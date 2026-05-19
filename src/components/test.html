@@ -1,0 +1,1051 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>杀伤链路构建系统可视化</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --neon-blue: #00f3ff;
+            --neon-red: #ff003c;
+            --neon-green: #0aff00;
+            --neon-purple: #bf00ff;
+            --neon-yellow: #ffee00;
+            --dark-bg: #050508;
+            --panel-bg: rgba(10, 15, 30, 0.85);
+        }
+
+        body {
+            background: var(--dark-bg);
+            font-family: 'Rajdhani', sans-serif;
+            overflow-x: hidden;
+            color: #e0e0e0;
+        }
+
+        .cyber-grid {
+            background-image: 
+                linear-gradient(rgba(0, 243, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 243, 255, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .stage-column {
+            min-width: 180px;
+            border-right: 1px solid rgba(0, 243, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .stage-column:hover {
+            background: rgba(0, 243, 255, 0.02);
+        }
+
+        .network-lane {
+            position: relative;
+            min-height: 140px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 15px 10px;
+        }
+
+        .platform-card {
+            background: linear-gradient(135deg, rgba(20, 30, 48, 0.9), rgba(10, 20, 35, 0.95));
+            border: 1px solid rgba(0, 243, 255, 0.2);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .platform-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 243, 255, 0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .platform-card:hover::before {
+            left: 100%;
+        }
+
+        .platform-card:hover {
+            transform: translateY(-3px) scale(1.02);
+            border-color: var(--neon-blue);
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.3), inset 0 0 20px rgba(0, 243, 255, 0.05);
+        }
+
+        .platform-card.active {
+            border-color: var(--neon-yellow);
+            box-shadow: 0 0 30px rgba(255, 238, 0, 0.4);
+        }
+
+        .weapon-tag {
+            display: inline-block;
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-radius: 12px;
+            margin: 2px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid currentColor;
+        }
+
+        .network-line {
+            position: absolute;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, currentColor, transparent);
+            opacity: 0.4;
+            animation: flow 3s linear infinite;
+        }
+
+        @keyframes flow {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+
+        .connection-line {
+            stroke-dasharray: 5, 5;
+            animation: dash 20s linear infinite;
+        }
+
+        @keyframes dash {
+            to { stroke-dashoffset: -100; }
+        }
+
+        .pulse-ring {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.05); }
+        }
+
+        .glass-panel {
+            background: var(--panel-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(0, 243, 255, 0.15);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        }
+
+        .hud-text {
+            font-family: 'Orbitron', monospace;
+            letter-spacing: 2px;
+        }
+
+        .data-stream {
+            font-family: 'Courier New', monospace;
+            font-size: 0.75rem;
+            color: var(--neon-green);
+            opacity: 0.6;
+        }
+
+        .threat-level {
+            height: 4px;
+            border-radius: 2px;
+            background: linear-gradient(90deg, var(--neon-green), var(--neon-yellow), var(--neon-red));
+            position: relative;
+            overflow: hidden;
+        }
+
+        .threat-level::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: var(--level, 0%);
+            background: currentColor;
+            transition: width 1s ease;
+            box-shadow: 0 0 10px currentColor;
+        }
+
+        .sensor-icon { color: var(--neon-blue); }
+        .weapon-icon { color: var(--neon-red); }
+        .platform-icon { color: var(--neon-yellow); }
+
+        /* 滚动条样式 */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.3);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(0, 243, 255, 0.3);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 243, 255, 0.5);
+        }
+
+        .detail-panel {
+            transform: translateX(100%);
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .detail-panel.open {
+            transform: translateX(0);
+        }
+
+        .network-legend {
+            position: fixed;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 50;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin: 15px 0;
+            cursor: pointer;
+            opacity: 0.7;
+            transition: all 0.3s;
+        }
+        .legend-item:hover, .legend-item.active {
+            opacity: 1;
+            transform: translateX(10px);
+        }
+        .legend-line {
+            width: 40px;
+            height: 3px;
+            margin-right: 12px;
+            border-radius: 2px;
+            position: relative;
+        }
+        .legend-line::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: inherit;
+            filter: blur(4px);
+            opacity: 0.6;
+        }
+
+        .time-axis {
+            position: relative;
+            height: 40px;
+            background: linear-gradient(90deg, 
+                rgba(0,243,255,0.1) 0%, 
+                rgba(0,243,255,0.2) 50%, 
+                rgba(0,243,255,0.1) 100%);
+            border-top: 1px solid rgba(0, 243, 255, 0.3);
+        }
+        .time-marker {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: rgba(0, 243, 255, 0.5);
+        }
+        .time-label {
+            position: absolute;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 0.75rem;
+            color: var(--neon-blue);
+            background: rgba(0, 0, 0, 0.8);
+            padding: 2px 8px;
+            border-radius: 4px;
+            border: 1px solid rgba(0, 243, 255, 0.3);
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+
+    <!-- 背景网格 -->
+    <div class="cyber-grid"></div>
+
+    <!-- 网络图例 -->
+    <div class="network-legend glass-panel p-4 rounded-xl">
+        <h3 class="text-sm font-bold mb-4 text-gray-400 hud-text">网络层级</h3>
+        <div class="legend-item active" data-network="strategic" onclick="toggleNetwork('strategic')">
+            <div class="legend-line" style="background: #ff003c;"></div>
+            <span class="text-sm">战略网</span>
+        </div>
+        <div class="legend-item active" data-network="tactical" onclick="toggleNetwork('tactical')">
+            <div class="legend-line" style="background: #00f3ff;"></div>
+            <span class="text-sm">战术链</span>
+        </div>
+        <div class="legend-item active" data-network="data" onclick="toggleNetwork('data')">
+            <div class="legend-line" style="background: #0aff00;"></div>
+            <span class="text-sm">数据链</span>
+        </div>
+        <div class="mt-6 pt-4 border-t border-gray-700">
+            <div class="text-xs text-gray-500 mb-2">系统状态</div>
+            <div class="flex items-center gap-2 mb-2">
+                <div class="w-2 h-2 rounded-full bg-green-500 pulse-ring"></div>
+                <span class="text-xs">在线节点: <span id="online-count">24</span></span>
+            </div>
+            <div class="flex items-center gap-2">
+                <div class="w-2 h-2 rounded-full bg-blue-500"></div>
+                <span class="text-xs">数据吞吐: <span id="data-rate">1.2</span> TB/s</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 主容器 -->
+    <div class="relative z-10 ml-48 p-6">
+        
+        <!-- 顶部标题栏 -->
+        <header class="mb-6 flex justify-between items-center glass-panel p-6 rounded-2xl">
+            <div>
+                <h1 class="text-3xl font-bold hud-text text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-600">
+                    KILL CHAIN ARCHITECTURE
+                </h1>
+                <p class="text-gray-400 text-sm mt-1 tracking-wider">杀伤链路构建系统 · 多域协同作战视图</p>
+            </div>
+            <div class="flex gap-4">
+                <button onclick="resetView()" class="px-4 py-2 rounded-lg border border-cyan-500/30 hover:bg-cyan-500/10 transition text-sm">
+                    重置视图
+                </button>
+                <button onclick="toggleAnimation()" class="px-4 py-2 rounded-lg bg-cyan-500/20 border border-cyan-500/50 hover:bg-cyan-500/30 transition text-sm flex items-center gap-2">
+                    <span id="anim-status">⏸</span> 数据流动
+                </button>
+            </div>
+        </header>
+
+        <!-- 时间轴 -->
+        <div class="time-axis rounded-lg mb-4 overflow-hidden">
+            <div class="time-marker" style="left: 8.33%"><span class="time-label">T+0s</span></div>
+            <div class="time-marker" style="left: 25%"><span class="time-label">T+30s</span></div>
+            <div class="time-marker" style="left: 41.66%"><span class="time-label">T+60s</span></div>
+            <div class="time-marker" style="left: 58.33%"><span class="time-label">T+90s</span></div>
+            <div class="time-marker" style="left: 75%"><span class="time-label">T+120s</span></div>
+            <div class="time-marker" style="left: 91.66%"><span class="time-label">T+150s</span></div>
+        </div>
+
+        <!-- 主可视化区域 -->
+        <div class="glass-panel rounded-2xl overflow-hidden">
+            
+            <!-- 阶段标题行 -->
+            <div class="flex border-b border-cyan-500/20 bg-black/40">
+                <div class="w-32 p-4 border-r border-cyan-500/20 flex items-center justify-center">
+                    <span class="text-xs text-gray-500 tracking-widest">NETWORK<br>LAYER</span>
+                </div>
+                <div class="flex-1 flex">
+                    <div class="stage-column flex-1 p-4 text-center border-r border-cyan-500/10">
+                        <div class="text-cyan-400 font-bold text-lg">01</div>
+                        <div class="text-white font-bold">发现</div>
+                        <div class="text-xs text-gray-500 mt-1">DETECTION</div>
+                    </div>
+                    <div class="stage-column flex-1 p-4 text-center border-r border-cyan-500/10">
+                        <div class="text-cyan-400 font-bold text-lg">02</div>
+                        <div class="text-white font-bold">定位</div>
+                        <div class="text-xs text-gray-500 mt-1">LOCATION</div>
+                    </div>
+                    <div class="stage-column flex-1 p-4 text-center border-r border-cyan-500/10">
+                        <div class="text-cyan-400 font-bold text-lg">03</div>
+                        <div class="text-white font-bold">跟踪</div>
+                        <div class="text-xs text-gray-500 mt-1">TRACKING</div>
+                    </div>
+                    <div class="stage-column flex-1 p-4 text-center border-r border-cyan-500/10">
+                        <div class="text-cyan-400 font-bold text-lg">04</div>
+                        <div class="text-white font-bold">瞄准</div>
+                        <div class="text-xs text-gray-500 mt-1">TARGETING</div>
+                    </div>
+                    <div class="stage-column flex-1 p-4 text-center border-r border-cyan-500/10">
+                        <div class="text-cyan-400 font-bold text-lg">05</div>
+                        <div class="text-white font-bold">交战</div>
+                        <div class="text-xs text-gray-500 mt-1">ENGAGEMENT</div>
+                    </div>
+                    <div class="stage-column flex-1 p-4 text-center">
+                        <div class="text-cyan-400 font-bold text-lg">06</div>
+                        <div class="text-white font-bold">评估</div>
+                        <div class="text-xs text-gray-500 mt-1">ASSESSMENT</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 战略网层 -->
+            <div class="network-lane" id="lane-strategic" style="border-left: 3px solid #ff003c;">
+                <div class="absolute left-0 top-0 bottom-0 w-32 flex items-center justify-center bg-red-950/20">
+                    <div class="text-center">
+                        <div class="text-red-500 font-bold text-sm tracking-wider">STRATEGIC</div>
+                        <div class="text-red-400/60 text-xs">战略网</div>
+                        <div class="mt-2 text-xs text-red-400/40">SATCOM</div>
+                    </div>
+                </div>
+                <div class="ml-32 flex h-full">
+                    <!-- 发现阶段 -->
+                    <div class="stage-column flex-1 p-3" data-stage="1" data-network="strategic">
+                        <div class="platform-card" onclick="showDetails('sat1', '侦察卫星', 'strategic', ['合成孔径雷达', '红外传感器', '光学相机'], '发现')">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="platform-icon text-lg">🛰</span>
+                                <span class="text-xs text-gray-400">SAT-001</span>
+                            </div>
+                            <div class="font-bold text-sm mb-2">侦察卫星</div>
+                            <div class="flex flex-wrap">
+                                <span class="weapon-tag sensor-icon">SAR雷达</span>
+                                <span class="weapon-tag sensor-icon">红外</span>
+                            </div>
+                            <div class="mt-2 text-xs text-gray-500 data-stream">▼ 2.4GHz | 信号强</div>
+                        </div>
+                    </div>
+                    <!-- 定位阶段 -->
+                    <div class="stage-column flex-1 p-3" data-stage="2" data-network="strategic">
+                        <div class="platform-card" onclick="showDetails('ew1', '电子战卫星', 'strategic', ['电子侦察', '信号分析', '测向定位'], '定位')">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="platform-icon text-lg">📡</span>
+                                <span class="text-xs text-gray-400">EW-SAT</span>
+                            </div>
+                            <div class="font-bold text-sm mb-2">电子战卫星</div>
+                            <div class="flex flex-wrap">
+                                <span class="weapon-tag sensor-icon">ELINT</span>
+                                <span class="weapon-tag sensor-icon">测向</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 跟踪阶段 -->
+                    <div class="stage-column flex-1 p-3" data-stage="3" data-network="strategic">
+                        <div class="platform-card" onclick="showDetails('awacs', '预警机', 'strategic', ['相控阵雷达', '指挥控制', '数据融合'], '跟踪')">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="platform-icon text-lg">✈</span>
+                                <span class="text-xs text-gray-400">KJ-2000</span>
+                            </div>
+                            <div class="font-bold text-sm mb-2">预警机</div>
+                            <div class="flex flex-wrap">
+                                <span class="weapon-tag sensor-icon">相控阵</span>
+                                <span class="weapon-tag sensor-icon">C2</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 瞄准阶段 -->
+                    <div class="stage-column flex-1 p-3" data-stage="4" data-network="strategic">
+                        <div class="platform-card" onclick="showDetails('cmd1', '战略指挥所', 'strategic', ['战场管理', '火力协调', '威胁评估'], '瞄准')">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="platform-icon text-lg">🏢</span>
+                                <span class="text-xs text-gray-400">CMD-STR</span>
+                            </div>
+                            <div class="font-bold text-sm mb-2">战略指挥所</div>
+                            <div class="flex flex-wrap">
+                                <span class="weapon-tag sensor-icon">BMC2</span>
+                                <span class="weapon-tag sensor-icon">融合</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 交战阶段 -->
+                    <div class="stage-column flex-1 p-3" data-stage="5" data-network="strategic">
+                        <div class="platform-card" onclick="showDetails('bomber', '战略轰炸机', 'strategic', ['巡航导弹', '精确制导炸弹', '电子战'], '交战')">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="platform-icon text-lg">🚀</span>
+                                <span class="text-xs text-gray-400">H-6N</span>
+                            </div>
+                            <div class="font-bold text-sm mb-2">战略轰炸机</div>
+                            <div class="flex flex-wrap">
+                                <span class="weapon-tag weapon-icon">巡航导弹</span>
+                                <span class="weapon-tag weapon-icon">制导炸弹</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 评估阶段 -->
+                    <div class="stage-column flex-1 p-3" data-stage="6" data-network="strategic">
+                        <div class="platform-card" onclick="showDetails('sat2', '评估卫星', 'strategic', ['高分辨率光学', '毁伤评估', '战场监视'], '评估')">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="platform-icon text-lg">🛰</span>
+                                <span class="text-xs text-gray-400">SAT-002</span>
+                            </div>
+                            <div class="font-bold text-sm mb-2">评估卫星</div>
+                            <div class="flex flex-wrap">
+                                <span class="weapon-tag sensor-icon">高清光学</span>
+                                <span class="weapon-tag sensor-icon">评估</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 战术链层 -->
+            <div class="network-lane" id="lane-tactical" style="border-left: 3px solid #00f3ff;">
+                <div class="absolute left-0 top-0 bottom-0 w-32 flex items-center justify-center bg-cyan-950/20">
+                    <div class="text-center">
+                        <div class="text-cyan-400 font-bold text-sm tracking-wider">TACTICAL</div>
+                        <div class="text-cyan-400/60 text-xs">战术链</div>
+                        <div class="mt-2 text-xs text-cyan-400/40">LINK-16/22</div>
+                    </div>
+                </div>
+                <div class="ml-32 flex h-full">
+                    <!-- 发现阶段 -->
+                    <div class="stage-column flex-1 p-3" data-stage="1" data-network="tactical">
+                        <div class="platform-card" onclick="showDetails('ground-radar', '地面雷达站', 'tactical', ['远程警戒雷达', '目标识别', '低空补盲'], '发现')">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="platform-icon text-lg">📡</span>
+                                <span class="text-xs text-gray-400">RAD-01</span>
+                            </div>
+                            <div class="font-bold text-sm mb-2">地面雷达站</div>
+                            <div class="flex flex-wrap">
+                                <span class="weapon-tag sensor-icon">警戒雷达</span>
+                                <span class="weapon-tag sensor-icon">识别</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 定位阶段 -->
+                    <div class="stage-column flex-1 p-3" data-stage="2" data-network="tactical">
+                        <div class="platform-card" onclick="showDetails('uav1', '侦察无人机', 'tactical', ['光电吊舱', 'SAR雷达', '激光测距'], '定位')">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="platform-icon text-lg">🚁</span>
+                                <span class="text-xs text-gray-400">UAV-RECON</span>
+                            </div>
+                            <div class="font-bold text-sm mb-2">侦察无人机</div>
+                            <div class="flex flex-wrap">
+                                <span class="weapon-tag sensor-icon">光电</span>
+                                <span class="weapon-tag sensor-icon">SAR</span>
+                            </div>
+                        </div>
+                        <div class="platform-card" onclick="showDetails('spec', '特种侦察', 'tactical', ['便携式雷达', '激光指示器', '通信中继'], '定位')">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="platform-icon text-lg">👁</span>
+                                <span class="text-xs text-gray-400">SPEC-OPS</span>
+                            </div>
+                            <div class="font-bold text-sm mb-2">特种侦察</div>
+                            <div class="flex flex-wrap">
+                                <span class="weapon-tag sensor-icon">指示器</span>
+                                <span class="weapon-tag sensor-icon">中继</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 跟踪阶段 -->
+                    <div class="stage-column flex-1 p-3" data-stage="3" data-network="tactical">
+                        <div class="platform-card" onclick="showDetails('ship1', '驱逐舰', 'tactical', ['相控阵雷达', '垂直发射系统', '直升机'], '跟踪')">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="platform-icon text-lg">🚢</span>
+                                <span class="text-xs text-gray-400">DDG-055</span>
+                            </div>
+                            <div class="font-bold text-sm mb-2">驱逐舰</div>
+                            <div class="flex flex-wrap">
+                                <span class="weapon-tag sensor-icon">相控阵</span>
+                                <span class="weapon-tag weapon-icon">VLS</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 瞄准阶段 -->
+                    <div class="stage-column flex-1 p-3" data-stage="4" data-network="tactical">
+                        <div class="platform-card" onclick="showDetails('tank', '主战坦克', 'tactical', ['火控系统', '热成像', '激光测距'], '瞄准')">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="platform-icon text-lg">⚔</span>
+                                <span class="text-xs text-gray-400">MBT-99A</span>
+                            </div>
+                            <div class="font-bold text-sm mb-2">主战坦克</div>
+                            <div class="flex flex-wrap">
+                                <span class="weapon-tag sensor-icon">火控</span>
+                                <span class="weapon-tag sensor-icon">热成像</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 交战阶段 -->
+                    <div class="stage-column flex-1 p-3" data-stage="5" data-network="tactical">
+                        <div class="platform-card" onclick="showDetails('fighter', '战斗机', 'tactical', ['有源相控阵', '空空导弹', '空地导弹'], '交战')">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="platform-icon text-lg">✈</span>
+                                <span class="text-xs text-gray-400">J-20</span>
+                            </div>
+                            <div class="font-bold text-sm mb-2">战斗机</div>
+                            <div class="flex flex-wrap">
+                                <span class="weapon-tag weapon-icon">PL-15</span>
+                                <span class="weapon-tag weapon-icon">KD-88</span>
+                            </div>
+                        </div>
+                        <div class="platform-card" onclick="showDetails('arty', '自行火炮', 'tactical', ['155mm榴弹炮', '制导炮弹', '自动装填'], '交战')">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="platform-icon text-lg">💥</span>
+                                <span class="text-xs text-gray-400">PLZ-05</span>
+                            </div>
+                            <div class="font-bold text-sm mb-2">自行火炮</div>
+                            <div class="flex flex-wrap">
+                                <span class="weapon-tag weapon-icon">155mm</span>
+                                <span class="weapon-tag weapon-icon">制导</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 评估阶段 -->
+                    <div class="stage-column flex-1 p-3" data-stage="6" data-network="tactical">
+                        <div class="platform-card" onclick="showDetails('uav2', '评估无人机', 'tactical', ['光电侦察', '毁伤评估', '实时回传'], '评估')">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="platform-icon text-lg">🚁</span>
+                                <span class="text-xs text-gray-400">UAV-EVAL</span>
+                            </div>
+                            <div class="font-bold text-sm mb-2">评估无人机</div>
+                            <div class="flex flex-wrap">
+                                <span class="weapon-tag sensor-icon">评估</span>
+                                <span class="weapon-tag sensor-icon">回传</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 数据链层 -->
+            <div class="network-lane" id="lane-data" style="border-left: 3px solid #0aff00;">
+                <div class="absolute left-0 top-0 bottom-0 w-32 flex items-center justify-center bg-green-950/20">
+                    <div class="text-center">
+                        <div class="text-green-400 font-bold text-sm tracking-wider">DATA LINK</div>
+                        <div class="text-green-400/60 text-xs">数据链</div>
+                        <div class="mt-2 text-xs text-green-400/40">TCDL/专用</div>
+                    </div>
+                </div>
+                <div class="ml-32 flex h-full">
+                    <!-- 发现阶段 -->
+                    <div class="stage-column flex-1 p-3" data-stage="1" data-network="data">
+                        <div class="platform-card" onclick="showDetails('elint', '电子侦察站', 'data', ['信号截获', '频谱分析', '辐射源定位'], '发现')">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="platform-icon text-lg">📻</span>
+                                <span class="text-xs text-gray-400">ELINT-01</span>
+                            </div>
+                            <div class="font-bold text-sm mb-2">电子侦察站</div>
+                            <div class="flex flex-wrap">
+                                <span class="weapon-tag sensor-icon">截获</span>
+                                <span class="weapon-tag sensor-icon">分析</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 定位阶段 -->
+                    <div class="stage-column flex-1 p-3" data-stage="2" data-network="data">
+                        <div class="platform-card" onclick="showDetails('radar2', '机动雷达', 'data', ['三坐标雷达', '高度测量', '速度测量'], '定位')">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="platform-icon text-lg">📡</span>
+                                <span class="text-xs text-gray-400">RAD-MOB</span>
+                            </div>
+                            <div class="font-bold text-sm mb-2">机动雷达</div>
+                            <div class="flex flex-wrap">
+                                <span class="weapon-tag sensor-icon">三坐标</span>
+                                <span class="weapon-tag sensor-icon">测高</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 跟踪阶段 -->
+                    <div class="stage-column flex-1 p-3" data-stage="3" data-network="data">
+                        <div class="platform-card" onclick="showDetails('radar3', '火控雷达', 'data', ['跟踪照射', '导弹制导', '多目标处理'], '跟踪')">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="platform-icon text-lg">🎯</span>
+                                <span class="text-xs text-gray-400">FCR-01</span>
+                            </div>
+                            <div class="font-bold text-sm mb-2">火控雷达</div>
+                            <div class="flex flex-wrap">
+                                <span class="weapon-tag sensor-icon">照射</span>
+                                <span class="weapon-tag sensor-icon">制导</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 瞄准阶段 -->
+                    <div class="stage-column flex-1 p-3" data-stage="4" data-network="data">
+                        <div class="platform-card" onclick="showDetails('ifv', '步兵战车', 'data', ['稳定火控', '反坦克导弹', '并列机枪'], '瞄准')">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="platform-icon text-lg">⚔</span>
+                                <span class="text-xs text-gray-400">IFV-04</span>
+                            </div>
+                            <div class="font-bold text-sm mb-2">步兵战车</div>
+                            <div class="flex flex-wrap">
+                                <span class="weapon-tag weapon-icon">导弹</span>
+                                <span class="weapon-tag weapon-icon">机关炮</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 交战阶段 -->
+                    <div class="stage-column flex-1 p-3" data-stage="5" data-network="data">
+                        <div class="platform-card" onclick="showDetails('sam', '防空导弹', 'data', ['主动雷达', '红外成像', '数据链'], '交战')">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="platform-icon text-lg">🚀</span>
+                                <span class="text-xs text-gray-400">HQ-9</span>
+                            </div>
+                            <div class="font-bold text-sm mb-2">防空导弹</div>
+                            <div class="flex flex-wrap">
+                                <span class="weapon-tag weapon-icon">主动雷达</span>
+                                <span class="weapon-tag sensor-icon">红外</span>
+                            </div>
+                        </div>
+                        <div class="platform-card" onclick="showDetails('atgm', '反坦克导弹', 'data', ['光纤制导', '图像匹配', '攻顶打击'], '交战')">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="platform-icon text-lg">🎯</span>
+                                <span class="text-xs text-gray-400">HJ-10</span>
+                            </div>
+                            <div class="font-bold text-sm mb-2">反坦克导弹</div>
+                            <div class="flex flex-wrap">
+                                <span class="weapon-tag weapon-icon">光纤</span>
+                                <span class="weapon-tag weapon-icon">攻顶</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 评估阶段 -->
+                    <div class="stage-column flex-1 p-3" data-stage="6" data-network="data">
+                        <div class="platform-card" onclick="showDetails('ground', '地面评估组', 'data', ['现场勘察', '损伤评估', '报告生成'], '评估')">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="platform-icon text-lg">👥</span>
+                                <span class="text-xs text-gray-400">EVAL-GRD</span>
+                            </div>
+                            <div class="font-bold text-sm mb-2">地面评估组</div>
+                            <div class="flex flex-wrap">
+                                <span class="weapon-tag sensor-icon">勘察</span>
+                                <span class="weapon-tag sensor-icon">评估</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- 底部状态栏 -->
+        <div class="mt-4 glass-panel p-4 rounded-xl flex justify-between items-center text-sm">
+            <div class="flex gap-6">
+                <div class="flex items-center gap-2">
+                    <div class="w-3 h-3 rounded-full bg-cyan-400 pulse-ring"></div>
+                    <span class="text-gray-400">系统正常</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="text-gray-500">网络延迟:</span>
+                    <span class="text-cyan-400 font-mono" id="latency">12ms</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="text-gray-500">数据同步:</span>
+                    <span class="text-green-400 font-mono">实时</span>
+                </div>
+            </div>
+            <div class="text-gray-500 text-xs">
+                最后更新: <span id="last-update">2026-04-02 09:16:00</span>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- 详情侧边栏 -->
+    <div id="detail-panel" class="detail-panel fixed right-0 top-0 h-full w-96 glass-panel border-l border-cyan-500/30 z-50 overflow-y-auto">
+        <div class="p-6">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-xl font-bold hud-text text-cyan-400">平台详情</h2>
+                <button onclick="closeDetails()" class="text-gray-400 hover:text-white text-2xl">&times;</button>
+            </div>
+            
+            <div id="detail-content">
+                <!-- 动态内容 -->
+            </div>
+
+            <div class="mt-6 pt-6 border-t border-gray-700">
+                <h3 class="text-sm font-bold text-gray-400 mb-3">实时数据流</h3>
+                <div class="space-y-2 text-xs font-mono data-stream" id="data-stream">
+                    <div>> 初始化连接...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SVG连接线层 -->
+    <svg id="connections" class="fixed inset-0 pointer-events-none z-20" style="width: 100%; height: 100%;">
+        <defs>
+            <marker id="arrowhead-red" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                <polygon points="0 0, 10 3.5, 0 7" fill="#ff003c" />
+            </marker>
+            <marker id="arrowhead-blue" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                <polygon points="0 0, 10 3.5, 0 7" fill="#00f3ff" />
+            </marker>
+            <marker id="arrowhead-green" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                <polygon points="0 0, 10 3.5, 0 7" fill="#0aff00" />
+            </marker>
+        </defs>
+        <!-- 动态生成的连接线 -->
+    </svg>
+
+    <script>
+        // 数据定义
+        const platforms = {
+            'sat1': { name: '侦察卫星', type: 'space', network: 'strategic', sensors: ['合成孔径雷达', '红外传感器', '光学相机'], stage: '发现' },
+            'ew1': { name: '电子战卫星', type: 'space', network: 'strategic', sensors: ['电子侦察', '信号分析', '测向定位'], stage: '定位' },
+            'awacs': { name: '预警机', type: 'air', network: 'strategic', sensors: ['相控阵雷达', '指挥控制', '数据融合'], stage: '跟踪' },
+            'cmd1': { name: '战略指挥所', type: 'ground', network: 'strategic', sensors: ['战场管理', '火力协调', '威胁评估'], stage: '瞄准' },
+            'bomber': { name: '战略轰炸机', type: 'air', network: 'strategic', sensors: ['巡航导弹', '精确制导炸弹', '电子战'], stage: '交战' },
+            'sat2': { name: '评估卫星', type: 'space', network: 'strategic', sensors: ['高分辨率光学', '毁伤评估', '战场监视'], stage: '评估' },
+            'ground-radar': { name: '地面雷达站', type: 'ground', network: 'tactical', sensors: ['远程警戒雷达', '目标识别', '低空补盲'], stage: '发现' },
+            'uav1': { name: '侦察无人机', type: 'air', network: 'tactical', sensors: ['光电吊舱', 'SAR雷达', '激光测距'], stage: '定位' },
+            'spec': { name: '特种侦察', type: 'ground', network: 'tactical', sensors: ['便携式雷达', '激光指示器', '通信中继'], stage: '定位' },
+            'ship1': { name: '驱逐舰', type: 'sea', network: 'tactical', sensors: ['相控阵雷达', '垂直发射系统', '直升机'], stage: '跟踪' },
+            'tank': { name: '主战坦克', type: 'ground', network: 'tactical', sensors: ['火控系统', '热成像', '激光测距'], stage: '瞄准' },
+            'fighter': { name: '战斗机', type: 'air', network: 'tactical', sensors: ['有源相控阵', '空空导弹', '空地导弹'], stage: '交战' },
+            'arty': { name: '自行火炮', type: 'ground', network: 'tactical', sensors: ['155mm榴弹炮', '制导炮弹', '自动装填'], stage: '交战' },
+            'uav2': { name: '评估无人机', type: 'air', network: 'tactical', sensors: ['光电侦察', '毁伤评估', '实时回传'], stage: '评估' },
+            'elint': { name: '电子侦察站', type: 'ground', network: 'data', sensors: ['信号截获', '频谱分析', '辐射源定位'], stage: '发现' },
+            'radar2': { name: '机动雷达', type: 'ground', network: 'data', sensors: ['三坐标雷达', '高度测量', '速度测量'], stage: '定位' },
+            'radar3': { name: '火控雷达', type: 'ground', network: 'data', sensors: ['跟踪照射', '导弹制导', '多目标处理'], stage: '跟踪' },
+            'ifv': { name: '步兵战车', type: 'ground', network: 'data', sensors: ['稳定火控', '反坦克导弹', '并列机枪'], stage: '瞄准' },
+            'sam': { name: '防空导弹', type: 'ground', network: 'data', sensors: ['主动雷达', '红外成像', '数据链'], stage: '交战' },
+            'atgm': { name: '反坦克导弹', type: 'ground', network: 'data', sensors: ['光纤制导', '图像匹配', '攻顶打击'], stage: '交战' },
+            'ground': { name: '地面评估组', type: 'ground', network: 'data', sensors: ['现场勘察', '损伤评估', '报告生成'], stage: '评估' }
+        };
+
+        let animationEnabled = true;
+        let activeNetworks = { strategic: true, tactical: true, data: true };
+
+        // 显示详情
+        function showDetails(id, name, network, sensors, stage) {
+            const panel = document.getElementById('detail-panel');
+            const content = document.getElementById('detail-content');
+            const platform = platforms[id];
+            
+            const networkColors = {
+                strategic: 'text-red-400 border-red-500/30 bg-red-950/30',
+                tactical: 'text-cyan-400 border-cyan-500/30 bg-cyan-950/30',
+                data: 'text-green-400 border-green-500/30 bg-green-950/30'
+            };
+            
+            const networkNames = {
+                strategic: '战略网 (SATCOM)',
+                tactical: '战术链 (LINK-16)',
+                data: '数据链 (TCDL)'
+            };
+
+            content.innerHTML = `
+                <div class="mb-6">
+                    <div class="text-3xl mb-2">${getPlatformIcon(platform.type)}</div>
+                    <h3 class="text-2xl font-bold text-white mb-1">${name}</h3>
+                    <div class="text-sm text-gray-400">ID: ${id.toUpperCase()} | 阶段: ${stage}</div>
+                </div>
+
+                <div class="mb-6 p-4 rounded-lg border ${networkColors[network]}">
+                    <div class="text-xs opacity-70 mb-1">网络归属</div>
+                    <div class="font-bold">${networkNames[network]}</div>
+                </div>
+
+                <div class="mb-6">
+                    <h4 class="text-sm font-bold text-gray-400 mb-3">载荷配置</h4>
+                    <div class="space-y-2">
+                        ${sensors.map((sensor, idx) => `
+                            <div class="flex items-center justify-between p-3 bg-black/30 rounded-lg border border-gray-700">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-2 h-2 rounded-full bg-cyan-400"></div>
+                                    <span class="text-sm">${sensor}</span>
+                                </div>
+                                <div class="text-xs text-gray-500">CH-${String(idx+1).padStart(2,'0')}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+
+                <div class="mb-6">
+                    <h4 class="text-sm font-bold text-gray-400 mb-3">状态监控</h4>
+                    <div class="space-y-3">
+                        <div>
+                            <div class="flex justify-between text-xs mb-1">
+                                <span class="text-gray-500">系统健康度</span>
+                                <span class="text-green-400">98%</span>
+                            </div>
+                            <div class="threat-level" style="--level: 98%"></div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-xs mb-1">
+                                <span class="text-gray-500">数据链路质量</span>
+                                <span class="text-cyan-400">优</span>
+                            </div>
+                            <div class="threat-level bg-gradient-to-r from-cyan-900 to-cyan-500" style="--level: 95%"></div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-xs mb-1">
+                                <span class="text-gray-500">电源状态</span>
+                                <span class="text-yellow-400">正常</span>
+                            </div>
+                            <div class="threat-level bg-gradient-to-r from-yellow-900 to-yellow-500" style="--level: 72%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <button class="p-3 rounded-lg bg-cyan-500/20 border border-cyan-500/50 hover:bg-cyan-500/30 transition text-sm">
+                        发送指令
+                    </button>
+                    <button class="p-3 rounded-lg bg-red-500/20 border border-red-500/50 hover:bg-red-500/30 transition text-sm">
+                        紧急断开
+                    </button>
+                </div>
+            `;
+
+            panel.classList.add('open');
+            
+            // 启动数据流模拟
+            startDataStream(name);
+        }
+
+        function closeDetails() {
+            document.getElementById('detail-panel').classList.remove('open');
+        }
+
+        function getPlatformIcon(type) {
+            const icons = {
+                space: '🛰',
+                air: '✈',
+                ground: '⚔',
+                sea: '🚢'
+            };
+            return icons[type] || '⚡';
+        }
+
+        function startDataStream(platformName) {
+            const stream = document.getElementById('data-stream');
+            const messages = [
+                '> 建立安全连接...',
+                '> 握手成功 (AES-256)',
+                `> 正在同步 ${platformName} 数据...`,
+                '> 接收遥测数据流',
+                '> 传感器状态: 正常',
+                '> 武器系统: 待命',
+                '> 网络延迟: 12ms',
+                '> 数据包完整性: 100%'
+            ];
+            
+            let idx = 0;
+            stream.innerHTML = '';
+            
+            const interval = setInterval(() => {
+                if (idx < messages.length) {
+                    const div = document.createElement('div');
+                    div.textContent = messages[idx];
+                    div.style.opacity = '0';
+                    stream.appendChild(div);
+                    setTimeout(() => div.style.opacity = '1', 50);
+                    stream.scrollTop = stream.scrollHeight;
+                    idx++;
+                } else {
+                    clearInterval(interval);
+                    // 持续随机数据
+                    setInterval(() => {
+                        const randomMsg = [
+                            `> 心跳包 [${new Date().toLocaleTimeString()}]`,
+                            `> 数据更新: ${(Math.random()*100).toFixed(2)} MB`,
+                            '> 链路质量检测: 优',
+                            `> 平台坐标更新 [${(Math.random()*180).toFixed(4)}, ${(Math.random()*90).toFixed(4)}]`
+                        ][Math.floor(Math.random()*4)];
+                        const div = document.createElement('div');
+                        div.textContent = randomMsg;
+                        stream.appendChild(div);
+                        if (stream.children.length > 20) stream.removeChild(stream.firstChild);
+                        stream.scrollTop = stream.scrollHeight;
+                    }, 2000);
+                }
+            }, 400);
+        }
+
+        // 网络切换
+        function toggleNetwork(network) {
+            activeNetworks[network] = !activeNetworks[network];
+            const lane = document.getElementById(`lane-${network}`);
+            const legend = document.querySelector(`[data-network="${network}"]`);
+            
+            if (activeNetworks[network]) {
+                lane.style.opacity = '1';
+                lane.style.pointerEvents = 'auto';
+                legend.classList.add('active');
+            } else {
+                lane.style.opacity = '0.2';
+                lane.style.pointerEvents = 'none';
+                legend.classList.remove('active');
+            }
+            
+            updateConnections();
+        }
+
+        // 绘制连接线
+        function updateConnections() {
+            const svg = document.getElementById('connections');
+            svg.innerHTML = svg.innerHTML.split('</defs>')[0] + '</defs>';
+            
+            if (!animationEnabled) return;
+            
+            const lanes = ['strategic', 'tactical', 'data'];
+            const colors = { strategic: '#ff003c', tactical: '#00f3ff', data: '#0aff00' };
+            
+            lanes.forEach(network => {
+                if (!activeNetworks[network]) return;
+                
+                const cards = document.querySelectorAll(`#lane-${network} .platform-card`);
+                const positions = [];
+                
+                cards.forEach(card => {
+                    const rect = card.getBoundingClientRect();
+                    positions.push({
+                        x: rect.left + rect.width / 2,
+                        y: rect.top + rect.height / 2,
+                        stage: parseInt(card.closest('.stage-column').dataset.stage)
+                    });
+                });
+                
+                // 按阶段排序并连接
+                positions.sort((a, b) => a.stage - b.stage);
+                
+                for (let i = 0; i < positions.length - 1; i++) {
+                    if (positions[i].stage < positions[i+1].stage) {
+                        const line = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                        const d = `M ${positions[i].x} ${positions[i].y} Q ${(positions[i].x + positions[i+1].x)/2} ${positions[i].y - 30} ${positions[i+1].x} ${positions[i+1].y}`;
+                        
+                        line.setAttribute('d', d);
+                        line.setAttribute('stroke', colors[network]);
+                        line.setAttribute('stroke-width', '2');
+                        line.setAttribute('fill', 'none');
+                        line.setAttribute('class', 'connection-line');
+                        line.setAttribute('opacity', '0.4');
+                        line.setAttribute('marker-end', `url(#arrowhead-${network === 'strategic' ? 'red' : network === 'tactical' ? 'blue' : 'green'})`);
+                        
+                        svg.appendChild(line);
+                    }
+                }
+            });
+        }
+
+        // 动画控制
+        function toggleAnimation() {
+            animationEnabled = !animationEnabled;
+            document.getElementById('anim-status').textContent = animationEnabled ? '⏸' : '▶';
+            if (animationEnabled) {
+                updateConnections();
+            } else {
+                document.getElementById('connections').innerHTML = document.getElementById('connections').innerHTML.split('</defs>')[0] + '</defs>';
+            }
+        }
+
+        function resetView() {
+            activeNetworks = { strategic: true, tactical: true, data: true };
+            document.querySelectorAll('.network-lane').forEach(lane => {
+                lane.style.opacity = '1';
+                lane.style.pointerEvents = 'auto';
+            });
+            document.querySelectorAll('.legend-item').forEach(item => item.classList.add('active'));
+            closeDetails();
+            updateConnections();
+        }
+
+        // 实时更新
+        setInterval(() => {
+            document.getElementById('latency').textContent = Math.floor(Math.random() * 20 + 5) + 'ms';
+            document.getElementById('data-rate').textContent = (Math.random() * 0.5 + 1.0).toFixed(1);
+            document.getElementById('last-update').textContent = new Date().toLocaleString('zh-CN');
+        }, 3000);
+
+        // 窗口调整时重绘连接线
+        window.addEventListener('resize', updateConnections);
+        window.addEventListener('scroll', updateConnections);
+        
+        // 初始化
+        setTimeout(updateConnections, 500);
+
+        // 点击空白处关闭详情
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.platform-card') && !e.target.closest('#detail-panel')) {
+                closeDetails();
+            }
+        });
+    </script>
+</body>
+</html>
