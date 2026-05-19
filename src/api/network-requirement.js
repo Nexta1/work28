@@ -65,10 +65,3 @@ export function getNetworkTypeMap() {
   })
 }
 
-// 根据作战任务查询网络拓扑
-export function queryNetworkTopology(zzrwid) {
-  return request({
-    url: `/rest/zzrwwl/topology/${zzrwid}`,
-    method: 'get'
-  })
-}
