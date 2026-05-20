@@ -227,6 +227,7 @@ export default {
   name: 'VerticalTopology',
   data() {
     return {
+      lastRefreshTime: '',
       trafficList: [], // 存储全量流量数据
       refreshTimer: null,
       graph: null,

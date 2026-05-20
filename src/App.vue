@@ -87,7 +87,12 @@ export default {
 
     mainMenus() {
       return [
-        {path: '/', name: '杀伤链路', icon: '🔗', badge: 'LIVE'},
+        {
+          path: '/kill-chain-situation',
+          name: '杀伤链路',
+          icon: '🔗',
+          badge: 'LIVE'
+        },
         {path: '/dashboard', name: '态势 Dashboard', icon: '📊'},
         {path: '/network', name: '态势 network', icon: '📊'}
       ]

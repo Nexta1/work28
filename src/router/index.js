@@ -33,7 +33,15 @@ const routes = [
       requiresAuth: true
     }
   },
-
+  {
+    path: '/kill-chain-situation',
+    name: 'KillChainSituation',
+    component: () => import('@/views/KillChainSituation.vue'),
+    meta: {
+      title: '杀伤链运行态势',
+      requiresAuth: true
+    }
+  },
   {
     path: '/login',
     name: 'Login',
