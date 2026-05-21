@@ -94,7 +94,8 @@ export default {
           badge: 'LIVE'
         },
         {path: '/dashboard', name: '态势 Dashboard', icon: '📊'},
-        {path: '/network', name: '态势 network', icon: '📊'}
+        {path: '/network', name: '态势 network', icon: '📊'},
+        {path: '/DeviceMonitor', name: '态势 DeviceMonitor', icon: '📊'}
       ]
     },
 

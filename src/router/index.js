@@ -43,6 +43,15 @@ const routes = [
     }
   },
   {
+    path: '/DeviceMonitor',
+    name: 'DeviceMonitor',
+    component: () => import('@/views/DeviceMonitor.vue'),
+    meta: {
+      title: 'DeviceMonitor',
+      requiresAuth: true
+    }
+  },
+  {
     path: '/login',
     name: 'Login',
     component: () => import('@/views/Login.vue'),

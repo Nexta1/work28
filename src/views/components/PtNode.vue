@@ -144,6 +144,7 @@ export default {
   box-sizing: border-box;
   overflow: hidden; /* 严禁内容撑开容器 */
   border-radius: 4px;
+  cursor: pointer;
 }
 
 .node-header {

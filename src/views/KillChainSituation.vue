@@ -686,12 +686,16 @@ export default {
         container: this.$refs.container,
         background: {color: '#0f172a'},
         panning: true,
+        interacting: {
+          nodeMovable: false, // 禁止所有节点拖动
+          edgeMovable: false // 禁止边移动
+        },
         mousewheel: true
       })
       this.graph.on('node:click', ({node}) => {
         const data = node.getData()
 
-        if (data.type === 'MORE_BTN') {
+        if (data && data.type === 'MORE_BTN') {
           this.currentPhaseMembers = data.members
           this.currentThemeColor = data.themeColor
           this.listDialogVisible = true
