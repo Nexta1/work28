@@ -1,114 +1,180 @@
 <template>
-  <div class="kill-chain-x6-container">
-    <!-- 顶部工具栏 -->
-    <div class="toolbar">
-      <div class="toolbar-left">
-        <h2 class="title">
-          <i class="el-icon-cpu"></i> 杀伤链运行态势监控 - X6 可视化
-        </h2>
-        <p class="subtitle">
-          数据同步时间：{{ lastRefreshTime || '等待同步...' }}
-          <span class="view-hint"
-            >| 操作：右键/左键拖拽平移，Ctrl+滚轮缩放</span
-          >
-        </p>
-      </div>
-      <el-form :model="filterForm" inline size="small" class="toolbar-form">
-        <el-form-item label="任务选择">
+  <div class="killchain-page">
+    <!-- 1. 杀伤链态势控制台 -->
+    <div class="status-workspace">
+      <div class="workspace-header">
+        <div class="brand">
+          <i class="el-icon-aim"></i>
+          <span>杀伤链执行态势控制台</span>
+        </div>
+        <div class="task-info">
+          <span class="label">当前任务:</span>
           <el-select
-            v-model="filterForm.taskId"
-            placeholder="请选择作战任务"
-            @change="loadData"
-            style="width: 250px"
+            v-model="currentTaskName"
+            size="mini"
+            @change="handleTaskChange"
+            class="dark-select"
           >
             <el-option
-              v-for="task in taskList"
-              :key="task.ZZRWID"
-              :label="task.RWMC"
-              :value="task.ZZRWID"
+              v-for="t in taskList"
+              :key="t.ZZRWID"
+              :label="t.RWMC"
+              :value="t.RWMC"
             />
           </el-select>
-        </el-form-item>
-        <el-button type="primary" icon="el-icon-rank" @click="resetGraph"
-          >居中视图</el-button
-        >
-        <el-button icon="el-icon-download" @click="exportImage">导出</el-button>
-      </el-form>
-    </div>
-
-    <div class="graph-layout">
-      <!-- 左侧控制图例 -->
-      <div class="control-panel">
-        <div class="panel-section">
-          <h3>网络图层显隐</h3>
-          <div class="network-legend">
+        </div>
+        <div class="state-legend">
+          <div class="legend-title">状态标识</div>
+          <div class="legend-items">
             <div
-              v-for="network in networks"
-              :key="network.id"
-              class="legend-item clickable"
-              :class="{inactive: !activeNetworks[network.id]}"
-              @click="toggleNetwork(network.id)"
+              v-for="(cfg, key) in stateConfigs"
+              :key="key"
+              class="legend-item"
             >
               <span
-                class="network-dot"
-                :style="{backgroundColor: network.color}"
+                class="legend-dot"
+                :style="{backgroundColor: cfg.color}"
               ></span>
-              <span class="network-text">{{ network.name }}</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="panel-section">
-          <h3>态势统计</h3>
-          <div class="status-info">
-            <div class="status-item">
-              <span class="status-label">在线节点</span>
-              <span class="status-value">{{ activePlatformsCount }}</span>
-            </div>
-            <div class="status-item">
-              <span class="status-label">通信链路</span>
-              <span class="status-value">{{ activeEdgesCount }}</span>
+              <span class="legend-label">{{ cfg.label }}</span>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- 画布容器 -->
-      <div class="graph-container" ref="graphContainer"></div>
-    </div>
-
-    <!-- 右侧详情面板 -->
-    <transition name="panel-slide">
-      <div v-if="selectedNode" class="detail-panel">
-        <div class="panel-header">
-          <span><i class="el-icon-aim"></i> 节点实时属性</span>
-          <i class="el-icon-close" @click="selectedNode = null"></i>
-        </div>
-        <div class="panel-content">
-          <div class="detail-section">
-            <h4>身份标识</h4>
-            <div class="info-row">
-              <span class="label">平台名称:</span
-              ><span class="value">{{ selectedNode.label }}</span>
+      <div class="status-cards-container">
+        <div
+          v-for="item in xxList"
+          :key="item.KILLCHAIN_ID"
+          :class="[
+            'status-card',
+            {'is-active': currentKillChainId === item.KILLCHAIN_ID},
+            getStatusClass(item.KILLCHAIN_STATE)
+          ]"
+          @click="selectKillChain(item)"
+        >
+          <div class="card-tag">#{{ item.KILLCHAIN_ID }}</div>
+          <div class="card-main">
+            <div class="target-info">
+              <span class="mbmc">{{ item.MBMC || '未知目标' }}</span>
+              <span class="mbid">ID:{{ item.MBID }}</span>
             </div>
-            <div class="info-row">
-              <span class="label">网络层级:</span
-              ><span class="value">{{ selectedNode.network }}</span>
-            </div>
-            <div class="info-row">
-              <span class="label">作战阶段:</span
-              ><span class="value">{{ selectedNode.stage }}</span>
+            <div class="property">
+              {{ item.KILLCHAIN_TARGET_PROPERTY || '默认属性' }}
             </div>
           </div>
-          <div class="detail-section">
-            <h4>载荷状态</h4>
-            <div class="sensor-list">
-              <span
-                v-for="s in selectedNode.sensors"
-                :key="s"
-                class="sensor-tag"
-                >{{ s }}</span
-              >
+          <div class="card-status">
+            <span
+              class="phase"
+              :style="{color: phaseColors[item.KILLCHAIN_EXECUTEPHASE].border}"
+            >
+              {{ phraseMap[item.KILLCHAIN_EXECUTEPHASE] }}
+            </span>
+            <span class="warn" v-if="item.Killchain_Warn > 0">
+              <i class="el-icon-warning-outline"></i>{{ item.Killchain_Warn }}
+            </span>
+          </div>
+          <div class="alarm-light" v-if="item.KILLCHAIN_STATE === 2"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. 主体展示区 -->
+    <div class="main-content">
+      <div id="container" ref="container"></div>
+      <!-- <div class="sidebar-panel">
+        <div class="panel-title">
+          <i class="el-icon-pie-chart"></i> 阶段资源分布
+        </div>
+        <div ref="resChart" class="chart-container"></div>
+        <div class="group-info-box" :class="{'group-flash': groupNameChanged}">
+          <div class="label">当前协同群组</div>
+          <div class="value">{{ currentGroupName || '等待同步...' }}</div>
+        </div>
+      </div> -->
+    </div>
+    <!-- 详情悬浮窗 -->
+    <!-- 自定义右侧详情面板 -->
+    <transition name="slide-fade">
+      <div v-if="detailDrawerVisible" class="custom-detail-panel">
+        <!-- 头部：带有关闭按钮和渐变边框 -->
+        <div class="panel-header">
+          <div class="header-title">
+            <i class="el-icon-info"></i>
+            <span>平台设备详情</span>
+          </div>
+          <i
+            class="el-icon-close close-btn"
+            @click="detailDrawerVisible = false"
+          ></i>
+        </div>
+
+        <div class="panel-content" v-if="currentSelectedPt">
+          <h2 class="pt-main-title">
+            {{ currentSelectedPt.PTMC || '未知平台' }}
+          </h2>
+
+          <!-- 传感器部分 -->
+          <div class="device-section">
+            <div class="section-tag tag-cgq">
+              传感器 ({{ (currentSelectedPt.cgqxxs || []).length }})
+            </div>
+            <div
+              v-for="item in currentSelectedPt.cgqxxs"
+              :key="item.CGQXXID"
+              class="device-item-card"
+            >
+              <div class="item-header">
+                <i class="el-icon-radar"></i>
+                <span class="item-name">{{ item.CGQMC }}</span>
+              </div>
+              <div class="item-detail">
+                <span>类型: {{ item.CGQLX || '未知' }}</span>
+                <span>探测范围: {{ item.TCFW }}km</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 武器部分 -->
+          <div class="device-section">
+            <div class="section-tag tag-wq">
+              武器装备 ({{ (currentSelectedPt.wqxxs || []).length }})
+            </div>
+            <div
+              v-for="item in currentSelectedPt.wqxxs"
+              :key="item.WQXXID"
+              class="device-item-card card-wq"
+            >
+              <div class="item-header">
+                <i class="el-icon-aim"></i>
+                <span class="item-name">{{ item.WQMC }}</span>
+              </div>
+              <div class="item-detail">
+                <span>型号: {{ item.WQXHMC }}</span>
+                <span>打击范围: {{ item.DJFW }}km</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 其他设备 -->
+          <div
+            class="device-section"
+            v-if="currentSelectedPt.sbzts && currentSelectedPt.sbzts.length"
+          >
+            <div class="section-tag tag-sb">
+              通用设备 ({{ currentSelectedPt.sbzts.length }})
+            </div>
+            <div
+              v-for="item in currentSelectedPt.sbzts"
+              :key="item.SBXXID"
+              class="device-item-card card-sb"
+            >
+              <div class="item-header">
+                <i class="el-icon-set-up"></i>
+                <span class="item-name">{{ item.SBMC }}</span>
+              </div>
+              <div class="item-detail">
+                <span>型号: {{ item.SBXHMC }}</span>
+              </div>
             </div>
           </div>
         </div>
@@ -119,366 +185,830 @@
 
 <script>
 import {Graph} from '@antv/x6'
+import {register} from '@antv/x6-vue-shape'
+import * as echarts from 'echarts'
+import PtNode from './components/PtNode.vue'
+import {pageQueryTask} from '@/api/combat-task'
+import {
+  getSslxxPage,
+  getSslqzPage,
+  getSslqzcyPage,
+  getptxPage
+} from '@/api/killchain'
+
+register({shape: 'pt-node', width: 185, height: 115, component: PtNode})
 
 export default {
-  name: 'KillChainFullView',
+  name: 'KillChainPro',
   data() {
     return {
+      detailDrawerVisible: false,
+      currentSelectedPt: {cgqxxs: [], wqxxs: []},
+      stateConfigs: {
+        1: {color: '#10b981', label: '正常', animation: 'pulse-normal'}, // 绿
+        2: {color: '#ef4444', label: '异常', animation: 'pulse-error'}, // 红
+        3: {color: '#64748b', label: '完成', animation: 'none'}, // 灰
+        4: {color: '#f59e0b', label: '中止', animation: 'pulse-warn'} // 橙
+      },
+      lastGroupId: null, // 新增：用于缓存判断
       graph: null,
-      lastRefreshTime: '', // 显式声明，修复变量未定义错误
-      filterForm: {taskId: null},
-      taskList: [
-        {ZZRWID: '101', RWMC: '年度联合海空演习'},
-        {ZZRWID: '102', RWMC: '边境态势常规监测'}
-      ],
-      platforms: [],
-      phases: ['发现', '定位', '跟踪', '瞄准', '交战', '评估'],
-      networks: [
-        {id: 'strategic', name: '战略网 (SATCOM)', color: '#ff003c'},
-        {id: 'tactical', name: '战术链 (LINK-16)', color: '#00f3ff'},
-        {id: 'data', name: '数据链 (TCDL)', color: '#0aff00'}
-      ],
-      activeNetworks: {strategic: true, tactical: true, data: true},
-      selectedNode: null,
-      activePlatformsCount: 0,
-      activeEdgesCount: 0
+      chart: null,
+      timer: null,
+      isPolling: false,
+      taskList: [],
+      xxList: [],
+      currentTaskName: '',
+      currentKillChainId: null,
+      currentGroupName: '',
+      groupNameChanged: false,
+      lastPhaseState: {}, // 格式: { PTID: phase }
+      phraseMap: {
+        0: '发现',
+        1: '定位',
+        2: '跟踪',
+        3: '瞄准',
+        4: '打击',
+        5: '评估'
+      },
+      // 核心 6 阶段配色
+      phaseColors: {
+        0: {bg: '#161d2b', border: '#3b82f6'}, // 蓝
+        1: {bg: '#1a1b2e', border: '#8b5cf6'}, // 紫
+        2: {bg: '#142421', border: '#10b981'}, // 绿
+        3: {bg: '#2a221a', border: '#f59e0b'}, // 橙
+        4: {bg: '#281a1a', border: '#ef4444'}, // 红
+        5: {bg: '#1a221e', border: '#14b8a6'} // 青
+      }
     }
   },
-  mounted() {
+  async mounted() {
     this.initGraph()
-    // 默认加载第一个任务
-    this.filterForm.taskId = this.taskList[0].ZZRWID
-    this.loadData()
+    // this.initChart()
+    await this.loadTasks()
+    this.startPolling()
+    window.addEventListener('resize', this.handleResize)
   },
   methods: {
-    initGraph() {
-      const container = this.$refs.graphContainer
-      this.graph = new Graph({
-        container: container,
-        autoResize: true,
-        background: {color: '#0a192f'},
-        // --- 核心配置：拖拽与缩放 ---
-        panning: {
-          enabled: true,
-          eventTypes: ['leftMouseDown', 'rightMouseDown']
-        },
-        mousewheel: {
-          enabled: true,
-          zoomAtMousePosition: true,
-          modifiers: ['ctrl', 'meta'], // 按住 Ctrl 缩放
-          minScale: 0.1,
-          maxScale: 2
-        },
-        // ------------------------
-        interacting: {nodeMovable: false},
-        grid: {visible: false}
-      })
+    async runSyncWorkflow() {
+      try {
+        // 1. 获取杀伤链列表
+        const resXX = await getSslxxPage({RWMC: this.currentTaskName})
+        this.xxList = resXX.data.data.list || []
+        if (this.xxList.length === 0) return
 
-      // 点击节点事件
-      this.graph.on('node:click', ({node}) => {
-        const data = node.getData()
-        if (data && data.type !== 'header') {
-          this.selectedNode = {
-            label: node.getAttrByPath('label/text').split('\n').pop(),
-            ...data
-          }
+        // 确定当前活跃的杀伤链对象
+        const activeItem =
+          this.xxList.find(i => i.KILLCHAIN_ID === this.currentKillChainId) ||
+          this.xxList[0]
+
+        // 如果切换了杀伤链 ID，必须清空缓存强制重绘
+        if (this.currentKillChainId !== activeItem.KILLCHAIN_ID) {
+          this.currentKillChainId = activeItem.KILLCHAIN_ID
+          this.lastFingerprint = null // 切换 ID 时重置指纹
         }
-      })
-    },
 
-    loadData() {
-      // 模拟接口请求
-      this.generatePlatformData()
-      this.renderGraph()
-      this.lastRefreshTime = new Date().toLocaleTimeString()
-    },
-
-    generatePlatformData() {
-      // 生成全量矩阵数据
-      this.platforms = []
-      this.networks.forEach((net, netIdx) => {
-        this.phases.forEach((phase, phaseIdx) => {
-          this.platforms.push({
-            id: `node-${net.id}-${phaseIdx}`,
-            label: `${net.name.split(' ')[0]}-${phase}`,
-            network: net.name,
-            networkId: net.id,
-            stage: phase,
-            stageIndex: phaseIdx,
-            networkIndex: netIdx,
-            icon: phaseIdx < 2 ? '🛰' : phaseIdx < 4 ? '✈' : '🚀',
-            sensors: ['加密通信', '态势共享'],
-            status: 'active'
-          })
+        // 2. 获取群组信息
+        const resQZ = await getSslqzPage({
+          KILLCHAIN_ID: this.currentKillChainId
         })
-      })
+        const groups = resQZ.data.data.list || []
+
+        if (groups.length > 0) {
+          // 获取最新的群组信息
+          const firstGroup = groups[groups.length - 1]
+          const currentGroupId = firstGroup.SSLQZID
+
+          /**
+           * 【核心修复点】：构建变更指纹
+           * 只有这三个关键维度都不变时，才跳过渲染。
+           * 包含：群组ID + 执行阶段 + 杀伤链状态
+           */
+          const currentFingerprint = `${currentGroupId}_${activeItem.KILLCHAIN_EXECUTEPHASE}_${activeItem.KILLCHAIN_STATE}`
+
+          if (this.lastFingerprint === currentFingerprint) {
+            console.log('数据状态未变化（群组/阶段/状态），跳过重绘')
+            return
+          }
+
+          // --- 触发变更动画逻辑 ---
+          if (this.lastGroupId && this.lastGroupId !== currentGroupId) {
+            this.groupNameChanged = true
+            setTimeout(() => {
+              this.groupNameChanged = false
+            }, 2000)
+          }
+
+          // 更新缓存标识
+          this.lastFingerprint = currentFingerprint
+          this.lastGroupId = currentGroupId
+          this.currentGroupName = currentGroupId
+
+          // 3. 调用成员加载并重绘（此时 activeItem 包含最新的 PHASE 和 STATE）
+          await this.loadMembersAndRender(currentGroupId, activeItem)
+        }
+      } catch (e) {
+        console.error('Sync Error:', e)
+      }
     },
 
-    renderGraph() {
+    async loadMembersAndRender(groupName, activeItem) {
+      const resCY = await getSslqzcyPage(this.currentKillChainId, groupName)
+      const rawMembers = resCY.data.data.list || []
+      const members = await Promise.all(
+        rawMembers.map(async m => {
+          try {
+            const resPT = await getptxPage(m.Killchain_Group_Member_PltID) // 假设接口入参是 ptid
+            const data = resPT.data.data || {}
+
+            return {
+              ...m,
+              ptDetail: data
+            }
+          } catch (e) {
+            return m
+          }
+        })
+      )
+
+      // 检测哪些阶段发生了人员变动
+      const changedStages = new Set()
+      members.forEach(m => {
+        const prevPhase = this.lastPhaseState[m.PTID]
+        if (prevPhase !== undefined && prevPhase !== m.killchain_EXECUTEPHASE) {
+          changedStages.add(m.killchain_EXECUTEPHASE) // 目标阶段闪烁
+        }
+        this.lastPhaseState[m.PTID] = m.killchain_EXECUTEPHASE
+      })
+
+      // 传入 activeItem 用于识别最新阶段
+      this.renderGraph(members, activeItem)
+      // this.updateChart(members)
+    },
+
+    renderGraph(members, activeKillChain) {
       if (!this.graph) return
       this.graph.clearCells()
 
-      const phaseSpacing = 220 // 横向间距
-      const networkSpacing = 160 // 纵向间距
-      const startX = 120
-      const startY = 150
+      // 1. 基础配置定义
+      const stages = [0, 1, 2, 3, 4, 5]
+      // 状态配置：1正常(绿), 2异常(红), 3完成(灰), 4中止(橙)
+      const stateConfigs = {
+        1: {color: '#10b981', className: 'state-normal'},
+        2: {color: '#ef4444', className: 'state-error'},
+        3: {color: '#94a3b8', className: 'state-done'},
+        4: {color: '#f59e0b', className: 'state-stop'}
+      }
 
-      // 1. 绘制阶段标题头
-      this.phases.forEach((phase, idx) => {
-        this.graph.addNode({
-          id: `header-${idx}`,
-          x: startX + idx * phaseSpacing - 50,
-          y: startY - 100,
-          width: 100,
-          height: 40,
-          shape: 'rect',
-          data: {type: 'header'},
-          attrs: {
-            body: {fill: 'rgba(0, 243, 255, 0.1)', stroke: '#00f3ff', rx: 20},
-            label: {text: phase, fill: '#00f3ff', fontWeight: 'bold'}
-          }
-        })
-      })
+      // 获取当前链条的实时状态与阶段
+      const currentPhase = activeKillChain
+        ? activeKillChain.KILLCHAIN_EXECUTEPHASE
+        : -1
+      const currentState = activeKillChain ? activeKillChain.KILLCHAIN_STATE : 1
+      const activeStateCfg = stateConfigs[currentState] || stateConfigs[1]
 
-      // 2. 绘制节点
-      const visibleNodes = this.platforms.filter(
-        p => this.activeNetworks[p.networkId]
-      )
-      visibleNodes.forEach(p => {
-        this.graph.addNode({
-          id: p.id,
-          x: startX + p.stageIndex * phaseSpacing - 60,
-          y: startY + p.networkIndex * networkSpacing - 30,
-          width: 120,
-          height: 60,
-          shape: 'rect',
-          data: p,
+      stages.forEach((sKey, idx) => {
+        const stageX = idx * 235 + 30
+        const phaseCfg = this.phaseColors[sKey] // 引用你 data 中的 6 阶段配色
+        const isLatest = sKey == currentPhase
+
+        // 2. 绘制主体泳道 (Swimlane)
+        const lane = this.graph.addNode({
+          x: stageX,
+          y: 15,
+          width: 210,
+          height: 580,
+          zIndex: 1,
+          label: `STAGE 0${idx + 1} · ${this.phraseMap[sKey]}`,
           attrs: {
             body: {
-              fill: '#0d2540',
-              stroke: this.networks[p.networkIndex].color,
-              strokeWidth: 2,
+              // 只有最新阶段挂载状态闪烁类名
+              class: isLatest
+                ? `swimlane-body swimlane-active-${currentState}`
+                : 'swimlane-body',
+              fill: phaseCfg.bg,
+              stroke: isLatest ? activeStateCfg.color : phaseCfg.border,
+              strokeWidth: isLatest ? 3 : 1,
               rx: 4,
-              style: {
-                filter: `drop-shadow(0 0 5px ${
-                  this.networks[p.networkIndex].color
-                }44)`
-              }
+              ry: 4
             },
-            label: {text: `${p.icon}\n${p.label}`, fill: '#fff', fontSize: 12}
+            label: {
+              refY: 25,
+              fill: isLatest ? '#ffffff' : '#94A3B8',
+              fontSize: 12,
+              fontWeight: isLatest ? 'bold' : 'normal',
+              textShadow: isLatest ? `0 0 10px ${activeStateCfg.color}` : 'none'
+            }
           }
         })
-      })
 
-      // 3. 绘制连接线
-      this.addEdges(visibleNodes)
-
-      // --- 关键：渲染后自动适配全屏 ---
-      this.$nextTick(() => {
-        this.graph.zoomToFit({padding: 50, maxScale: 1})
-        this.graph.centerContent()
-      })
-
-      this.activePlatformsCount = visibleNodes.length
-      this.activeEdgesCount = this.graph.getEdges().length
-    },
-
-    addEdges(nodes) {
-      this.networks.forEach(net => {
-        if (!this.activeNetworks[net.id]) return
-        const lineNodes = nodes
-          .filter(n => n.networkId === net.id)
-          .sort((a, b) => a.stageIndex - b.stageIndex)
-        for (let i = 0; i < lineNodes.length - 1; i++) {
-          this.graph.addEdge({
-            source: lineNodes[i].id,
-            target: lineNodes[i + 1].id,
-            connector: {name: 'smooth'},
+        // 3. 绘制右上角状态标识小圆点 (Status Dot)
+        if (isLatest) {
+          this.graph.addNode({
+            x: stageX + 188,
+            y: 22,
+            width: 10,
+            height: 10,
+            zIndex: 10,
             attrs: {
-              line: {stroke: net.color, strokeWidth: 2, targetMarker: 'classic'}
+              body: {
+                fill: activeStateCfg.color,
+                stroke: '#ffffff',
+                strokeWidth: 1.5,
+                rx: 5,
+                ry: 5,
+                class: currentState === 2 ? 'dot-alarm-blink' : '' // 仅异常时圆点剧烈闪烁
+              }
             }
           })
+        }
+
+        // 4. 渲染平台成员 (PT Nodes)
+        const stageMembers = members.filter(
+          m => m.killchain_EXECUTEPHASE == sKey
+        )
+        stageMembers.forEach((m, mIdx) => {
+          this.graph.addNode({
+            shape: 'pt-node',
+            x: stageX + 12,
+            y: 80 + mIdx * 155,
+            zIndex: 10,
+            data: {
+              ...m,
+              themeColor: isLatest ? activeStateCfg.color : phaseCfg.border,
+              isHighlight: isLatest
+            }
+          })
+        })
+      })
+    },
+
+    async loadTasks() {
+      const res = await pageQueryTask({pageNum: 1, pageSize: 100})
+      this.taskList = res.data.list || []
+      if (this.taskList.length > 0) this.currentTaskName = this.taskList[0].RWMC
+    },
+    selectKillChain(item) {
+      this.currentKillChainId = item.KILLCHAIN_ID
+      this.lastGroupId = null // 重置缓存
+      this.lastPhaseState = {}
+      this.runSyncWorkflow()
+    },
+    // 切换任务时重置状态
+    /**
+     * 处理任务切换（下拉框或列表切换）
+     */
+    handleTaskChange() {
+      // 1. 清空当前业务状态
+      this.currentKillChainId = null
+      this.currentGroupName = ''
+
+      // 2. 核心：重置所有检测缓存
+      // 必须同时重置 lastGroupId 和 lastFingerprint，确保下次轮询强制重绘
+      this.lastGroupId = null
+      this.lastFingerprint = null
+
+      // 3. (可选) 清理画布，给用户一个“正在加载”的视觉预期
+      if (this.graph) {
+        this.graph.clearCells()
+      }
+
+      // 4. 立即执行一次同步流程
+      this.runSyncWorkflow()
+    },
+    getStatusClass(state) {
+      return {1: 'is-normal', 2: 'is-error', 3: 'is-done', 4: 'is-stop'}[state]
+    },
+    // ... 其他辅助函数如 initGraph, initChart, loadTasks 保持原逻辑 ...
+    initGraph() {
+      this.graph = new Graph({
+        container: this.$refs.container,
+        background: {color: '#0f172a'},
+        panning: true,
+        mousewheel: true
+      })
+      this.graph.on('node:click', ({node}) => {
+        const data = node.getData()
+
+        if (node.shape === 'pt-node' && data.ptDetail) {
+          this.currentSelectedPt = data.ptDetail // 将接口获取的完整详情传给弹窗
+
+          this.detailDrawerVisible = true
         }
       })
     },
 
-    toggleNetwork(networkId) {
-      this.activeNetworks[networkId] = !this.activeNetworks[networkId]
-      this.renderGraph()
-    },
+    // 修改后的启动函数
+    async startPolling() {
+      // 1. 立即执行第一次同步
+      this.isPolling = true
+      await this.runSyncWorkflow()
+      this.isPolling = false
 
-    resetGraph() {
-      this.graph.zoomToFit({padding: 50, maxScale: 1})
-      this.graph.centerContent()
-    },
-
-    exportImage() {
-      this.graph.toPNG(dataUri => {
-        const link = document.createElement('a')
-        link.download = '杀伤链态势图.png'
-        link.href = dataUri
-        link.click()
-      })
+      // 2. 开启定时器
+      this.timer = setInterval(async () => {
+        if (this.isPolling) return
+        this.isPolling = true
+        await this.runSyncWorkflow()
+        this.isPolling = false
+      }, 15000)
     }
   }
 }
 </script>
-
 <style scoped>
-.kill-chain-x6-container {
+.group-flash {
+  animation: group-bg-flash 1s 2;
+}
+@keyframes group-bg-flash {
+  50% {
+    background: #14b8a6;
+    color: #fff;
+  }
+}
+.killchain-page {
   width: 100%;
   height: 100vh;
   display: flex;
   flex-direction: column;
-  background: #0a192f;
+  background: #0f172a;
+  color: #f8fafc;
   overflow: hidden;
 }
 
-.toolbar {
-  height: 80px;
-  background: rgba(13, 37, 64, 0.95);
-  border-bottom: 1px solid #1e3f66;
-  padding: 0 25px;
+/* 顶部态势空间 */
+.status-workspace {
+  background: #111827;
+  padding: 12px 20px;
+  border-bottom: 1px solid #1f2937;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+}
+
+.workspace-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  z-index: 10;
+  margin-bottom: 12px;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #14b8a6;
+  font-weight: bold;
 }
 
-.title {
-  color: #00f3ff;
-  margin: 0;
-  font-size: 20px;
-  letter-spacing: 1px;
-}
-.subtitle {
-  color: #8899af;
-  margin-top: 5px;
-  font-size: 13px;
-}
-.view-hint {
-  color: #5c7a99;
-  margin-left: 10px;
+.status-cards-container {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 4px;
 }
 
-.graph-layout {
+/* 卡片样式 */
+.status-card {
+  min-width: 200px;
+  background: #1f2937;
+  border: 1px solid #374151;
+  border-radius: 6px;
+  padding: 10px;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.status-card.is-active {
+  border-color: #14b8a6;
+  background: #111827;
+  box-shadow: 0 0 10px rgba(20, 184, 166, 0.2);
+}
+
+.card-tag {
+  font-size: 10px;
+  color: #64748b;
+  font-family: monospace;
+}
+.target-info {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin: 4px 0;
+}
+.mbmc {
+  font-weight: bold;
+  font-size: 14px;
+}
+.mbid {
+  font-size: 11px;
+  color: #475569;
+}
+.property {
+  font-size: 12px;
+  color: #94a3b8;
+}
+.card-status {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8px;
+  border-top: 1px solid #374151;
+  padding-top: 6px;
+}
+.phase {
+  font-size: 11px;
+  color: #14b8a6;
+  background: rgba(20, 184, 166, 0.1);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+.warn {
+  color: #ef4444;
+  font-size: 11px;
+  font-weight: bold;
+}
+
+/* 状态色条 */
+.is-normal {
+  border-left: 3px solid #10b981;
+}
+.is-error {
+  border-left: 3px solid #ef4444;
+}
+.is-done {
+  border-left: 3px solid #64748b;
+  opacity: 0.7;
+}
+.is-stop {
+  border-left: 3px solid #f59e0b;
+}
+
+/* 报警呼吸灯 */
+.alarm-light {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 8px;
+  height: 8px;
+  background: #ef4444;
+  border-radius: 50%;
+  animation: alarm-blink 1s infinite;
+}
+
+@keyframes alarm-blink {
+  0%,
+  100% {
+    opacity: 1;
+    box-shadow: 0 0 8px #ef4444;
+  }
+  50% {
+    opacity: 0.3;
+    box-shadow: 0 0 0px #ef4444;
+  }
+}
+
+/* 主视图 */
+.main-content {
   flex: 1;
   display: flex;
-  position: relative;
+}
+#container {
+  flex: 1;
 }
 
-.control-panel {
-  width: 240px;
-  background: rgba(13, 37, 64, 0.8);
-  border-right: 1px solid #1e3f66;
-  padding: 20px;
+.sidebar-panel {
+  width: 280px;
+  background: #111827;
+  border-left: 1px solid #1f2937;
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
 }
 
-.panel-section h3 {
+.group-info-box {
+  margin-top: auto;
+  background: #1f2937;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #374151;
+}
+.group-info-box .label {
+  font-size: 11px;
+  color: #64748b;
+  margin-bottom: 4px;
+}
+.group-info-box .value {
+  font-weight: bold;
+  color: #14b8a6;
   font-size: 14px;
-  color: #00f3ff;
-  margin-bottom: 15px;
-  border-left: 3px solid #00f3ff;
-  padding-left: 10px;
+}
+
+/* 群组名称变动闪烁 */
+.group-flash {
+  animation: group-bg-flash 1s 2;
+}
+
+@keyframes group-bg-flash {
+  0%,
+  100% {
+    background: #1f2937;
+  }
+  50% {
+    background: #14b8a6;
+    color: #fff;
+  }
+}
+
+/* 覆盖暗色 Select */
+.dark-select ::v-deep .el-input__inner {
+  background-color: #1f2937 !important;
+  border: 1px solid #374151 !important;
+  color: #fff !important;
+}
+
+/* 基础样式 */
+::v-deep .swimlane-body {
+  transition: stroke 0.3s, stroke-width 0.3s;
+}
+
+/* 激活态闪烁动画 */
+::v-deep .swimlane-active-flash {
+  animation: swimlane-glow 1.5s ease-in-out infinite;
+}
+
+@keyframes swimlane-glow {
+  0% {
+    stroke-width: 1;
+    filter: drop-shadow(0 0 0px #fff);
+  }
+  50% {
+    stroke-width: 3;
+    stroke: #ffffff; /* 闪烁时变白 */
+    filter: drop-shadow(0 0 8px #ffffff);
+  }
+  100% {
+    stroke-width: 1;
+    filter: drop-shadow(0 0 0px #fff);
+  }
+} /* 移除之前的白色闪烁，改为基于主题色的柔和呼吸 */
+::v-deep .swimlane-latest-flash {
+  animation: latest-stage-pulse 2s ease-in-out infinite;
+}
+
+@keyframes latest-stage-pulse {
+  0% {
+    stroke-width: 2;
+    fill-opacity: 0.7;
+    filter: brightness(1);
+  }
+  50% {
+    stroke-width: 4;
+    fill-opacity: 1;
+    /* 利用 brightness 提升当前主题色的亮度，产生发光感而非白光 */
+    filter: brightness(1.4) drop-shadow(0 0 12px currentColor);
+  }
+  100% {
+    stroke-width: 2;
+    fill-opacity: 0.7;
+    filter: brightness(1);
+  }
+}
+/* 基础泳道样式 */
+::v-deep .swimlane-body {
+  transition: all 0.5s ease;
+}
+
+/* 状态 1: 正常执行 (绿光呼吸) */
+::v-deep .swimlane-active-1 {
+  animation: pulse-normal 2.5s infinite;
+}
+
+/* 状态 2: 异常 (红光急促呼吸) */
+::v-deep .swimlane-active-2 {
+  animation: pulse-error 1.2s infinite;
+}
+
+/* 状态 3: 完成 (灰色静止，无动画) */
+::v-deep .swimlane-active-3 {
+  filter: grayscale(0.5);
+}
+
+/* 状态 4: 中止 (橙光呼吸) */
+::v-deep .swimlane-active-4 {
+  animation: pulse-stop 2.5s infinite;
+}
+
+/* 动画定义：使用亮度增强和投影，避免白光 */
+@keyframes pulse-normal {
+  50% {
+    filter: brightness(1.3) drop-shadow(0 0 12px #10b981);
+    stroke-width: 4;
+  }
+}
+
+@keyframes pulse-error {
+  50% {
+    filter: brightness(1.5) drop-shadow(0 0 18px #ef4444);
+    stroke-width: 5;
+  }
+}
+
+@keyframes pulse-stop {
+  50% {
+    filter: brightness(1.3) drop-shadow(0 0 12px #f59e0b);
+    stroke-width: 4;
+  }
+}
+
+/* 异常状态的小圆点报警动画 */
+::v-deep .dot-alarm-blink {
+  animation: alarm-dot 0.6s infinite;
+}
+
+@keyframes alarm-dot {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.4;
+    transform: scale(1.3);
+  }
+}
+.state-legend {
+  background: rgba(31, 41, 55, 0.5);
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 20px;
+  border: 1px solid #374151;
+}
+
+.legend-title {
+  font-size: 12px;
+  color: #94a3b8;
+  margin-bottom: 10px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.legend-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
 }
 
 .legend-item {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 10px;
-  cursor: pointer;
-  transition: 0.3s;
+  gap: 6px;
 }
-.legend-item:hover {
-  background: rgba(255, 255, 255, 0.05);
-}
-.legend-item.inactive {
-  opacity: 0.3;
-  grayscale: 1;
-}
-.network-dot {
-  width: 12px;
-  height: 12px;
+
+.legend-dot {
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
-  box-shadow: 0 0 8px currentColor;
+  /* 增加一个淡淡的外边框和发光，使其更立体 */
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 0 4px currentColor;
 }
 
-.status-info {
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: 8px;
-  padding: 10px;
+.legend-label {
+  font-size: 11px;
+  color: #d1d5db;
 }
-.status-item {
+
+/* 针对侧边栏标题的微调 */
+.panel-title {
+  margin-top: 10px;
+  font-size: 14px;
+  color: #f8fafc;
   display: flex;
-  justify-content: space-between;
-  margin: 10px 0;
-  font-size: 13px;
-  color: #b0c4de;
+  align-items: center;
+  gap: 8px;
 }
-.status-value {
-  color: #00f3ff;
-  font-weight: bold;
-}
-
-.graph-container {
-  flex: 1;
-  cursor: grab;
-}
-.graph-container:active {
-  cursor: grabbing;
-}
-
-.detail-panel {
+/* 面板主体 */
+.custom-detail-panel {
   position: absolute;
-  right: 0;
   top: 0;
-  bottom: 0;
-  width: 320px;
-  background: rgba(10, 25, 47, 0.98);
-  border-left: 2px solid #00f3ff;
-  z-index: 100;
+  right: 0;
+  width: 380px;
+  height: 100%;
+  background: rgba(15, 23, 42, 0.95); /* 深蓝色背景 */
+  backdrop-filter: blur(10px);
+  border-left: 1px solid rgba(59, 130, 246, 0.3);
   box-shadow: -10px 0 30px rgba(0, 0, 0, 0.5);
+  z-index: 2000;
+  display: flex;
+  flex-direction: column;
 }
 
+/* 头部样式 */
 .panel-header {
   padding: 20px;
-  border-bottom: 1px solid #1e3f66;
   display: flex;
   justify-content: space-between;
-  color: #00f3ff;
-}
-.panel-content {
-  padding: 20px;
-  color: #fff;
-}
-.detail-section h4 {
-  font-size: 13px;
-  color: #8899af;
-  margin-bottom: 15px;
-}
-.info-row {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 12px;
-  font-size: 14px;
-}
-.sensor-tag {
-  display: inline-block;
-  padding: 4px 10px;
-  background: rgba(0, 243, 255, 0.1);
-  border: 1px solid #00f3ff;
-  border-radius: 4px;
-  margin: 0 8px 8px 0;
-  font-size: 12px;
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.panel-slide-enter-active,
-.panel-slide-leave-active {
-  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+.header-title {
+  color: #3b82f6;
+  font-weight: bold;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
-.panel-slide-enter,
-.panel-slide-leave-to {
+
+.close-btn {
+  cursor: pointer;
+  color: #94a3b8;
+  font-size: 20px;
+  transition: color 0.3s;
+}
+.close-btn:hover {
+  color: #ef4444;
+}
+
+/* 内容区域 */
+.panel-content {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.pt-main-title {
+  font-size: 20px;
+  color: #f8fafc;
+  margin-bottom: 24px;
+  padding-left: 10px;
+  border-left: 4px solid #3b82f6;
+}
+
+/* 栏目标签 */
+.section-tag {
+  font-size: 12px;
+  padding: 4px 12px;
+  border-radius: 4px;
+  margin-bottom: 12px;
+  display: inline-block;
+}
+.tag-cgq {
+  background: rgba(59, 130, 246, 0.2);
+  color: #60a5fa;
+}
+.tag-wq {
+  background: rgba(239, 68, 68, 0.2);
+  color: #f87171;
+}
+.tag-sb {
+  background: rgba(148, 163, 184, 0.2);
+  color: #cbd5e1;
+}
+
+/* 设备卡片 */
+.device-item-card {
+  background: rgba(30, 41, 59, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 6px;
+  padding: 12px;
+  margin-bottom: 12px;
+  transition: transform 0.2s;
+}
+.device-item-card:hover {
+  transform: translateX(-5px);
+  background: rgba(30, 41, 59, 0.9);
+  border-color: rgba(59, 130, 246, 0.4);
+}
+
+.item-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  color: #f1f5f9;
+}
+
+.item-name {
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.item-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12px;
+  color: #94a3b8;
+  padding-left: 22px;
+}
+
+/* 进场动画 */
+.slide-fade-enter-active,
+.slide-fade-leave-active {
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.slide-fade-enter,
+.slide-fade-leave-to {
   transform: translateX(100%);
+  opacity: 0;
 }
 </style>

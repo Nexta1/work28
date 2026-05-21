@@ -1,83 +1,35 @@
-// src/utils/logicflowVueAdapter.js
-import Vue from 'vue';
+async runSyncWorkflow() {
+  try {
+    const resXX = await getSslxxPage({ RWMC: this.currentTaskName });
+    this.xxList = resXX.data.data.list || [];
+    if (this.xxList.length === 0) return;
 
-/**
- * 注册 Vue 组件到 LogicFlow
- * @param {LogicFlow} lf - LogicFlow 实例
- * @param {string} type - 节点类型名称 (例如 'vue-node')
- * @param {Object} componentMap - 组件映射表 { 'router': RouterComponent, 'switch': SwitchComponent }
- */
-export function registerVueNode(lf, type, componentMap) {
-  lf.registerNode(type, class VueNode extends lf.baseNode.RectNode {
-    // 设置节点样式，宽高等
-    static get style() {
-      return {
-        width: 100,
-        height: 60,
-        rect: {
-          fill: 'transparent',
-          stroke: 'transparent',
-          strokeWidth: 0,
-        },
-      };
+    // 找到当前选中的杀伤链对象
+    const activeItem = this.xxList.find(i => i.KILLCHAIN_ID === this.currentKillChainId) || this.xxList[0];
+    this.currentKillChainId = activeItem.KILLCHAIN_ID;
+
+    // --- 核心修复：多维度变更检测 ---
+    // 组合一个指纹标识：包含 群组、阶段、状态
+    // 只要这三者有一个变了，就必须重绘泳道
+    const resQZ = await getSslqzPage({ KILLCHAIN_ID: this.currentKillChainId });
+    const groups = resQZ.data.data.list || [];
+    const firstGroup = groups[0] || {};
+    
+    const currentFingerprint = `${firstGroup.QZZRW}_${activeItem.KILLCHAIN_EXECUTEPHASE}_${activeItem.KILLCHAIN_STATE}`;
+
+    if (this.lastFingerprint === currentFingerprint) {
+      // 完全没变化，跳过昂贵的 DOM/SVG 重绘
+      return;
     }
+    
+    // 更新指纹标识
+    this.lastFingerprint = currentFingerprint;
+    this.currentGroupName = firstGroup.QZZRW || '';
 
-    // 核心：创建 DOM 并挂载 Vue 组件
-    setAttributes() {
-      // 获取传递给节点的数据
-      const props = this.properties; 
-      const nodeData = this.getData();
-      
-      // 1. 创建容器 div
-      const container = document.createElement('div');
-      container.style.width = '100%';
-      container.style.height = '100%';
-      container.style.position = 'relative';
-      // 防止事件冒泡干扰拖拽
-      container.style.pointerEvents = 'all'; 
+    // 执行渲染
+    await this.loadMembersAndRender(this.currentGroupName, activeItem);
 
-      // 2. 根据业务逻辑确定使用哪个组件
-      // 这里假设你的数据里有一个 'componentType' 字段，或者根据 text 判断
-      // 为了演示，我们简单根据 properties.componentName 来查找
-      const componentName = props.componentName || 'default';
-      const ComponentConstructor = componentMap[componentName] || componentMap['default'];
-
-      if (!ComponentConstructor) {
-        container.innerHTML = '<div style="color:red">Unknown Component</div>';
-        this.setDom(container);
-        return;
-      }
-
-      // 3. 实例化 Vue 组件
-      const vm = new Vue({
-        render: (h) => h(ComponentConstructor, {
-          props: {
-            properties: props, // 将 logicflow 节点数据传给组件
-            nodeData: nodeData,
-            graph: lf,         // 可选：传入 graph 实例以便组件内操作
-            nodeId: nodeData.id
-          }
-        }),
-      });
-
-      // 4. 挂载
-      vm.$mount();
-      container.appendChild(vm.$el);
-
-      // 5. 将 DOM 设置给 LogicFlow
-      this.setDom(container);
-      
-      // 保存 vm 实例以便后续销毁（防止内存泄漏）
-      this.vm = vm;
-    }
-
-    // 节点被删除或画布销毁时清理 Vue 实例
-    destroy() {
-      if (this.vm) {
-        this.vm.$destroy();
-        this.vm = null;
-      }
-      super.destroy && super.destroy();
-    }
-  });
+  } catch (e) {
+    console.error('Sync Error:', e);
+  }
 }
