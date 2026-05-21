@@ -151,6 +151,35 @@
                 }}</span>
               </div>
             </div>
+
+            <div class="platform-status-summary-bar">
+              <div class="summary-label">📊 挂载资产态势统计：</div>
+              <div class="summary-indicators">
+                <div class="indicator-item text-green">
+                  <span class="status-dot dot-running"></span>
+                  运行中 (正常/占用)：<span class="count-num">{{
+                    statusStatistics.running
+                  }}</span>
+                </div>
+                <div class="indicator-item text-gray">
+                  <span class="status-dot dot-offline"></span>
+                  未运行 (离线/未激活)：<span class="count-num">{{
+                    statusStatistics.offline
+                  }}</span>
+                </div>
+                <div class="indicator-item text-red">
+                  <span class="status-dot dot-fault"></span>
+                  严重故障：<span class="count-num">{{
+                    statusStatistics.fault
+                  }}</span>
+                </div>
+                <div class="indicator-item text-blue">
+                  📦 资产总计：<span class="count-num">{{
+                    statusStatistics.total
+                  }}</span>
+                </div>
+              </div>
+            </div>
           </div>
 
           <div class="sub-fluid-layout">
@@ -253,6 +282,73 @@
               </div>
             </div>
 
+            <div class="matrix-column">
+              <div class="column-title">
+                ⚙️ 机载核心物理外设 (全量 {{ deviceList.length }})
+              </div>
+              <div class="matrix-scroll-box">
+                <div v-if="deviceList.length === 0" class="sub-empty">
+                  该平台未检测到注册物理设备
+                </div>
+                <div
+                  v-for="sb in deviceList"
+                  :key="sb.ZYXH"
+                  class="monitor-node node-device"
+                  :class="[
+                    getStatusClass(sb.JKZT, sb.ZYZYZT),
+                    {'data-bounce': sb._bounce}
+                  ]"
+                >
+                  <div
+                    class="card-status-dot"
+                    :class="getStatusDotClass(sb.JKZT, sb.ZYZYZT)"
+                  ></div>
+
+                  <div class="node-name-bar">
+                    {{ sb.SBXHMC || '未知硬件元' }}
+                  </div>
+                  <div class="detail-grid">
+                    <div>
+                      编号: <span class="bsh-txt">#{{ sb.PTBSH || '-' }}</span>
+                    </div>
+                    <div>
+                      类型: <span>{{ getDeviceType(sb.SBLX) }}</span>
+                    </div>
+                    <div class="full-col flex-between">
+                      <span>算力(CPU):</span>
+                      <span
+                        :class="
+                          sb.CPU > 80 ? 'text-orange' : 'text-green font-num'
+                        "
+                        >{{ sb.CPU || 0 }}%</span
+                      >
+                    </div>
+                    <div class="full-col">
+                      <el-progress
+                        :percentage="Math.floor(sb.CPU || 0)"
+                        :status="sb.CPU > 80 ? 'exception' : 'success'"
+                        :stroke-width="2"
+                        :show-text="false"
+                      />
+                    </div>
+                    <div class="full-col flex-between">
+                      <span>负载(RAM):</span>
+                      <span class="text-blue font-num">{{ sb.RAM || 0 }}%</span>
+                    </div>
+                    <div class="full-col flex-between">
+                      <span>热核温度:</span>
+                      <span
+                        :class="
+                          sb.TEMP > 75 ? 'text-red' : 'text-cyan font-num'
+                        "
+                        >{{ sb.TEMP || 0 }}℃</span
+                      >
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <div class="matrix-column charts-exclusive-column">
               <div class="column-title">📊 数字化效能深度剖析</div>
               <div class="chart-vertical-box">
@@ -277,7 +373,8 @@ import {
   getPlatformPage,
   getWeaponPage,
   getSensorPage,
-  getPlatformTypeMap
+  getPlatformTypeMap,
+  getsbxxPage
 } from '@/api/platform'
 
 export default {
@@ -291,6 +388,7 @@ export default {
       platformList: [],
       weaponList: [],
       sensorList: [],
+      deviceList: [],
       selectedPlatform: null,
       activePtId: null,
       totalPlatforms: 0,
@@ -308,11 +406,43 @@ export default {
       barChartIns: null
     }
   },
+  // 🔥 新增：利用 computed 计算属性，实时高效统计当前选中平台下的状态总数
+  computed: {
+    statusStatistics() {
+      // 聚合当前平台下所有的挂载资产节点
+      const allAssets = [
+        ...this.weaponList,
+        ...this.sensorList,
+        ...this.deviceList
+      ]
+
+      let running = 0
+      let offline = 0
+      let fault = 0
+
+      allAssets.forEach(asset => {
+        const jkzt = Number(asset.JKZT)
+        if (jkzt === 2) {
+          fault++
+        } else if (jkzt === 1) {
+          offline++
+        } else {
+          running++ // jkzt 为 0 (运行中)
+        }
+      })
+
+      return {
+        running,
+        offline,
+        fault,
+        total: allAssets.length
+      }
+    }
+  },
   created() {
     this.fetchTypeMap()
     this.loadPlatforms(false, true)
 
-    // 3秒全网动态心跳静默刷新
     this.timer = setInterval(() => {
       this.syncPollingData()
     }, 3000)
@@ -337,9 +467,6 @@ export default {
       }
     },
 
-    /**
-     * 基础平台列表加载引擎
-     */
     async loadPlatforms(isAppend = false, showLoading = false) {
       if (showLoading) {
         if (isAppend) this.loadingMore = true
@@ -377,9 +504,6 @@ export default {
       }
     },
 
-    /**
-     * 原生滚动触底加载监听
-     */
     handleListScroll(e) {
       const {scrollTop, clientHeight, scrollHeight} = e.target
       if (scrollHeight - scrollTop - clientHeight < 15) {
@@ -394,9 +518,6 @@ export default {
       }
     },
 
-    /**
-     * 调阅单个靶向平台设备血缘关系 (9999 全量)
-     */
     async selectPlatform(pt) {
       this.selectedPlatform = pt
       this.activePtId = pt.PTXXID
@@ -406,13 +527,15 @@ export default {
 
     async loadCascadeSubSystems(ptId, isUpdate = false) {
       try {
-        const [resWq, resCg] = await Promise.all([
+        const [resWq, resCg, resSb] = await Promise.all([
           getWeaponPage({pageNum: 1, pageSize: 9999, params: {PTID: ptId}}),
-          getSensorPage({pageNum: 1, pageSize: 9999, params: {PTID: ptId}})
+          getSensorPage({pageNum: 1, pageSize: 9999, params: {PTID: ptId}}),
+          getsbxxPage({pageNum: 1, pageSize: 9999, params: {PTID: ptId}})
         ])
 
         const wqs = resWq?.data?.list || resWq?.rows || []
         const cgs = resCg?.data?.list || resCg?.rows || []
+        const sbs = resSb?.data?.list || resSb?.rows || []
 
         this.weaponList = wqs.map(w => {
           let b = false
@@ -432,10 +555,20 @@ export default {
           return {...c, _bounce: b}
         })
 
+        this.deviceList = sbs.map(s => {
+          let b = false
+          if (isUpdate) {
+            const old = this.deviceList.find(o => o.ZYXH === s.ZYXH)
+            if (old && (old.CPU !== s.CPU || old.JKZT !== s.JKZT)) b = true
+          }
+          return {...s, _bounce: b}
+        })
+
         this.updateCharts()
         setTimeout(() => {
           this.weaponList.forEach(w => (w._bounce = false))
           this.sensorList.forEach(s => (s._bounce = false))
+          this.deviceList.forEach(d => (d._bounce = false))
         }, 600)
       } catch (e) {
         console.error(e)
@@ -444,9 +577,6 @@ export default {
       }
     },
 
-    /**
-     * 静默后台轮询同步，消除重绘闪烁
-     */
     async syncPollingData() {
       try {
         const res = await getPlatformPage({
@@ -498,7 +628,6 @@ export default {
         .slice(0, 5)
         .map(w => (w.DJCGL || 0) * 100)
 
-      // 通过 setOption 增量更新模式 (false) 抑制白屏产生
       this.radarChartIns.setOption(
         {
           backgroundColor: 'transparent',
@@ -559,7 +688,6 @@ export default {
         false
       )
 
-      // 🔥 核心修正：依靠 nextTick 确保容器 v-show 彻底拉开后执行重排，修复初次加载大小不对的问题
       this.$nextTick(() => {
         if (this.radarChartIns) this.radarChartIns.resize()
         if (this.barChartIns) this.barChartIns.resize()
@@ -576,6 +704,7 @@ export default {
       this.selectedPlatform = null
       this.weaponList = []
       this.sensorList = []
+      this.deviceList = []
     },
     resizeCharts() {
       if (this.radarChartIns) this.radarChartIns.resize()
@@ -596,6 +725,12 @@ export default {
     },
     getSensorType(t) {
       return {1: '雷达', 2: '光学', 3: '电子'}[t] || '组合'
+    },
+    getDeviceType(t) {
+      return (
+        {1: '计算核心', 2: '存储矩阵', 3: '通信路由', 4: '供电伺服'}[t] ||
+        '通用硬件'
+      )
     }
   }
 }
@@ -694,9 +829,7 @@ export default {
   min-height: 0;
 }
 
-/* ==========================================
-   LEFT: 瘦身型平台列表（22% 宽度），原生触底无限加载
-   ========================================== */
+/* LEFT: 瘦身型平台列表 */
 .left-platform-sidebar {
   width: 22%;
   background: #080e18;
@@ -746,7 +879,7 @@ export default {
   border-radius: 2px;
 }
 
-/* 卡片精致化瘦身 */
+/* 卡片精致化 */
 .platform-brief-card {
   background: #0d1522;
   border: 1px solid #172438;
@@ -808,9 +941,7 @@ export default {
   padding: 10px 0;
 }
 
-/* ==========================================
-   RIGHT: 宽域级联详情（78% 宽度），三分排布彻底防止图表遮挡
-   ========================================== */
+/* RIGHT: 宽域级联详情 */
 .right-cascade-panel {
   width: 78%;
   background: #080e18;
@@ -843,7 +974,7 @@ export default {
 }
 .params-matrix {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(6, 1fr); /* 调整为 6 列平铺 */
   gap: 6px;
 }
 .matrix-item {
@@ -851,22 +982,63 @@ export default {
   padding: 5px 8px;
   border-radius: 2px;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column; /* 调整为上下结构，更节省大屏幕横向空间 */
+  align-items: flex-start;
+  gap: 2px;
   font-size: 11px;
 }
 .matrix-item label {
   color: #415169;
+  font-size: 10px;
 }
 .matrix-item .val {
   font-weight: bold;
   color: #fff;
 }
 
-/* 三分天下流式层架布局 */
+/* 🔥 新增：平台状态统计行样式 */
+.platform-status-summary-bar {
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px dashed #1c2d42;
+  display: flex;
+  align-items: center;
+  font-size: 11px;
+}
+.summary-label {
+  color: #64748b;
+  font-weight: bold;
+}
+.summary-indicators {
+  display: flex;
+  gap: 18px;
+  align-items: center;
+}
+.indicator-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 500;
+}
+.indicator-item .status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  display: inline-block;
+}
+.indicator-item .count-num {
+  font-family: monospace;
+  font-size: 13px;
+  font-weight: bold;
+  background: rgba(255, 255, 255, 0.04);
+  padding: 0px 6px;
+  border-radius: 3px;
+}
+
+/* 下方四分天下 layout */
 .sub-fluid-layout {
   display: grid;
-  grid-template-columns: 34% 34% 32%;
+  grid-template-columns: repeat(4, 1fr);
   gap: 12px;
   flex: 1;
   min-height: 0;
@@ -892,7 +1064,7 @@ export default {
   gap: 8px;
 }
 
-/* 组件挂载基础节点卡片 */
+/* 基础节点卡片 */
 .monitor-node {
   background: #0d1522;
   border: 1px solid #172438;
@@ -927,10 +1099,11 @@ export default {
   gap: 6px;
   margin-top: 2px;
 }
+.flex-between {
+  justify-content: space-between;
+}
 
-/* ==========================================
-   ✨ 新增：卡片右上角微光呼吸发光小圆点样式
-   ========================================== */
+/* 呼吸小圆点 */
 .card-status-dot {
   position: absolute;
   top: 9px;
@@ -1003,9 +1176,7 @@ export default {
   height: 100%;
 }
 
-/* ==========================================
-   动效与核心状态机发光控制
-   ========================================== */
+/* 动效控制 */
 @keyframes row-pop-flash {
   0% {
     transform: scale(1);
@@ -1106,6 +1277,9 @@ export default {
 }
 .text-cyan {
   color: #06b6d4 !important;
+}
+.text-red {
+  color: #ef4444 !important;
 }
 .text-gray {
   color: #415169 !important;
