@@ -112,68 +112,144 @@
           <h2 class="pt-main-title">
             {{ currentSelectedPt.PTMC || '未知平台' }}
           </h2>
-
-          <!-- 传感器部分 -->
-          <div class="device-section">
-            <div class="section-tag tag-cgq">
-              传感器 ({{ (currentSelectedPt.cgqxxs || []).length }})
+          <div class="custom-tab-header">
+            <div
+              class="tab-item"
+              :class="{active: activeTab === 'device'}"
+              @click="activeTab = 'device'"
+            >
+              设备详情
             </div>
             <div
-              v-for="item in currentSelectedPt.cgqxxs"
-              :key="item.CGQXXID"
-              class="device-item-card"
+              class="tab-item"
+              :class="{active: activeTab === 'warn'}"
+              @click="handleWarnTabClick"
             >
-              <div class="item-header">
-                <i class="el-icon-radar"></i>
-                <span class="item-name">{{ item.CGQMC }}</span>
-              </div>
-              <div class="item-detail">
-                <span>类型: {{ item.CGQLX || '未知' }}</span>
-                <span>探测范围: {{ item.TCFW }}km</span>
-              </div>
+              告警信息
+              <span v-if="warnList.length" class="warn-dot"></span>
             </div>
           </div>
+          <div class="tab-container" v-if="currentSelectedPt">
+            <!-- 1. 设备详情内容 (你原有的代码放这里) -->
+            <div v-show="activeTab === 'device'" class="tab-pane-content">
+              <!-- 传感器部分 -->
+              <div class="device-section">
+                <div class="section-tag tag-cgq">
+                  传感器 ({{ (currentSelectedPt.cgqxxs || []).length }})
+                </div>
+                <div
+                  v-for="item in currentSelectedPt.cgqxxs"
+                  :key="item.CGQXXID"
+                  class="device-item-card"
+                >
+                  <div class="item-header">
+                    <i class="el-icon-radar"></i>
+                    <span class="item-name">{{ item.CGQMC }}</span>
+                  </div>
+                  <div class="item-detail">
+                    <span>类型: {{ item.CGQLX || '未知' }}</span>
+                    <span>探测范围: {{ item.TCFW }}km</span>
+                  </div>
+                </div>
+              </div>
 
-          <!-- 武器部分 -->
-          <div class="device-section">
-            <div class="section-tag tag-wq">
-              武器装备 ({{ (currentSelectedPt.wqxxs || []).length }})
-            </div>
-            <div
-              v-for="item in currentSelectedPt.wqxxs"
-              :key="item.WQXXID"
-              class="device-item-card card-wq"
-            >
-              <div class="item-header">
-                <i class="el-icon-aim"></i>
-                <span class="item-name">{{ item.WQMC }}</span>
+              <!-- 武器部分 -->
+              <div class="device-section">
+                <div class="section-tag tag-wq">
+                  武器装备 ({{ (currentSelectedPt.wqxxs || []).length }})
+                </div>
+                <div
+                  v-for="item in currentSelectedPt.wqxxs"
+                  :key="item.WQXXID"
+                  class="device-item-card card-wq"
+                >
+                  <div class="item-header">
+                    <i class="el-icon-aim"></i>
+                    <span class="item-name">{{ item.WQMC }}</span>
+                  </div>
+                  <div class="item-detail">
+                    <span>型号: {{ item.WQXHMC }}</span>
+                    <span>打击范围: {{ item.DJFW }}km</span>
+                  </div>
+                </div>
               </div>
-              <div class="item-detail">
-                <span>型号: {{ item.WQXHMC }}</span>
-                <span>打击范围: {{ item.DJFW }}km</span>
-              </div>
-            </div>
-          </div>
 
-          <!-- 其他设备 -->
-          <div
-            class="device-section"
-            v-if="currentSelectedPt.sbzts && currentSelectedPt.sbzts.length"
-          >
-            <div class="section-tag tag-sb">
-              通用设备 ({{ currentSelectedPt.sbzts.length }})
-            </div>
-            <div
-              v-for="item in currentSelectedPt.sbzts"
-              :key="item.SBXXID"
-              class="device-item-card card-sb"
-            >
-              <div class="item-header">
-                <i class="el-icon-set-up"></i>
-                <span class="item-name">{{ item.SBMC }}</span>
+              <!-- 其他设备 -->
+              <div
+                class="device-section"
+                v-if="currentSelectedPt.sbzts && currentSelectedPt.sbzts.length"
+              >
+                <div class="section-tag tag-sb">
+                  通用设备 ({{ currentSelectedPt.sbzts.length }})
+                </div>
+                <div
+                  v-for="item in currentSelectedPt.sbzts"
+                  :key="item.SBXXID"
+                  class="device-item-card card-sb"
+                >
+                  <div class="item-header">
+                    <i class="el-icon-set-up"></i>
+                    <span class="item-name">{{ item.SBMC }}</span>
+                  </div>
+                  <div class="item-detail">
+                    <span>型号: {{ item.SBXHMC }}</span>
+                  </div>
+                </div>
               </div>
-              <div class="item-detail">
-                <span>型号: {{ item.SBXHMC }}</span>
+            </div>
+
+            <!-- 2. 告警信息内容 -->
+            <div
+              v-show="activeTab === 'warn'"
+              class="tab-pane-content"
+              v-loading="loadingWarn"
+            >
+              <div v-if="warnList.length === 0" class="empty-warn">
+                <i class="el-icon-circle-check"></i> 暂无告警记录
+              </div>
+
+              <div
+                v-for="(warn, index) in warnList.slice(0, 5)"
+                :key="index"
+                class="warn-item-box"
+              >
+                <div
+                  class="warn-side-line"
+                  :style="{
+                    backgroundColor: (warnLevelMap[warn.warnLevel] || {}).color
+                  }"
+                ></div>
+                <div class="warn-main">
+                  <div class="warn-top">
+                    <span
+                      class="warn-level-tag"
+                      :style="{
+                        color: (warnLevelMap[warn.warnLevel] || {}).color
+                      }"
+                    >
+                      {{ (warnLevelMap[warn.warnLevel] || {}).label }}
+                    </span>
+                    <span class="warn-time">{{
+                      formatWarnTime(warn.warnTimestamp)
+                    }}</span>
+                  </div>
+                  <!-- 这里的 warnContent 按需使用正则清洗标签 -->
+                  <div class="warn-msg">
+                    {{
+                      warn.warnContent
+                        ? warn.warnContent.replace(/<[^>]+>/g, '')
+                        : '-'
+                    }}
+                  </div>
+                  <div class="warn-footer">
+                    <span>状态: {{ warn.warnState }}</span>
+                    <span>来源: {{ warn.srcPlatformName }}</span>
+                  </div>
+                </div>
+              </div>
+              <div v-if="warnList.length > 0" class="warn-more-tip">
+                更多告警信息请前往
+                <span class="highlight">系统运维 / 告警信息</span> 查看
               </div>
             </div>
           </div>
@@ -201,7 +277,8 @@ import {
   getSslxxPage,
   getSslqzPage,
   getSslqzcyPage,
-  getptxPage
+  getptxPage,
+  getptWarnInfos
 } from '@/api/killchain'
 
 register({shape: 'pt-node', width: 185, height: 115, component: PtNode})
@@ -211,6 +288,16 @@ export default {
   components: {SideDetails},
   data() {
     return {
+      warnTimer: null, // 定时器句柄
+      activeTab: 'device', // 默认选中设备详情
+      loadingWarn: false,
+      warnList: [],
+      // 映射关系
+      warnLevelMap: {
+        1: {label: '一般', color: '#E6A23C'},
+        2: {label: '紧急', color: '#F56C6C'},
+        3: {label: '很严重', color: '#9d0000'}
+      },
       detailDrawerVisible: false,
       currentSelectedPt: {cgqxxs: [], wqxxs: []},
       listDialogVisible: false,
@@ -233,7 +320,7 @@ export default {
       currentKillChainId: null,
       currentGroupName: '',
       groupNameChanged: false,
-      lastPhaseState: {}, // 格式: { PTID: phase }
+      lastPhaseState: {}, // 格式: { Killchain_Group_Member_PltID: phase }
       phraseMap: {
         0: '发现',
         1: '定位',
@@ -253,14 +340,57 @@ export default {
       }
     }
   },
+  watch: {
+    currentSelectedPt: {
+      immediate: true,
+      handler(val) {
+        if (val && val.PTID) {
+          this.warnList = [] // 清空旧数据
+          this.fetchWarnInfos() // 立即刷新
+          this.resetWarnTimer() // 重置 20s 定时器
+        }
+      }
+    },
+    // 离开组件或关闭面板时销毁定时器
+    visible(val) {
+      if (!val) this.clearWarnTimer()
+    }
+  },
   async mounted() {
     this.initGraph()
     // this.initChart()
     await this.loadTasks()
     this.startPolling()
     window.addEventListener('resize', this.handleResize)
+  }, // 组件销毁生命周期钩子
+  beforeDestroy() {
+    this.clearWarnTimer()
   },
   methods: {
+    // 核心刷新逻辑
+    async fetchWarnInfos() {
+      if (!this.currentSelectedPt || !this.currentSelectedPt.PTID) return
+      try {
+        const res = await getptWarnInfos(this.currentSelectedPt.PTID)
+        this.warnList = res.data.data
+      } catch (e) {
+        console.error('轮询告警失败', e)
+      }
+    }, // 重置定时器
+    resetWarnTimer() {
+      this.clearWarnTimer()
+      this.warnTimer = setInterval(() => {
+        this.fetchWarnInfos()
+      }, 20000) // 20秒刷新一次
+    },
+
+    // 清除定时器
+    clearWarnTimer() {
+      if (this.warnTimer) {
+        clearInterval(this.warnTimer)
+        this.warnTimer = null
+      }
+    },
     async runSyncWorkflow() {
       try {
         // 1. 获取杀伤链列表
@@ -345,11 +475,13 @@ export default {
       // 检测哪些阶段发生了人员变动
       const changedStages = new Set()
       members.forEach(m => {
-        const prevPhase = this.lastPhaseState[m.PTID]
+        const prevPhase = this.lastPhaseState[m.Killchain_Group_Member_PltID]
+
         if (prevPhase !== undefined && prevPhase !== m.killchain_EXECUTEPHASE) {
           changedStages.add(m.killchain_EXECUTEPHASE) // 目标阶段闪烁
         }
-        this.lastPhaseState[m.PTID] = m.killchain_EXECUTEPHASE
+        this.lastPhaseState[m.Killchain_Group_Member_PltID] =
+          m.killchain_EXECUTEPHASE
       })
 
       // 传入 activeItem 用于识别最新阶段
@@ -498,7 +630,20 @@ export default {
         })
       })
     },
-
+    async handleWarnTabClick() {
+      this.activeTab = 'warn'
+      this.loadingWarn = true
+      await this.fetchWarnInfos()
+      this.loadingWarn = false
+    },
+    formatWarnTime(ts) {
+      if (!ts) return ''
+      const date = new Date(Number(ts))
+      return `${date.getHours().toString().padStart(2, '0')}:${date
+        .getMinutes()
+        .toString()
+        .padStart(2, '0')}:${date.getSeconds().toString().padStart(2, '0')}`
+    },
     async loadTasks() {
       const res = await pageQueryTask({pageNum: 1, pageSize: 100})
       this.taskList = res.data.list || []
@@ -1074,5 +1219,126 @@ export default {
 .slide-fade-leave-to {
   transform: translateX(100%);
   opacity: 0;
+} /* Tab 头部样式 */
+.custom-tab-header {
+  display: flex;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  margin-bottom: 20px;
+  gap: 24px;
+}
+
+.tab-item {
+  padding: 10px 4px;
+  color: #94a3b8;
+  cursor: pointer;
+  font-size: 14px;
+  position: relative;
+  transition: all 0.3s;
+}
+
+.tab-item:hover {
+  color: #fff;
+}
+
+.tab-item.active {
+  color: #3b82f6;
+  font-weight: bold;
+}
+
+.tab-item.active::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: #3b82f6;
+  box-shadow: 0 -2px 10px rgba(59, 130, 246, 0.5);
+}
+
+.warn-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  background: #f87171;
+  border-radius: 50%;
+  margin-left: 4px;
+  vertical-align: top;
+}
+
+/* 告警条目样式 */
+.warn-item-box {
+  background: rgba(255, 255, 255, 0.03);
+  margin-bottom: 12px;
+  display: flex;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.warn-side-line {
+  width: 4px;
+  flex-shrink: 0;
+}
+
+.warn-main {
+  padding: 12px;
+  flex: 1;
+}
+
+.warn-top {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.warn-level-tag {
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.warn-time {
+  font-size: 12px;
+  color: #475569;
+}
+
+.warn-msg {
+  font-size: 13px;
+  color: #cbd5e1;
+  line-height: 1.6;
+  margin-bottom: 8px;
+}
+
+.warn-footer {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: #64748b;
+}
+
+.empty-warn {
+  text-align: center;
+  padding: 40px 0;
+  color: #475569;
+  font-size: 13px;
+}
+.warn-more-tip {
+  text-align: center;
+  padding: 15px 0 30px;
+  color: #64748b;
+  font-size: 12px;
+  border-top: 1px dashed rgba(255, 255, 255, 0.05);
+  margin-top: 20px;
+}
+
+.warn-more-tip .highlight {
+  color: #3b82f6;
+  margin: 0 4px;
+  font-weight: 500;
+}
+
+/* 优化滚动条，确保底部提示可见 */
+.tab-pane-content {
+  max-height: calc(100vh - 180px);
+  overflow-y: auto;
 }
 </style>

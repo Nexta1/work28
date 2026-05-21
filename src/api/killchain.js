@@ -25,6 +25,8 @@ export const getSslqzcyPage = (killchainId, qzId) =>
 
 // 2. 武器与传感器
 export const getptxPage = ptId => request.get(`/ptxx/${ptId}`)
+export const getptWarnInfos = ptId =>
+  request.get(`/warnInfo/ptWarnInfos/${ptId}`)
 
 /**
  * 3. 新增/完善：获取作战任务网络态势接口
