@@ -84,7 +84,7 @@ export default {
   mounted() {
     const node = this.getNode()
     const rawData = node.getData() || {}
-    console.log(rawData)
+
     this.data = rawData
     this.themeColor = rawData.themeColor || '#3b82f6'
     this.isNew = rawData.isNew || false
@@ -107,10 +107,10 @@ export default {
     const otherDevicesCount = (detail.sbzts || []).length
     this.totalCount = sensors.length + weapons.length + otherDevicesCount
     let filtered
-    console.log(rawData.KILLCHAIN_EXECUTEPHASE)
+
     if (rawData.KILLCHAIN_EXECUTEPHASE == 4) {
       filtered = [...weapons, ...sensors]
-      console.log(filtered)
+
       this.displayResources = filtered.slice(0, 2)
     } else {
       // 4. 仅合并武器和传感器进行展示

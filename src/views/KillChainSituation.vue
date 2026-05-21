@@ -180,6 +180,13 @@
         </div>
       </div>
     </transition>
+    <SideDetails
+      :visible="listDialogVisible"
+      :listData="currentPhaseMembers"
+      :themeColor="currentThemeColor"
+      @close="listDialogVisible = false"
+      @select="setCurrentSelectedPt"
+    />
   </div>
 </template>
 
@@ -189,6 +196,7 @@ import {register} from '@antv/x6-vue-shape'
 import * as echarts from 'echarts'
 import PtNode from './components/PtNode.vue'
 import {pageQueryTask} from '@/api/combat-task'
+import SideDetails from './components/SideDetails.vue'
 import {
   getSslxxPage,
   getSslqzPage,
@@ -200,10 +208,14 @@ register({shape: 'pt-node', width: 185, height: 115, component: PtNode})
 
 export default {
   name: 'KillChainPro',
+  components: {SideDetails},
   data() {
     return {
       detailDrawerVisible: false,
       currentSelectedPt: {cgqxxs: [], wqxxs: []},
+      listDialogVisible: false,
+      currentPhaseMembers: [],
+      currentThemeColor: '',
       stateConfigs: {
         1: {color: '#10b981', label: '正常', animation: 'pulse-normal'}, // 绿
         2: {color: '#ef4444', label: '异常', animation: 'pulse-error'}, // 红
@@ -346,6 +358,7 @@ export default {
     },
 
     renderGraph(members, activeKillChain) {
+      // console.log(members)
       if (!this.graph) return
       this.graph.clearCells()
 
@@ -376,7 +389,7 @@ export default {
           x: stageX,
           y: 15,
           width: 210,
-          height: 580,
+          height: 690,
           zIndex: 1,
           label: `STAGE 0${idx + 1} · ${this.phraseMap[sKey]}`,
           attrs: {
@@ -421,12 +434,54 @@ export default {
             }
           })
         }
-
-        // 4. 渲染平台成员 (PT Nodes)
-        const stageMembers = members.filter(
+        const allStageMembers = members.filter(
           m => m.killchain_EXECUTEPHASE == sKey
         )
-        stageMembers.forEach((m, mIdx) => {
+        const displayMembers = allStageMembers
+          .slice(0, 4)
+          .filter(m => m.killchain_EXECUTEPHASE == sKey) // 只取前4个
+        const hasMore = allStageMembers.length > 4
+        // 4. 渲染平台成员 (PT Nodes)
+        // const stageMembers = members.filter(
+        //   m => m.killchain_EXECUTEPHASE == sKey
+        // )
+
+        // 3. 如果超过4个，添加“查看更多”按钮节点
+        if (hasMore) {
+          this.graph.addNode({
+            x: stageX + 12,
+            y: 70 + 4 * 145, // 排在第5个位置
+            width: 185,
+            height: 36,
+            zIndex: 12,
+            markup: [
+              {tagName: 'rect', selector: 'body'},
+              {tagName: 'text', selector: 'label'}
+            ],
+            attrs: {
+              body: {
+                fill: 'rgba(59, 130, 246, 0.1)',
+                stroke: 'rgba(59, 130, 246, 0.5)',
+                strokeDasharray: '4 2',
+                rx: 4,
+                ry: 4,
+                cursor: 'pointer'
+              },
+              label: {
+                text: `查看更多 (${allStageMembers.length}) ...`,
+                fill: '#60a5fa',
+                fontSize: 12,
+                cursor: 'pointer'
+              }
+            },
+            data: {
+              type: 'MORE_BTN',
+              phase: sKey,
+              members: allStageMembers // 将全量数据挂载到按钮上
+            }
+          })
+        }
+        displayMembers.forEach((m, mIdx) => {
           this.graph.addNode({
             shape: 'pt-node',
             x: stageX + 12,
@@ -491,14 +546,21 @@ export default {
       this.graph.on('node:click', ({node}) => {
         const data = node.getData()
 
+        if (data.type === 'MORE_BTN') {
+          this.currentPhaseMembers = data.members
+          this.currentThemeColor = data.themeColor
+          this.listDialogVisible = true
+          return
+        }
         if (node.shape === 'pt-node' && data.ptDetail) {
-          this.currentSelectedPt = data.ptDetail // 将接口获取的完整详情传给弹窗
-
-          this.detailDrawerVisible = true
+          this.setCurrentSelectedPt(data.ptDetail)
         }
       })
     },
-
+    setCurrentSelectedPt(ptDetail) {
+      this.currentSelectedPt = ptDetail // 将接口获取的完整详情传给弹窗
+      this.detailDrawerVisible = true
+    },
     // 修改后的启动函数
     async startPolling() {
       // 1. 立即执行第一次同步
