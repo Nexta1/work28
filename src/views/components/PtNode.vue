@@ -34,7 +34,7 @@
           <span>点击查看全部 {{ totalCount }} 个资源...</span>
         </div>
       </div>
-
+      <div v-else class="no-res-placeholder">暂无传感器/武器</div>
       <!-- 网络信息 -->
       <div class="net-info">
         <i class="el-icon-connection"></i>
@@ -84,6 +84,7 @@ export default {
   mounted() {
     const node = this.getNode()
     const rawData = node.getData() || {}
+    console.log(rawData)
     this.data = rawData
     this.themeColor = rawData.themeColor || '#3b82f6'
     this.isNew = rawData.isNew || false
@@ -105,10 +106,17 @@ export default {
     // 3. 统计总数（包含设备）用于“显示更多”判断
     const otherDevicesCount = (detail.sbzts || []).length
     this.totalCount = sensors.length + weapons.length + otherDevicesCount
-
-    // 4. 仅合并武器和传感器进行展示
-    const filtered = [...weapons, ...sensors]
-    this.displayResources = filtered.slice(0, 2)
+    let filtered
+    console.log(rawData.KILLCHAIN_EXECUTEPHASE)
+    if (rawData.KILLCHAIN_EXECUTEPHASE == 4) {
+      filtered = [...weapons, ...sensors]
+      console.log(filtered)
+      this.displayResources = filtered.slice(0, 2)
+    } else {
+      // 4. 仅合并武器和传感器进行展示
+      filtered = [...sensors, ...weapons]
+      this.displayResources = filtered.slice(0, 2)
+    }
 
     // 如果 武器+传感器 > 2 或者 有其他设备，则显示“更多”
     this.hasMore = filtered.length > 2 || otherDevicesCount > 0
@@ -125,11 +133,17 @@ export default {
 <style scoped>
 .pt-node-container {
   width: 185px;
+  height: 140px;
   background: #151a24;
   border-radius: 4px;
   color: #d1d5db;
   font-size: 11px;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  overflow: hidden; /* 严禁内容撑开容器 */
+  border-radius: 4px;
 }
 
 .node-header {
@@ -144,6 +158,11 @@ export default {
 
 .node-body {
   padding: 8px 10px;
+  flex: 1; /* 自动填充剩余空间 */
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 .res-list {
   margin-bottom: 4px;
@@ -194,6 +213,7 @@ export default {
   display: flex;
   align-items: center;
   color: #64748b;
+  /* margin-top: auto; */
 }
 .net-tag {
   background: #1e293b;

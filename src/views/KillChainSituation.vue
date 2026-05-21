@@ -431,6 +431,8 @@ export default {
             shape: 'pt-node',
             x: stageX + 12,
             y: 80 + mIdx * 155,
+            width: 185, // 显式固定宽度
+            height: 140, // 显式固定高度
             zIndex: 10,
             data: {
               ...m,
