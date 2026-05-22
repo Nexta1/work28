@@ -88,3 +88,31 @@ export function getsbxxPage(data) {
     data
   })
 }
+export function wlzt(data) {
+  return request({
+    url: '/rest/wlzt/page',
+    method: 'post',
+    data
+  })
+}
+export function getZzrwqzPage(data) {
+  return request({
+    url: '/rest/zzrwqz/page',
+    method: 'post',
+    data
+  })
+}
+export function getServiceInfoPage(data) {
+  return request({
+    url: '/rest/serviceInfo/page',
+    method: 'post',
+    data
+  })
+}
+export function getWlllDetectPage(data) {
+  return request({
+    url: '/rest/wlllDetect/page',
+    method: 'post',
+    data
+  })
+}

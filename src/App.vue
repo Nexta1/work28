@@ -95,7 +95,13 @@ export default {
         },
         {path: '/dashboard', name: '态势 Dashboard', icon: '📊'},
         {path: '/network', name: '态势 network', icon: '📊'},
-        {path: '/DeviceMonitor', name: '态势 DeviceMonitor', icon: '📊'}
+        {path: '/DeviceMonitor', name: '态势 DeviceMonitor', icon: '📊'},
+        {path: '/BusinessQualityMonitor', name: '态势 BusinessQualityMonitor', icon: '📊'},
+        {
+          path: '/LinkPerformanceMonitor',
+          name: '态势 LinkPerformanceMonitor',
+          icon: '📊'
+        }
       ]
     },
 

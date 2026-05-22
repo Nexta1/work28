@@ -52,6 +52,24 @@ const routes = [
     }
   },
   {
+    path: '/LinkPerformanceMonitor',
+    name: 'LinkPerformanceMonitor',
+    component: () => import('@/views/LinkPerformanceMonitor.vue'),
+    meta: {
+      title: 'LinkPerformanceMonitor',
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/BusinessQualityMonitor',
+    name: 'BusinessQualityMonitor',
+    component: () => import('@/views/BusinessQualityMonitor.vue'),
+    meta: {
+      title: 'BusinessQualityMonitor',
+      requiresAuth: true
+    }
+  },
+  {
     path: '/login',
     name: 'Login',
     component: () => import('@/views/Login.vue'),
