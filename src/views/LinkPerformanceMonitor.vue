@@ -2,7 +2,7 @@
   <div class="screen-container">
     <div class="top-search-header">
       <div class="search-flex">
-        <span class="hub-title">🛰️ 战术平台检索调度</span>
+        <span class="hub-title">🛰️ 战术平台检索调度系统</span>
 
         <div class="search-item">
           <label>平台名称</label>
@@ -10,7 +10,7 @@
             type="text"
             v-model="platformQueryParams.PTMC"
             @input="handlePlatformSearch"
-            placeholder="输入平台名称（如：战斗机）..."
+            placeholder="输入平台名称..."
             class="global-input"
           />
         </div>
@@ -45,6 +45,90 @@
       </div>
     </div>
 
+    <div class="top-dashboard-layout">
+      <div class="stats-panel-box">
+        <div class="panel-inner-title">📊 战术遥测数据统计中心</div>
+        <div class="stats-grid-matrix">
+          <div class="stats-card">
+            <span class="lbl">监控网络总数</span>
+            <span class="val text-blue font-num"
+              >{{ totalLinks }} <small>条</small></span
+            >
+          </div>
+          <div class="stats-card">
+            <span class="lbl">活动硬件节点</span>
+            <span class="val text-green font-num"
+              >{{ deviceList.length }} <small>台</small></span
+            >
+          </div>
+          <div class="stats-card">
+            <span class="lbl">网络平均丢包率</span>
+            <span class="val text-orange font-num">{{ avgDropRate }}%</span>
+          </div>
+          <div class="stats-card">
+            <span class="lbl">集群异常告警数</span>
+            <span
+              class="val font-num"
+              :class="globalAlarmCount > 0 ? 'text-red' : 'text-gray'"
+            >
+              {{ globalAlarmCount }} <small>项</small>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="platform-horizontal-panel bg-center-radar">
+        <div class="panel-inner-title">
+          <span>🧭 检索平台时空航迹态势 (横向平铺)</span>
+          <span class="badge font-num text-orange animate-flash"
+            >LIVE SYNC</span
+          >
+        </div>
+
+        <div class="horizontal-scroll-container" v-loading="loadingPlatform">
+          <div v-if="platformList.length === 0" class="sub-empty-horizontal">
+            未检索到匹配的平台实体航迹
+          </div>
+
+          <div
+            v-for="pt in platformList"
+            :key="pt.PTBSH"
+            class="radar-track-horizontal-card"
+            :class="{'is-active': activePlatformId === pt.PTBSH}"
+            @click="activePlatformId = pt.PTBSH"
+          >
+            <div class="track-header-meta">
+              <span class="pt-title">📍 {{ pt.PTMC || '未知测控节点' }}</span>
+              <span class="pt-bsh font-num">{{
+                platformTypeMap[pt.PTLX] || '常规平台'
+              }}</span>
+            </div>
+
+            <div class="track-grid-matrix">
+              <div class="track-cell">
+                <span class="label">当前经/纬度</span>
+                <span class="value font-num text-blue"
+                  >{{ pt.PTJD || '0.00' }}° / {{ pt.PTWD || '0.00' }}°</span
+                >
+              </div>
+              <div class="track-cell">
+                <span class="label">测地高度</span>
+                <span class="value font-num text-green"
+                  >{{ pt.PTGD || 0 }} m</span
+                >
+              </div>
+              <div class="track-cell">
+                <span class="label">矢量速度</span>
+                <span class="value font-num text-orange"
+                  >{{ pt.PTSD || 0 }} km/h</span
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="main-body-layout">
       <div class="monitor-column-panel width-28">
         <div class="panel-header-summary">
@@ -56,7 +140,7 @@
           <input
             type="text"
             v-model="deviceFilterText"
-            placeholder="过滤当前设备型号/名称..."
+            placeholder="过滤设备型号/名称..."
             class="mini-input"
           />
         </div>
@@ -100,107 +184,33 @@
                   >
                 </div>
               </div>
-              <div class="metric-block">
-                <label>缓冲内存 (RAM)</label>
-                <div class="progress-wrapper">
-                  <el-progress
-                    :percentage="Math.floor(sb.RAM || 0)"
-                    color="#3b82f6"
-                    :stroke-width="3"
-                    :show-text="false"
-                  />
-                  <span class="val font-num text-blue">{{ sb.RAM || 0 }}%</span>
-                </div>
-              </div>
             </div>
 
             <div class="card-footer-info">
-              <span>🆔 设备信息ID: #{{ sb.SBXXID }}</span>
+              <span>🆔 ID: #{{ sb.SBXXID }}</span>
               <span :class="sb.TEMP > 75 ? 'text-red' : 'text-cyan'"
-                >🌡️ 核温 {{ sb.TEMP || 0 }}℃</span
+                >🌡️ {{ sb.TEMP || 0 }}℃</span
               >
             </div>
           </div>
         </div>
       </div>
 
-      <div class="monitor-column-panel width-34 bg-center-radar">
+      <div class="monitor-column-panel width-34">
         <div class="panel-header-summary">
-          <span class="title">🧭 检索平台时空航迹态势</span>
-          <span class="badge font-num text-orange animate-flash"
-            >LIVE SYNC</span
+          <span class="title">📊 激活设备特征性能谱系</span>
+          <span class="badge font-num text-cyan" v-if="activeDeviceId"
+            >ID: #{{ activeDeviceId }}</span
           >
         </div>
-
-        <div class="scroll-container-box flex-half" v-loading="loadingPlatform">
-          <div v-if="platformList.length === 0" class="sub-empty">
-            未检索到匹配的平台实体航迹
-          </div>
-
-          <div
-            v-for="pt in platformList"
-            :key="pt.PTBSH"
-            class="radar-track-dashboard"
-            :class="{'is-active': activePlatformId === pt.PTBSH}"
-            @click="activePlatformId = pt.PTBSH"
-          >
-            <div class="track-header-meta">
-              <span class="pt-title">📍 {{ pt.PTMC || '未知测控节点' }}</span>
-              <span class="pt-bsh font-num">{{
-                platformTypeMap[pt.PTLX] || '常规平台'
-              }}</span>
-            </div>
-
-            <div class="track-grid-matrix">
-              <div class="track-cell">
-                <span class="label">当前经度</span>
-                <span class="value font-num text-blue"
-                  >{{ pt.PTJD || '0.00000' }} °</span
-                >
-              </div>
-              <div class="track-cell">
-                <span class="label">当前纬度</span>
-                <span class="value font-num text-blue"
-                  >{{ pt.PTWD || '0.00000' }} °</span
-                >
-              </div>
-              <div class="track-cell">
-                <span class="label">测地高度</span>
-                <span class="value font-num text-green"
-                  >{{ pt.PTGD || 0 }} m</span
-                >
-              </div>
-              <div class="track-cell">
-                <span class="label">矢量速度</span>
-                <span class="value font-num text-orange"
-                  >{{ pt.PTSD || 0 }} km/h</span
-                >
-              </div>
-            </div>
-
-            <div class="track-timestamp">
-              <span
-                >⏳ 原子时元:
-                <span class="font-num text-gray">{{
-                  pt.PTSJ || '-'
-                }}</span></span
-              >
-              <span class="font-num text-blue">#{{ pt.PTBSH }}</span>
-            </div>
-          </div>
-        </div>
-
         <div class="center-chart-box">
-          <div class="chart-header-title">
-            📊 激活硬件外设性能特征历史演进图谱
-          </div>
           <div ref="perfLineChart" class="echart-container"></div>
         </div>
       </div>
 
       <div class="monitor-column-panel width-38">
         <div class="panel-header-summary">
-          <span class="title">📡 链网动态运行状态监控 (`wlzt`)</span>
+          <span class="title">📡 链网状态高级遥测网络监控</span>
           <span class="badge font-num text-blue"
             >总计: {{ totalLinks }} 条</span
           >
@@ -220,9 +230,9 @@
               @change="handleNetworkSearch"
               class="inner-select"
             >
-              <option value="">全部健康状态</option>
-              <option value="0">🟢 正常健康</option>
-              <option value="1">🔴 故障告警</option>
+              <option value="">全部状态</option>
+              <option value="0">🟢 正常</option>
+              <option value="1">🔴 告警</option>
             </select>
             <select
               v-model="networkQueryParams.WLLX"
@@ -249,7 +259,7 @@
           <div
             v-for="link in linkList"
             :key="link.WLZTID"
-            class="link-status-card"
+            class="link-status-card enrichment-card"
             :class="[
               getNetworkStatusClass(link.JKZT),
               {'is-active': activeLinkId === link.WLZTID}
@@ -277,33 +287,34 @@
                 :class="Number(link.JKZT) === 1 ? 'score-bad' : 'score-good'"
               >
                 <span class="score-val">{{
-                  Number(link.JKZT) === 1 ? '⚠️ 告警' : '✔ 稳健'
+                  Number(link.JKZT) === 1 ? '⚠️ 故障告警' : '✔ 稳健运行'
                 }}</span>
               </div>
             </div>
 
             <div class="freq-range-bar">
-              <span class="freq-label">📡 工作频段范围:</span>
+              <span class="freq-label">📡 载波工作频段:</span>
               <span class="freq-value font-num text-cyan"
                 >{{ link.PDXX || 0 }} ~ {{ link.PDSX || 0 }} MHz</span
               >
             </div>
 
             <div class="link-tech-spec">
-              🛠️ 组网体制组件：<span class="spec-highlight">{{
-                networkTypeMap[link.WLLX] || '未知体制组件'
+              <span class="spec-label">⚙️ 组网体制组件:</span>
+              <span class="spec-highlight text-blue">{{
+                networkTypeMap[link.WLLX] || '未知体制方案'
               }}</span>
             </div>
 
             <div class="link-perf-grid">
               <div class="spec-cell">
-                <label>总带宽(最小)</label>
+                <label>规划总带宽</label>
                 <span class="val font-num text-blue"
                   >{{ link.DK || 0 }} <small>Mbps</small></span
                 >
               </div>
               <div class="spec-cell">
-                <label>剩余带宽</label>
+                <label>动态剩余带宽</label>
                 <span
                   class="val font-num"
                   :class="
@@ -325,17 +336,19 @@
                 </span>
               </div>
               <div class="spec-cell">
-                <label>状态标识符</label>
+                <label>技术识别符</label>
                 <span
                   class="val font-num text-gray ellipsis-text"
                   :title="link.WLZTID"
-                  >{{ link.WLZTID }}</span
+                  >#{{ link.WLZTID }}</span
                 >
               </div>
             </div>
 
             <div class="link-card-bottom-bar">
-              <span class="time font-num">⏳ 索引: #{{ link.WLZTID }}</span>
+              <span class="time font-num"
+                >⏳ 传输索引号: #{{ link.WLZTID }}</span
+              >
               <el-button
                 type="text"
                 class="detail-text-btn"
@@ -439,33 +452,23 @@ export default {
       loadingDevice: false,
       loadingPlatform: false,
       loadingLink: false,
-      pollingTimer: null, // 15秒统一高阶轮询时钟
+      pollingTimer: null,
 
-      // 数据源相互独立，不再共享深度穿透参数
       deviceList: [],
       platformList: [],
       linkList: [],
       totalLinks: 0,
 
       deviceFilterText: '',
-      activeDeviceId: null, // 绑定 SBXXID
+      activeDeviceId: null,
       activePlatformId: null,
       activeLinkId: null,
 
       detailDialogVisible: false,
       activeLinkDetail: null,
 
-      // 顶部平台专属查询参数
-      platformQueryParams: {
-        PTMC: '',
-        PTLX: ''
-      },
-      // 右侧网络专属查询参数
-      networkQueryParams: {
-        WLMC: '',
-        JKZT: '',
-        WLLX: ''
-      },
+      platformQueryParams: {PTMC: '', PTLX: ''},
+      networkQueryParams: {WLMC: '', JKZT: '', WLLX: ''},
 
       pageConfig: {pageNum: 1, pageSize: 10},
       perfChartIns: null,
@@ -495,7 +498,6 @@ export default {
     }
   },
   computed: {
-    // 过滤设备列表（基于 SBXXID 和型号名称进行检索）
     filteredDevices() {
       if (!this.deviceFilterText) return this.deviceList
       const txt = this.deviceFilterText.toLowerCase()
@@ -504,11 +506,26 @@ export default {
           (d.SBXHMC && d.SBXHMC.toLowerCase().includes(txt)) ||
           (d.SBXXID && String(d.SBXXID).includes(txt))
       )
+    },
+    // 前端根据当前轮询数据集动态统计全局网络及硬件指标
+    globalAlarmCount() {
+      const devAlarms = this.deviceList.filter(
+        d => Number(d.JKZT) === 1 || d.CPU > 85
+      ).length
+      const linkAlarms = this.linkList.filter(l => Number(l.JKZT) === 1).length
+      return devAlarms + linkAlarms
+    },
+    avgDropRate() {
+      if (!this.linkList.length) return '0.00'
+      const totalDrop = this.linkList.reduce(
+        (acc, curr) => acc + (curr.DBL || 0),
+        0
+      )
+      return ((totalDrop / this.linkList.length) * 100).toFixed(2)
     }
   },
   created() {
     this.masterWorkflowInit()
-    // 【变更核心】：合并三大系统的数据请求，严格执行 15000ms（15秒）统一轮询一次
     this.pollingTimer = setInterval(() => {
       this.syncPollingWorkflow()
     }, 15000)
@@ -523,28 +540,19 @@ export default {
     if (this.perfChartIns) this.perfChartIns.dispose()
   },
   methods: {
-    /**
-     * 各大板块首次初始化独立加载
-     */
     async masterWorkflowInit() {
       this.loadingDevice = true
       this.loadingPlatform = true
       this.loadingLink = true
-
       await Promise.all([
         this.fetchPlatformPage(),
         this.fetchDevicePage(),
         this.fetchWlztPage()
       ])
-
       this.loadingDevice = false
       this.loadingPlatform = false
       this.loadingLink = false
     },
-
-    /**
-     * 1. 平台数据集抓取
-     */
     async fetchPlatformPage() {
       try {
         const payload = {
@@ -560,7 +568,6 @@ export default {
         }
         const res = await getPlatformPage(payload)
         this.platformList = res?.rows || res?.data?.list || []
-
         if (this.platformList.length > 0 && !this.activePlatformId) {
           this.activePlatformId = this.platformList[0].PTBSH
         }
@@ -568,10 +575,6 @@ export default {
         console.warn('时空平台调度链路受限')
       }
     },
-
-    /**
-     * 2. 物理层集群抓取（ZYXH 已升级为 SBXXID）
-     */
     async fetchDevicePage() {
       try {
         const res = await getsbxxPage({pageNum: 1, pageSize: 50, params: {}})
@@ -583,10 +586,6 @@ export default {
         console.warn('硬件外设总线扫描阻断')
       }
     },
-
-    /**
-     * 3. wlzt 网络数据集抓取
-     */
     async fetchWlztPage() {
       try {
         const payload = {
@@ -611,31 +610,17 @@ export default {
         console.error('WLZT 调度中心遥测解析异常：', e)
       }
     },
-
-    /**
-     * 独立点击：激活当前设备信息ID，填充下层 ECharts 指标
-     */
     selectDevice(sb) {
       this.activeDeviceId = sb.SBXXID
       this.chartHistory = {timeline: [], cpu: [], ram: [], temp: []}
       this.pushChartDataPoint(sb.CPU, sb.RAM, sb.TEMP)
     },
-
-    /**
-     * 【15秒高集成、全静默轮询管道】
-     * 彻底对齐客户要求：15秒对三大独立核心实体进行一次性并发轮询更新
-     */
     async syncPollingWorkflow() {
-      console.log('--- [15秒战术周期同步启动] 并行触发全量基础数据遥测任务 ---')
-
-      // 三路接口并发无缝提取，互不级联干扰
       await Promise.all([
         this.fetchPlatformPage(),
         this.fetchDevicePage(),
         this.fetchWlztPage()
       ])
-
-      // 增量为当前高亮的激活物理硬件压入图表演进点
       if (this.activeDeviceId) {
         const curSb = this.deviceList.find(
           d => d.SBXXID === this.activeDeviceId
@@ -645,7 +630,6 @@ export default {
         }
       }
     },
-
     handlePlatformSearch() {
       this.fetchPlatformPage()
     },
@@ -658,7 +642,6 @@ export default {
       this.chartHistory.cpu.push(cpu || 0)
       this.chartHistory.ram.push(ram || 0)
       this.chartHistory.temp.push(temp || 0)
-
       if (this.chartHistory.timeline.length > 12) {
         this.chartHistory.timeline.shift()
         this.chartHistory.cpu.shift()
@@ -758,7 +741,7 @@ export default {
 
 <style scoped>
 /* ==========================================================================
-   全解耦战术大屏 CSS 骨架样式
+   全新扁平重构可视化基础骨架 CSS
    ========================================================================== */
 .screen-container {
   width: 100%;
@@ -769,12 +752,12 @@ export default {
   flex-direction: column;
   overflow: hidden;
   box-sizing: border-box;
-  padding: 14px;
+  padding: 12px;
 }
 
 /* 顶层战略条件检索面板 */
 .top-search-header {
-  height: 52px;
+  height: 48px;
   background: #080e18;
   border: 1px solid #111b2b;
   border-radius: 4px;
@@ -782,7 +765,7 @@ export default {
   align-items: center;
   justify-content: space-between;
   padding: 0 16px;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
   flex-shrink: 0;
 }
 .hub-title {
@@ -790,12 +773,11 @@ export default {
   font-weight: bold;
   color: #38bdf8;
   letter-spacing: 1px;
-  margin-right: 8px;
 }
 .search-flex {
   display: flex;
   align-items: center;
-  gap: 18px;
+  gap: 16px;
 }
 .search-item {
   display: flex;
@@ -805,32 +787,26 @@ export default {
 .search-item label {
   font-size: 11px;
   color: #52637a;
-  font-weight: bold;
   white-space: nowrap;
 }
-
-.global-input {
-  background: #0d1522;
-  border: 1px solid #1e3557;
-  color: #fff;
-  padding: 5px 10px;
-  border-radius: 4px;
-  font-size: 11px;
-  width: 200px;
-  outline: none;
-}
+.global-input,
 .global-select {
   background: #0d1522;
   border: 1px solid #1e3557;
-  color: #38bdf8;
-  padding: 4px 10px;
+  color: #fff;
+  padding: 4px 8px;
   border-radius: 4px;
   font-size: 11px;
-  width: 130px;
   outline: none;
 }
+.global-input {
+  width: 150px;
+}
+.global-select {
+  color: #38bdf8;
+  width: 110px;
+}
 
-/* 状态图例 */
 .monitor-legend {
   display: flex;
   gap: 12px;
@@ -857,22 +833,159 @@ export default {
   background: #ef4444;
 }
 
-/* 主体分栏骨架 */
+/* ==================== 上层横向平铺区 ==================== */
+.top-dashboard-layout {
+  display: flex;
+  gap: 12px;
+  height: 135px;
+  margin-bottom: 12px;
+  flex-shrink: 0;
+}
+.panel-inner-title {
+  font-size: 11px;
+  font-weight: bold;
+  color: #38bdf8;
+  margin-bottom: 6px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* 统计数据区样式 */
+.stats-panel-box {
+  width: 28%;
+  background: #080e18;
+  border: 1px solid #111b2b;
+  border-radius: 4px;
+  padding: 10px;
+  box-sizing: border-box;
+}
+.stats-grid-matrix {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6px;
+}
+.stats-card {
+  background: #0d1522;
+  border: 1px solid #172438;
+  padding: 6px 8px;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.stats-card .lbl {
+  font-size: 10px;
+  color: #52637a;
+  margin-bottom: 1px;
+}
+.stats-card .val {
+  font-size: 15px;
+  font-weight: bold;
+}
+.stats-card .val small {
+  font-size: 10px;
+}
+
+/* 平台实体横向滚动区 */
+.platform-horizontal-panel {
+  width: 72%;
+  background: #080e18;
+  border: 1px solid #111b2b;
+  border-radius: 4px;
+  padding: 10px;
+  box-sizing: border-box;
+}
+.horizontal-scroll-container {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  height: 92px;
+  padding-bottom: 4px;
+}
+.horizontal-scroll-container::-webkit-scrollbar {
+  height: 4px;
+}
+.horizontal-scroll-container::-webkit-scrollbar-thumb {
+  background: #172438;
+  border-radius: 2px;
+}
+
+.radar-track-horizontal-card {
+  flex: 0 0 230px;
+  background: #0c1424;
+  border: 1px solid #172438;
+  border-radius: 4px;
+  padding: 8px;
+  cursor: pointer;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.radar-track-horizontal-card:hover,
+.radar-track-horizontal-card.is-active {
+  border-color: #06b6d4;
+  background: #101b2e;
+}
+.track-header-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #172438;
+  padding-bottom: 2px;
+}
+.track-header-meta .pt-title {
+  font-size: 11px;
+  font-weight: bold;
+  color: #fff;
+}
+.track-header-meta .pt-bsh {
+  font-size: 9px;
+  color: #06b6d4;
+  background: rgba(6, 182, 212, 0.1);
+  padding: 0 4px;
+  border-radius: 2px;
+}
+.track-grid-matrix {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+}
+.track-cell {
+  background: #070c14;
+  padding: 4px;
+  border-radius: 2px;
+  display: flex;
+  flex-direction: column;
+}
+.track-cell .label {
+  font-size: 8px;
+  color: #415169;
+  transform: scale(0.9);
+}
+.track-cell .value {
+  font-size: 10px;
+  font-weight: bold;
+  margin-top: 1px;
+  white-space: nowrap;
+}
+
+/* ==================== 下层中底部结构 ==================== */
 .main-body-layout {
   display: flex;
   flex: 1;
-  gap: 14px;
-  height: calc(100% - 64px);
+  gap: 12px;
+  height: calc(100% - 195px);
   min-height: 0;
 }
-
 .monitor-column-panel {
   background: #080e18;
   border: 1px solid #111b2b;
   border-radius: 4px;
   display: flex;
   flex-direction: column;
-  padding: 12px;
+  padding: 10px;
   box-sizing: border-box;
   min-height: 0;
 }
@@ -890,9 +1003,9 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
   border-bottom: 1px solid #111b2b;
-  padding-bottom: 6px;
+  padding-bottom: 4px;
   flex-shrink: 0;
 }
 .panel-header-summary .title {
@@ -906,11 +1019,10 @@ export default {
   background: rgba(6, 182, 212, 0.1);
   padding: 1px 6px;
   border-radius: 10px;
-  font-family: monospace;
 }
 
 .sub-filter-bar {
-  margin-bottom: 8px;
+  margin-bottom: 6px;
   flex-shrink: 0;
 }
 .mini-input {
@@ -918,69 +1030,27 @@ export default {
   background: #070c14;
   border: 1px solid #172438;
   color: #cbd5e1;
-  padding: 5px 8px;
+  padding: 4px 8px;
   border-radius: 3px;
   font-size: 10px;
   outline: none;
-}
-
-/* 右侧网络专属内嵌式检索组件 */
-.network-inner-search-bar {
-  background: #0b121f;
-  border: 1px solid #15233a;
-  padding: 8px;
-  border-radius: 3px;
-  margin-bottom: 10px;
-  flex-shrink: 0;
-}
-.search-grid {
-  display: grid;
-  grid-template-columns: 1.2fr 1fr 1fr;
-  gap: 6px;
-}
-.inner-input,
-.inner-select {
-  background: #070c14;
-  border: 1px solid #1a293d;
-  color: #fff;
-  padding: 4px 6px;
-  border-radius: 3px;
-  font-size: 10px;
-  outline: none;
-  width: 100%;
   box-sizing: border-box;
 }
-.inner-select {
-  color: #8a99ad;
-}
 
-/* 独立容器滚动槽 */
 .scroll-container-box {
   flex: 1;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  padding-right: 2px;
-}
-.scroll-container-box.flex-half {
-  flex: 0.55;
-  margin-bottom: 10px;
-}
-::-webkit-scrollbar {
-  width: 4px;
-}
-::-webkit-scrollbar-thumb {
-  background: #172438;
-  border-radius: 2px;
+  gap: 6px;
 }
 
-/* ==================== 设备层卡片 ==================== */
+/* 设备卡片 */
 .brief-glass-card {
   background: #0d1522;
   border: 1px solid #172438;
   border-left: 3px solid #475569;
-  padding: 8px 10px;
+  padding: 6px 8px;
   border-radius: 3px;
   cursor: pointer;
 }
@@ -997,24 +1067,21 @@ export default {
 .card-title-bar .name-text {
   font-size: 11px;
   font-weight: bold;
-  color: #ffffff;
-  white-space: nowrap;
-  overflow: hidden;
+  color: #fff;
   text-overflow: ellipsis;
-  max-width: 70%;
+  overflow: hidden;
+  white-space: nowrap;
+  max-width: 65%;
 }
 .card-title-bar .type-tag {
   font-size: 9px;
   color: #475569;
   background: #070c14;
-  padding: 0px 4px;
+  padding: 0 4px;
   border-radius: 2px;
 }
 .device-mini-metrics {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  margin: 6px 0;
+  margin: 4px 0;
 }
 .metric-block {
   display: flex;
@@ -1026,127 +1093,76 @@ export default {
 .progress-wrapper {
   display: flex;
   align-items: center;
-  gap: 8px;
-  width: 68%;
+  gap: 6px;
+  width: 62%;
 }
 .progress-wrapper .el-progress {
   flex: 1;
 }
 .progress-wrapper .val {
-  min-width: 30px;
+  min-width: 28px;
   text-align: right;
   color: #cbd5e1;
 }
 .card-footer-info {
   display: flex;
   justify-content: space-between;
-  font-size: 10px;
-  color: #415169;
-  font-family: monospace;
-}
-
-/* ==================== 平台航迹卡片 (中栏) ==================== */
-.bg-center-radar {
-  background-image: radial-gradient(
-    circle at 50% 20%,
-    rgba(6, 182, 212, 0.04) 0%,
-    transparent 75%
-  );
-}
-.radar-track-dashboard {
-  background: #0c1424;
-  border: 1px solid #172438;
-  border-radius: 4px;
-  padding: 10px;
-  cursor: pointer;
-  transition: border-color 0.2s;
-}
-.radar-track-dashboard:hover,
-.radar-track-dashboard.is-active {
-  border-color: #06b6d4;
-  background: #101b2e;
-}
-.track-header-meta {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 6px;
-  border-bottom: 1px solid #172438;
-  padding-bottom: 4px;
-}
-.track-header-meta .pt-title {
-  font-size: 11px;
-  font-weight: bold;
-  color: #fff;
-}
-.track-header-meta .pt-bsh {
-  font-size: 9px;
-  color: #06b6d4;
-  background: rgba(6, 182, 212, 0.1);
-  padding: 1px 4px;
-  border-radius: 2px;
-}
-.track-grid-matrix {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 4px;
-}
-.track-cell {
-  background: #070c14;
-  padding: 4px 6px;
-  border-radius: 2px;
-  display: flex;
-  flex-direction: column;
-}
-.track-cell .label {
-  font-size: 8px;
-  color: #415169;
-  scale: 0.9;
-}
-.track-cell .value {
-  font-size: 11px;
-  font-weight: bold;
-  margin-top: 1px;
-}
-.track-timestamp {
-  margin-top: 5px;
   font-size: 9px;
   color: #415169;
-  display: flex;
-  justify-content: space-between;
 }
 
-/* 中央演进图表舱 */
+/* 图表区居中舱 */
 .center-chart-box {
   flex: 1;
   background: #070c14;
-  border: 1px solid #111b2b;
   border-radius: 4px;
-  padding: 10px;
   display: flex;
   flex-direction: column;
   min-height: 0;
-}
-.chart-header-title {
-  font-size: 11px;
-  color: #52637a;
-  font-weight: bold;
-  margin-bottom: 4px;
 }
 .echart-container {
   flex: 1;
   width: 100%;
 }
 
-/* ==================== 网络状态卡片 (右栏) ==================== */
-.link-status-card {
+/* ==================== 右侧网络运行状态监控（重构强化） ==================== */
+.network-inner-search-bar {
+  background: #0b121f;
+  border: 1px solid #15233a;
+  padding: 6px;
+  border-radius: 3px;
+  margin-bottom: 6px;
+  flex-shrink: 0;
+}
+.search-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr 1fr;
+  gap: 4px;
+}
+.inner-input,
+.inner-select {
+  background: #070c14;
+  border: 1px solid #1a293d;
+  color: #fff;
+  padding: 4px;
+  border-radius: 3px;
+  font-size: 10px;
+  outline: none;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.link-status-card.enrichment-card {
   background: #0d1522;
   border: 1px solid #172438;
   border-radius: 4px;
-  padding: 10px;
+  padding: 8px 10px;
   position: relative;
   overflow: hidden;
   cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 .link-status-card:hover,
 .link-status-card.is-active {
@@ -1165,7 +1181,7 @@ export default {
 }
 .strip-level-crit {
   background: #ef4444;
-  box-shadow: 0 0 6px #ef4444;
+  box-shadow: 0 0 4px #ef4444;
 }
 
 .link-card-top {
@@ -1179,75 +1195,74 @@ export default {
   gap: 1px;
 }
 .wl-name {
-  font-size: 12px;
+  font-size: 11px;
   font-weight: bold;
   color: #fff;
 }
 .wl-code {
-  font-size: 10px;
-  color: #415169;
+  font-size: 9px;
+  color: #52637a;
 }
 
 .health-score-badge {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
   background: #070c14;
-  padding: 2px 6px;
-  border-radius: 4px;
-  border: 1px solid #172438;
+  padding: 1px 6px;
+  border-radius: 3px;
+  border: 1px solid #1a293d;
 }
 .health-score-badge .score-val {
-  font-size: 10px;
+  font-size: 9px;
   font-weight: bold;
 }
 
+/* 频段和组网组件常驻样式 */
 .freq-range-bar {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   background: #070c14;
-  padding: 3px 6px;
+  padding: 2px 6px;
   border-radius: 3px;
-  margin: 5px 0;
   border: 1px dashed #142235;
 }
 .freq-label {
-  font-size: 10px;
-  color: #52637a;
+  font-size: 9px;
+  color: #415169;
 }
 .freq-value {
-  font-size: 10px;
+  font-size: 9px;
   font-weight: bold;
 }
 
 .link-tech-spec {
-  font-size: 10px;
-  color: #415169;
-  margin-bottom: 4px;
+  font-size: 9px;
+  display: flex;
+  gap: 4px;
+  align-items: center;
 }
-.spec-highlight {
-  color: #cbd5e1;
+.link-tech-spec .spec-label {
+  color: #415169;
 }
 
+/* 多维技术指标网格 */
 .link-perf-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 4px;
   background: #070c14;
-  padding: 6px;
-  border-radius: 2px;
+  padding: 5px;
+  border-radius: 3px;
 }
-.spec-cell {
+.link-perf-grid .spec-cell {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 10px;
+  font-size: 9px;
 }
-.spec-cell label {
+.link-perf-grid .spec-cell label {
   color: #415169;
 }
-.spec-cell .val {
+.link-perf-grid .spec-cell .val {
   font-weight: bold;
 }
 
@@ -1255,51 +1270,28 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 5px;
+  border-top: 1px dashed #142235;
+  padding-top: 2px;
+  margin-top: 2px;
 }
 .link-card-bottom-bar .time {
-  font-size: 9px;
+  font-size: 8px;
   color: #334155;
 }
 .detail-text-btn {
-  font-size: 10px !important;
+  font-size: 9px !important;
   color: #38bdf8 !important;
   padding: 0 !important;
 }
 
-/* ==================== 弹出视窗定制 ==================== */
-::v-deep .dark-custom-dialog {
-  background: #0c1424 !important;
-  border: 1px solid #1a293d !important;
+/* 通用基础辅助 */
+.bg-center-radar {
+  background-image: radial-gradient(
+    circle at 50% 20%,
+    rgba(6, 182, 212, 0.04) 0%,
+    transparent 75%
+  );
 }
-::v-deep .dark-custom-dialog .el-dialog__title {
-  color: #38bdf8 !important;
-  font-size: 12px;
-  font-weight: bold;
-}
-.dialog-detail-matrix {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 8px;
-}
-.detail-row {
-  background: #070c14;
-  padding: 6px 10px;
-  border-radius: 3px;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-.detail-row .lbl {
-  font-size: 10px;
-  color: #415169;
-}
-.detail-row .val {
-  font-size: 11px;
-  font-weight: bold;
-  color: #fff;
-}
-
 .status-running {
   border-left-color: #10b981 !important;
 }
@@ -1307,7 +1299,6 @@ export default {
   border-left-color: #ef4444 !important;
   border-color: rgba(239, 68, 68, 0.2);
 }
-
 .score-good {
   border-color: #10b981;
 }
@@ -1320,32 +1311,26 @@ export default {
 .score-bad .score-val {
   color: #ef4444;
 }
-
 .lvl-crit {
   border-color: rgba(239, 68, 68, 0.2);
-}
-.lvl-safe {
 }
 
 .sub-empty {
   text-align: center;
   font-size: 10px;
   color: #223147;
-  padding: 25px;
+  padding: 20px;
   border: 1px dashed #111b2b;
 }
-
-@keyframes flash {
-  0%,
-  100% {
-    opacity: 0.3;
-  }
-  50% {
-    opacity: 1;
-  }
-}
-.animate-flash {
-  animation: flash 1.5s infinite ease-in-out;
+.sub-empty-horizontal {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  font-size: 10px;
+  color: #223147;
+  border: 1px dashed #111b2b;
+  height: 100%;
 }
 
 .font-num {
@@ -1373,7 +1358,53 @@ export default {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 85px;
+  max-width: 80px;
   display: inline-block;
+}
+
+@keyframes flash {
+  0%,
+  100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+.animate-flash {
+  animation: flash 1.5s infinite ease-in-out;
+}
+
+/* 弹出框深度覆写 */
+::v-deep .dark-custom-dialog {
+  background: #0c1424 !important;
+  border: 1px solid #1a293d !important;
+}
+::v-deep .dark-custom-dialog .el-dialog__title {
+  color: #38bdf8 !important;
+  font-size: 11px;
+  font-weight: bold;
+}
+.dialog-detail-matrix {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6px;
+}
+.detail-row {
+  background: #070c14;
+  padding: 4px 8px;
+  border-radius: 3px;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.detail-row .lbl {
+  font-size: 9px;
+  color: #415169;
+}
+.detail-row .val {
+  font-size: 10px;
+  font-weight: bold;
+  color: #fff;
 }
 </style>
