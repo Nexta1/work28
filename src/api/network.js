@@ -20,3 +20,17 @@ export function xxlltj(data) {
     data
   })
 }
+export function xxfsjg(data) {
+  return request({
+    url: `rest/xxfsjg/page`,
+    method: 'post',
+    data
+  })
+}
+export function wlllDetect(data) {
+  return request({
+    url: '/rest/wlllDetect/page',
+    method: 'post',
+    data
+  })
+}

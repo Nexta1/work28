@@ -269,9 +269,9 @@
 <script>
 import {Graph} from '@antv/x6'
 import {register} from '@antv/x6-vue-shape'
-import * as echarts from 'echarts'
+
 import PtNode from './components/PtNode.vue'
-import {pageQueryTask} from '@/api/combat-task'
+import {taskGetPage} from '@/api/task'
 import SideDetails from './components/SideDetails.vue'
 import {
   getSslxxPage,
@@ -645,7 +645,7 @@ export default {
         .padStart(2, '0')}:${date.getSeconds().toString().padStart(2, '0')}`
     },
     async loadTasks() {
-      const res = await pageQueryTask({pageNum: 1, pageSize: 100})
+      const res = await taskGetPage({pageNum: 1, pageSize: 100})
       this.taskList = res.data.list || []
       if (this.taskList.length > 0) this.currentTaskName = this.taskList[0].RWMC
     },

@@ -443,7 +443,8 @@
 
 <script>
 import * as echarts from 'echarts'
-import {getsbxxPage, getPlatformPage, wlzt} from '@/api/platform'
+import {getsbxxPage, getPlatformPage} from '@/api/platform'
+import {wlzt} from '@/api/network'
 
 export default {
   name: 'LinkPerformanceMonitor',

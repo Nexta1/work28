@@ -218,9 +218,9 @@
 
 <script>
 import {Graph, Shape} from '@antv/x6'
-import {pageQueryTask} from '@/api/combat-task'
-import {queryNetworkTree} from '@/api/network-requirement'
-import {wlzt, xxlltj} from '@/api/wl'
+import {taskGetPage} from '@/api/task'
+
+import {wlzt, xxlltj, findTree} from '@/api/network'
 import {transformTopologyData} from './test'
 
 export default {
@@ -413,7 +413,7 @@ export default {
 
     loadTaskList() {
       this.loading = true
-      pageQueryTask({pageNum: 1, pageSize: 100})
+      taskGetPage({pageNum: 1, pageSize: 100})
         .then(res => {
           this.taskList = res.data.list || []
           if (this.taskList.length > 0) {
@@ -432,7 +432,7 @@ export default {
     onTaskSelect() {
       if (!this.filterForm.ZZRWID) return
       this.loading = true
-      queryNetworkTree(this.filterForm.ZZRWID)
+      findTree(this.filterForm.ZZRWID)
         .then(res => {
           const topologyData = [res.data]
           this.clearGraph()

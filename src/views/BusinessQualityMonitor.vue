@@ -344,12 +344,11 @@
 import * as echarts from 'echarts'
 // 导入对应的后端真实服务层接口（分页标准一致）
 import {
-  getWlllDetectPage,
   getPlatformPage,
   getServiceInfoPage,
   getZzrwqzPage
 } from '@/api/platform'
-
+import {wlllDetect} from '@/api/network'
 export default {
   name: 'BusinessQualityMonitor',
   data() {
@@ -457,7 +456,7 @@ export default {
                 : undefined
           }
         }
-        const res = await getWlllDetectPage(payload)
+        const res = await wlllDetect(payload)
         this.linkDetectList = res?.rows || res?.data?.list || []
 
         // 【若无接口数据：自动注入高仿真模拟数据集进行大屏保障】
