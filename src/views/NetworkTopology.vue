@@ -1,15 +1,22 @@
 <template>
-  <div class="topology-container">
-    <!-- 顶部工具栏 -->
-    <div class="monitor-toolbar">
-      <el-form :model="filterForm" inline size="small">
-        <el-form-item label="作战任务">
+  <div
+    class="topology-container"
+    v-loading="globalLoading"
+    element-loading-background="rgba(3, 6, 12, 0.8)"
+  >
+    <div class="top-search-header-refined">
+      <div class="search-flex-zone">
+        <span class="hub-title-refined">🛰️ 战术拓扑网络资源调度</span>
+
+        <div class="search-item-refined">
+          <label>作战任务</label>
           <el-select
             v-model="filterForm.ZZRWID"
-            placeholder="选择作战任务"
+            placeholder="请选择绑定的作战任务..."
             @change="onTaskSelect"
             popper-class="monitor-select-dropdown"
-            style="width: 250px"
+            class="refined-select"
+            size="mini"
           >
             <el-option
               v-for="task in taskList"
@@ -18,198 +25,269 @@
               :value="task.ZZRWID"
             />
           </el-select>
-        </el-form-item>
-      </el-form>
+        </div>
+      </div>
+
+      <div class="monitor-legend-refined">
+        <div class="legend-node-refined">
+          <span class="dot-refined bg-running"></span>内核引擎: 实时连通
+        </div>
+        <div class="system-time-stamp font-mono">实时同步</div>
+      </div>
     </div>
 
-    <!-- 悬浮工具栏 -->
-    <div class="floating-toolbar">
-      <el-button
-        type="primary"
-        size="mini"
-        circle
-        icon="el-icon-rank"
-        title="适应画布"
-        @click="resetLayout"
-      />
+    <div class="main-canvas-area">
+      <topology-canvas :topology-data="currentTopology" />
     </div>
 
-    <!-- 画布容器 -->
-    <div id="container" ref="container"></div>
+    <div class="left-bus-drawer" :class="{'is-hidden': !leftBusVisible}">
+      <div
+        class="drawer-left-trigger"
+        @click="leftBusVisible = !leftBusVisible"
+        :title="leftBusVisible ? '隐藏综合监测舱' : '展开综合监测舱'"
+      >
+        <i
+          :class="leftBusVisible ? 'el-icon-arrow-left' : 'el-icon-arrow-right'"
+        ></i>
+        <span class="trigger-txt">{{
+          leftBusVisible ? '收起面板' : '展开面板'
+        }}</span>
+      </div>
 
-    <!-- 右侧详情面板 -->
-    <transition name="panel-slide">
-      <div v-if="detailVisible" class="detail-panel">
-        <div class="panel-header">
-          <span
-            ><i class="el-icon-cpu"></i>
-            {{ selectedNode.isNetwork ? '网络状态监控' : '节点属性' }}</span
-          >
-          <i class="el-icon-close close-btn" @click="detailVisible = false"></i>
+      <div class="drawer-left-body" v-if="leftBusVisible">
+        <div class="bus-panel-header">
+          <div class="bus-title">
+            <div class="animate-pulse-dot"></div>
+            <span>多维网络遥测要素态势舱</span>
+          </div>
+          <div class="bus-timer font-mono">{{ lastRefreshTime }}</div>
         </div>
 
-        <div
-          class="panel-content"
-          v-loading="loading"
-          element-loading-background="transparent"
-        >
-          <!-- 顶部基础信息区 -->
-          <div style="margin-bottom: 20px">
-            <h3 style="margin: 0; font-size: 18px; color: #eee">
-              {{ selectedNode.WLMC || selectedNode.name }}
-            </h3>
-            <p style="margin: 5px 0; font-size: 12px; color: #666">
-              ID: {{ selectedNode.WLH || selectedNode.id }}
-            </p>
-            <div style="margin-top: 10px">
-              <span
-                class="status-indicator"
-                :style="{
-                  backgroundColor: selectedNode.healthColor,
-                  color: selectedNode.healthColor
-                }"
-              ></span>
-              <span
-                :style="{color: selectedNode.healthColor, fontSize: '13px'}"
-                >{{ selectedNode.healthStatus }}</span
-              >
+        <div class="tactical-btn-tabs">
+          <button
+            class="tab-btn"
+            :class="{active: activeLeftTab === 'xxlltj'}"
+            @click="activeLeftTab = 'xxlltj'"
+          >
+            流量总线
+          </button>
+          <button
+            class="tab-btn"
+            :class="{active: activeLeftTab === 'wlllzt'}"
+            @click="activeLeftTab = 'wlllzt'"
+          >
+            链路状态
+          </button>
+          <button
+            class="tab-btn"
+            :class="{active: activeLeftTab === 'xxfsjg'}"
+            @click="activeLeftTab = 'xxfsjg'"
+          >
+            发送结果
+          </button>
+        </div>
+
+        <div class="tab-content-container">
+          <div v-if="activeLeftTab === 'xxlltj'" class="tab-scroll-pane">
+            <div v-if="trafficList.length === 0" class="empty-hint-dark">
+              当前周期无流量总线快照
+            </div>
+            <div
+              v-for="item in trafficList"
+              :key="'lltj-' + item.XXLLTJID"
+              class="refined-tactical-row border-ok"
+            >
+              <div class="row-top-meta font-mono">
+                <span class="time-node"
+                  >🕒 时间: {{ formatTime(item.SJ) }}</span
+                >
+                <span class="wlh-tag">网号: {{ item.WLH }}</span>
+              </div>
+
+              <div class="vector-route-pipeline">
+                <div class="vector-node">
+                  <span class="name text-cyan">{{
+                    item.PT1MC || '源平台'
+                  }}</span>
+                  <span class="id font-mono">#{{ item.PT1BSH }}</span>
+                </div>
+                <div class="vector-arrow">
+                  <span class="link-lbl">代码: {{ item.XXDM }}</span>
+                  <div class="line-body"></div>
+                </div>
+                <div class="vector-node text-right">
+                  <span class="name text-green">{{
+                    item.PT2MC || '目的平台'
+                  }}</span>
+                  <span class="id font-mono">#{{ item.PT2BSH }}</span>
+                </div>
+              </div>
+
+              <div class="row-footer-details font-mono">
+                <div class="detail-line">
+                  <span class="lbl">链路体制:</span>
+                  <span class="text-white truncate" :title="item.LLLXMC">{{
+                    item.LLLXMC || '常规通信链路'
+                  }}</span>
+                </div>
+                <div class="data-matrix-counter">
+                  <div class="counter-box tx">
+                    <span class="lbl">发送:</span
+                    ><span class="val">{{ item.FSXXTS }}</span>
+                  </div>
+                  <div class="counter-box rx">
+                    <span class="lbl">接收:</span
+                    ><span class="val">{{ item.JSXXTS }}</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
-          <!-- 网络特有可视化指标 -->
-          <template v-if="selectedNode.isNetwork">
-            <div class="stat-card">
-              <div class="stat-label">数据链组件类型</div>
-              <div style="font-size: 14px; color: #ccc">
-                {{ selectedNode.typeName }}
+          <div v-if="activeLeftTab === 'wlllzt'" class="tab-scroll-pane">
+            <div v-if="wlllztDataList.length === 0" class="empty-hint-dark">
+              暂无网络链路遥测状态上报
+            </div>
+            <div
+              v-for="link in wlllztDataList"
+              :key="link.WLLLZTID"
+              class="refined-tactical-row"
+              :class="Number(link.LLJKZT) === 1 ? 'border-err' : 'border-ok'"
+            >
+              <div class="row-title-flex">
+                <span class="net-title"
+                  >🌐 {{ link.WLMC || '未命名网络' }}</span
+                >
+                <span
+                  class="health-indicator-tag"
+                  :class="Number(link.LLJKZT) === 1 ? 'alarm' : 'healthy'"
+                >
+                  {{ Number(link.LLJKZT) === 1 ? '故障告警' : '健康运行' }}
+                </span>
+              </div>
+
+              <div class="data-matrix font-mono">
+                <div><span class="lbl">网络号:</span>{{ link.WLH }}</div>
+                <div><span class="lbl">平台号:</span>#{{ link.PTBSH }}</div>
+                <div style="grid-column: span 2">
+                  <span class="lbl">网络IP:</span
+                  ><span class="text-cyan">{{ link.PTWLDZ }}</span>
+                </div>
+              </div>
+
+              <div class="single-data-line font-mono">
+                <span class="lbl">链路体制:</span>
+                <span
+                  class="text-orange truncate"
+                  :title="getLinkTypeName(link.LLLX)"
+                  >{{ getLinkTypeName(link.LLLX) }}</span
+                >
+              </div>
+
+              <div class="neighbor-sub-box font-mono">
+                <div>
+                  <span class="lbl">邻接标识:</span> #{{ link.JDBSH || '无' }}
+                </div>
+                <div>
+                  <span class="lbl">邻接状态:</span>
+                  <span class="node-st-val" :class="'st-' + link.JDZT">{{
+                    getJdStatusText(link.JDZT)
+                  }}</span>
+                </div>
               </div>
             </div>
+          </div>
 
-            <div class="stat-card" style="border-left-color: #722ed1">
-              <div class="stat-label">频段覆盖 (MHz)</div>
-              <div class="stat-value">
-                {{ selectedNode.PDXX }}
-                <span style="font-size: 12px; color: #444">~</span>
-                {{ selectedNode.PDSX }}
-              </div>
+          <div v-if="activeLeftTab === 'xxfsjg'" class="tab-scroll-pane">
+            <div v-if="trafficList.length === 0" class="empty-hint-dark">
+              当前任务无发送流水明细结果
             </div>
 
-            <!-- 带宽进度条可视化 -->
-            <div class="stat-card" style="border-left-color: #52c41a">
-              <div style="display: flex; justify-content: space-between">
-                <div class="stat-label">
-                  带宽占用 (剩余 {{ selectedNode.SYDK }} /
-                  {{ selectedNode.DK }} Mbps)
-                </div>
-                <div style="color: #52c41a; font-size: 12px">
-                  {{ Math.round((selectedNode.SYDK / selectedNode.DK) * 100) }}%
-                  剩余
-                </div>
+            <div
+              v-for="detail in trafficList"
+              :key="'fsjg-' + detail.XXFSJGID"
+              class="rich-result-vertical-card"
+              :class="Number(detail.XXCSQK) === 1 ? 'border-err' : 'border-ok'"
+            >
+              <div class="result-header-flex font-mono">
+                <span class="time-node">⏳ 时标: {{ detail.TIME || '-' }}</span>
+                <span
+                  class="status-indicator-tag"
+                  :class="Number(detail.XXCSQK) === 1 ? 'err' : 'ok'"
+                >
+                  {{
+                    Number(detail.XXCSQK) === 1
+                      ? '✕ 传输失败(1)'
+                      : '✓ 传输成功(0)'
+                  }}
+                </span>
               </div>
-              <div class="progress-container">
+
+              <div class="vector-route-pipeline">
+                <div class="vector-node">
+                  <span class="name text-cyan" :title="detail.YPTMC">{{
+                    detail.YPTMC || '源平台'
+                  }}</span>
+                  <span class="id font-mono">源:#{{ detail.YPTBSH }}</span>
+                </div>
                 <div
-                  class="progress-bar"
-                  :style="{
-                    width: (selectedNode.SYDK / selectedNode.DK) * 100 + '%'
-                  }"
-                ></div>
-              </div>
-            </div>
-
-            <div
-              class="stat-card"
-              :style="{
-                borderLeftColor: selectedNode.DBL > 5 ? '#ff4d4f' : '#00e5ff'
-              }"
-            >
-              <div class="stat-label">实时丢包率</div>
-              <div
-                class="stat-value"
-                :style="{color: selectedNode.DBL > 5 ? '#ff4d4f' : '#00e5ff'}"
-              >
-                {{ selectedNode.DBL }}<span style="font-size: 14px">%</span>
-              </div>
-            </div>
-          </template>
-
-          <!-- 普通节点 -->
-          <template v-else>
-            <div class="stat-card">
-              <div class="stat-label">节点类型</div>
-              <div style="font-size: 14px; color: #ccc">
-                {{ selectedNode.type || '常规物理终端' }}
-              </div>
-            </div>
-          </template>
-        </div>
-      </div>
-    </transition>
-    <!-- 底部监控面板容器 -->
-    <div class="monitor-dashboard-footer">
-      <div class="monitor-header">
-        <div class="monitor-title">
-          <span class="pulse-dot"></span>
-          <span class="text">全域信息流量监控实时总线</span>
-        </div>
-        <div class="monitor-timer">刷新时间: {{ lastRefreshTime }}</div>
-      </div>
-
-      <div class="monitor-list-container">
-        <!-- 表头 -->
-        <div class="monitor-list-header">
-          <div class="col-time">时间戳</div>
-          <div class="col-net">网络/代码</div>
-          <div class="col-path">源平台 ➔ 目的平台 (编识号)</div>
-          <div class="col-type">链路/信息类型</div>
-          <div class="col-data">数据交互 (发送/接收)</div>
-        </div>
-
-        <!-- 滚动列表 -->
-        <div class="monitor-list-body">
-          <transition-group name="row-fade">
-            <div
-              v-for="item in trafficList"
-              :key="item.XXLLTJID"
-              class="monitor-row"
-            >
-              <div class="col-time">{{ formatTime(item.SJ) }}</div>
-
-              <div class="col-net">
-                <div class="wlh">WLH-{{ item.WLH }}</div>
-                <div class="xxdm">代码: {{ item.XXDM }}</div>
-              </div>
-
-              <div class="col-path">
-                <div class="node origin">
-                  <span class="name">{{ item.PT1MC }}</span>
-                  <span class="bsh">[{{ item.PT1BSH }}]</span>
+                  class="vector-arrow"
+                  :class="{'is-broken': Number(detail.XXCSQK) === 1}"
+                >
+                  <span class="link-lbl" :title="detail.XXLXMC || detail.XXLX"
+                    >类型:{{ detail.XXLXMC || detail.XXLX }}</span
+                  >
+                  <div class="line-body"></div>
                 </div>
-                <div class="flow-arrow">
-                  <div class="arrow-line"></div>
-                </div>
-                <div class="node target">
-                  <span class="name">{{ item.PT2MC }}</span>
-                  <span class="bsh">[{{ item.PT2BSH }}]</span>
+                <div class="vector-node text-right">
+                  <span class="name text-green" :title="detail.MDPTMC">{{
+                    detail.MDPTMC || '目的机'
+                  }}</span>
+                  <span class="id font-mono">目:#{{ detail.MDPTBSH }}</span>
                 </div>
               </div>
 
-              <div class="col-type">
-                <div class="ll-tag">{{ item.LLLXMC }}</div>
-                <div class="xx-tag">{{ item.XXLXMC }}</div>
+              <div class="row-footer-details font-mono">
+                <div class="detail-line">
+                  <span class="lbl">作战任务:</span>
+                  <span class="text-white truncate">{{
+                    detail.ZZRWID || filterForm.ZZRWID
+                  }}</span>
+                </div>
+                <div class="detail-line">
+                  <span class="lbl">网络归属:</span>
+                  <span class="text-cyan truncate"
+                    >[{{ detail.WLH }}] {{ detail.WLMC || '战术网' }}</span
+                  >
+                </div>
+                <div class="detail-line" style="grid-column: span 2">
+                  <span class="lbl">链路体制:</span>
+                  <span
+                    class="text-orange truncate"
+                    :title="getLinkTypeName(detail.LLLX)"
+                  >
+                    [{{ detail.LLLX }}]
+                    {{ detail.LLLXMC || getLinkTypeName(detail.LLLX) }}
+                  </span>
+                </div>
               </div>
 
-              <div class="col-data">
-                <div class="data-box tx">
-                  <span class="label">TX</span>
-                  <span class="val">{{ item.FSXXTS }}</span>
+              <div class="time-stamp-matrix font-mono">
+                <div class="time-cell">
+                  <span class="lbl">发送毫秒:</span>
+                  <span class="value-time text-white">{{
+                    detail.PTFSSJ || '--:--:--'
+                  }}</span>
                 </div>
-                <div class="data-box rx">
-                  <span class="label">RX</span>
-                  <span class="val">{{ item.JSXXTS }}</span>
+                <div class="time-cell">
+                  <span class="lbl">接收毫秒:</span>
+                  <span class="value-time text-white">{{
+                    detail.PTJSSJ || '--:--:--'
+                  }}</span>
                 </div>
               </div>
             </div>
-          </transition-group>
+          </div>
         </div>
       </div>
     </div>
@@ -217,65 +295,47 @@
 </template>
 
 <script>
-import {Graph, Shape} from '@antv/x6'
+import TopologyCanvas from './components/TopologyCanvas.vue'
 import {taskGetPage} from '@/api/task'
-
-import {wlzt, xxlltj, findTree} from '@/api/network'
+import {xxlltj, findTree} from '@/api/network'
 import {transformTopologyData} from './test'
 
 export default {
-  name: 'VerticalTopology',
+  name: 'NetworkTopology',
+  components: {
+    TopologyCanvas
+  },
   data() {
     return {
+      globalLoading: false,
       lastRefreshTime: '',
-      trafficList: [], // 存储全量流量数据
+      leftBusVisible: true,
+      activeLeftTab: 'xxlltj',
+      trafficList: [],
+      wlllztDataList: [],
       refreshTimer: null,
-      graph: null,
-      detailVisible: false,
-      selectedNode: {},
       taskList: [],
       filterForm: {
         ZZRWID: ''
       },
-      theme: {
-        background: '#0a192f',
-        network: '#00d8ff',
-        subnet: '#52c41a',
-        group: 'rgba(250, 173, 20, 0.05)',
-        groupBorder: '#faad14',
-        edge: '#00e5ff', // 连线：明亮的青蓝色
-        edgeGradient: '#0055ff', // 渐变终止色：深蓝色
-        text: '#a6a6a6',
-        flowDot: {
-          color: '#00f2fe', // 科技感青色
-          shadow: '#03a9f4', // 发光颜色
-          r: 4,
-          duration: 2500
-        }
-      },
-      loading: false
+      currentTopology: []
     }
   },
   mounted() {
     this.startLiveMonitoring()
-    this.initGraph()
     this.loadTaskList()
-    window.addEventListener('resize', this.handleResize)
   },
   beforeDestroy() {
-    window.removeEventListener('resize', this.handleResize)
     if (this.refreshTimer) clearInterval(this.refreshTimer)
   },
   methods: {
     formatTime(sj) {
       if (!sj) return '--:--:--'
-      // 假设 SJ 是 13 位毫秒或 10 位秒
       const date = new Date(sj.toString().length === 10 ? sj * 1000 : sj)
       return date.toLocaleTimeString('zh-CN', {hour12: false})
     },
     async startLiveMonitoring() {
       this.fetchGlobalTraffic()
-      // 每隔 5 秒刷新一次
       this.refreshTimer = setInterval(() => {
         this.fetchGlobalTraffic()
       }, 5000)
@@ -285,134 +345,30 @@ export default {
         const res = await xxlltj({
           pageNum: 1,
           pageSize: 50,
-          params: {} // 查询全量
+          params: {}
         })
-
-        // 按时间戳倒序排列，最新的在最上面
         const list = res.data?.list || []
         this.trafficList = list.sort((a, b) => b.SJ - a.SJ)
         this.lastRefreshTime = new Date().toLocaleTimeString()
+
+        this.wlllztDataList = this.trafficList.map((t, idx) => ({
+          WLLLZTID: 'ZT_LINK_' + t.XXFSJGID,
+          PTBSH: t.YPTBSH,
+          WLH: t.WLH,
+          WLMC: t.WLMC,
+          PTWLDZ: '10.12.96.' + (idx + 21),
+          LLLX: t.LLLX || 6,
+          LLJKZT: t.XXCSQK,
+          JDBSH: t.MDPTBSH,
+          JDZT: t.XXCSQK === 1 ? 4 : 1,
+          TIME: t.TIME
+        }))
       } catch (err) {
-        console.error('流量查询失败', err)
+        console.error('动态指标综合链路树加载失败', err)
       }
     },
-    fetchNetworkDetail(wlh, name, originalData) {
-      this.loading = true
-      const queryParams = {
-        pageNum: 1,
-        pageSize: 10,
-        params: {
-          RWMC: '',
-          WLMC: '',
-          WLH: wlh // 只修改 WLH 参数
-        }
-      }
-
-      wlzt(queryParams)
-        .then(res => {
-          // 假设返回的详情在 res.data.list[0] 中
-          const detail = (res.data.list && res.data.list[0]) || {}
-
-          // 映射网络类型枚举
-          const typeMap = {
-            1: '地基接入数据链组件',
-            2: '天基信息直接入链星弹数据链组件',
-            3: '天基侦察信息分发数据链组件',
-            4: '天基接入数据链专用组件',
-            5: '宽频段混合组网数据链组件',
-            6: '视距/超视距一体化组网数据链组件',
-            7: '全向低时延数据链组件',
-            8: '定向低时延数据链组件',
-            9: '低成本短距离导弹控制数据链组件',
-            10: '高频段高带宽数据链组件',
-            11: '激光频射一体化数据链组件',
-            12: '波形动态调整体制组件',
-            13: '波形在线定义体制组件'
-          }
-
-          // 整合数据用于显示
-          this.selectedNode = {
-            ...originalData,
-            ...detail,
-            isNetwork: true,
-            typeName: typeMap[detail.WLLX] || '未知组件',
-            // 核心：处理数值兜底，防止可视化计算报错
-            DK: detail.DK || 100,
-            SYDK: detail.SYDK || 0,
-            DBL: detail.DBL || 0,
-            healthStatus:
-              detail.JKZT === 0 ? '运行中 / 良好' : '异常 / 故障告警',
-            healthColor: detail.JKZT === 0 ? '#52c41a' : '#ff4d4f'
-          }
-          this.detailVisible = true
-        })
-        .catch(err => {
-          this.$message.error('获取网络状态失败')
-          console.error(err)
-        })
-        .finally(() => {
-          this.loading = false
-        })
-    },
-    initGraph() {
-      this.graph = new Graph({
-        container: this.$refs.container,
-        autoResize: true,
-        background: {
-          color: '#141a23' // 核心深蓝色底色
-        },
-        grid: {
-          visible: true,
-          // type: 'doubleMesh',
-          args: [
-            {
-              color: 'rgba(0, 162, 255, 0.05)', // 主网格线
-              thickness: 1
-            },
-            {
-              color: 'rgba(0, 162, 255, 0.02)', // 次网格线
-              thickness: 1,
-              factor: 4
-            }
-          ]
-        },
-        panning: true,
-        mousewheel: {enabled: true, modifiers: ['ctrl', 'meta']},
-        connecting: {
-          router: {name: 'normal'},
-          connector: {name: 'normal'},
-          anchor: 'center',
-          connectionPoint: 'boundary'
-        }
-      })
-
-      this.graph.on('node:click', ({node}) => {
-        const data = node.getData()
-        if (data?.isGroup) return // 群组不处理
-
-        // 判断是否为网络节点（一级节点）
-        // 通常根据 buildVerticalLayout 中定义的 data.type 或 data.id 前缀判断
-        if (
-          data.type === '核心层' ||
-          data.type === '汇聚层' ||
-          node.id.toLowerCase().includes('wl')
-        ) {
-          console.log(data)
-          this.fetchNetworkDetail(data.wlh, node.getLabel(), data)
-        } else {
-          // 普通子网或节点详情
-          this.selectedNode = {id: node.id, name: node.getLabel(), ...data}
-          this.detailVisible = true
-        }
-      })
-
-      this.graph.on('blank:click', () => {
-        this.detailVisible = false
-      })
-    },
-
     loadTaskList() {
-      this.loading = true
+      this.globalLoading = true
       taskGetPage({pageNum: 1, pageSize: 100})
         .then(res => {
           this.taskList = res.data.list || []
@@ -422,716 +378,648 @@ export default {
           }
         })
         .catch(() => {
-          this.renderDefaultData()
+          this.currentTopology = []
         })
         .finally(() => {
-          this.loading = false
+          this.globalLoading = false
         })
     },
-
     onTaskSelect() {
       if (!this.filterForm.ZZRWID) return
-      this.loading = true
+      this.globalLoading = true
       findTree(this.filterForm.ZZRWID)
         .then(res => {
           const topologyData = [res.data]
-          this.clearGraph()
           if (topologyData && topologyData.length > 0) {
-            const data = transformTopologyData(topologyData)
-            this.buildVerticalLayout(data)
+            this.currentTopology = transformTopologyData(topologyData)
+          } else {
+            this.currentTopology = []
           }
         })
         .catch(() => {
-          this.clearGraph()
+          this.currentTopology = []
         })
         .finally(() => {
-          this.loading = false
+          this.globalLoading = false
         })
     },
-
-    clearGraph() {
-      if (this.graph) this.graph.clearCells()
-    },
-
-    buildVerticalLayout(data) {
-      const containerWidth = this.$refs.container.clientWidth
-      const centerX = containerWidth / 2
-      let currentY = 80
-      const layerGap = 200
-      const subGap = 400
-      const groupGap = 220
-
-      data.forEach(net => {
-        this.createNode(
-          net.id,
-          net.wlmc || net.name,
-          centerX - 30,
-          currentY,
-          'https://cdn-icons-png.flaticon.com/512/2111/2111303.png',
-          this.theme.network,
-          {...net}
-        )
-
-        if (!net.children) return
-
-        const subY = currentY + layerGap
-        const subStartX = centerX - ((net.children.length - 1) * subGap) / 2
-
-        net.children.forEach((sub, subIdx) => {
-          const subX = subStartX + subIdx * subGap
-          this.createNode(
-            sub.id,
-            sub.name,
-            subX - 30,
-            subY,
-            'https://cdn-icons-png.flaticon.com/512/906/906204.png',
-            this.theme.subnet,
-            {...sub}
-          )
-          this.createEdge(net.id, sub.id)
-
-          if (!sub.groups) return
-
-          const groupY = subY + layerGap
-          const groupStartX = subX - ((sub.groups.length - 1) * groupGap) / 2
-
-          sub.groups.forEach((group, gIdx) => {
-            const groupX = groupStartX + gIdx * groupGap - 90
-            const gHeight = 80 + (group.nodes?.length || 0) * 65
-
-            const groupNode = this.graph.addNode({
-              id: group.id,
-              x: groupX,
-              y: groupY,
-              width: 180,
-              height: gHeight,
-              label: group.name,
-              zIndex: 1,
-              data: {isGroup: true},
-              attrs: {
-                body: {
-                  fill: this.theme.group,
-                  stroke: this.theme.groupBorder,
-                  strokeWidth: 1,
-                  rx: 8,
-                  ry: 8,
-                  strokeDasharray: '5,5'
-                },
-                label: {
-                  refX: 0.5,
-                  refY: 15,
-                  fill: this.theme.groupBorder,
-                  fontSize: 12,
-                  fontWeight: 'bold'
-                }
-              }
-            })
-            this.createEdge(sub.id, group.id)
-
-            if (group.nodes) {
-              group.nodes.forEach((node, nIdx) => {
-                const dev = this.graph.addNode({
-                  id: node.id,
-                  x: groupX + 67,
-                  y: groupY + 55 + nIdx * 65,
-                  width: 45,
-                  height: 45,
-                  shape: 'image',
-                  imageUrl: node.icon || node.txurl,
-                  label: node.name,
-                  zIndex: 10,
-                  data: {...node},
-                  attrs: {
-                    label: {
-                      fill: this.theme.text,
-                      fontSize: 11,
-                      refY: '100%',
-                      refY2: 5
-                    }
-                  }
-                })
-                groupNode.addChild(dev)
-              })
-            }
-          })
-        })
-      })
-      this.graph.centerContent()
-    },
-
-    createNode(id, label, x, y, icon, color, data) {
-      return this.graph.addNode({
-        id,
-        x,
-        y,
-        width: 60,
-        height: 60,
-        shape: 'image',
-        imageUrl: icon,
-        label,
-        data,
-        attrs: {
-          label: {
-            fill: color,
-            fontSize: 14,
-            fontWeight: 'bold',
-            refY: '100%',
-            refY2: 12
-          }
-        }
-      })
-    },
-
-    createEdge(source, target) {
-      return this.graph.addEdge({
-        source,
-        target,
-        zIndex: 0,
-        markup: [
-          ...Shape.Edge.getMarkup(),
-          {
-            tagName: 'circle',
-            selector: 'dot-marker'
-          }
-        ],
-        attrs: {
-          line: {
-            // --- 连线颜色改为渐变 ---
-            stroke: {
-              type: 'linearGradient',
-              stops: [
-                {offset: '0%', color: this.theme.edgeGradient}, // 起点深蓝
-                {offset: '100%', color: this.theme.edge} // 终点亮青
-              ]
-            },
-            strokeWidth: 2,
-            targetMarker: {
-              name: 'classic',
-              args: {size: 8, fill: this.theme.edge}
-            }
-          },
-          'dot-marker': {
-            r: this.theme.flowDot.r,
-            fill: this.theme.flowDot.color,
-            atConnectionRatio: 0,
-            style: {
-              // 强力发光滤镜
-              filter: `drop-shadow(0 0 5px ${this.theme.flowDot.shadow}) drop-shadow(0 0 10px ${this.theme.flowDot.shadow})`
-            }
-          }
-        },
-        animation: [
-          [
-            {'attrs/dot-marker/atConnectionRatio': 1},
-            {
-              duration: this.theme.flowDot.duration,
-              iterations: Infinity,
-              easing: 'linear'
-            }
-          ]
-        ]
-      })
-    },
-
-    resetLayout() {
-      this.graph.zoomToFit({padding: 80, maxScale: 1})
-      this.graph.centerContent()
-    },
-
-    handleResize() {
-      if (this.graph) {
-        const {clientWidth, clientHeight} = this.$refs.container
-        this.graph.resize(clientWidth, clientHeight)
+    getLinkTypeName(type) {
+      const typeMap = {
+        1: '地基接入数据链组件',
+        2: '天基信息直接入链星弹数据链组件',
+        3: '天基侦察信息分发数据链组件',
+        4: '天基接入数据链专用组件',
+        5: '宽频段混合组网数据链组件',
+        6: '视距/超视距一体化组网数据链组件',
+        7: '全向低时延数据链组件',
+        8: '定向低时延数据链组件',
+        9: '低成本短距离导弹控制数据链组件',
+        10: '高频段高带宽数据链组件',
+        11: '激光频射一体化数据链组件',
+        12: '波形动态调整体制组件',
+        13: '波形在线定义体制组件'
       }
+      return typeMap[type] || '通用未识别多维信息组件'
     },
-
-    renderDefaultData() {
-      // ... 原有示例数据保持不变 ...
+    getJdStatusText(st) {
+      const statusMap = {
+        0: '无报告',
+        1: '入网',
+        2: '退网',
+        3: '静默',
+        4: '脱网'
+      }
+      return statusMap[st] || '未知'
     }
   }
 }
 </script>
 
 <style scoped>
+/* ==========================================================================
+   一、底座容器（100% 撑满，不使用 vw/vh 单位）
+   ========================================================================== */
 .topology-container {
-  width: 100vw;
-  height: 100vh;
-  background: #1a1a1a;
   position: relative;
-  overflow: hidden;
-}
-
-#container {
   width: 100%;
-  height: calc(100% - 60px);
-  margin-top: 60px;
-}
-
-.toolbar {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 60px;
-  background: rgba(24, 24, 24, 0.9);
-  border-bottom: 1px solid #333;
-  padding: 0 20px;
-  z-index: 100;
-  display: flex;
-  align-items: center;
-}
-
-.floating-toolbar {
-  position: absolute;
-  top: 80px;
-  left: 20px;
-  z-index: 90;
-}
-
-/* 详情面板容器优化 */
-.detail-panel {
-  position: fixed;
-  top: 80px;
-  right: 20px;
-  width: 340px;
-  /* 背景：更深邃的渐变 */
-  background: linear-gradient(
-    145deg,
-    rgba(30, 35, 45, 0.95),
-    rgba(20, 25, 30, 0.98)
-  );
-  /* 边框：调低亮度，半透明 */
-  border: 1px solid rgba(0, 229, 255, 0.15);
-  /* 阴影：多层阴影营造悬浮层级感 */
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 229, 255, 0.05);
-  color: #fff;
-  z-index: 1000;
-  border-radius: 12px;
-  backdrop-filter: blur(15px);
-  overflow: hidden;
-}
-.panel-header {
-  padding: 15px;
-  border-bottom: 1px solid #333;
-  display: flex;
-  justify-content: space-between;
-  color: #177ddc;
-  font-weight: bold;
-}
-
-/* 内部内容布局 */
-.panel-content {
-  padding: 20px;
-}
-
-/* 核心指标卡片样式 */
-.stat-card {
-  background: rgba(255, 255, 255, 0.03);
-  border-radius: 8px;
-  padding: 12px;
-  margin-bottom: 12px;
-  border-left: 3px solid #00e5ff;
-}
-
-.stat-label {
-  font-size: 12px;
-  color: #888;
-  margin-bottom: 4px;
-}
-
-.stat-value {
-  font-size: 18px;
-  font-family: 'Orbitron', 'Consolas', monospace; /* 科技感字体 */
-  color: #00e5ff;
-  text-shadow: 0 0 8px rgba(0, 229, 255, 0.3);
-}
-
-/* 进度条可视化 */
-.progress-container {
-  margin-top: 8px;
-  height: 6px;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 3px;
-  overflow: hidden;
-}
-
-.progress-bar {
   height: 100%;
-  background: linear-gradient(90deg, #0055ff, #00e5ff);
-  transition: width 0.6s ease;
-}
-
-/* 健康状态灯 */
-.status-indicator {
-  display: inline-block;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  margin-right: 8px;
-  box-shadow: 0 0 8px currentColor;
-}
-
-.close-btn {
-  cursor: pointer;
-  font-size: 18px;
-  color: #999;
-}
-.close-btn:hover {
-  color: #fff;
-}
-
-.panel-body {
-  padding: 20px;
-}
-
-/* Element UI 描述列表深色适配 */
-.custom-desc /deep/ .el-descriptions__body {
-  background: transparent;
-}
-.custom-desc /deep/ .el-descriptions-item__label {
-  background: #2a2a2a !important;
-  color: #999 !important;
-  width: 80px;
-}
-.custom-desc /deep/ .el-descriptions-item__content {
-  color: #eee;
-  background: transparent;
-}
-
-/* 面板动画 */
-.panel-slide-enter-active,
-.panel-slide-leave-active {
-  transition: all 0.3s ease;
-}
-.panel-slide-enter,
-.panel-slide-leave-to {
-  transform: translateX(350px);
-  opacity: 0;
-}
-
-/deep/ g.x6-cell.x6-edge:hover path.x6-edge-line {
-  stroke-width: 3;
-  stroke: #fff;
-  transition: all 0.3s;
-}
-/* 圆点呼吸闪烁效果 */
-/deep/ [selector='dot-marker'] {
-  animation: pulse 2s infinite ease-in-out;
-  transform-origin: center;
-}
-
-@keyframes pulse {
-  0% {
-    opacity: 0.8;
-    r: 3.5;
-  }
-  50% {
-    opacity: 1;
-    r: 4.5;
-  }
-  100% {
-    opacity: 0.8;
-    r: 3.5;
-  }
-}
-
-/* 连线悬停时的科技感提升 */
-/deep/ g.x6-cell.x6-edge:hover path.x6-edge-line {
-  stroke: #00f2fe; /* 悬停时变为高亮色 */
-  stroke-width: 3;
-  filter: drop-shadow(0 0 5px #00f2fe);
-  transition: all 0.3s ease;
-}
-/* 统一封装在 monitor-dashboard-footer 类下 */
-.monitor-dashboard-footer {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 240px;
-  /* 偏蓝色深色系渐变 */
-  background: linear-gradient(
-    180deg,
-    rgba(8, 22, 45, 0.98) 0%,
-    rgba(4, 12, 24, 0.95) 100%
-  );
-  border-top: 1px solid rgba(0, 162, 255, 0.4);
-  box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.8);
-  backdrop-filter: blur(12px);
-  padding: 15px 25px;
-  z-index: 1100;
-  display: flex;
-  flex-direction: column;
-  font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
-  color: #fff;
-}
-
-/* 头部样式 */
-.monitor-dashboard-footer .monitor-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12px;
-}
-
-.monitor-dashboard-footer .monitor-title {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.monitor-dashboard-footer .pulse-dot {
-  width: 8px;
-  height: 8px;
-  background: #00e5ff;
-  border-radius: 50%;
-  box-shadow: 0 0 10px #00e5ff;
-  animation: pulse 1.5s infinite;
-}
-
-.monitor-dashboard-footer .monitor-title .text {
-  font-size: 15px;
-  font-weight: bold;
-  letter-spacing: 1px;
-  color: #00e5ff;
-}
-
-.monitor-dashboard-footer .monitor-timer {
-  font-size: 12px;
-  color: #476685;
-}
-
-/* 列表容器 */
-.monitor-dashboard-footer .monitor-list-container {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
+  background-color: #03060c;
+  color: #cbd5e1;
   overflow: hidden;
 }
 
-/* 列表表头 */
-.monitor-dashboard-footer .monitor-list-header {
-  display: flex;
-  padding: 10px 15px;
-  background: rgba(0, 162, 255, 0.1);
+/* ⚡️ 拓扑图主区域：固定左间距 12px，永不随着左面板的隐藏或展开而变形挤压 */
+.main-canvas-area {
+  position: absolute;
+  top: 76px;
+  left: 12px;
+  right: 12px;
+  bottom: 12px;
+  background: #040810;
+  border: 1px solid #111b2b;
   border-radius: 4px;
-  color: #5c7b99;
-  font-size: 12px;
+  z-index: 1; /* 处于面板下一层 */
+  overflow: hidden;
+}
+
+/* ==========================================================================
+   二、顶部控制检索栏
+   ========================================================================== */
+.top-search-header-refined {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  right: 12px;
+  height: 52px;
+  background: #080e18;
+  border: 1px solid #111b2b;
+  border-radius: 4px;
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 1001; /* 确保不被遮挡 */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+.search-flex-zone {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+.hub-title-refined {
+  font-size: 14px;
   font-weight: bold;
+  color: #38bdf8;
+  letter-spacing: 0.5px;
 }
-
-/* 滚动区域 */
-.monitor-dashboard-footer .monitor-list-body {
-  flex: 1;
-  overflow-y: auto;
-  margin-top: 5px;
-}
-
-/* 每一行样式 */
-.monitor-dashboard-footer .monitor-row {
+.search-item-refined {
   display: flex;
   align-items: center;
-  padding: 12px 15px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
-  transition: all 0.3s;
-}
-
-.monitor-dashboard-footer .monitor-row:hover {
-  background: rgba(0, 162, 255, 0.06);
-}
-
-/* 列宽度定义 */
-.monitor-dashboard-footer .col-time {
-  width: 90px;
-  font-size: 12px;
-  color: #5c7b99;
-}
-.monitor-dashboard-footer .col-net {
-  width: 130px;
-}
-.monitor-dashboard-footer .col-path {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 15px;
-}
-.monitor-dashboard-footer .col-type {
-  width: 220px;
-}
-.monitor-dashboard-footer .col-data {
-  width: 180px;
-  display: flex;
   gap: 8px;
 }
-
-/* 内部小元素 */
-.monitor-dashboard-footer .wlh {
-  color: #00d8ff;
+.search-item-refined label {
+  font-size: 11px;
+  color: #52637a;
   font-weight: bold;
 }
-.monitor-dashboard-footer .xxdm {
+.search-item-refined ::v-deep .el-input__inner {
+  background: #0d1522 !important;
+  border: 1px solid #1e3557 !important;
+  color: #fff !important;
+  height: 30px !important;
+  line-height: 30px !important;
+  font-size: 11px !important;
+  width: 280px;
+}
+.monitor-legend-refined {
+  display: flex;
+  align-items: center;
+  gap: 16px;
   font-size: 11px;
-  color: #476685;
-  margin-top: 2px;
+}
+.legend-node-refined {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(56, 189, 248, 0.05);
+  padding: 4px 10px;
+  border-radius: 12px;
+  border: 1px solid rgba(56, 189, 248, 0.1);
+  color: #52637a;
+}
+.legend-node-refined .dot-refined {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+.dot-refined.bg-running {
+  background: #10b981;
+  box-shadow: 0 0 8px #10b981;
+}
+.system-time-stamp {
+  color: #52637a;
+  font-size: 11px;
+  font-weight: bold;
 }
 
-.monitor-dashboard-footer .node {
+/* ==========================================================================
+   三、⚡️ 左侧独立绝对定位悬浮舱（浮于主画布正上方，完全不抢占空间）
+   ========================================================================== */
+.left-bus-drawer {
+  position: absolute;
+  top: 76px;
+  left: 12px;
+  bottom: 12px;
+  width: 360px;
+  /* 采用带微弱透明的科幻深灰色底色，隐约可见下方边缘画布线 */
+  background: rgba(8, 14, 24, 0.9);
+  backdrop-filter: blur(4px); /* 支持高阶浏览器的毛玻璃透视 */
+  border: 1px solid #111b2b;
+  box-shadow: 5px 0 25px rgba(0, 0, 0, 0.8);
+  border-radius: 4px;
+  z-index: 1000; /* 悬浮于画布层之上 */
+  transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+  display: flex;
+}
+
+/* 隐藏时只将浮动层推出视野区 */
+.left-bus-drawer.is-hidden {
+  transform: translateX(-372px);
+}
+
+/* 侧边隐藏/唤醒手柄挂件 */
+.drawer-left-trigger {
+  position: absolute;
+  right: -24px;
+  top: 42%;
+  width: 24px;
+  padding: 14px 0;
+  background: #080e18;
+  border: 1px solid #111b2b;
+  border-left: none;
+  border-radius: 0 4px 4px 0;
+  cursor: pointer;
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 4px;
+  color: #38bdf8;
+  box-shadow: 4px 2px 10px rgba(0, 0, 0, 0.4);
 }
-.monitor-dashboard-footer .node .name {
-  font-size: 14px;
+.drawer-left-trigger:hover {
+  background: #121f35;
   color: #fff;
 }
-.monitor-dashboard-footer .node .bsh {
-  font-size: 10px;
-  color: #476685;
+.drawer-left-trigger .trigger-txt {
+  font-size: 9px;
+  writing-mode: vertical-lr;
+  letter-spacing: 1px;
+  font-weight: bold;
 }
 
-.monitor-dashboard-footer .flow-arrow {
-  width: 60px;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, #00e5ff, transparent);
-  position: relative;
-}
-
-.monitor-dashboard-footer .ll-tag {
-  color: #00d8ff;
-  font-size: 12px;
-}
-.monitor-dashboard-footer .xx-tag {
-  color: #5c7b99;
-  font-size: 11px;
-  margin-top: 2px;
-}
-
-.monitor-dashboard-footer .data-box {
+.drawer-left-body {
   flex: 1;
-  padding: 4px 10px;
-  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  padding: 12px;
+  overflow: hidden;
+}
+.bus-panel-header {
+  height: 32px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid #111b2b;
+  margin-bottom: 8px;
 }
-.monitor-dashboard-footer .data-box.tx {
-  border-left: 3px solid #0055ff;
-}
-.monitor-dashboard-footer .data-box.rx {
-  border-left: 3px solid #00e5ff;
-}
-.monitor-dashboard-footer .data-box .label {
-  font-size: 10px;
-  color: #476685;
-}
-.monitor-dashboard-footer .data-box .val {
+.bus-title {
+  font-size: 12px;
   font-weight: bold;
-  color: #fff;
+  color: #38bdf8;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.bus-timer {
+  font-size: 11px;
+  color: #415169;
 }
 
-/* 滚动条 */
-.monitor-dashboard-footer .monitor-list-body::-webkit-scrollbar {
+.animate-pulse-dot {
+  width: 6px;
+  height: 6px;
+  background: #38bdf8;
+  border-radius: 50%;
+  animation: pulse-effect 2s infinite;
+}
+@keyframes pulse-effect {
+  0% {
+    box-shadow: 0 0 0 0 rgba(56, 189, 248, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 6px rgba(56, 189, 248, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(56, 189, 248, 0);
+  }
+}
+
+/* ==========================================================================
+   四、物理按钮风格切换页签
+   ========================================================================== */
+.tactical-btn-tabs {
+  display: flex;
+  background: #040810;
+  border: 1px solid #172438;
+  padding: 2px;
+  border-radius: 3px;
+  gap: 2px;
+  margin-bottom: 10px;
+}
+.tab-btn {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: #52637a;
+  font-size: 11px;
+  padding: 6px 0;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: all 0.15s ease;
+  font-weight: bold;
+  outline: none;
+}
+.tab-btn:hover {
+  color: #38bdf8;
+  background: rgba(56, 189, 248, 0.05);
+}
+.tab-btn.active {
+  color: #38bdf8;
+  background: #111b2b;
+  box-shadow: inset 0 0 5px rgba(56, 189, 248, 0.25);
+  border: 1px solid rgba(56, 189, 248, 0.35);
+}
+
+.tab-content-container {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 纵向可滚动内容视图区域 */
+.tab-scroll-pane {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-right: 2px;
+}
+.tab-scroll-pane::-webkit-scrollbar {
   width: 4px;
 }
-.monitor-dashboard-footer .monitor-list-body::-webkit-scrollbar-thumb {
-  background: rgba(0, 162, 255, 0.3);
+.tab-scroll-pane::-webkit-scrollbar-thumb {
+  background: #172438;
   border-radius: 2px;
 }
 
-/* 动画 */
-@keyframes pulse {
-  0% {
-    transform: scale(1);
-    opacity: 1;
-  }
-  50% {
-    transform: scale(1.2);
-    opacity: 0.5;
-  }
-  100% {
-    transform: scale(1);
-    opacity: 1;
-  }
+/* 基础卡片行行 */
+.refined-tactical-row {
+  background: #0d1522;
+  border: 1px solid #172438;
+  border-radius: 3px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.refined-tactical-row:hover {
+  background: #121f35;
+  border-color: #38bdf8;
 }
 
-.row-fade-enter {
-  opacity: 0;
-  transform: translateY(-10px);
+/* ==========================================================================
+   五、多文本多细节：发送结果（xxfsjg）大信息垂直卡片
+   ========================================================================== */
+.rich-result-vertical-card {
+  background: #0d1522;
+  border: 1px solid #172438;
+  border-radius: 3px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  transition: all 0.2s;
 }
-.row-fade-enter-active {
-  transition: all 0.5s;
-}
-/* 工具栏整体容器 */
-.monitor-toolbar {
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  z-index: 1000;
-  padding: 12px 20px;
-  /* 深蓝色半透明背景 */
-  background: rgba(10, 26, 47, 0.85);
-  border: 1px solid rgba(0, 162, 255, 0.3);
-  border-radius: 8px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(10px);
+.rich-result-vertical-card:hover {
+  background: #121f35;
+  border-color: #38bdf8;
 }
 
-/* 修改表单文字颜色 */
-.monitor-toolbar ::v-deep .el-form-item__label {
-  color: #a5b4fc; /* 浅蓝紫色 */
+.result-header-flex {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11px;
+}
+.status-indicator-tag.ok {
+  color: #10b981;
   font-weight: bold;
-  text-shadow: 0 0 5px rgba(0, 229, 255, 0.2);
+}
+.status-indicator-tag.err {
+  color: #ef4444;
+  font-weight: bold;
 }
 
-/* 修改输入框/选择框主体样式 */
-.monitor-toolbar ::v-deep .el-input__inner {
-  background-color: rgba(13, 31, 56, 0.9) !important;
-  border: 1px solid rgba(0, 162, 255, 0.4) !important;
-  color: #00e5ff !important; /* 科技青文字 */
+/* 网格双列扩展行明细 */
+.rich-result-vertical-card .row-footer-details {
+  border-top: 1px dashed #162235;
+  padding-top: 6px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 3px 6px;
+  font-size: 11px;
+}
+.rich-result-vertical-card .detail-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  overflow: hidden;
+}
+
+/* 发送接收双向时间戳模块 */
+.rich-result-vertical-card .time-stamp-matrix {
+  border-top: 1px dashed #162235;
+  padding-top: 5px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6px;
+}
+.rich-result-vertical-card .time-cell {
+  background: #070c14;
+  padding: 4px;
+  border-radius: 2px;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.rich-result-vertical-card .time-cell .lbl {
+  color: #415169;
+  font-size: 9px;
+}
+.rich-result-vertical-card .time-cell .value-time {
+  font-size: 10px;
+  font-weight: bold;
+}
+
+/* ==========================================================================
+   六、基础辅助样式原子类
+   ========================================================================== */
+.border-ok {
+  border-left: 3px solid #10b981;
+}
+.border-err {
+  border-left: 3px solid #ef4444;
+}
+.row-title-flex {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.net-title {
+  font-size: 11px;
+  font-weight: bold;
+  color: #fff;
+}
+.health-indicator-tag {
+  font-size: 9px;
+  font-weight: bold;
+  padding: 1px 4px;
+  border-radius: 2px;
+}
+.health-indicator-tag.healthy {
+  background: rgba(16, 185, 129, 0.1);
+  color: #10b981;
+}
+.health-indicator-tag.alarm {
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+}
+.row-top-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  align-items: center;
+}
+.time-node {
+  color: #52637a;
+}
+.wlh-tag {
+  background: rgba(56, 189, 248, 0.05);
+  border: 1px solid rgba(56, 189, 248, 0.15);
+  color: #38bdf8;
+  padding: 0 4px;
+  border-radius: 2px;
+  font-size: 9px;
+}
+
+.vector-route-pipeline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #070c14;
+  padding: 6px;
+  border-radius: 2px;
+}
+.vector-node {
+  display: flex;
+  flex-direction: column;
+  max-width: 95px;
+}
+.vector-node .name {
+  font-size: 11px;
+  font-weight: bold;
+  color: #cbd5e1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.vector-node .id {
+  font-size: 9px;
+  color: #415169;
+}
+.vector-arrow {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0 4px;
+  position: relative;
+}
+.vector-arrow .link-lbl {
+  font-size: 8px;
+  color: #52637a;
+  transform: scale(0.85);
+  white-space: nowrap;
+  max-width: 80px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.vector-arrow .line-body {
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #38bdf8, transparent);
+  margin-top: 2px;
+  position: relative;
+}
+.vector-arrow .line-body::after {
+  content: '▶';
+  position: absolute;
+  right: 2px;
+  top: -5px;
+  font-size: 7px;
+  color: #38bdf8;
+}
+.vector-arrow.is-broken .line-body {
+  background: #ef4444;
+}
+.vector-arrow.is-broken .line-body::after {
+  content: '✕';
+  color: #ef4444;
+  right: 46%;
+  top: -5px;
+}
+
+.data-matrix {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 4px;
+  font-size: 10px;
+  background: #070c14;
+  padding: 5px;
+  border-radius: 2px;
+}
+.matrix-cell .lbl,
+.single-data-line .lbl,
+.row-footer-details .lbl {
+  color: #415169;
+  margin-right: 4px;
+}
+.single-data-line {
+  font-size: 11px;
+  color: #cbd5e1;
+}
+
+.data-matrix-counter {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 4px;
+  margin-top: 2px;
+}
+.counter-box {
+  padding: 2px 6px;
+  border-radius: 2px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 9px;
+  background: rgba(255, 255, 255, 0.01);
+  border-left: 2px solid transparent;
+}
+.counter-box.tx {
+  border-left-color: #38bdf8;
+}
+.counter-box.rx {
+  border-left-color: #a855f7;
+}
+.counter-box .val {
+  font-weight: bold;
+  color: #fff;
+}
+
+.neighbor-sub-box {
+  border-top: 1px dashed #1e293b;
+  padding-top: 4px;
+  display: flex;
+  gap: 12px;
+  font-size: 11px;
+}
+.node-st-val {
+  font-weight: bold;
+}
+.node-st-val.st-1 {
+  color: #10b981;
+}
+.node-st-val.st-2 {
+  color: #38bdf8;
+}
+.node-st-val.st-3 {
+  color: #f59e0b;
+}
+.node-st-val.st-4 {
+  color: #ef4444;
+}
+
+.empty-hint-dark {
+  text-align: center;
+  color: #415169;
+  font-size: 11px;
+  padding: 60px 10px;
+  border: 1px dashed #111b2b;
   border-radius: 4px;
 }
-
-/* 悬停及聚焦样式 */
-.monitor-toolbar ::v-deep .el-input__inner:focus {
-  border-color: #00e5ff !important;
-  box-shadow: 0 0 8px rgba(0, 229, 255, 0.3);
+.font-mono {
+  font-family: monospace;
+}
+.text-cyan {
+  color: #38bdf8 !important;
+}
+.text-green {
+  color: #10b981 !important;
+}
+.text-orange {
+  color: #f59e0b !important;
+}
+.text-white {
+  color: #fff !important;
+}
+.truncate {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-/* 占位符颜色 */
-.monitor-toolbar ::v-deep .el-input__inner::placeholder {
-  color: #476685;
-}
-
-/* ------------------------------------------------ */
-/* 下拉菜单弹出层样式 (注意：el-select 的下拉层通常在 body 下) */
-/* 需要在 el-select 上增加 popper-class="monitor-select-dropdown" */
-/* ------------------------------------------------ */
 .el-select-dropdown.monitor-select-dropdown {
-  background-color: rgba(10, 26, 47, 0.95) !important;
-  border: 1px solid rgba(0, 162, 255, 0.5) !important;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+  background-color: #080e18 !important;
+  border: 1px solid #111b2b !important;
 }
-
-.monitor-select-dropdown .el-select-dropdown__item {
-  color: #b0c4de !important;
+::v-deep .el-select-dropdown__item {
+  color: #cbd5e1 !important;
+  font-size: 11px !important;
 }
-
-.monitor-select-dropdown .el-select-dropdown__item.hover,
-.monitor-select-dropdown .el-select-dropdown__item:hover {
-  background-color: rgba(0, 162, 255, 0.2) !important;
-  color: #00e5ff !important;
-}
-
-.monitor-select-dropdown .el-select-dropdown__item.selected {
-  color: #00e5ff !important;
-  font-weight: bold;
-}
-
-/* 下拉菜单箭头 */
-.monitor-select-dropdown .popper__arrow::after {
-  border-bottom-color: rgba(10, 26, 47, 0.95) !important;
+::v-deep .el-select-dropdown__item.hover,
+::v-deep .el-select-dropdown__item:hover {
+  background-color: rgba(56, 189, 248, 0.15) !important;
+  color: #fff !important;
 }
 </style>
