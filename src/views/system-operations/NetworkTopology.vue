@@ -295,10 +295,10 @@
 </template>
 
 <script>
-import TopologyCanvas from './components/TopologyCanvas.vue'
+import TopologyCanvas from '../components/TopologyCanvas.vue'
 import {taskGetPage} from '@/api/task'
 import {xxlltj, findTree} from '@/api/network'
-import {transformTopologyData} from './test'
+import {transformTopologyData} from '../methods/network'
 
 export default {
   name: 'NetworkTopology',

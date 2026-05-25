@@ -1,78 +1,402 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import KillChainVisualization from '@/components/KillChainVisualization.vue'
-import AgentFlowEditor from '@/components/AgentFlowEditor.vue'
 
 Vue.use(VueRouter)
 
 const routes = [
   {
     path: '/',
-    name: 'KillChain',
-    component: KillChainVisualization,
-    meta: {
-      title: '杀伤链路构建系统',
-      requiresAuth: false
-    }
+    name: '/',
+    redirect: '/task-decomposition'
   },
+  // 体系运营管理 - 任务需求分解
   {
-    path: '/dashboard',
-    name: 'Dashboard',
-    component: () => import('@/views/Dashboard.vue'),
+    path: '/task-decomposition',
+    name: 'TaskDecomposition',
+    component: () => import('@/views/system-operations/TaskDecomposition.vue'),
     meta: {
-      title: '作战态势 dashboard',
+      title: '任务需求分解',
+      subsystem: '体系运营管理',
+      category: '任务需求分解',
+      icon: '📋',
+      isModule: true,
       requiresAuth: true
     }
   },
   {
-    path: '/network',
-    name: 'Network',
-    component: () => import('@/views/NetworkTopology.vue'),
+    path: '/battlefield-planning-info',
+    name: 'BattlefieldPlanningInfo',
+    component: () => import('@/views/system-operations/TaskDecomposition.vue'),
     meta: {
-      title: '网络拓扑',
+      title: '作战筹划信息获取',
+      subsystem: '体系运营管理',
+      category: '任务需求分解',
+      icon: '📍',
+      parentModule: '任务需求分解',
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/datalink-requirement-generation',
+    name: 'DatalinkRequirementGeneration',
+    component: () => import('@/views/system-operations/TaskDecomposition.vue'),
+    meta: {
+      title: '数据链保障需求生成',
+      subsystem: '体系运营管理',
+      category: '任务需求分解',
+      icon: '🔗',
+      parentModule: '任务需求分解',
+      requiresAuth: true
+    }
+  },
+
+  // 体系运营管理 - 运控策略制定
+  {
+    path: '/control-strategy',
+    name: 'ControlStrategy',
+    component: () => import('@/views/system-operations/ControlStrategy.vue'),
+    meta: {
+      title: '运控策略制定',
+      subsystem: '体系运营管理',
+      category: '运控策略制定',
+      icon: '⚙️',
+      isModule: true,
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/task-group-config-strategy',
+    name: 'TaskGroupConfigStrategy',
+    component: () => import('@/views/system-operations/ControlStrategy.vue'),
+    meta: {
+      title: '任务群组配置策略生成',
+      subsystem: '体系运营管理',
+      category: '运控策略制定',
+      icon: '👥',
+      parentModule: '运控策略制定',
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/hierarchical-control-strategy',
+    name: 'HierarchicalControlStrategy',
+    component: () => import('@/views/system-operations/ControlStrategy.vue'),
+    meta: {
+      title: '分级体系运控策略生成',
+      subsystem: '体系运营管理',
+      category: '运控策略制定',
+      icon: '🏢',
+      parentModule: '运控策略制定',
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/datalink-assurance-plan',
+    name: 'DatalinkAssurancePlan',
+    component: () => import('@/views/system-operations/ControlStrategy.vue'),
+    meta: {
+      title: '数据链保障方案构建',
+      subsystem: '体系运营管理',
+      category: '运控策略制定',
+      icon: '🔐',
+      parentModule: '运控策略制定',
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/parallel-system-simulation',
+    name: 'ParallelSystemSimulation',
+    component: () => import('@/views/system-operations/ControlStrategy.vue'),
+    meta: {
+      title: '平行系统推演',
+      subsystem: '体系运营管理',
+      category: '运控策略制定',
+      icon: '🔄',
+      parentModule: '运控策略制定',
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/datalink-fault-diagnosis',
+    name: 'DatalinkFaultDiagnosis',
+    component: () => import('@/views/system-operations/ControlStrategy.vue'),
+    meta: {
+      title: '数据链故障诊断和处理策略',
+      subsystem: '体系运营管理',
+      category: '运控策略制定',
+      icon: '🔧',
+      parentModule: '运控策略制定',
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/control-strategy-library',
+    name: 'ControlStrategyLibrary',
+    component: () => import('@/views/system-operations/ControlStrategy.vue'),
+    meta: {
+      title: '运控策略库构建',
+      subsystem: '体系运营管理',
+      category: '运控策略制定',
+      icon: '📚',
+      parentModule: '运控策略制定',
+      requiresAuth: true
+    }
+  },
+
+  // 体系运营管理 - 综合调度管理
+  {
+    path: '/scheduling-management',
+    name: 'SchedulingManagement',
+    component: () =>
+      import('@/views/system-operations/SchedulingManagement.vue'),
+    meta: {
+      title: '综合调度管理',
+      subsystem: '体系运营管理',
+      category: '综合调度管理',
+      icon: '🎯',
+      isModule: true,
+      requiresAuth: true
+    }
+  },
+
+  // 体系运营管理 - 业务开通运行
+  {
+    path: '/business-operation',
+    name: 'BusinessOperation',
+    component: () => import('@/views/system-operations/BusinessOperation.vue'),
+    meta: {
+      title: '业务开通运行',
+      subsystem: '体系运营管理',
+      category: '业务开通运行',
+      icon: '🚀',
+      isModule: true,
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/control-strategy-optimization',
+    name: 'ControlStrategyOptimization',
+    component: () => import('@/views/system-operations/BusinessOperation.vue'),
+    meta: {
+      title: '运控策略优选与生成',
+      subsystem: '体系运营管理',
+      category: '业务开通运行',
+      icon: '✨',
+      parentModule: '业务开通运行',
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/config-strategy-deployment',
+    name: 'ConfigStrategyDeployment',
+    component: () => import('@/views/system-operations/BusinessOperation.vue'),
+    meta: {
+      title: '配置策略下发',
+      subsystem: '体系运营管理',
+      category: '业务开通运行',
+      icon: '📤',
+      parentModule: '业务开通运行',
+      requiresAuth: true
+    }
+  },
+
+  // 体系运营管理 - 运控态势监视
+  {
+    path: '/control-situation-monitoring',
+    name: 'ControlSituationMonitoring',
+    component: () => import('@/views/system-operations/Dashboard.vue'),
+    meta: {
+      title: '运控态势监视',
+      subsystem: '体系运营管理',
+      category: '运控态势监视',
+      icon: '👁️',
+      isModule: true,
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/statistic-data-monitoring',
+    name: 'StatisticDataMonitoring',
+    component: () => import('@/views/system-operations/Dashboard.vue'),
+    meta: {
+      title: '统计数据监视',
+      subsystem: '体系运营管理',
+      category: '运控态势监视',
+      icon: '📊',
+      parentModule: '运控态势监视',
       requiresAuth: true
     }
   },
   {
     path: '/kill-chain-situation',
     name: 'KillChainSituation',
-    component: () => import('@/views/KillChainSituation.vue'),
+    component: () => import('@/views/system-operations/KillChainSituation.vue'),
     meta: {
-      title: '杀伤链运行态势',
+      title: '杀伤链运行态势监视',
+      subsystem: '体系运营管理',
+      category: '运控态势监视',
+      icon: '⛓️',
+      parentModule: '运控态势监视',
       requiresAuth: true
     }
   },
   {
-    path: '/DeviceMonitor',
+    path: '/combat-resource-status',
+    name: 'CombatResourceStatus',
+    component: () => import('@/views/system-operations/DeviceMonitor.vue'),
+    meta: {
+      title: '资源装备状态监视',
+      subsystem: '体系运营管理',
+      category: '运控态势监视',
+      icon: '🎖️',
+      parentModule: '运控态势监视',
+      requiresAuth: true
+    }
+  },
+
+  {
+    path: '/network-status-monitoring',
+    name: 'NetworkStatusMonitoring',
+    component: () => import('@/views/system-operations/NetworkTopology.vue'),
+    meta: {
+      title: '网络状态信息监视',
+      subsystem: '体系运营管理',
+      category: '运控态势监视',
+      icon: '🌐',
+      parentModule: '运控态势监视',
+      requiresAuth: true
+    }
+  },
+
+  // 系统运维
+  {
+    path: '/alarm-monitoring',
+    name: 'AlarmMonitoring',
+    component: () => import('@/views/system-operations/DeviceMonitor.vue'),
+    meta: {
+      title: '研制告警监控处理',
+      subsystem: '系统运维',
+      category: '研制告警监控处理',
+      icon: '🚨',
+      isModule: true,
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/performance-monitoring',
+    name: 'PerformanceMonitoring',
+    component: () =>
+      import('@/views/system-maintenance/LinkPerformanceMonitor.vue'),
+    meta: {
+      title: '性能监控处理',
+      subsystem: '系统运维',
+      category: '性能监控处理',
+      icon: '⚡',
+      isModule: true,
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/business-quality-monitor',
+    name: 'BusinessQualityMonitorModule',
+    component: () =>
+      import('@/views/system-maintenance/BusinessQualityMonitor.vue'),
+    meta: {
+      title: '业务质量监控',
+      subsystem: '系统运维',
+      category: '业务质量监控',
+      icon: '📈',
+      isModule: true,
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/equipment-maintenance-test',
+    name: 'EquipmentMaintenanceTest',
+    component: () =>
+      import('@/views/system-maintenance/EquipmentMaintenance.vue'),
+    meta: {
+      title: '装备维护测试',
+      subsystem: '系统运维',
+      category: '装备维护测试',
+      icon: '🔧',
+      isModule: true,
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/device-monitor',
     name: 'DeviceMonitor',
-    component: () => import('@/views/DeviceMonitor.vue'),
+    component: () => import('@/views/system-operations/DeviceMonitor.vue'),
     meta: {
-      title: 'DeviceMonitor',
+      title: '设备监控',
+      subsystem: '系统运维',
+      category: '研制告警监控处理',
+      icon: '💻',
+      parentModule: '研制告警监控处理',
       requiresAuth: true
     }
   },
   {
-    path: '/LinkPerformanceMonitor',
+    path: '/link-performance',
     name: 'LinkPerformanceMonitor',
-    component: () => import('@/views/LinkPerformanceMonitor.vue'),
+    component: () =>
+      import('@/views/system-maintenance/LinkPerformanceMonitor.vue'),
     meta: {
-      title: 'LinkPerformanceMonitor',
+      title: '链路性能监控',
+      subsystem: '系统运维',
+      category: '性能监控处理',
+      icon: '📊',
+      parentModule: '性能监控处理',
       requiresAuth: true
     }
   },
   {
-    path: '/BusinessQualityMonitor',
+    path: '/business-quality-detail',
     name: 'BusinessQualityMonitor',
-    component: () => import('@/views/BusinessQualityMonitor.vue'),
+    component: () =>
+      import('@/views/system-maintenance/BusinessQualityMonitor.vue'),
     meta: {
-      title: 'BusinessQualityMonitor',
+      title: '业务质量详情',
+      subsystem: '系统运维',
+      category: '业务质量监控',
+      icon: '📑',
+      parentModule: '业务质量监控',
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/equipment-test-report',
+    name: 'EquipmentTestReport',
+    component: () =>
+      import('@/views/system-maintenance/EquipmentMaintenance.vue'),
+    meta: {
+      title: '测试报告',
+      subsystem: '系统运维',
+      category: '装备维护测试',
+      icon: '📋',
+      parentModule: '装备维护测试',
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/equipment-maintenance-log',
+    name: 'EquipmentMaintenanceLog',
+    component: () =>
+      import('@/views/system-maintenance/EquipmentMaintenance.vue'),
+    meta: {
+      title: '维护日志',
+      subsystem: '系统运维',
+      category: '装备维护测试',
+      icon: '📝',
+      parentModule: '装备维护测试',
       requiresAuth: true
     }
   },
   {
     path: '/login',
     name: 'Login',
-    component: () => import('@/views/Login.vue'),
+    component: () => import('@/views/auth/Login.vue'),
     meta: {
       title: '系统登录',
       requiresAuth: false

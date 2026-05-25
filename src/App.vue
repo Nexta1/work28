@@ -1,19 +1,27 @@
+
 <template>
   <div id="app">
-    <!-- 登录页不需要导航 -->
     <template v-if="isLoginPage">
       <router-view />
     </template>
 
-    <!-- 其他页面带侧边导航 -->
     <template v-else>
       <div class="app-layout">
-        <!-- 顶部系统栏 -->
         <header class="system-header">
-          <div class="logo">
-            <span class="logo-icon">⚡</span>
-            <span class="logo-text">KILL CHAIN OS</span>
+          <div class="header-left">
+            <button
+              v-if="!navVisible"
+              class="top-nav-btn left-expand-btn"
+              @click="toggleNav"
+            >
+              ☰
+            </button>
+
+            <div class="header-page-title">
+              {{ currentMenuTitle }}
+            </div>
           </div>
+
           <div class="system-info">
             <span class="time">{{ currentTime }}</span>
             <span class="user" v-if="userInfo">
@@ -24,41 +32,72 @@
         </header>
 
         <div class="main-layout">
-          <!-- 左侧导航 -->
-          <nav class="side-nav">
-            <div class="nav-section">
-              <div class="nav-title">作战视图</div>
-              <router-link
-                v-for="item in mainMenus"
-                :key="item.path"
-                :to="item.path"
-                class="nav-item"
-                :class="{active: $route.path === item.path}"
-              >
-                <span class="nav-icon">{{ item.icon }}</span>
-                <span class="nav-text">{{ item.name }}</span>
-                <span v-if="item.badge" class="nav-badge">{{
-                  item.badge
-                }}</span>
-              </router-link>
+          <aside class="left-menu" :class="{hidden: !navVisible}">
+            <div class="menu-header">
+              <div class="menu-title">体系运营管理</div>
+
+              <button class="collapse-btn" @click="toggleNav">◀</button>
             </div>
 
-            <div class="nav-section">
-              <div class="nav-title">系统管理</div>
-              <router-link
-                v-for="item in sysMenus"
-                :key="item.path"
-                :to="item.path"
-                class="nav-item"
-                :class="{active: $route.path === item.path}"
+            <div class="menu-content">
+              <div
+                v-for="subsystem in subsystems"
+                :key="subsystem"
+                class="subsystem-block"
               >
-                <span class="nav-icon">{{ item.icon }}</span>
-                <span class="nav-text">{{ item.name }}</span>
-              </router-link>
-            </div>
-          </nav>
+                <div class="subsystem-title">
+                  {{ subsystem }}
+                </div>
 
-          <!-- 主内容区 -->
+                <div class="modules-container">
+                  <div
+                    v-for="category in getCategoriesBySubsystem(subsystem)"
+                    :key="category"
+                    class="module-group"
+                  >
+                    <template v-if="getModuleRoutes(subsystem, category).length > 0">
+                      <router-link
+                        v-for="moduleRoute in getModuleRoutes(subsystem, category)"
+                        :key="moduleRoute.path"
+                        :to="moduleRoute.path"
+                        class="module-item"
+                        :class="{active: $route.path === moduleRoute.path}"
+                      >
+                        <span class="nav-icon">{{ moduleRoute.meta.icon }}</span>
+                        <span class="nav-text">{{ moduleRoute.meta.title }}</span>
+                        <span
+                          v-if="getSubRoutes(category).length > 0"
+                          class="module-arrow"
+                          @click.prevent="toggleCategory(category)"
+                        >
+                          {{ isCategoryExpanded(category) ? '▼' : '▶' }}
+                        </span>
+                      </router-link>
+
+                      <transition name="expand">
+                        <div
+                          v-if="isCategoryExpanded(category) && getSubRoutes(category).length > 0"
+                          class="sub-items-container"
+                        >
+                          <router-link
+                            v-for="subRoute in getSubRoutes(category)"
+                            :key="subRoute.path"
+                            :to="subRoute.path"
+                            class="nav-item"
+                            :class="{active: $route.path === subRoute.path}"
+                          >
+                            <span class="nav-icon">{{ subRoute.meta.icon }}</span>
+                            <span class="nav-text">{{ subRoute.meta.title }}</span>
+                          </router-link>
+                        </div>
+                      </transition>
+                    </template>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </aside>
+
           <main class="content-area">
             <router-view />
           </main>
@@ -76,7 +115,9 @@ export default {
     return {
       currentTime: '',
       userInfo: null,
-      timer: null
+      timer: null,
+      navVisible: true,
+      expandedCategories: {}
     }
   },
 
@@ -85,28 +126,12 @@ export default {
       return this.$route.path === '/login'
     },
 
-    mainMenus() {
-      return [
-        {
-          path: '/kill-chain-situation',
-          name: '杀伤链路',
-          icon: '🔗',
-          badge: 'LIVE'
-        },
-        {path: '/dashboard', name: '态势 Dashboard', icon: '📊'},
-        {path: '/network', name: '态势 network', icon: '📊'},
-        {path: '/DeviceMonitor', name: '态势 DeviceMonitor', icon: '📊'},
-        {path: '/BusinessQualityMonitor', name: '态势 BusinessQualityMonitor', icon: '📊'},
-        {
-          path: '/LinkPerformanceMonitor',
-          name: '态势 LinkPerformanceMonitor',
-          icon: '📊'
-        }
-      ]
+    subsystems() {
+      return ['体系运营管理', '资源和数据管理', '系统运维']
     },
 
-    sysMenus() {
-      return [{path: '/settings', name: '系统设置', icon: '⚙️'}]
+    currentMenuTitle() {
+      return this.$route.meta?.title || '体系运营管理'
     }
   },
 
@@ -121,8 +146,71 @@ export default {
   },
 
   methods: {
+    toggleNav() {
+      this.navVisible = !this.navVisible
+    },
+
+    toggleCategory(category) {
+      this.$set(this.expandedCategories, category, !this.expandedCategories[category])
+    },
+
+    isCategoryExpanded(category) {
+      return this.expandedCategories[category] !== false
+    },
+
+    getCategoriesBySubsystem(subsystem) {
+      const routes = this.$router.getRoutes()
+      const categories = new Set()
+
+      routes.forEach(route => {
+        if (
+          route.meta &&
+          route.meta.subsystem === subsystem &&
+          route.meta.category
+        ) {
+          categories.add(route.meta.category)
+        }
+      })
+
+      return Array.from(categories)
+    },
+
+    getRoutesBySubsystemAndCategory(subsystem, category) {
+      return this.$router
+        .getRoutes()
+        .filter(
+          route =>
+            route.meta &&
+            route.meta.subsystem === subsystem &&
+            route.meta.category === category
+        )
+    },
+
+    getModuleRoutes(subsystem, category) {
+      return this.$router
+        .getRoutes()
+        .filter(
+          route =>
+            route.meta &&
+            route.meta.subsystem === subsystem &&
+            route.meta.category === category &&
+            route.meta.isModule
+        )
+    },
+
+    getSubRoutes(module) {
+      return this.$router
+        .getRoutes()
+        .filter(
+          route =>
+            route.meta &&
+            route.meta.parentModule === module
+        )
+    },
+
     updateTime() {
       const now = new Date()
+
       this.currentTime = now.toLocaleString('zh-CN', {
         year: 'numeric',
         month: '2-digit',
@@ -135,6 +223,7 @@ export default {
 
     loadUserInfo() {
       const saved = localStorage.getItem('userInfo')
+
       if (saved) {
         this.userInfo = JSON.parse(saved)
       }
@@ -156,191 +245,315 @@ export default {
   box-sizing: border-box;
 }
 
-body {
-  font-family: 'Microsoft YaHei', 'SimHei', sans-serif;
-  background: #050508;
-  color: #e0e0e0;
+html,
+body,
+#app {
+  width: 100%;
+  height: 100%;
   overflow: hidden;
 }
 
-#app {
-  height: 100vh;
-  width: 100vw;
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    'PingFang SC', 'Microsoft YaHei', sans-serif;
+  background: #050508;
+  color: #e0e0e0;
 }
 
-/* 系统布局 */
 .app-layout {
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  width: 100%;
+  height: 100%;
 }
 
-/* 顶部系统栏 */
 .system-header {
-  height: 50px;
-  background: rgba(10, 15, 30, 0.95);
-  border-bottom: 1px solid rgba(0, 243, 255, 0.2);
+  height: 56px;
+  padding: 0 18px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 20px;
+  background: rgba(10, 15, 30, 0.96);
+  border-bottom: 1px solid rgba(0, 243, 255, 0.18);
   flex-shrink: 0;
 }
 
-.logo {
+.header-left {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 16px;
 }
 
-.logo-icon {
-  font-size: 24px;
-  color: #00f3ff;
-  text-shadow: 0 0 10px rgba(0, 243, 255, 0.5);
-}
-
-.logo-text {
-  font-size: 16px;
-  font-weight: bold;
-  color: #00f3ff;
-  letter-spacing: 2px;
+.header-page-title {
+  color: #f4f7fb;
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  padding: 0 8px;
+  border-left: 3px solid #00f3ff;
+  padding-left: 14px;
 }
 
 .system-info {
   display: flex;
   align-items: center;
-  gap: 20px;
-  font-size: 13px;
+  gap: 14px;
 }
 
-.time {
-  color: #00f3ff;
-  font-family: monospace;
+.top-nav-btn,
+.logout-btn,
+.collapse-btn {
+  border: none;
+  outline: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
-.user {
-  color: #888;
+.top-nav-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: rgba(0, 243, 255, 0.08);
+  color: #7cecff;
+  border: 1px solid rgba(0, 243, 255, 0.16);
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.top-nav-btn:hover {
+  background: rgba(0, 243, 255, 0.16);
+  transform: translateY(-1px);
+}
+
+.left-expand-btn {
+  margin-right: 4px;
 }
 
 .logout-btn {
-  background: rgba(255, 0, 60, 0.2);
-  border: 1px solid #ff003c;
-  color: #ff003c;
-  padding: 4px 12px;
-  font-size: 12px;
-  cursor: pointer;
-  transition: all 0.3s;
+  height: 32px;
+  padding: 0 14px;
+  border-radius: 6px;
+  background: rgba(255, 80, 80, 0.15);
+  color: #ff7b7b;
+  border: 1px solid rgba(255, 80, 80, 0.2);
 }
 
 .logout-btn:hover {
-  background: rgba(255, 0, 60, 0.3);
+  background: rgba(255, 80, 80, 0.25);
 }
 
-/* 主布局 */
 .main-layout {
-  display: flex;
   flex: 1;
+  display: flex;
   overflow: hidden;
 }
 
-/* 侧边导航 */
-.side-nav {
-  width: 200px;
-  background: rgba(10, 15, 30, 0.9);
-  border-right: 1px solid rgba(0, 243, 255, 0.1);
-  padding: 20px 0;
-  overflow-y: auto;
-  flex-shrink: 0;
+.left-menu {
+  width: 280px;
+  background: linear-gradient(180deg, #0b1220 0%, #070b14 100%);
+  border-right: 1px solid rgba(120, 210, 255, 0.12);
+  transition: all 0.3s ease;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: inset -1px 0 0 rgba(255, 255, 255, 0.02);
 }
 
-.nav-section {
-  margin-bottom: 30px;
+.left-menu.hidden {
+  width: 0;
+  min-width: 0;
+  border-right: none;
 }
 
-.nav-title {
-  color: #666;
-  font-size: 11px;
-  text-transform: uppercase;
+.menu-header {
+  height: 64px;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(120, 210, 255, 0.08);
+  background: rgba(255, 255, 255, 0.015);
+}
+
+.menu-title {
+  color: #eef7ff;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.2;
   letter-spacing: 1px;
-  padding: 0 20px 10px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  margin-bottom: 10px;
 }
 
-.nav-item {
+.collapse-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 6px;
+  background: rgba(0, 243, 255, 0.1);
+  color: #00f3ff;
+}
+
+.collapse-btn:hover {
+  background: rgba(0, 243, 255, 0.2);
+}
+
+.menu-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px 0;
+}
+
+.subsystem-block {
+  margin-bottom: 14px;
+}
+
+.subsystem-title {
+  padding: 16px 22px 10px;
+  color: #7cecff;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.module-item {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 12px 20px;
-  color: #aaa;
+  margin: 6px 12px;
+  padding: 13px 14px;
+  color: #aebed1;
   text-decoration: none;
-  font-size: 13px;
-  transition: all 0.3s;
+  transition: all 0.2s ease;
+  border-radius: 12px;
+  border: 1px solid transparent;
+  font-weight: 600;
+}
+
+.module-item:hover {
+  background: rgba(124, 236, 255, 0.08);
+  color: #ffffff;
+  border-color: rgba(124, 236, 255, 0.12);
+}
+
+.module-item.active {
+  background: linear-gradient(
+    90deg,
+    rgba(0, 243, 255, 0.16),
+    rgba(0, 243, 255, 0.04)
+  );
+  color: #7cecff;
+  border-color: rgba(124, 236, 255, 0.18);
+  box-shadow: 0 0 12px rgba(0, 243, 255, 0.08);
+}
+
+.module-arrow {
+  margin-left: auto;
+  font-size: 10px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.sub-items-container {
+  padding-left: 12px;
+  overflow: hidden;
+}
+
+.category-title {
+  padding: 8px 22px;
+  color: #6f8199;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: color 0.2s ease;
+  user-select: none;
+}
+
+.category-title:hover {
+  color: #7cecff;
+}
+
+.category-title.expanded {
+  color: #7cecff;
+}
+
+.category-arrow {
+  font-size: 10px;
+  display: inline-block;
+  transition: transform 0.2s ease;
+}
+
+.nav-items-container {
+  overflow: hidden;
+}
+
+.expand-enter-active,
+.expand-leave-active {
+  transition: all 0.2s ease;
+  overflow: hidden;
+}
+
+.expand-enter,
+.expand-leave-to {
+  opacity: 0;
+  max-height: 0;
+}
+
+.expand-enter-to,
+.expand-leave {
+  opacity: 1;
+  max-height: 500px;
+}
+
+.nav-item {
   position: relative;
-  border-left: 3px solid transparent;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 4px 12px 4px 28px;
+  padding: 10px 12px;
+  color: #8a98ad;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  font-size: 13px;
 }
 
 .nav-item:hover {
-  background: rgba(0, 243, 255, 0.05);
-  color: #fff;
+  background: rgba(124, 236, 255, 0.06);
+  color: #b8c5d4;
+  border-color: rgba(124, 236, 255, 0.1);
 }
 
 .nav-item.active {
-  background: rgba(0, 243, 255, 0.1);
-  color: #00f3ff;
-  border-left-color: #00f3ff;
+  background: rgba(0, 243, 255, 0.12);
+  color: #7cecff;
+  border-color: rgba(124, 236, 255, 0.16);
+  box-shadow: 0 0 8px rgba(0, 243, 255, 0.06);
 }
 
 .nav-icon {
-  font-size: 16px;
-  width: 20px;
+  width: 18px;
   text-align: center;
 }
 
-.nav-badge {
-  position: absolute;
-  right: 15px;
-  background: #ff003c;
-  color: #fff;
-  font-size: 9px;
-  padding: 2px 6px;
-  border-radius: 10px;
-  animation: pulse 2s infinite;
+.nav-text {
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.3px;
 }
 
-/* 内容区 */
 .content-area {
   flex: 1;
-  overflow: hidden;
-  position: relative;
+  overflow: auto;
+  background: radial-gradient(circle at top, #0c1529 0%, #050508 60%);
 }
 
-@keyframes pulse {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.6;
-  }
-}
-
-/* 滚动条样式 */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-
-::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.3);
-}
-
-::-webkit-scrollbar-thumb {
-  background: rgba(0, 243, 255, 0.3);
-  border-radius: 3px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 243, 255, 0.5);
+.time,
+.user {
+  color: #c7d2e3;
+  font-size: 13px;
 }
 </style>

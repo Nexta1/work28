@@ -746,7 +746,7 @@ export default {
    ========================================================================== */
 .screen-container {
   width: 100%;
-  height: 100vh;
+  height: 100%;
   background-color: #03060c;
   color: #cbd5e1;
   display: flex;
