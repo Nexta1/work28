@@ -1176,3 +1176,122 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
+/* ===================================================================
+ * 战术大屏 Element UI 全局 el-table 表格及边框(Border)深度定制覆盖
+ * 特性：去立体阴影、细扁平暗边框、半透明深海蓝底色、战术高亮
+ * =================================================================== */
+
+/* ---------------- 1. 表格主体与基础边框 ---------------- */
+.el-table {
+  background-color: transparent !important; /* 表格背景透明，承接大屏底色 */
+  color: #cbd5e1 !important; /* 全局行文本灰白高对比 */
+  border: 1px solid #16243b !important; /* 表格最外层电子围栏暗蓝边框 */
+}
+
+/* 彻底重写单元格之间的纵向、横向网格线 */
+.el-table td,
+.el-table th.el-table__cell.is-leaf {
+  border-bottom: 1px solid #111b2d !important; /* 横向网格线：极暗蓝，避免刺眼 */
+}
+
+/* 当开启 border 属性时的纵向网格线定制 */
+.el-table--border td,
+.el-table--border th,
+.el-table__cell {
+  border-right: 1px solid #111b2d !important; /* 纵向网格线 */
+}
+
+/* 修复带有 border 属性时表格右侧和底部的双重边框冲突 */
+.el-table--border::after,
+.el-table--group::after,
+.el-table::before {
+  background-color: #16243b !important; /* 将边缘伪类线条颜色同化 */
+}
+
+/* ---------------- 2. 表头定制 (th) ---------------- */
+.el-table th {
+  background-color: #0c1424 !important; /* 表头采用稍亮一点的战术模块底色 */
+  color: #ffffff !important; /* 表头文字纯白 */
+  font-size: 11px !important;
+  font-weight: bold !important;
+  letter-spacing: 0.5px;
+}
+
+/* ---------------- 3. 数据行定制 (tr) ---------------- */
+.el-table tr {
+  background-color: rgba(8, 14, 24, 0.6) !important; /* 常态行：半透明深色 */
+}
+
+/* 斑马纹表格样式定制 (stripe) */
+.el-table--striped .el-table__row--striped {
+  background-color: rgba(
+    13,
+    21,
+    34,
+    0.65
+  ) !important; /* 交替行：略微变浅，拉开层次 */
+}
+
+/* ---------------- 4. 🚀 鼠标悬浮高亮状态 (Hover Row) ---------------- */
+/* 战术大屏核心：鼠标移入行时，必须有极强的扁平化电磁青/绿高亮感知 */
+.el-table--enable-row-hover .el-table__row:hover > td.el-table__cell {
+  background-color: #14253d !important; /* 悬浮行背景改为科技深蓝 */
+  color: #38bdf8 !important; /* 悬浮行文字整体变青蓝色 */
+  border-bottom-color: #1d3554 !important; /* 悬浮时下边框微亮 */
+  transition: all 0.15s ease-in-out;
+}
+
+/* ---------------- 5. 特殊状态表格列（固定列、多选框、空数据） ---------------- */
+/* 固定列 (Fixed-Left/Right) 背景同化，防止滚动时出现白底遮罩 */
+.el-table__fixed,
+.el-table__fixed-right {
+  background-color: #080e18 !important;
+  border-color: #16243b !important;
+}
+.el-table__fixed-right::before,
+.el-table__fixed::before {
+  background-color: #16243b !important;
+}
+
+/* 树形表格多级展开按钮 */
+.el-table .el-table__expand-icon {
+  color: #38bdf8 !important; /* 展开箭头改为青蓝色 */
+}
+
+/* 无数据时的空态文字 */
+.el-table__empty-block {
+  background-color: #080e18 !important;
+}
+.el-table__empty-text {
+  color: #475569 !important; /* “暂无数据”文字使用暗灰 */
+  font-size: 11px;
+  font-style: italic;
+}
+/* ===================================================================
+ * 战术大屏 el-form-item 标签字体大小与排版精细化微调
+ * =================================================================== */
+
+.el-form .el-form-item__label {
+  color: #94a3b8 !important; /* 标牌文字使用低饱和度灰白 */
+  font-size: 11px !important; /* 🌟 将字体缩小至 11px（如嫌大可改为 10px） */
+  font-weight: 600 !important; /* 适当加粗，确保字号虽小但清晰可读 */
+  letter-spacing: 0.5px !important; /* 增加微小字间距，提升电子屏幕质感 */
+  padding-right: 8px !important; /* 紧凑右间距 */
+  line-height: 28px !important; /* 匹配大屏迷你（mini）输入框的行高 */
+}
+
+/* 针对大屏 mini 尺寸表单项的极致紧凑微调 */
+.el-form--label-top .el-form-item__label {
+  padding-bottom: 2px !important; /* 如果标签在输入框上方，缩短上下间距 */
+  margin-bottom: 0 !important;
+}
+
+/* 必填项红色星号微调：防止因字号缩小导致星号变形或错位 */
+.el-form
+  .el-form-item.is-required:not(.is-no-asterisk)
+  > .el-form-item__label:before {
+  color: #f43f5e !important;
+  margin-right: 2px !important;
+  font-size: 12px !important; /* 星号可以稍微比文字大一点点 */
+  vertical-align: middle !important;
+}

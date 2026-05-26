@@ -394,6 +394,73 @@ const routes = [
       requiresAuth: true
     }
   },
+  // 资源和数据管理 - 数据管理
+  {
+    path: '/data-management',
+    name: 'DataManagement',
+    component: () => import('@/views/system-resource/DataManagement.vue'),
+    meta: {
+      title: '数据管理',
+      subsystem: '资源和数据管理',
+      category: '数据管理',
+      icon: '💾',
+      isModule: true,
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/permission-management',
+    name: 'PermissionManagement',
+    component: () => import('@/views/system-resource/PermissionManagement.vue'),
+    meta: {
+      title: '权限管理',
+      subsystem: '资源和数据管理',
+      category: '数据管理',
+      icon: '🔐',
+      parentModule: '数据管理',
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/data-governance-model',
+    name: 'DataGovernanceModel',
+    component: () => import('@/views/system-resource/DataGovernanceModel.vue'),
+    meta: {
+      title: '数据治理模型维护',
+      subsystem: '资源和数据管理',
+      category: '数据管理',
+      icon: '📋',
+      parentModule: '数据管理',
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/classification-storage',
+    name: 'ClassificationStorage',
+    component: () => import('@/views/system-resource/ClassificationStorage.vue'),
+    meta: {
+      title: '分类存储',
+      subsystem: '资源和数据管理',
+      category: '数据管理',
+      icon: '🗂️',
+      parentModule: '数据管理',
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/subscription-distribution',
+    name: 'SubscriptionDistribution',
+    component: () => import('@/views/system-resource/SubscriptionDistribution.vue'),
+    meta: {
+      title: '订阅分发',
+      subsystem: '资源和数据管理',
+      category: '数据管理',
+      icon: '📤',
+      parentModule: '数据管理',
+      requiresAuth: true
+    }
+  },
+
   {
     path: '/login',
     name: 'Login',
