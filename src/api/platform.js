@@ -33,7 +33,7 @@ export function getPlatformById(ptxxid) {
  */
 export function getPlatformTypeMap() {
   return request({
-    url: 'rest/ptxxInfo/ptlxMap',
+    url: 'rest/ptxhInfo/ptlxMap',
     method: 'get'
   })
 }

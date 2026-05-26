@@ -773,3 +773,264 @@
   color: #94a3b8 !important; /* 表单字段名统一设为中性灰蓝 */
   font-size: 11px !important;
 }
+/* ===================================================================
+   全局 Element UI 标签 (el-tag) 覆盖（纯扁平 / 无阴影 / 战术大屏风格）
+   =================================================================== */
+
+/* 1. 基础标签通用骨架重塑 */
+.el-tag {
+  background-color: rgba(
+    30,
+    41,
+    59,
+    0.4
+  ) !important; /* 默认状态：暗灰蓝半透明 */
+  border: 1px solid #334155 !important; /* 1px 硬核微亮边界线 */
+  color: #94a3b8 !important; /* 中性文本色 */
+  border-radius: 2px !important; /* 极微小硬朗圆角 */
+  box-shadow: none !important; /* 强行剔除可能存在的阴影 */
+  padding: 0 6px !important; /* 紧凑内边距 */
+  height: 22px !important; /* 匹配 mini/small 轴线高度 */
+  line-height: 20px !important;
+  font-size: 11px !important;
+  font-family: monospace, 'Microsoft YaHei';
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 标签内原生关闭小叉 (x) 协同调整 */
+.el-tag .el-tag__close {
+  color: #475569 !important;
+  top: 0 !important;
+}
+.el-tag .el-tag__close:hover {
+  background-color: #f43f5e !important; /* 悬浮删除转为警告红 */
+  color: #ffffff !important;
+}
+
+/* ===================================================================
+   2. 不同语义类型 (Type) 的战术高亮覆盖
+   =================================================================== */
+
+/* --- Success / 正常运行 / 激活状态 --- */
+.el-tag--success {
+  background-color: rgba(16, 185, 129, 0.12) !important; /* 极淡透明绿 */
+  border-color: rgba(16, 185, 129, 0.6) !important; /* 线性激光绿 */
+  color: #10b981 !important; /* 文本高亮绿 */
+}
+
+/* --- Info / 次要要素 / 默认未知 --- */
+.el-tag--info {
+  background-color: rgba(148, 163, 184, 0.1) !important; /* 极淡透明灰 */
+  border-color: rgba(148, 163, 184, 0.5) !important; /* 线性边界灰 */
+  color: #94a3b8 !important;
+}
+
+/* --- Warning / 注意 / 边缘/ 中度威胁 --- */
+.el-tag--warning {
+  background-color: rgba(245, 158, 11, 0.12) !important; /* 极淡透明黄 */
+  border-color: rgba(245, 158, 11, 0.6) !important; /* 线性警告黄 */
+  color: #f59e0b !important;
+}
+
+/* --- Danger / 故障 / 强攻击 / 高威胁 --- */
+.el-tag--danger {
+  background-color: rgba(239, 68, 68, 0.15) !important; /* 极淡透明红 */
+  border-color: rgba(239, 68, 68, 0.6) !important; /* 线性危机红 */
+  color: #ef4444 !important;
+}
+
+/* ===================================================================
+   3. 强制兼容极暗/高级特征 (Dark 与 Plain) 模式降级
+   =================================================================== */
+/* 使得即使在代码中误用了 effect="dark" 或 effect="plain" 也能强制锁定扁平无阴影 */
+.el-tag--dark,
+.el-tag--plain {
+  box-shadow: none !important;
+}
+
+/* 针对大尺寸标签（如 medium / small）在列表中的柔性微调 */
+.el-tag--medium {
+  height: 26px !important;
+  line-height: 24px !important;
+}
+.el-tag--small {
+  height: 20px !important;
+  line-height: 18px !important;
+}
+.el-tag--mini {
+  height: 18px !important;
+  line-height: 16px !important;
+  padding: 0 4px !important;
+}
+/* ===================================================================
+   全局 Element UI 加载遮罩 (v-loading / el-loading) 覆盖（纯扁平 / 战术暗黑）
+   =================================================================== */
+
+/* 1. 加载遮罩层背景重塑 */
+.el-loading-mask {
+  background-color: rgba(
+    3,
+    6,
+    12,
+    0.75
+  ) !important; /* 精准对齐系统基底背景色，半透明硬化切面 */
+  backdrop-filter: blur(
+    1px
+  ) !important; /* 微弱的战术磨砂感，绝不产生发白高光 */
+  transition: opacity 0.2s ease-in-out;
+  box-shadow: none !important; /* 剔除阴影边界 */
+}
+
+/* 2. 旋转器加载区域容器 */
+.el-loading-spinner {
+  top: 50% !important;
+  margin-top: -21px !important; /* 精准居中对齐 */
+}
+
+/* 3. 自定义动画：雷达脉冲旋转（取代原生单纯的旋转） */
+@keyframes dark-radar-spin {
+  0% {
+    transform: rotate(0deg);
+    border-top-color: #38bdf8; /* 战术高亮蓝 */
+  }
+  50% {
+    border-top-color: #06b6d4; /* 转换至青绿 */
+  }
+  100% {
+    transform: rotate(360deg);
+    border-top-color: #38bdf8;
+  }
+}
+
+/* 4. 重造核心加载图标（摒弃原生 svg，改用极简扁平线性雷达圈） */
+.el-loading-spinner .el-loading-icon {
+  display: inline-block;
+  width: 28px !important;
+  height: 28px !important;
+  animation: dark-radar-spin 0.8s linear infinite !important;
+  border: 2px dashed #111b2b !important; /* 底圈为极暗硬核骨架线 */
+  border-top: 2px solid #38bdf8 !important; /* 激活波束线 */
+  border-radius: 50% !important;
+  box-shadow: none !important;
+}
+
+/* 隐藏原生的 svg 圆圈 */
+.el-loading-spinner .circular {
+  display: none !important;
+}
+
+/* 5. 加载提示文本 (Element loading-text) 风格微调 */
+.el-loading-spinner .el-loading-text {
+  color: #64748b !important; /* 采用中性灰蓝文本，不反客为主 */
+  font-size: 11px !important;
+  font-family: monospace, 'Microsoft YaHei';
+  letter-spacing: 1px;
+  margin-top: 8px !important;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+/* ===================================================================
+   6. 局部特定模块微缩适配（如表格、按钮内 loading 的柔性降级）
+   =================================================================== */
+
+/* 针对较小的块或子卡片加载，自动收缩尺寸 */
+.table-container-flex .el-loading-spinner .el-loading-icon,
+.panel-wing-left .el-loading-spinner .el-loading-icon {
+  width: 22px !important;
+  height: 22px !important;
+}
+
+/* 如果有按钮级的 loading，保持原生缩放但强制锁定扁平配色 */
+.el-button .el-icon-loading {
+  color: inherit !important;
+  animation-duration: 0.6s !important;
+}
+/* ===================================================================
+   🛰️ 运控中心专属：Element UI 全局持久化深色确认弹窗重构
+   =================================================================== */
+
+/* 1. 弹窗整体外壳：对齐画布背景，加入微弱的科技蓝外发光 */
+.el-message-box {
+  background-color: #080e18 !important;
+  border: 1px solid #16243a !important;
+  border-radius: 4px !important;
+  box-shadow: 0 0 15px rgba(6, 182, 212, 0.15) !important;
+  padding-bottom: 15px !important;
+}
+
+/* 2. 弹窗头部标题栏 */
+.el-message-box__header {
+  padding: 15px 20px 10px !important;
+  border-bottom: 1px solid #111b2b !important;
+}
+.el-message-box__title {
+  color: #06b6d4 !important; /* 核心科技青色 */
+  font-size: 14px !important;
+  font-weight: bold !important;
+}
+.el-message-box__headerbtn .el-message-box__close {
+  color: #52637a !important;
+}
+.el-message-box__headerbtn:hover .el-message-box__close {
+  color: #38bdf8 !important; /* 悬浮高亮天蓝色 */
+}
+
+/* 3. 弹窗文本内容区 */
+.el-message-box__content {
+  padding: 25px 20px !important;
+  color: #cbd5e1 !important; /* 浅灰白文字，保障易读性 */
+  font-size: 13px !important;
+}
+.el-message-box__status {
+  font-size: 24px !important;
+}
+/* 强力警告图标：替换为亮橙色 */
+.el-message-box__status.el-icon-warning {
+  color: #f59e0b !important;
+}
+
+/* 4. 底部按钮控制舱 */
+.el-message-box__btns {
+  padding: 5px 20px 0 !important;
+  display: flex !important;
+  justify-content: flex-end !important;
+  gap: 8px !important;
+}
+
+/* 5. 「取消」按钮定制 */
+.el-message-box__btns .el-button--default {
+  background-color: #0f172a !important;
+  border: 1px solid #1e293b !important;
+  color: #94a3b8 !important;
+  font-size: 12px !important;
+  transition: all 0.2s ease;
+}
+.el-message-box__btns .el-button--default:hover {
+  border-color: #38bdf8 !important;
+  color: #38bdf8 !important;
+  background-color: #1e293b !important;
+}
+
+/* 6. 「确定」按钮定制（默认主要动作按钮） */
+.el-message-box__btns .el-button--primary {
+  background-color: #0284c7 !important; /* 科技深蓝 */
+  border: 1px solid #0369a1 !important;
+  color: #ffffff !important;
+  font-size: 12px !important;
+  transition: all 0.2s ease;
+}
+.el-message-box__btns .el-button--primary:hover {
+  background-color: #0369a1 !important;
+  border-color: #38bdf8 !important;
+  box-shadow: 0 0 8px rgba(56, 189, 248, 0.4) !important;
+}
+
+/* 7. 特殊处理：危险操作下的「确定」按钮（如删除节点）
+   如果在 $confirm 传入了 type: 'warning'，可配合扩展样式 */
+.el-message-box__status.el-icon-warning + .el-message-box__message {
+  color: #cbd5e1 !important;
+}

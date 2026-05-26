@@ -5,6 +5,12 @@ export function wllxMap() {
     method: 'get'
   })
 }
+export function nodeTypes() {
+  return request({
+    url: `/rest/businessNode/nodeTypes`,
+    method: 'get'
+  })
+}
 export function zzrwwlFindTree(zzrwid) {
   return request({
     url: `rest/zzrwwl/findTree/${zzrwid}`,

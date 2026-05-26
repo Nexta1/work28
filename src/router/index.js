@@ -36,19 +36,19 @@ const routes = [
       requiresAuth: true
     }
   },
-  {
-    path: '/datalink-requirement-generation',
-    name: 'DatalinkRequirementGeneration',
-    component: () => import('@/views/system-operations/TaskDecomposition.vue'),
-    meta: {
-      title: '数据链保障需求生成',
-      subsystem: '体系运营管理',
-      category: '任务需求分解',
-      icon: '🔗',
-      parentModule: '任务需求分解',
-      requiresAuth: true
-    }
-  },
+  // {
+  //   path: '/datalink-requirement-generation',
+  //   name: 'DatalinkRequirementGeneration',
+  //   component: () => import('@/views/system-operations/TaskDecomposition.vue'),
+  //   meta: {
+  //     title: '作战筹划信息获取',
+  //     subsystem: '体系运营管理',
+  //     category: '任务需求分解',
+  //     icon: '🔗',
+  //     parentModule: '任务需求分解',
+  //     requiresAuth: true
+  //   }
+  // },
 
   // 体系运营管理 - 运控策略制定
   {
@@ -189,9 +189,10 @@ const routes = [
   {
     path: '/config-strategy-deployment',
     name: 'ConfigStrategyDeployment',
-    component: () => import('@/views/system-operations/BusinessOperation.vue'),
+    component: () =>
+      import('@/views/system-operations/ServiceTemplateDashboard.vue'),
     meta: {
-      title: '配置策略下发',
+      title: '服务模板和信息维护',
       subsystem: '体系运营管理',
       category: '业务开通运行',
       icon: '📤',
@@ -274,9 +275,9 @@ const routes = [
     name: 'AlarmMonitoring',
     component: () => import('@/views/system-operations/DeviceMonitor.vue'),
     meta: {
-      title: '研制告警监控处理',
+      title: '告警监视处理',
       subsystem: '系统运维',
-      category: '研制告警监控处理',
+      category: '告警监视处理',
       icon: '🚨',
       isModule: true,
       requiresAuth: true
@@ -325,15 +326,15 @@ const routes = [
     }
   },
   {
-    path: '/device-monitor',
-    name: 'DeviceMonitor',
-    component: () => import('@/views/system-operations/DeviceMonitor.vue'),
+    path: '/warnInfoDashboard',
+    name: 'WarnInfoDashboard',
+    component: () => import('@/views/system-maintenance/WarnInfoDashboard.vue'),
     meta: {
-      title: '设备监控',
+      title: '告警信息',
       subsystem: '系统运维',
-      category: '研制告警监控处理',
+      category: '告警监视处理',
       icon: '💻',
-      parentModule: '研制告警监控处理',
+      parentModule: '告警监视处理',
       requiresAuth: true
     }
   },

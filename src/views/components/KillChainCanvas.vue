@@ -7,20 +7,17 @@
 <script>
 import {Graph} from '@antv/x6'
 import {register} from '@antv/x6-vue-shape'
-import PtNode from './PtNode.vue' // 请根据您实际路径微调
+import PtNode from './PtNode.vue'
 
-// 注册 X6 节点
 register({shape: 'pt-node', width: 185, height: 115, component: PtNode})
 
 export default {
   name: 'KillChainCanvas',
   props: {
-    // 全量群组成员数据
     members: {
       type: Array,
       default: () => []
     },
-    // 当前活跃的杀伤链数据快照
     activeKillChain: {
       type: Object,
       default: () => null
@@ -48,7 +45,6 @@ export default {
     }
   },
   watch: {
-    // 监测到数据变化时自动触发画布重绘
     members: {
       deep: true,
       handler() {
@@ -74,18 +70,30 @@ export default {
   },
   methods: {
     initGraph() {
+      const container = this.$refs.container
+      if (!container) return
+
       this.graph = new Graph({
-        container: this.$refs.container,
-        background: {color: '#0f172a'},
+        container: container,
+        background: {color: '#070c14'}, // 对齐主控台深色底色
+        grid: {
+          size: 10,
+          visible: true,
+          type: 'mesh',
+          args: {color: '#111c2e', thickness: 1}
+        },
         panning: true,
+        // 新增配置：开启 X6 框架底层的动态响应，配合外部通知
+        autoResize: true,
+        width: container.clientWidth || 800,
+        height: container.clientHeight || 600,
         interacting: {
-          nodeMovable: false, // 禁止节点移动
-          edgeMovable: false // 禁止连线移动
+          nodeMovable: false,
+          edgeMovable: false
         },
         mousewheel: true
       })
 
-      // 统一监听节点点击事件并抛给主控台父组件
       this.graph.on('node:click', ({node}) => {
         const nodeData = node.getData()
         if (!nodeData) return
@@ -97,9 +105,30 @@ export default {
         }
       })
 
-      // 初次尝试渲染
       this.renderGraph()
     },
+
+    // ===================================================================
+    // 🛰️ 开放并修正给父组件直接跨级调用的 Resize 适配接口
+    // ===================================================================
+    handleGraphResize() {
+      if (this.graph && this.$refs.container) {
+        const container = this.$refs.container
+        // 动态抓取当前外壳最真实的 Client 宽高（已被 min-width/min-height 赋予收缩权）
+        const width = container.clientWidth
+        const height = container.clientHeight
+
+        // 抹平、重置并强制重新居中对齐内容
+        this.graph.resize(width, height)
+        this.graph.centerContent()
+      }
+    },
+    handleResize() {
+      // 浏览器级别的拉伸调用
+      this.handleGraphResize()
+    },
+    // ===================================================================
+
     renderGraph() {
       if (!this.graph) return
       this.graph.clearCells()
@@ -234,30 +263,41 @@ export default {
           })
         })
       })
-    },
-    handleResize() {
-      if (this.graph && this.$refs.container) {
-        // 让 X6 自适应外部包裹层的 100% 物理宽高的变化
-        const width = this.$refs.container.clientWidth
-        const height = this.$refs.container.clientHeight
-        this.graph.resize(width, height)
-      }
+
+      // 动态数据装载完毕后，顺便居中对齐所有阶段泳道
+      //   this.graph.centerContent()
     }
   }
 }
 </script>
 
 <style scoped>
+/* ===================================================================
+   🛰️ 核心修改：通过底层 Flex 与强行阻断破除高度塌陷死锁
+   =================================================================== */
 .canvas-wrapper {
+  flex: 1; /* 完美吞噬父级分配的全部可用空间 */
   width: 100%;
   height: 100%;
+  min-width: 0; /* 核心：赋予它跟随父级变小收缩的物理权利 */
+  min-height: 0; /* 核心：防止被 X6 大面积 SVG 内部图元顶破撑死死锁 */
+  display: flex; /* 转换为 flex 轴 */
   position: relative;
-}
-#killchain-graph-container {
-  width: 100%;
-  height: 100%;
+  overflow: hidden;
 }
 
+#killchain-graph-container {
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  min-width: 0; /* 核心 */
+  min-height: 0; /* 核心 */
+  position: absolute; /* 使用绝对定位使其完全附着于 .canvas-wrapper 这个安全外壳上 */
+  inset: 0; /* 四周拉满 0px */
+  background-color: #070c14;
+}
+
+/* =================================================================== */
 /* 以下复用原画布动态 CSS 特效类，确保抽离后发光动画不失效 */
 ::v-deep .swimlane-body {
   transition: all 0.5s ease;

@@ -1,4 +1,5 @@
 import request from '@/utils/request'
+import request2 from '@/utils/request-maintenance'
 
 /**
  * ===================================================================
@@ -24,7 +25,20 @@ export function apiPage(baseUrl, data) {
     data
   })
 }
-
+export function mainPage(baseUrl, data) {
+  const {pageNum, pageSize, ...rest} = data
+  const params = {
+    start: (pageNum - 1) * pageSize,
+    length: pageSize,
+    draw: 1,
+    ...rest // 3. 只展开剔除后的剩余字段，这样就不会包含 pageNum 和 pageSize 了
+  }
+  return request2({
+    url: `/rest/${baseUrl}`,
+    method: 'get',
+    params
+  })
+}
 /**
  * @description 通用新增 (POST)
 
@@ -65,6 +79,12 @@ export function apiDelete(baseUrl, id) {
     method: 'delete'
   })
 }
+export function mainDelete(baseUrl, id) {
+  return request({
+    url: `/rest/${baseUrl}/${id}`,
+    method: 'post'
+  })
+}
 
 /**
  * @description 通用详情查询 (GET)
@@ -90,5 +110,11 @@ export function apiGetAll(baseUrl, params, s) {
     url: `/rest/${baseUrl}/${s}`,
     method: 'get',
     params
+  })
+}
+export function apiFindAllTrees(baseUrl) {
+  return request({
+    url: `/rest/${baseUrl}/findAllTrees`,
+    method: 'get'
   })
 }
