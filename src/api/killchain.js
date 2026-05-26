@@ -42,3 +42,10 @@ export const getZzrwwlPage = queryParams =>
       ...queryParams
     }
   })
+export function sslrw(data) {
+  return request({
+    url: `/sslrw/page`,
+    method: 'post',
+    data
+  })
+}

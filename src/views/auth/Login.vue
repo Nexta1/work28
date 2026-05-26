@@ -1,35 +1,35 @@
 <template>
   <div class="login-page">
     <div class="cyber-grid"></div>
-    
+
     <div class="login-box">
       <div class="login-header">
         <div class="logo-large">⚡</div>
         <h1>KILL CHAIN OS</h1>
         <p>杀伤链路构建系统</p>
       </div>
-      
+
       <form @submit.prevent="handleLogin">
         <div class="form-group">
           <label>用户名</label>
-          <input 
-            type="text" 
+          <input
+            type="text"
             v-model="form.username"
             placeholder="请输入用户名"
             required
           />
         </div>
-        
+
         <div class="form-group">
           <label>密码</label>
-          <input 
-            type="password" 
+          <input
+            type="password"
             v-model="form.password"
             placeholder="请输入密码"
             required
           />
         </div>
-        
+
         <div class="form-options">
           <label class="remember">
             <input type="checkbox" v-model="form.remember" />
@@ -37,17 +37,17 @@
           </label>
           <a href="#" class="forgot">忘记密码?</a>
         </div>
-        
+
         <button type="submit" class="login-btn" :disabled="loading">
           {{ loading ? '登录中...' : '进入系统' }}
         </button>
       </form>
-      
+
       <div class="login-footer">
         <p>系统版本 v2.6.4 | 军事机密 严禁外泄</p>
       </div>
     </div>
-    
+
     <!-- 装饰元素 -->
     <div class="decoration-circle c1"></div>
     <div class="decoration-circle c2"></div>
@@ -58,7 +58,7 @@
 <script>
 export default {
   name: 'Login',
-  
+
   data() {
     return {
       form: {
@@ -69,20 +69,23 @@ export default {
       loading: false
     }
   },
-  
+
   methods: {
     handleLogin() {
       this.loading = true
-      
+
       // 模拟登录（实际项目中替换为真实API）
       setTimeout(() => {
         localStorage.setItem('token', 'mock-token-' + Date.now())
-        localStorage.setItem('userInfo', JSON.stringify({
-          name: this.form.username || '指挥员',
-          role: '高级指挥官',
-          id: 'CMD-001'
-        }))
-        
+        localStorage.setItem(
+          'userInfo',
+          JSON.stringify({
+            name: this.form.username || '指挥员',
+            role: '高级指挥官',
+            id: 'CMD-001'
+          })
+        )
+
         this.$router.push('/')
         this.loading = false
       }, 1000)
@@ -93,7 +96,7 @@ export default {
 
 <style scoped>
 .login-page {
-  height: 100vh;
+  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -108,8 +111,10 @@ export default {
   left: 0;
   width: 100%;
   height: 100%;
-  background-image: 
-    linear-gradient(rgba(0, 243, 255, 0.03) 1px, transparent 1px),
+  background-image: linear-gradient(
+      rgba(0, 243, 255, 0.03) 1px,
+      transparent 1px
+    ),
     linear-gradient(90deg, rgba(0, 243, 255, 0.03) 1px, transparent 1px);
   background-size: 50px 50px;
   pointer-events: none;
@@ -209,7 +214,11 @@ export default {
 
 .login-btn {
   width: 100%;
-  background: linear-gradient(90deg, rgba(0, 243, 255, 0.2), rgba(0, 243, 255, 0.1));
+  background: linear-gradient(
+    90deg,
+    rgba(0, 243, 255, 0.2),
+    rgba(0, 243, 255, 0.1)
+  );
   border: 1px solid #00f3ff;
   color: #00f3ff;
   padding: 14px;
@@ -277,12 +286,23 @@ export default {
 }
 
 @keyframes rotate {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 @keyframes pulse {
-  0%, 100% { opacity: 0.3; transform: scale(1); }
-  50% { opacity: 0.6; transform: scale(1.05); }
+  0%,
+  100% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(1.05);
+  }
 }
 </style>

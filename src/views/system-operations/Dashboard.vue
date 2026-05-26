@@ -12,8 +12,14 @@
           </div>
           <div class="panel-body">
             <div class="stat-grid">
-              <div class="stat-item" v-for="(item, index) in missionStats" :key="index">
-                <div class="stat-value" :class="item.status">{{ item.value }}</div>
+              <div
+                class="stat-item"
+                v-for="(item, index) in missionStats"
+                :key="index"
+              >
+                <div class="stat-value" :class="item.status">
+                  {{ item.value }}
+                </div>
                 <div class="stat-label">{{ item.label }}</div>
               </div>
             </div>
@@ -29,10 +35,16 @@
           </div>
           <div class="panel-body">
             <div class="network-rings">
-              <div class="ring-box" v-for="(metric, index) in networkMetrics" :key="index">
+              <div
+                class="ring-box"
+                v-for="(metric, index) in networkMetrics"
+                :key="index"
+              >
                 <div ref="networkRingCharts" class="ring-chart"></div>
                 <div class="ring-text">
-                  <div class="ring-value">{{ metric.value }}{{ metric.unit }}</div>
+                  <div class="ring-value">
+                    {{ metric.value }}{{ metric.unit }}
+                  </div>
                   <div class="ring-label">{{ metric.label }}</div>
                 </div>
               </div>
@@ -49,15 +61,25 @@
           </div>
           <div class="panel-body">
             <div class="platform-brief">
-              <span class="brief-item">总数: <b>{{ platformStats.total }}</b></span>
-              <span class="brief-item online">在线: <b>{{ platformStats.online }}</b></span>
-              <span class="brief-item warning">告警: <b>{{ platformStats.warning }}</b></span>
+              <span class="brief-item"
+                >总数: <b>{{ platformStats.total }}</b></span
+              >
+              <span class="brief-item online"
+                >在线: <b>{{ platformStats.online }}</b></span
+              >
+              <span class="brief-item warning"
+                >告警: <b>{{ platformStats.warning }}</b></span
+              >
             </div>
             <div ref="platformChart" class="chart-container"></div>
             <div class="platform-table">
               <table>
                 <thead>
-                  <tr><th>编号</th><th>类型</th><th>状态</th></tr>
+                  <tr>
+                    <th>编号</th>
+                    <th>类型</th>
+                    <th>状态</th>
+                  </tr>
                 </thead>
                 <tbody>
                   <tr v-for="(p, i) in platformList.slice(0, 4)" :key="i">
@@ -81,10 +103,10 @@
             <span class="panel-icon">⚔</span>
             <span class="panel-title">杀伤链保障态势</span>
             <div class="task-tabs">
-              <span 
-                v-for="task in taskTypes" 
+              <span
+                v-for="task in taskTypes"
                 :key="task.key"
-                :class="['tab', { active: currentTask === task.key }]"
+                :class="['tab', {active: currentTask === task.key}]"
                 @click="switchTask(task.key)"
               >
                 {{ task.name }}
@@ -96,29 +118,40 @@
             <div class="killchain-main">
               <div ref="killChainMainChart" class="main-chart"></div>
               <div class="killchain-legend">
-                <div class="legend-item" v-for="(item, idx) in currentKillChainData" :key="idx">
-                  <span class="legend-color" :style="{ background: item.color }"></span>
+                <div
+                  class="legend-item"
+                  v-for="(item, idx) in currentKillChainData"
+                  :key="idx"
+                >
+                  <span
+                    class="legend-color"
+                    :style="{background: item.color}"
+                  ></span>
                   <span class="legend-name">{{ item.name }}</span>
-                  <span class="legend-value" :style="{ color: item.color }">{{ item.value }}%</span>
+                  <span class="legend-value" :style="{color: item.color}"
+                    >{{ item.value }}%</span
+                  >
                 </div>
               </div>
             </div>
-            
+
             <!-- 杀伤链详情 -->
             <div class="killchain-detail">
               <div class="chain-cards">
-                <div 
-                  class="chain-card" 
-                  v-for="(chain, idx) in currentKillChainData" 
+                <div
+                  class="chain-card"
+                  v-for="(chain, idx) in currentKillChainData"
                   :key="idx"
-                  :style="{ borderColor: chain.color }"
+                  :style="{borderColor: chain.color}"
                 >
-                  <div class="card-header" :style="{ color: chain.color }">
+                  <div class="card-header" :style="{color: chain.color}">
                     <span class="card-name">{{ chain.name }}</span>
                     <span class="card-phase">PHASE {{ idx + 1 }}</span>
                   </div>
                   <div class="card-body">
-                    <div class="big-number" :style="{ color: chain.color }">{{ chain.value }}</div>
+                    <div class="big-number" :style="{color: chain.color}">
+                      {{ chain.value }}
+                    </div>
                     <div class="card-metrics">
                       <div class="metric">
                         <span class="metric-label">响应时间</span>
@@ -131,7 +164,13 @@
                     </div>
                   </div>
                   <div class="card-progress">
-                    <div class="progress-fill" :style="{ width: chain.value + '%', background: chain.color }"></div>
+                    <div
+                      class="progress-fill"
+                      :style="{
+                        width: chain.value + '%',
+                        background: chain.color
+                      }"
+                    ></div>
                   </div>
                 </div>
               </div>
@@ -151,10 +190,10 @@
           <div class="panel-body">
             <div ref="alarmChart" class="chart-container"></div>
             <div class="alarm-list">
-              <div 
-                class="alarm-item" 
-                v-for="(alarm, idx) in recentAlarms" 
-                :key="idx" 
+              <div
+                class="alarm-item"
+                v-for="(alarm, idx) in recentAlarms"
+                :key="idx"
                 :class="alarm.level"
               >
                 <span class="alarm-badge">{{ alarm.levelText }}</span>
@@ -199,110 +238,268 @@ import * as echarts from 'echarts'
 
 export default {
   name: 'MonitorDashboard',
-  
+
   data() {
     return {
       charts: {},
       currentTask: 'strike',
-      
+
       // 任务类型
       taskTypes: [
-        { key: 'strike', name: '打击任务' },
-        { key: 'defense', name: '防御任务' },
-        { key: 'recon', name: '侦察任务' },
-        { key: 'support', name: '支援任务' }
+        {key: 'strike', name: '打击任务'},
+        {key: 'defense', name: '防御任务'},
+        {key: 'recon', name: '侦察任务'},
+        {key: 'support', name: '支援任务'}
       ],
-      
+
       // 不同任务的杀伤链数据
       killChainData: {
         strike: [
-          { name: '发现(F)', value: 96, color: '#00f0ff', response: 120, success: 98.5 },
-          { name: '定位(F)', value: 92, color: '#00ff88', response: 85, success: 97.2 },
-          { name: '跟踪(T)', value: 89, color: '#ffdd00', response: 200, success: 95.8 },
-          { name: '瞄准(T)', value: 94, color: '#ff8800', response: 150, success: 96.5 },
-          { name: '交战(E)', value: 91, color: '#ff0044', response: 300, success: 94.2 },
-          { name: '评估(A)', value: 88, color: '#aa00ff', response: 500, success: 93.1 }
+          {
+            name: '发现(F)',
+            value: 96,
+            color: '#00f0ff',
+            response: 120,
+            success: 98.5
+          },
+          {
+            name: '定位(F)',
+            value: 92,
+            color: '#00ff88',
+            response: 85,
+            success: 97.2
+          },
+          {
+            name: '跟踪(T)',
+            value: 89,
+            color: '#ffdd00',
+            response: 200,
+            success: 95.8
+          },
+          {
+            name: '瞄准(T)',
+            value: 94,
+            color: '#ff8800',
+            response: 150,
+            success: 96.5
+          },
+          {
+            name: '交战(E)',
+            value: 91,
+            color: '#ff0044',
+            response: 300,
+            success: 94.2
+          },
+          {
+            name: '评估(A)',
+            value: 88,
+            color: '#aa00ff',
+            response: 500,
+            success: 93.1
+          }
         ],
         defense: [
-          { name: '发现(F)', value: 98, color: '#00f0ff', response: 80, success: 99.1 },
-          { name: '定位(F)', value: 95, color: '#00ff88', response: 60, success: 98.5 },
-          { name: '跟踪(T)', value: 96, color: '#ffdd00', response: 100, success: 97.8 },
-          { name: '瞄准(T)', value: 93, color: '#ff8800', response: 120, success: 96.9 },
-          { name: '交战(E)', value: 97, color: '#ff0044', response: 200, success: 98.2 },
-          { name: '评估(A)', value: 94, color: '#aa00ff', response: 400, success: 95.5 }
+          {
+            name: '发现(F)',
+            value: 98,
+            color: '#00f0ff',
+            response: 80,
+            success: 99.1
+          },
+          {
+            name: '定位(F)',
+            value: 95,
+            color: '#00ff88',
+            response: 60,
+            success: 98.5
+          },
+          {
+            name: '跟踪(T)',
+            value: 96,
+            color: '#ffdd00',
+            response: 100,
+            success: 97.8
+          },
+          {
+            name: '瞄准(T)',
+            value: 93,
+            color: '#ff8800',
+            response: 120,
+            success: 96.9
+          },
+          {
+            name: '交战(E)',
+            value: 97,
+            color: '#ff0044',
+            response: 200,
+            success: 98.2
+          },
+          {
+            name: '评估(A)',
+            value: 94,
+            color: '#aa00ff',
+            response: 400,
+            success: 95.5
+          }
         ],
         recon: [
-          { name: '发现(F)', value: 99, color: '#00f0ff', response: 50, success: 99.8 },
-          { name: '定位(F)', value: 97, color: '#00ff88', response: 100, success: 98.9 },
-          { name: '跟踪(T)', value: 95, color: '#ffdd00', response: 150, success: 97.5 },
-          { name: '瞄准(T)', value: 85, color: '#ff8800', response: 200, success: 92.1 },
-          { name: '交战(E)', value: 60, color: '#ff0044', response: 0, success: 0 },
-          { name: '评估(A)', value: 98, color: '#aa00ff', response: 300, success: 99.2 }
+          {
+            name: '发现(F)',
+            value: 99,
+            color: '#00f0ff',
+            response: 50,
+            success: 99.8
+          },
+          {
+            name: '定位(F)',
+            value: 97,
+            color: '#00ff88',
+            response: 100,
+            success: 98.9
+          },
+          {
+            name: '跟踪(T)',
+            value: 95,
+            color: '#ffdd00',
+            response: 150,
+            success: 97.5
+          },
+          {
+            name: '瞄准(T)',
+            value: 85,
+            color: '#ff8800',
+            response: 200,
+            success: 92.1
+          },
+          {
+            name: '交战(E)',
+            value: 60,
+            color: '#ff0044',
+            response: 0,
+            success: 0
+          },
+          {
+            name: '评估(A)',
+            value: 98,
+            color: '#aa00ff',
+            response: 300,
+            success: 99.2
+          }
         ],
         support: [
-          { name: '发现(F)', value: 90, color: '#00f0ff', response: 200, success: 95.2 },
-          { name: '定位(F)', value: 88, color: '#00ff88', response: 180, success: 94.5 },
-          { name: '跟踪(T)', value: 85, color: '#ffdd00', response: 250, success: 93.1 },
-          { name: '瞄准(T)', value: 82, color: '#ff8800', response: 300, success: 91.8 },
-          { name: '交战(E)', value: 80, color: '#ff0044', response: 400, success: 90.5 },
-          { name: '评估(A)', value: 92, color: '#aa00ff', response: 600, success: 96.2 }
+          {
+            name: '发现(F)',
+            value: 90,
+            color: '#00f0ff',
+            response: 200,
+            success: 95.2
+          },
+          {
+            name: '定位(F)',
+            value: 88,
+            color: '#00ff88',
+            response: 180,
+            success: 94.5
+          },
+          {
+            name: '跟踪(T)',
+            value: 85,
+            color: '#ffdd00',
+            response: 250,
+            success: 93.1
+          },
+          {
+            name: '瞄准(T)',
+            value: 82,
+            color: '#ff8800',
+            response: 300,
+            success: 91.8
+          },
+          {
+            name: '交战(E)',
+            value: 80,
+            color: '#ff0044',
+            response: 400,
+            success: 90.5
+          },
+          {
+            name: '评估(A)',
+            value: 92,
+            color: '#aa00ff',
+            response: 600,
+            success: 96.2
+          }
         ]
       },
-      
+
       // 任务保障
       missionStats: [
-        { label: '保障任务', value: 128, status: 'normal' },
-        { label: '成功率', value: '98.5%', status: 'good' },
-
+        {label: '保障任务', value: 128, status: 'normal'},
+        {label: '成功率', value: '98.5%', status: 'good'}
       ],
-      
+
       // 网络指标
       networkMetrics: [
-        { label: '带宽', value: 68, unit: '%' },
-        { label: '负载', value: 45, unit: '%' },
-        { label: '质量', value: 92, unit: '%' }
+        {label: '带宽', value: 68, unit: '%'},
+        {label: '负载', value: 45, unit: '%'},
+        {label: '质量', value: 92, unit: '%'}
       ],
-      
+
       // 平台数据
-      platformStats: { total: 156, online: 142, offline: 8, warning: 6 },
+      platformStats: {total: 156, online: 142, offline: 8, warning: 6},
       platformList: [
-        { id: 'PLT-001', type: '指挥车', status: 'online', statusText: '在线' },
-        { id: 'PLT-002', type: '雷达站', status: 'online', statusText: '在线' },
-        { id: 'PLT-003', type: '通信车', status: 'warning', statusText: '告警' },
-        { id: 'PLT-004', type: '无人机', status: 'online', statusText: '在线' },
-        { id: 'PLT-005', type: '指挥车', status: 'offline', statusText: '离线' }
+        {id: 'PLT-001', type: '指挥车', status: 'online', statusText: '在线'},
+        {id: 'PLT-002', type: '雷达站', status: 'online', statusText: '在线'},
+        {id: 'PLT-003', type: '通信车', status: 'warning', statusText: '告警'},
+        {id: 'PLT-004', type: '无人机', status: 'online', statusText: '在线'},
+        {id: 'PLT-005', type: '指挥车', status: 'offline', statusText: '离线'}
       ],
-      
+
       // 告警
       recentAlarms: [
-        { time: '15:02', level: 'high', levelText: '紧急', content: '节点PLT-003通信中断' },
-        { time: '14:58', level: 'medium', levelText: '重要', content: '链路延迟超过阈值' },
-        { time: '14:45', level: 'low', levelText: '一般', content: '备用电源切换' }
+        {
+          time: '15:02',
+          level: 'high',
+          levelText: '紧急',
+          content: '节点PLT-003通信中断'
+        },
+        {
+          time: '14:58',
+          level: 'medium',
+          levelText: '重要',
+          content: '链路延迟超过阈值'
+        },
+        {
+          time: '14:45',
+          level: 'low',
+          levelText: '一般',
+          content: '备用电源切换'
+        }
       ],
-      
+
       // 故障
-      faultStats: { total: 23, resolved: 18, pending: 5 }
+      faultStats: {total: 23, resolved: 18, pending: 5}
     }
   },
-  
+
   computed: {
     currentKillChainData() {
       return this.killChainData[this.currentTask]
     }
   },
-  
+
   mounted() {
     this.$nextTick(() => {
       this.initCharts()
       window.addEventListener('resize', this.handleResize)
     })
   },
-  
+
   beforeDestroy() {
     window.removeEventListener('resize', this.handleResize)
     Object.values(this.charts).forEach(chart => chart && chart.dispose())
   },
-  
+
   methods: {
     switchTask(taskKey) {
       this.currentTask = taskKey
@@ -310,7 +507,7 @@ export default {
         this.updateKillChainChart()
       })
     },
-    
+
     initCharts() {
       this.initMissionChart()
       this.initNetworkCharts()
@@ -319,222 +516,254 @@ export default {
       this.initAlarmChart()
       this.initFaultChart()
     },
-    
+
     initMissionChart() {
       const dom = this.$refs.missionChart
       if (!dom) return
       const chart = echarts.init(dom)
       this.charts.mission = chart
-      
+
       chart.setOption({
-        grid: { top: 5, right: 5, bottom: 5, left: 5, containLabel: true },
+        grid: {top: 5, right: 5, bottom: 5, left: 5, containLabel: true},
         xAxis: {
           type: 'category',
           data: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00'],
-          axisLine: { lineStyle: { color: '#1e3a5f' } },
-          axisLabel: { color: '#8ba3c7', fontSize: 9 }
+          axisLine: {lineStyle: {color: '#1e3a5f'}},
+          axisLabel: {color: '#8ba3c7', fontSize: 9}
         },
         yAxis: {
           type: 'value',
-          splitLine: { lineStyle: { color: '#1e3a5f', type: 'dashed' } },
-          axisLabel: { color: '#8ba3c7', fontSize: 9 }
+          splitLine: {lineStyle: {color: '#1e3a5f', type: 'dashed'}},
+          axisLabel: {color: '#8ba3c7', fontSize: 9}
         },
-        series: [{
-          data: [120, 132, 101, 134, 90, 130],
-          type: 'line',
-          smooth: true,
-          symbol: 'none',
-          lineStyle: { color: '#00f0ff', width: 2 },
-          areaStyle: {
-            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-              { offset: 0, color: 'rgba(0, 240, 255, 0.3)' },
-              { offset: 1, color: 'rgba(0, 240, 255, 0.05)' }
-            ])
+        series: [
+          {
+            data: [120, 132, 101, 134, 90, 130],
+            type: 'line',
+            smooth: true,
+            symbol: 'none',
+            lineStyle: {color: '#00f0ff', width: 2},
+            areaStyle: {
+              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                {offset: 0, color: 'rgba(0, 240, 255, 0.3)'},
+                {offset: 1, color: 'rgba(0, 240, 255, 0.05)'}
+              ])
+            }
           }
-        }]
+        ]
       })
     },
-    
+
     initNetworkCharts() {
       // 环形图
       this.$refs.networkRingCharts?.forEach((el, index) => {
         if (!el) return
         const chart = echarts.init(el)
         this.charts[`network${index}`] = chart
-        
+
         const metric = this.networkMetrics[index]
-        const color = index === 0 ? '#00f0ff' : index === 1 ? '#00ff88' : '#ffdd00'
-        
+        const color =
+          index === 0 ? '#00f0ff' : index === 1 ? '#00ff88' : '#ffdd00'
+
         chart.setOption({
-          series: [{
-            type: 'pie',
-            radius: ['70%', '90%'],
-            center: ['50%', '50%'],
-            startAngle: 90,
-            label: { show: false },
-            data: [
-              { value: metric.value, itemStyle: { color: color } },
-              { value: 100 - metric.value, itemStyle: { color: 'rgba(30, 58, 95, 0.3)' } }
-            ]
-          }]
+          series: [
+            {
+              type: 'pie',
+              radius: ['70%', '90%'],
+              center: ['50%', '50%'],
+              startAngle: 90,
+              label: {show: false},
+              data: [
+                {value: metric.value, itemStyle: {color: color}},
+                {
+                  value: 100 - metric.value,
+                  itemStyle: {color: 'rgba(30, 58, 95, 0.3)'}
+                }
+              ]
+            }
+          ]
         })
       })
-      
+
       // 趋势图
       const trendDom = this.$refs.networkTrendChart
       if (!trendDom) return
       const trendChart = echarts.init(trendDom)
       this.charts.networkTrend = trendChart
-      
+
       trendChart.setOption({
-        grid: { top: 5, right: 5, bottom: 5, left: 5, containLabel: true },
+        grid: {top: 5, right: 5, bottom: 5, left: 5, containLabel: true},
         xAxis: {
           type: 'category',
           data: ['1分', '2分', '3分', '4分', '5分'],
-          axisLine: { lineStyle: { color: '#1e3a5f' } },
-          axisLabel: { color: '#8ba3c7', fontSize: 9 }
+          axisLine: {lineStyle: {color: '#1e3a5f'}},
+          axisLabel: {color: '#8ba3c7', fontSize: 9}
         },
         yAxis: {
           type: 'value',
-          splitLine: { lineStyle: { color: '#1e3a5f', type: 'dashed' } },
-          axisLabel: { color: '#8ba3c7', fontSize: 9 }
+          splitLine: {lineStyle: {color: '#1e3a5f', type: 'dashed'}},
+          axisLabel: {color: '#8ba3c7', fontSize: 9}
         },
         series: [
           {
             type: 'bar',
             data: [320, 302, 301, 334, 390],
-            itemStyle: { color: 'rgba(0, 240, 255, 0.6)' }
+            itemStyle: {color: 'rgba(0, 240, 255, 0.6)'}
           }
         ]
       })
     },
-    
+
     initPlatformChart() {
       const dom = this.$refs.platformChart
       if (!dom) return
       const chart = echarts.init(dom)
       this.charts.platform = chart
-      
+
       chart.setOption({
-        grid: { top: 5, right: 5, bottom: 5, left: 5, containLabel: true },
-        series: [{
-          type: 'pie',
-          radius: ['40%', '70%'],
-          center: ['50%', '50%'],
-          roseType: 'radius',
-          itemStyle: { borderRadius: 3 },
-          label: { show: false },
-          data: [
-            { value: 40, name: '指挥控制', itemStyle: { color: '#00f0ff' } },
-            { value: 38, name: '情报侦察', itemStyle: { color: '#00ff88' } },
-            { value: 32, name: '通信中继', itemStyle: { color: '#ffdd00' } },
-            { value: 30, name: '电子对抗', itemStyle: { color: '#ff8800' } },
-            { value: 28, name: '武器平台', itemStyle: { color: '#ff0044' } }
-          ]
-        }]
+        grid: {top: 5, right: 5, bottom: 5, left: 5, containLabel: true},
+        series: [
+          {
+            type: 'pie',
+            radius: ['40%', '70%'],
+            center: ['50%', '50%'],
+            roseType: 'radius',
+            itemStyle: {borderRadius: 3},
+            label: {show: false},
+            data: [
+              {value: 40, name: '指挥控制', itemStyle: {color: '#00f0ff'}},
+              {value: 38, name: '情报侦察', itemStyle: {color: '#00ff88'}},
+              {value: 32, name: '通信中继', itemStyle: {color: '#ffdd00'}},
+              {value: 30, name: '电子对抗', itemStyle: {color: '#ff8800'}},
+              {value: 28, name: '武器平台', itemStyle: {color: '#ff0044'}}
+            ]
+          }
+        ]
       })
     },
-    
+
     initKillChainChart() {
       const dom = this.$refs.killChainMainChart
       if (!dom) return
       const chart = echarts.init(dom)
       this.charts.killChain = chart
-      
+
       this.updateKillChainChart()
     },
-    
+
     updateKillChainChart() {
       const chart = this.charts.killChain
       if (!chart) return
-      
+
       const data = this.currentKillChainData
-      
-      chart.setOption({
-        backgroundColor: 'transparent',
-        grid: { top: 20, right: 30, bottom: 20, left: 30, containLabel: true },
-        radar: {
-          indicator: data.map(d => ({ name: d.name, max: 100 })),
-          center: ['50%', '55%'],
-          radius: '65%',
-          axisName: { color: '#8ba3c7', fontSize: 11, formatter: (value) => value.split('(')[0] },
-          splitArea: { 
-            areaStyle: { 
-              color: ['rgba(0, 240, 255, 0.02)', 'rgba(0, 240, 255, 0.05)', 'rgba(0, 240, 255, 0.08)', 'rgba(0, 240, 255, 0.11)'] 
-            } 
-          },
-          axisLine: { lineStyle: { color: '#1e3a5f' } },
-          splitLine: { lineStyle: { color: '#1e3a5f' } }
-        },
-        series: [{
-          type: 'radar',
-          data: [{
-            value: data.map(d => d.value),
-            name: '杀伤链效能',
-            areaStyle: { 
-              color: new echarts.graphic.RadialGradient(0.5, 0.5, 1, [
-                { offset: 0, color: 'rgba(0, 240, 255, 0.1)' },
-                { offset: 1, color: 'rgba(0, 240, 255, 0.3)' }
-              ])
+
+      chart.setOption(
+        {
+          backgroundColor: 'transparent',
+          grid: {top: 20, right: 30, bottom: 20, left: 30, containLabel: true},
+          radar: {
+            indicator: data.map(d => ({name: d.name, max: 100})),
+            center: ['50%', '55%'],
+            radius: '65%',
+            axisName: {
+              color: '#8ba3c7',
+              fontSize: 11,
+              formatter: value => value.split('(')[0]
             },
-            lineStyle: { color: '#00f0ff', width: 2 },
-            itemStyle: { color: '#00f0ff', borderWidth: 2, borderColor: '#fff' }
-          }]
-        }]
-      }, true)
+            splitArea: {
+              areaStyle: {
+                color: [
+                  'rgba(0, 240, 255, 0.02)',
+                  'rgba(0, 240, 255, 0.05)',
+                  'rgba(0, 240, 255, 0.08)',
+                  'rgba(0, 240, 255, 0.11)'
+                ]
+              }
+            },
+            axisLine: {lineStyle: {color: '#1e3a5f'}},
+            splitLine: {lineStyle: {color: '#1e3a5f'}}
+          },
+          series: [
+            {
+              type: 'radar',
+              data: [
+                {
+                  value: data.map(d => d.value),
+                  name: '杀伤链效能',
+                  areaStyle: {
+                    color: new echarts.graphic.RadialGradient(0.5, 0.5, 1, [
+                      {offset: 0, color: 'rgba(0, 240, 255, 0.1)'},
+                      {offset: 1, color: 'rgba(0, 240, 255, 0.3)'}
+                    ])
+                  },
+                  lineStyle: {color: '#00f0ff', width: 2},
+                  itemStyle: {
+                    color: '#00f0ff',
+                    borderWidth: 2,
+                    borderColor: '#fff'
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        true
+      )
     },
-    
+
     initAlarmChart() {
       const dom = this.$refs.alarmChart
       if (!dom) return
       const chart = echarts.init(dom)
       this.charts.alarm = chart
-      
+
       chart.setOption({
-        grid: { top: 5, right: 5, bottom: 5, left: 5, containLabel: true },
+        grid: {top: 5, right: 5, bottom: 5, left: 5, containLabel: true},
         xAxis: {
           type: 'category',
           data: ['通信', '导航', '雷达', '电子', '武器'],
-          axisLine: { lineStyle: { color: '#1e3a5f' } },
-          axisLabel: { color: '#8ba3c7', fontSize: 9 }
+          axisLine: {lineStyle: {color: '#1e3a5f'}},
+          axisLabel: {color: '#8ba3c7', fontSize: 9}
         },
         yAxis: {
           type: 'value',
-          splitLine: { lineStyle: { color: '#1e3a5f', type: 'dashed' } },
-          axisLabel: { color: '#8ba3c7', fontSize: 9 }
+          splitLine: {lineStyle: {color: '#1e3a5f', type: 'dashed'}},
+          axisLabel: {color: '#8ba3c7', fontSize: 9}
         },
-        series: [{
-          type: 'bar',
-          data: [
-            { value: 12, itemStyle: { color: '#ff0044' } },
-            { value: 8, itemStyle: { color: '#ff8800' } },
-            { value: 15, itemStyle: { color: '#ffdd00' } },
-            { value: 6, itemStyle: { color: '#00f0ff' } },
-            { value: 4, itemStyle: { color: '#00ff88' } }
-          ],
-          barWidth: '50%'
-        }]
+        series: [
+          {
+            type: 'bar',
+            data: [
+              {value: 12, itemStyle: {color: '#ff0044'}},
+              {value: 8, itemStyle: {color: '#ff8800'}},
+              {value: 15, itemStyle: {color: '#ffdd00'}},
+              {value: 6, itemStyle: {color: '#00f0ff'}},
+              {value: 4, itemStyle: {color: '#00ff88'}}
+            ],
+            barWidth: '50%'
+          }
+        ]
       })
     },
-    
+
     initFaultChart() {
       const dom = this.$refs.faultChart
       if (!dom) return
       const chart = echarts.init(dom)
       this.charts.fault = chart
-      
+
       chart.setOption({
-        grid: { top: 5, right: 5, bottom: 5, left: 5, containLabel: true },
+        grid: {top: 5, right: 5, bottom: 5, left: 5, containLabel: true},
         xAxis: {
           type: 'category',
           data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
-          axisLine: { lineStyle: { color: '#1e3a5f' } },
-          axisLabel: { color: '#8ba3c7', fontSize: 9 }
+          axisLine: {lineStyle: {color: '#1e3a5f'}},
+          axisLabel: {color: '#8ba3c7', fontSize: 9}
         },
         yAxis: {
           type: 'value',
-          splitLine: { lineStyle: { color: '#1e3a5f', type: 'dashed' } },
-          axisLabel: { color: '#8ba3c7', fontSize: 9 }
+          splitLine: {lineStyle: {color: '#1e3a5f', type: 'dashed'}},
+          axisLabel: {color: '#8ba3c7', fontSize: 9}
         },
         series: [
           {
@@ -542,19 +771,19 @@ export default {
             type: 'bar',
             stack: 'total',
             data: [3, 4, 2, 5, 3, 2, 4],
-            itemStyle: { color: '#ff0044' }
+            itemStyle: {color: '#ff0044'}
           },
           {
             name: '修复',
             type: 'bar',
             stack: 'total',
             data: [2, 3, 3, 4, 2, 3, 1],
-            itemStyle: { color: '#00ff88' }
+            itemStyle: {color: '#00ff88'}
           }
         ]
       })
     },
-    
+
     handleResize() {
       Object.values(this.charts).forEach(chart => chart && chart.resize())
     }
@@ -565,7 +794,7 @@ export default {
 <style scoped>
 .monitor-dashboard {
   width: 100%;
-  height: 100vh;
+  height: 100%;
   background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
   color: #fff;
   font-family: 'Microsoft YaHei', sans-serif;
@@ -720,9 +949,15 @@ export default {
   margin-bottom: 2px;
 }
 
-.stat-value.normal { color: #00f0ff; }
-.stat-value.good { color: #00ff88; }
-.stat-value.warning { color: #ffdd00; }
+.stat-value.normal {
+  color: #00f0ff;
+}
+.stat-value.good {
+  color: #00ff88;
+}
+.stat-value.warning {
+  color: #ffdd00;
+}
 
 .stat-label {
   font-size: 11px;
@@ -781,8 +1016,12 @@ export default {
   margin-left: 4px;
 }
 
-.platform-brief .online b { color: #00ff88; }
-.platform-brief .warning b { color: #ffdd00; }
+.platform-brief .online b {
+  color: #00ff88;
+}
+.platform-brief .warning b {
+  color: #ffdd00;
+}
 
 .platform-table {
   margin-top: 8px;
@@ -813,9 +1052,15 @@ export default {
   color: #00f0ff;
 }
 
-.platform-table .online { color: #00ff88; }
-.platform-table .warning { color: #ffdd00; }
-.platform-table .offline { color: #ff0044; }
+.platform-table .online {
+  color: #00ff88;
+}
+.platform-table .warning {
+  color: #ffdd00;
+}
+.platform-table .offline {
+  color: #ff0044;
+}
 
 .platform-table .dot {
   display: inline-block;
@@ -907,7 +1152,7 @@ export default {
 .card-phase {
   font-size: 10px;
   opacity: 0.7;
-  background: rgba(0,0,0,0.3);
+  background: rgba(0, 0, 0, 0.3);
   padding: 2px 6px;
   border-radius: 3px;
 }
@@ -954,7 +1199,7 @@ export default {
   left: 0;
   right: 0;
   height: 3px;
-  background: rgba(255,255,255,0.1);
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .progress-fill {
@@ -977,12 +1222,18 @@ export default {
   margin-bottom: 4px;
   border-radius: 3px;
   font-size: 11px;
-  background: rgba(0,0,0,0.2);
+  background: rgba(0, 0, 0, 0.2);
 }
 
-.alarm-item.high { border-left: 3px solid #ff0044; }
-.alarm-item.medium { border-left: 3px solid #ff8800; }
-.alarm-item.low { border-left: 3px solid #ffdd00; }
+.alarm-item.high {
+  border-left: 3px solid #ff0044;
+}
+.alarm-item.medium {
+  border-left: 3px solid #ff8800;
+}
+.alarm-item.low {
+  border-left: 3px solid #ffdd00;
+}
 
 .alarm-badge {
   padding: 1px 6px;
@@ -992,9 +1243,16 @@ export default {
   white-space: nowrap;
 }
 
-.alarm-item.high .alarm-badge { background: #ff0044; }
-.alarm-item.medium .alarm-badge { background: #ff8800; }
-.alarm-item.low .alarm-badge { background: #ffdd00; color: #000; }
+.alarm-item.high .alarm-badge {
+  background: #ff0044;
+}
+.alarm-item.medium .alarm-badge {
+  background: #ff8800;
+}
+.alarm-item.low .alarm-badge {
+  background: #ffdd00;
+  color: #000;
+}
 
 .alarm-msg {
   flex: 1;
@@ -1029,8 +1287,12 @@ export default {
   color: #ff0044;
 }
 
-.fnum.resolved .fnum-val { color: #00ff88; }
-.fnum.pending .fnum-val { color: #ffdd00; }
+.fnum.resolved .fnum-val {
+  color: #00ff88;
+}
+.fnum.pending .fnum-val {
+  color: #ffdd00;
+}
 
 .fnum-label {
   font-size: 11px;

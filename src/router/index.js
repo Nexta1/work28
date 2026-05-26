@@ -67,7 +67,7 @@ const routes = [
   {
     path: '/task-group-config-strategy',
     name: 'TaskGroupConfigStrategy',
-    component: () => import('@/views/system-operations/ControlStrategy.vue'),
+    component: () => import('@/views/system-operations/ScenarioStrategy.vue'),
     meta: {
       title: '任务群组配置策略生成',
       subsystem: '体系运营管理',
@@ -79,8 +79,8 @@ const routes = [
   },
   {
     path: '/hierarchical-control-strategy',
-    name: 'HierarchicalControlStrategy',
-    component: () => import('@/views/system-operations/ControlStrategy.vue'),
+    name: 'OcStrategyConfig',
+    component: () => import('@/views/system-operations/OcStrategyConfig.vue'),
     meta: {
       title: '分级体系运控策略生成',
       subsystem: '体系运营管理',
@@ -92,8 +92,8 @@ const routes = [
   },
   {
     path: '/datalink-assurance-plan',
-    name: 'DatalinkAssurancePlan',
-    component: () => import('@/views/system-operations/ControlStrategy.vue'),
+    name: 'DataLinkGuarantee',
+    component: () => import('@/views/system-operations/DataLinkGuarantee.vue'),
     meta: {
       title: '数据链保障方案构建',
       subsystem: '体系运营管理',
@@ -119,7 +119,7 @@ const routes = [
   {
     path: '/datalink-fault-diagnosis',
     name: 'DatalinkFaultDiagnosis',
-    component: () => import('@/views/system-operations/ControlStrategy.vue'),
+    component: () => import('@/views/system-operations/FaultStrategy.vue'),
     meta: {
       title: '数据链故障诊断和处理策略',
       subsystem: '体系运营管理',
@@ -129,19 +129,19 @@ const routes = [
       requiresAuth: true
     }
   },
-  {
-    path: '/control-strategy-library',
-    name: 'ControlStrategyLibrary',
-    component: () => import('@/views/system-operations/ControlStrategy.vue'),
-    meta: {
-      title: '运控策略库构建',
-      subsystem: '体系运营管理',
-      category: '运控策略制定',
-      icon: '📚',
-      parentModule: '运控策略制定',
-      requiresAuth: true
-    }
-  },
+  // {
+  //   path: '/control-strategy-library',
+  //   name: 'ControlStrategyLibrary',
+  //   component: () => import('@/views/system-operations/ControlStrategy.vue'),
+  //   meta: {
+  //     title: '运控策略库构建',
+  //     subsystem: '体系运营管理',
+  //     category: '运控策略制定',
+  //     icon: '📚',
+  //     parentModule: '运控策略制定',
+  //     requiresAuth: true
+  //   }
+  // },
 
   // 体系运营管理 - 综合调度管理
   {

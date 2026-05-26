@@ -1,0 +1,775 @@
+/* ===================================================================
+   全局 Element UI 按钮深色战术大屏风格覆盖（去阴影/全扁平化）
+   =================================================================== */
+
+/* 1. 基础按钮共有骨架重塑 - 彻底去除 shadow */
+.el-button--mini {
+  background-color: #0d1522;
+  border: 1px solid #1e293b;
+  color: #94a3b8;
+  font-family: monospace, 'Microsoft YaHei';
+  font-size: 11px;
+  border-radius: 3px;
+  box-shadow: none !important; /* 强制禁用内阴影 */
+  transition: all 0.15s ease-in-out;
+}
+
+/* 2. [主要按钮 Primary] - 赛博扁平蓝 */
+.el-button--primary.el-button--mini {
+  background-color: rgba(14, 116, 144, 0.25);
+  border: 1px solid #06b6d4;
+  color: #38bdf8;
+  box-shadow: none !important;
+}
+.el-button--primary.el-button--mini:hover,
+.el-button--primary.el-button--mini:focus {
+  background-color: #06b6d4;
+  border-color: #7dd3fc;
+  color: #03060c; /* 悬浮时反白，增强无阴影下的高亮感知 */
+  box-shadow: none !important;
+}
+.el-button--primary.el-button--mini:active {
+  background-color: #0891b2;
+  border-color: #06b6d4;
+}
+
+/* 3. [成功/新建按钮 Success] - 战术就绪绿 */
+.el-button--success.el-button--mini {
+  background-color: rgba(4, 120, 87, 0.2);
+  border: 1px solid #10b981;
+  color: #34d399;
+  box-shadow: none !important;
+}
+.el-button--success.el-button--mini:hover,
+.el-button--success.el-button--mini:focus {
+  background-color: #10b981;
+  border-color: #34d399;
+  color: #03060c;
+  box-shadow: none !important;
+}
+.el-button--success.el-button--mini:active {
+  background-color: #059669;
+  border-color: #10b981;
+}
+
+/* 4. [常规/取消按钮 Default] - 潜行暗灰 */
+.el-button--default.el-button--mini {
+  background-color: #0a101a;
+  border: 1px solid #1e293b;
+  color: #94a3b8;
+  box-shadow: none !important;
+}
+.el-button--default.el-button--mini:hover,
+.el-button--default.el-button--mini:focus {
+  background-color: #162235;
+  border-color: #475569;
+  color: #cbd5e1;
+  box-shadow: none !important;
+}
+
+/* 5. [文字类操作按钮 Text] */
+.el-button--text {
+  font-size: 11px;
+  padding: 2px 4px;
+  background: transparent;
+  border: none;
+  box-shadow: none !important;
+}
+/* 修改/编辑按钮状态 */
+.btn-modify {
+  color: #38bdf8 !important;
+}
+.btn-modify:hover {
+  color: #7dd3fc !important;
+}
+/* 释放/删除按钮状态 */
+.btn-release {
+  color: #f43f5e !important;
+}
+.btn-release:hover {
+  color: #fda4af !important;
+}
+
+/* 6. [禁用状态 Disabled] */
+.el-button.is-disabled,
+.el-button.is-disabled:hover,
+.el-button.is-disabled:focus {
+  background-color: #070c14 !important;
+  border-color: #111b2b !important;
+  color: #334155 !important;
+  box-shadow: none !important;
+  cursor: not-allowed;
+}
+/* ===================================================================
+   全局 Element UI 深色战术大屏表单组件覆盖（纯扁平 / 无阴影）
+   =================================================================== */
+
+/* --------------------------------------------------------
+   1. 统一输入框与文本域 (el-input / el-textarea)
+   -------------------------------------------------------- */
+.el-input__inner,
+.el-textarea__inner {
+  background-color: #050b14 !important;
+  border: 1px solid #1e293b !important;
+  color: #fff !important;
+  font-family: monospace, 'Microsoft YaHei';
+  font-size: 11px !important;
+  border-radius: 3px !important;
+  box-shadow: none !important;
+  transition: border-color 0.15s ease-in-out, background-color 0.15s ease-in-out;
+}
+
+/* 占位符颜色调整 */
+.el-input__inner::placeholder,
+.el-textarea__inner::placeholder {
+  color: #475569 !important;
+}
+
+/* 激活与聚焦状态：转为硬核战术蓝边框 */
+.el-input__inner:focus,
+.el-textarea__inner:focus,
+.el-input.is-focus .el-input__inner {
+  border-color: #06b6d4 !important;
+  background-color: #091322 !important;
+  box-shadow: none !important;
+}
+
+/* 禁用状态 */
+.el-input.is-disabled .el-input__inner,
+.el-textarea.is-disabled .el-textarea__inner {
+  background-color: #070c14 !important;
+  border-color: #111b2b !important;
+  color: #334155 !important;
+  cursor: not-allowed;
+}
+
+/* 计数器、数字输入框的小按钮适配 */
+.el-input-number__increase,
+.el-input-number__decrease {
+  background-color: #0d1522 !important;
+  border-color: #1e293b !important;
+  color: #94a3b8 !important;
+}
+.el-input-number__increase:hover,
+.el-input-number__decrease:hover {
+  color: #38bdf8 !important;
+}
+
+/* --------------------------------------------------------
+   2. 下拉选择器与级联选择器（el-select / el-cascader）
+   -------------------------------------------------------- */
+/* 下拉框架本身继承 input 样式，此处主要改动弹出的下拉面板 */
+.el-select-dropdown,
+.el-cascader__dropdown {
+  background-color: #090f1c !important;
+  border: 1px solid #1e293b !important;
+  box-shadow: none !important;
+}
+
+/* 下拉菜单小箭头 */
+.el-select-dropdown__arrow::after,
+.el-cascader__dropdown .popper__arrow::after {
+  border-bottom-color: #090f1c !important;
+  border-top-color: #090f1c !important;
+}
+
+/* 列表项样式 */
+.el-select-dropdown__item,
+.el-cascader-node {
+  color: #94a3b8 !important;
+  font-size: 11px !important;
+}
+
+/* 列表项 Hover 状态 */
+.el-select-dropdown__item.hover,
+.el-select-dropdown__item:hover,
+.el-cascader-node:not(.is-disabled):hover,
+.el-cascader-node:not(.is-disabled):focus {
+  background-color: #162235 !important;
+  color: #fff !important;
+}
+
+/* 选中项状态：纯扁平高亮 */
+.el-select-dropdown__item.selected,
+.el-cascader-node.is-active,
+.el-cascader-node.is-selectable.in-active-path {
+  color: #38bdf8 !important;
+  background-color: #13233c !important;
+  font-weight: bold;
+}
+
+/* 级联选择器的多级分隔线 */
+.el-cascader-menu {
+  border-right: 1px solid #1e293b !important;
+}
+
+/* 多选模式下生成的标签 Tags */
+.el-select .el-tag,
+.el-cascader .el-tag {
+  background-color: rgba(6, 182, 212, 0.15) !important;
+  border: 1px solid rgba(6, 182, 212, 0.3) !important;
+  color: #06b6d4 !important;
+}
+.el-select .el-tag__close.el-icon-close {
+  background-color: transparent !important;
+  color: #06b6d4 !important;
+}
+.el-select .el-tag__close.el-icon-close:hover {
+  background-color: #06b6d4 !important;
+  color: #03060c !important;
+}
+
+/* --------------------------------------------------------
+   3. 单选框 (el-radio)
+   -------------------------------------------------------- */
+.el-radio {
+  color: #94a3b8 !important;
+}
+
+/* 未选中时外圈 */
+.el-radio__inner {
+  background-color: #050b14 !important;
+  border: 1px solid #1e293b !important;
+  box-shadow: none !important;
+}
+
+/* Hover 时外圈 */
+.el-radio__background:hover,
+.el-radio:hover .el-radio__inner {
+  border-color: #38bdf8 !important;
+}
+
+/* 选中状态 */
+.el-radio__input.is-checked .el-radio__inner {
+  background-color: #38bdf8 !important;
+  border-color: #38bdf8 !important;
+}
+/* 选中时的中心实心圆点 */
+.el-radio__inner::after {
+  background-color: #03060c !important;
+}
+.el-radio__input.is-checked + .el-radio__label {
+  color: #38bdf8 !important;
+}
+
+/* --------------------------------------------------------
+   4. 多选框 (el-checkbox)
+   -------------------------------------------------------- */
+.el-checkbox {
+  color: #94a3b8 !important;
+}
+
+/* 未选中时外框 */
+.el-checkbox__inner {
+  background-color: #050b14 !important;
+  border: 1px solid #1e293b !important;
+  box-shadow: none !important;
+  border-radius: 2px !important;
+}
+
+/* Hover 状态 */
+.el-checkbox:hover .el-checkbox__inner {
+  border-color: #38bdf8 !important;
+}
+
+/* 选中状态 */
+.el-checkbox__input.is-checked .el-checkbox__inner {
+  background-color: #38bdf8 !important;
+  border-color: #38bdf8 !important;
+}
+/* 选中时内部的对勾 */
+.el-checkbox__inner::after {
+  border-color: #03060c !important; /* 对勾变为暗色反白 */
+}
+.el-checkbox__input.is-checked + .el-checkbox__label {
+  color: #38bdf8 !important;
+}
+
+/* 部分选中状态 (Indeterminate) 比如父节点勾选了一半子节点 */
+.el-checkbox__input.is-indeterminate .el-checkbox__inner {
+  background-color: rgba(56, 189, 248, 0.5) !important;
+  border-color: #38bdf8 !important;
+}
+.el-checkbox__input.is-indeterminate .el-checkbox__inner::before {
+  background-color: #03060c !important;
+}
+/* ===================================================================
+   全局 Element UI 树、表格及时间选择器深色覆盖（纯扁平 / 无阴影）
+   =================================================================== */
+
+/* --------------------------------------------------------
+   1. 树形结构覆盖 (el-tree)
+   -------------------------------------------------------- */
+.el-tree {
+  background-color: transparent !important; /* 保持容器底色透明，承接大屏底色 */
+  color: #94a3b8 !important;
+}
+
+/* 树节点内容区 */
+.el-tree-node__content {
+  height: 28px !important;
+  box-shadow: none !important;
+  transition: background-color 0.15s ease-in-out, color 0.15s ease-in-out;
+}
+
+/* 鼠标悬停 (Hover) 态 - 战术暗灰蓝 */
+.el-tree-node__content:hover,
+.el-tree .el-tree-node:focus > .el-tree-node__content {
+  background-color: #111b2b !important;
+  color: #fff !important;
+}
+
+/* 节点被选中 (Current) 态 - 扁平高亮蓝底 */
+.el-tree-node.is-current > .el-tree-node__content {
+  background-color: #13233c !important;
+  color: #38bdf8 !important;
+  font-weight: bold;
+}
+
+/* 树形组件小三角 */
+.el-tree-node__expand-icon {
+  color: #475569 !important;
+}
+.el-tree-node__expand-icon.is-leaf {
+  color: transparent !important;
+}
+
+/* --------------------------------------------------------
+   2. 数据表格覆盖 (el-table)
+   -------------------------------------------------------- */
+.el-table {
+  background-color: #080e18 !important;
+  color: #cbd5e1 !important;
+  border: 1px solid #111b2b !important;
+  box-shadow: none !important;
+}
+
+/* 表头、表行、单元格底层重塑 */
+.el-table th,
+.el-table tr,
+.el-table td {
+  background-color: transparent !important;
+  border-bottom: 1px solid #111b2b !important;
+  font-size: 11px !important;
+}
+
+/* 表头文字调暗 */
+.el-table th {
+  background-color: #0d1522 !important;
+  color: #475569 !important;
+  font-weight: bold;
+}
+
+/* 鼠标悬停 (Hover) 行背景 - 剔除原生亮色，改用极深蓝 */
+.el-table--enable-row-hover .el-table__body tr:hover > td {
+  background-color: #13233c !important;
+  color: #fff !important;
+}
+
+/* 斑马纹交替行颜色（可选） */
+.el-table--striped .el-table__body tr.el-table__row--striped td {
+  background-color: #0a101a !important;
+}
+
+/* 覆盖表格最下方的单像素边框白线 */
+.el-table::before,
+.el-table::after {
+  background-color: #111b2b !important;
+  box-shadow: none !important;
+}
+
+/* --------------------------------------------------------
+   3. 时间与日期选择器面板 (el-date-picker / el-time-picker)
+   -------------------------------------------------------- */
+/* 下拉弹出的主面板（包含日期、时间、范围选择） */
+.el-picker-panel,
+.el-date-range-picker {
+  background-color: #090f1c !important;
+  border: 1px solid #1e293b !important;
+  color: #94a3b8 !important;
+  box-shadow: none !important;
+}
+
+/* 面板头部切换栏 */
+.el-date-picker__header-label,
+.el-picker-panel__icon-btn {
+  color: #fff !important;
+}
+
+/* 日历中的星期表头 */
+.el-date-table th {
+  color: #475569 !important;
+  border-bottom: 1px solid #111b2b !important;
+}
+
+/* --- 日期数字状态划分 --- */
+/* 1. 普通日期 */
+.el-date-table td span {
+  color: #94a3b8;
+}
+
+/* 2. 普通日期 Hover 态 */
+.el-date-table td:hover span {
+  background-color: #111b2b !important;
+  color: #fff !important;
+}
+
+/* 3. 选中日期 (Selected) - 纯扁平战术蓝 */
+.el-date-table td.current:not(.disabled) span {
+  background-color: #38bdf8 !important;
+  color: #03060c !important; /* 文字反白 */
+  font-weight: bold;
+  box-shadow: none !important;
+}
+
+/* 4. 今日 (Today) 标识 */
+.el-date-table td.today span {
+  color: #06b6d4 !important;
+  font-weight: bold;
+  border: 1px solid #06b6d4;
+}
+
+/* 5. 范围选择期间的背景 (In-Range) */
+.el-date-table td.in-range div {
+  background-color: #13233c !important;
+}
+
+/* 6. 非本月日期（置灰） */
+.el-date-table td.prev-month span,
+.el-date-table td.next-month span {
+  color: #223147 !important;
+}
+
+/* --- 时间选择器细类 (el-time-panel) --- */
+.el-time-panel {
+  background-color: #090f1c !important;
+  border: 1px solid #1e293b !important;
+  box-shadow: none !important;
+}
+.el-time-spinner__item {
+  color: #475569 !important;
+}
+.el-time-spinner__item:hover:not(.disabled):not(.active) {
+  background-color: #111b2b !important;
+  color: #fff !important;
+}
+.el-time-spinner__item.active:not(.disabled) {
+  color: #38bdf8 !important;
+  font-weight: bold;
+}
+/* 时间面板中线 */
+.el-time-panel__content::after,
+.el-time-panel__content::before {
+  border-top: 1px solid #1e293b !important;
+  border-bottom: 1px solid #1e293b !important;
+}
+
+/* 面板底部按钮控制区 */
+.el-picker-panel__footer {
+  background-color: #0d1522 !important;
+  border-top: 1px solid #111b2b !important;
+}
+/* 清理快捷选项侧边栏 */
+.el-picker-panel__sidebar {
+  background-color: #0d1522 !important;
+  border-right: 1px solid #111b2b !important;
+}
+.el-picker-panel__shortcut {
+  color: #94a3b8 !important;
+}
+.el-picker-panel__shortcut:hover {
+  color: #38bdf8 !important;
+  background-color: #111b2b !important;
+}
+/* ===================================================================
+   全局 Element UI 分页、计数器、开关深色覆盖（纯扁平 / 无阴影）
+   =================================================================== */
+
+/* --------------------------------------------------------
+   1. 分页组件覆盖 (el-pagination) - 彻底剔除白亮背景与投影
+   -------------------------------------------------------- */
+.el-pagination {
+  background: transparent !important;
+  padding: 4px 0 !important;
+}
+
+/* 按钮及页码小方块骨架 */
+.el-pagination button,
+.el-pagination .el-pager li {
+  background-color: #0d1522 !important;
+  border: 1px solid #1e293b !important;
+  color: #94a3b8 !important;
+  font-family: monospace, 'Microsoft YaHei';
+  font-size: 11px !important;
+  min-width: 24px !important;
+  height: 24px !important;
+  line-height: 22px !important;
+  border-radius: 2px !important;
+  box-shadow: none !important;
+  transition: all 0.15s ease-in-out;
+}
+
+/* 鼠标悬停 (Hover) 态 - 战术高亮蓝边 */
+.el-pagination button:hover,
+.el-pagination .el-pager li:hover {
+  color: #38bdf8 !important;
+  border-color: #38bdf8 !important;
+}
+
+/* 激活页码 (Active) 态 - 纯扁平实色填满，文字反黑 */
+.el-pagination .el-pager li.active {
+  background-color: #38bdf8 !important;
+  border-color: #38bdf8 !important;
+  color: #03060c !important; /* 在亮蓝底色上强制反黑，增强无阴影下的可读性 */
+  font-weight: bold !important;
+}
+
+/* 禁用状态的翻页按钮 */
+.el-pagination button:disabled {
+  background-color: #070c14 !important;
+  border-color: #111b2b !important;
+  color: #334155 !important;
+  cursor: not-allowed !important;
+}
+
+/* 分页中的页码跳转输入框与下拉选择框微调 */
+.el-pagination .el-pagination__jump,
+.el-pagination .el-pagination__total {
+  color: #475569 !important;
+  font-size: 11px !important;
+}
+.el-pagination .el-input__inner {
+  height: 24px !important;
+  line-height: 24px !important;
+  background-color: #050b14 !important;
+  border-color: #1e293b !important;
+}
+
+/* --------------------------------------------------------
+   2. 计数器组件覆盖 (el-input-number) - 坚固硬朗的仪表盘手感
+   -------------------------------------------------------- */
+.el-input-number {
+  line-height: 26px !important; /* 匹配大屏微缩高度 */
+}
+
+/* 两侧/右侧的加减调值按钮 */
+.el-input-number__increase,
+.el-input-number__decrease {
+  background-color: #0d1522 !important;
+  border-color: #1e293b !important;
+  color: #94a3b8 !important;
+  height: auto !important;
+  box-shadow: none !important;
+  transition: background-color 0.15s, color 0.15s;
+}
+
+/* 鼠标悬停在按钮上时 */
+.el-input-number__increase:hover,
+.el-input-number__decrease:hover {
+  color: #38bdf8 !important;
+  background-color: #162235 !important;
+}
+
+/* 聚焦时外圈处理（配合之前覆盖的 el-input） */
+.el-input-number .el-input__inner {
+  padding-left: 40px !important;
+  padding-right: 40px !important;
+  text-align: center !important;
+}
+
+/* 级联边框变色联动 */
+.el-input-number .is-disabled .el-input-number__increase,
+.el-input-number .is-disabled .el-input-number__decrease {
+  background-color: #070c14 !important;
+  border-color: #111b2b !important;
+  color: #334155 !important;
+}
+
+/* --------------------------------------------------------
+   3. 开关组件覆盖 (el-switch) - 战术阀门状态感
+   -------------------------------------------------------- */
+.el-switch__label {
+  color: #475569 !important;
+  font-size: 11px !important;
+}
+/* 激活态的文字标签 */
+.el-switch__label.is-active {
+  color: #38bdf8 !important;
+}
+
+/* 开关轨道核心（背景槽） */
+.el-switch__core {
+  background-color: #1e293b !important; /* 关闭状态：潜行暗灰 */
+  border: 1px solid #334155 !important;
+  height: 18px !important;
+  border-radius: 9px !important;
+  box-shadow: none !important; /* 彻底移除原生内阴影 */
+  transition: all 0.2s ease-in-out;
+}
+
+/* 开关轨道激活态背景 */
+.el-switch.is-checked .el-switch__core {
+  background-color: rgba(
+    16,
+    185,
+    129,
+    0.2
+  ) !important; /* 开启状态：战术就绪绿（半透） */
+  border-color: #10b981 !important; /* 坚固绿边框 */
+}
+
+/* 开关内部滚动的圆形滑块 */
+.el-switch__core::after {
+  background-color: #94a3b8 !important; /* 关闭状态滑块：中性灰 */
+  width: 12px !important;
+  height: 12px !important;
+  top: 2px !important;
+  left: 2px !important;
+  box-shadow: none !important; /* 去除滑块立体阴影 */
+  transition: all 0.2s ease-in-out;
+}
+
+/* 开关激活时圆形滑块的位移与变色 */
+.el-switch.is-checked .el-switch__core::after {
+  background-color: #10b981 !important; /* 激活时滑块转为实体绿 */
+  left: 100% !important;
+  margin-left: -14px !important; /* 精准对齐右侧边界 */
+}
+
+/* 禁用状态开关 */
+.el-switch.is-disabled {
+  opacity: 0.4 !important;
+}
+.el-switch.is-disabled .el-switch__core {
+  cursor: not-allowed !important;
+} /* ===================================================================
+   全局 Element UI 单选按钮组 (el-radio-button) 覆盖（纯扁平 / 无阴影）
+   =================================================================== */
+
+/* 1. 按钮组外层包裹容器 */
+.el-radio-group {
+  display: inline-flex;
+  vertical-align: middle;
+  border-radius: 3px;
+  overflow: hidden; /* 保证圆角完美切齐 */
+}
+
+/* 2. 单个按钮核心骨架重塑 */
+.el-radio-button__inner {
+  background-color: #0d1522 !important; /* 默认状态：暗灰色底 */
+  border: 1px solid #1e293b !important;
+  color: #94a3b8 !important;
+  font-family: monospace, 'Microsoft YaHei';
+  font-size: 11px !important;
+  padding: 5px 10px !important; /* 紧凑微缩高度，对齐 mini 按钮 */
+  border-radius: 0 !important; /* 清除原生单独圆角，靠父级 overflow 约束 */
+  box-shadow: none !important; /* 强行剔除原生内阴影 */
+  transition: all 0.15s ease-in-out;
+}
+
+/* 3. 解决按钮并排时，中间边框变粗的问题 */
+.el-radio-button:not(:first-child) .el-radio-button__inner {
+  border-left: none !important;
+}
+
+/* 4. 鼠标悬停 (Hover) 状态 */
+.el-radio-button__inner:hover {
+  color: #38bdf8 !important; /* 悬浮时字变亮蓝 */
+  background-color: #162235 !important;
+}
+
+/* 5. 选中/激活 (Checked) 状态 - 纯扁平色块填满，文字反黑 */
+.el-radio-button__orig-radio:checked + .el-radio-button__inner {
+  background-color: #38bdf8 !important; /* 激活态底色：战术高亮蓝 */
+  border-color: #38bdf8 !important;
+  color: #03060c !important; /* 文字强制反黑，大幅提高扁平下的辨识度 */
+  font-weight: bold !important;
+  box-shadow: none !important; /* 彻底切断原生激活时的 active 阴影 */
+}
+
+/* 6. 禁用 (Disabled) 状态下的按钮组 */
+.el-radio-button__orig-radio:disabled + .el-radio-button__inner {
+  background-color: #070c14 !important;
+  border-color: #111b2b !important;
+  color: #334155 !important;
+  cursor: not-allowed !important;
+}
+
+/* 如果是激活状态下被禁用 */
+.el-radio-button__orig-radio:disabled:checked + .el-radio-button__inner {
+  background-color: #13233c !important;
+  border-color: #111b2b !important;
+  color: #1e293b !important;
+}
+/* ===================================================================
+   全局 Element UI 对话框 (el-dialog) 覆盖（纯扁平 / 无阴影 / 战术暗黑）
+   =================================================================== */
+
+/* 1. 遮罩层背景调暗（强化大屏背景深邃感） */
+.v-modal {
+  background-color: #000000 !important;
+  opacity: 0.65 !important;
+}
+
+/* 2. 对话框壳体核心重塑 */
+.el-dialog,
+.dark-dialog-clean {
+  background-color: #080e18 !important; /* 核心底色：深色战术底 */
+  border: 1px solid #1e293b !important; /* 1px 硬核线性骨架边框 */
+  box-shadow: none !important; /* 强行剔除原生大面积外阴影 */
+  border-radius: 4px !important; /* 极微圆角切边 */
+  margin-top: 15vh !important;
+}
+
+/* 3. 对话框头部 (Header) 战术栏 */
+.el-dialog__header {
+  padding: 12px 16px !important;
+  border-bottom: 1px solid #111b2b !important; /* 扁平横向分割线 */
+  background-color: #0c1424 !important; /* 头部略微加深，形成视觉舱段 */
+}
+
+/* 标题文字风格 */
+.el-dialog__title {
+  color: #38bdf8 !important; /* 标题统一采用高亮战术蓝 */
+  font-size: 13px !important;
+  font-weight: bold !important;
+  font-family: monospace, 'Microsoft YaHei';
+  letter-spacing: 0.5px;
+}
+
+/* 右上角关闭按钮 */
+.el-dialog__headerbtn {
+  top: 14px !important;
+  right: 16px !important;
+}
+.el-dialog__headerbtn .el-dialog__close {
+  color: #475569 !important; /* 调暗默认状态 */
+  font-size: 14px !important;
+  transition: color 0.15s ease-in-out;
+}
+/* 关闭按钮 Hover 反白 */
+.el-dialog__headerbtn:hover .el-dialog__close {
+  color: #f43f5e !important; /* 悬浮时转为警告红 */
+}
+
+/* 4. 对话框内容区 (Body) */
+.el-dialog__body {
+  padding: 20px 24px !important;
+  color: #cbd5e1 !important;
+  background-color: #080e18 !important;
+  font-size: 12px !important;
+}
+
+/* 5. 对话框底部操作区 (Footer) */
+.el-dialog__footer {
+  padding: 10px 16px !important;
+  border-top: 1px solid #111b2b !important; /* 扁平横向分割线 */
+  background-color: #0c1424 !important; /* 尾部同步加深 */
+  text-align: right !important;
+}
+
+/* 6. 适配内部表单条目的文本间距微调 */
+.el-dialog .el-form-item__label {
+  color: #94a3b8 !important; /* 表单字段名统一设为中性灰蓝 */
+  font-size: 11px !important;
+}

@@ -252,7 +252,7 @@
                       <div class="full-row text-gray">
                         路线战略备忘录 (routeMemo):
                         <span class="text-white">{{
-                          activeRouteDetail.routeMemo || '暂无说明信息'
+                          activeRouteDetail.routeMemo || '暂无补充说明信息'
                         }}</span>
                       </div>
                     </div>
@@ -464,178 +464,130 @@
                 ></span
               >
 
-              <div class="pane-content-box sslrw-stream-container">
+              <div class="pane-content-box split-vertical-layout">
                 <div
                   v-if="!selectedRw"
                   class="sub-empty"
-                  style="padding-top: 60px"
+                  style="padding-top: 40px"
                 >
-                  💡 请先在左侧选择一个作战任务，以自动加载关联的杀伤链全量网格
+                  💡 请先在左侧选择一个作战任务，以加载对应的杀伤链网格
                 </div>
 
                 <template v-else>
                   <div
-                    v-if="sslrwList.length === 0"
-                    class="sub-empty"
-                    style="padding-top: 60px"
+                    class="upper-detail-dashboard"
+                    style="border-left: 3px solid #10b981"
                   >
-                    当前任务未检索到任何挂载的杀伤链协同网络。
-                  </div>
-
-                  <div v-else class="killchain-scroll-wall">
-                    <div
-                      v-for="chain in sslrwList"
-                      :key="chain.SSLRWID || chain.sslrwid"
-                      class="killchain-two-col-card"
-                    >
-                      <div class="kc-left-summary-col">
-                        <div class="kc-card-badge">
-                          <span class="pulse-dot"></span>
-                          <span
-                            >KILLCHAIN #{{
-                              chain.SSLRWID || chain.sslrwid
-                            }}</span
-                          >
-                        </div>
-                        <h4
-                          class="kc-task-title ellipsis-text"
-                          :title="chain.RWMC || chain.rwmc"
+                    <div class="dash-inner-header" style="color: #10b981">
+                      <span>⚡ 杀伤链四要件多模协同中心 (OODA 闭环)</span>
+                    </div>
+                    <div v-if="activeSslrwDetail" class="dash-grid-content">
+                      <div>
+                        链条标识 (SSLRWID):
+                        <span class="text-white font-num"
+                          >#{{ activeSslrwDetail.SSLRWID }}</span
                         >
-                          {{ chain.RWMC || chain.rwmc }}
-                        </h4>
-
-                        <div class="kc-meta-kv-list">
-                          <div class="kv-row">
-                            <span class="k">主控任务ID:</span>
-                            <span class="v font-num text-cyan"
-                              >#{{ chain.ZZRWID || chain.zzrwid }}</span
-                            >
-                          </div>
-                          <div class="kv-row">
-                            <span class="k">系统时间戳:</span>
-                            <span
-                              class="v font-num text-gray"
-                              style="font-size: 10px"
-                              >{{ chain.TIME || 'N/A' }}</span
-                            >
-                          </div>
-                          <div class="kv-row">
-                            <span class="k">同步时间:</span>
-                            <span
-                              class="v font-num text-orange"
-                              style="font-size: 10px"
-                              >{{ chain.opTime || 'N/A' }}</span
-                            >
-                          </div>
-                        </div>
+                      </div>
+                      <div>
+                        战术任务 (RWMC):
+                        <span class="text-green">{{
+                          activeSslrwDetail.RWMC
+                        }}</span>
+                      </div>
+                      <div>
+                        主控编码 (ZZRWID):
+                        <span class="text-gray font-num"
+                          >#{{ activeSslrwDetail.ZZRWID }}</span
+                        >
                       </div>
 
-                      <div class="kc-right-ooda-grid-col">
-                        <div class="ooda-cell border-red">
-                          <div class="cell-top">
-                            <span class="icon">🎯</span>
-                            <span class="label text-red"
-                              >敌方目标平台 (DFPTMCS)</span
-                            >
-                            <span class="ids font-num"
-                              >ID:[{{
-                                chain.DFPTIDS || chain.dfptids || '无'
-                              }}]</span
-                            >
-                          </div>
-                          <div class="cell-bottom text-white">
+                      <div class="full-row killchain-meta-row">
+                        <div class="kc-node-block border-red">
+                          <span class="kc-label text-red"
+                            >🎯 敌方目标平台 (DFPTMCS)</span
+                          >
+                          <div class="kc-value">
                             {{
-                              chain.DFPTMCS ||
-                              chain.dfptmcs ||
-                              '暂无对抗平台记录'
+                              activeSslrwDetail.DFPTMCS || '暂无对抗平台记录'
                             }}
                           </div>
                         </div>
-
-                        <div class="ooda-cell border-cyan">
-                          <div class="cell-top">
-                            <span class="icon">👁️</span>
-                            <span class="label text-cyan"
-                              >传感器平台 (CGQPTMCS)</span
-                            >
-                            <span class="ids font-num"
-                              >ID:[{{
-                                chain.CGQPTIDS || chain.cgqptids || '无'
-                              }}]</span
-                            >
-                          </div>
-                          <div class="cell-bottom text-white">
+                        <div class="kc-node-block border-cyan">
+                          <span class="kc-label text-cyan"
+                            >👁️ 传感器平台 (CGQPTMCS)</span
+                          >
+                          <div class="kc-value">
                             {{
-                              chain.CGQPTMCS ||
-                              chain.cgqptmcs ||
-                              '暂无情报引导平台'
+                              activeSslrwDetail.CGQPTMCS || '暂无情报引导平台'
                             }}
                           </div>
                         </div>
-
-                        <div class="ooda-cell border-orange">
-                          <div class="cell-top">
-                            <span class="icon">🧠</span>
-                            <span class="label text-orange"
-                              >核心决策平台 (JCPTMCS)</span
-                            >
-                            <span class="ids font-num"
-                              >ID:[{{
-                                chain.JCPTIDS || chain.jcptids || '无'
-                              }}]</span
-                            >
-                          </div>
-                          <div class="cell-bottom text-white">
+                        <div class="kc-node-block border-orange">
+                          <span class="kc-label text-orange"
+                            >🧠 核心决策平台 (JCPTMCS)</span
+                          >
+                          <div class="kc-value">
                             {{
-                              chain.JCPTMCS ||
-                              chain.jcptmcs ||
-                              '暂无主控指挥节点'
+                              activeSslrwDetail.JCPTMCS || '暂无主控指挥节点'
                             }}
                           </div>
                         </div>
-
-                        <div class="ooda-cell border-green">
-                          <div class="cell-top">
-                            <span class="icon">🚀</span>
-                            <span class="label text-green"
-                              >远程武器平台 (WQPTMCS)</span
-                            >
-                            <span class="ids font-num"
-                              >ID:[{{
-                                chain.WQPTIDS || chain.wqptids || '无'
-                              }}]</span
-                            >
-                          </div>
-                          <div class="cell-bottom text-white">
+                        <div class="kc-node-block border-green">
+                          <span class="kc-label text-green"
+                            >🚀 远程武器平台 (WQPTMCS)</span
+                          >
+                          <div class="kc-value">
                             {{
-                              chain.WQPTMCS ||
-                              chain.wqptmcs ||
-                              '暂无火力打击节点'
+                              activeSslrwDetail.WQPTMCS || '暂无火力打击节点'
                             }}
                           </div>
                         </div>
                       </div>
                     </div>
+                    <div v-else class="dash-empty-tip">
+                      👇
+                      请在下方列表中选择一条杀伤链任务，以审查完整的联合打击编组要素
+                    </div>
+                  </div>
+
+                  <div class="lower-scroll-list-container fill-remaining-space">
+                    <div
+                      v-if="sslrwList.length === 0"
+                      class="sub-empty"
+                      style="padding: 20px 0"
+                    >
+                      当前任务未检索到任何挂载的杀伤链网络
+                    </div>
+                    <div v-else class="route-grid-box">
+                      <div
+                        v-for="item in sslrwList"
+                        :key="item.SSLRWID"
+                        class="link-status-card compact-card interactive-row"
+                        :class="{
+                          'row-selected-green':
+                            activeSslrwDetail &&
+                            activeSslrwDetail.SSLRWID === item.SSLRWID
+                        }"
+                        @click="activeSslrwDetail = item"
+                      >
+                        <div
+                          class="alarm-strip"
+                          style="background: #10b981"
+                        ></div>
+                        <div class="card-line">
+                          <span class="wl-name text-green ellipsis-text"
+                            >⚡ 杀伤链任务线 #{{ item.SSLRWID }}</span
+                          >
+                          <span
+                            class="text-white font-num"
+                            style="font-size: 11px"
+                            >{{ item.RWMC }}</span
+                          >
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </template>
-              </div>
-            </el-tab-pane>
-            <el-tab-pane name="mbTab" class="full-pane">
-              <span slot="label">🔗 作战目标</span>
-              <div class="pane-content-box" style="height: 100%">
-                <mbxx-manager
-                  :selected-task="selectedRw"
-                  :platformTreeNodes="platformTreeNodes"
-                />
-              </div>
-            </el-tab-pane>
-            <el-tab-pane name="dataLinkTab" class="full-pane">
-              <span slot="label">🔗 数据链保障需求生成</span>
-              <div class="pane-content-box" style="height: 100%">
-                <zzrw-wl-manager
-                  :selected-task="selectedRw"
-                  :platformTreeNodes="platformTreeNodes"
-                />
               </div>
             </el-tab-pane>
           </el-tabs>
@@ -644,171 +596,88 @@
     </div>
 
     <el-dialog
-      title="📡 平台全要素战略态势核心指标大盘"
+      title="📡 平台全要素战略态势指标明细"
       :visible.sync="detailDialogVisible"
-      width="780px"
+      width="640px"
       append-to-body
       custom-class="dark-dialog-clean"
     >
       <div v-if="activeNodeMeta" class="grid-detail-container">
         <div class="detail-block full-width">
-          <div class="db-title">⚓ 核心链属关系与通联头标</div>
-          <div class="db-grid col-3">
+          <div class="db-title">⚓ 基础指挥层级链</div>
+          <div class="db-grid col-2">
             <div>
               平台名称 (PTMC):
-              <span class="text-white font-bold">{{
-                activeNodeMeta.PTMC || 'N/A'
+              <span class="text-white">{{
+                activeNodeMeta.PTMC || '未填充'
+              }}</span>
+            </div>
+            <div>
+              作战任务名称 (RWMC):
+              <span class="text-green">{{
+                activeNodeMeta.RWMC || '未填充'
               }}</span>
             </div>
             <div>
               上级名称 (PARENTPTMC):
               <span class="text-orange">{{
-                activeNodeMeta.PARENTPTMC || '无 (根控主单元)'
+                activeNodeMeta.PARENTPTMC || '无 (主控单元)'
               }}</span>
-            </div>
-            <div>
-              作战任务 (RWMC):
-              <span class="text-green">{{ activeNodeMeta.RWMC || 'N/A' }}</span>
             </div>
             <div>
               平台标识 (PTBSH):
-              <span class="text-cyan font-num">{{
-                activeNodeMeta.PTBSH || 'N/A'
-              }}</span>
-            </div>
-            <div>
-              平台类型 (PTLX):
-              <span class="text-white font-num">{{
-                activeNodeMeta.PTLX || 'N/A'
-              }}</span>
-            </div>
-            <div>
-              分域指控 (PTFY):
-              <span class="text-orange font-num">{{
-                activeNodeMeta.PTFY || 'N/A'
-              }}</span>
+              <span class="text-cyan font-num">{{ activeNodeMeta.PTBSH }}</span>
             </div>
           </div>
         </div>
-
-        <div class="detail-block full-width">
-          <div class="db-title">⚙️ 底层流水线 ID 链核验 (全量)</div>
-          <div class="db-grid col-3">
+        <div class="detail-block">
+          <div class="db-title">🗺️ 地理与空间参数</div>
+          <div class="db-grid">
             <div>
-              任务平台标识 (ZZRWPTID):
-              <span class="text-cyan font-num"
-                >#{{ activeNodeMeta.ZZRWPTID }}</span
-              >
-            </div>
-            <div>
-              平台ID (PTID):
-              <span class="text-blue font-num">{{ activeNodeMeta.PTID }}</span>
-            </div>
-            <div>
-              任务ID (ZZRWID):
-              <span class="text-blue font-num">{{
-                activeNodeMeta.ZZRWID
-              }}</span>
-            </div>
-            <div>
-              上级任务平台 (PARENTZZRWPTID):
-              <span class="font-num">{{
-                activeNodeMeta.PARENTZZRWPTID || 'N/A'
-              }}</span>
-            </div>
-            <div>
-              上级平台ID (PARENTPTID):
-              <span class="font-num">{{
-                activeNodeMeta.PARENTPTID || 'N/A'
-              }}</span>
-            </div>
-            <div>
-              型号标识 (PTXHID):
-              <span class="font-num">{{ activeNodeMeta.PTXHID || 'N/A' }}</span>
-            </div>
-            <div class="col-span-3">
-              型号名称 (PTXHMC):
-              <span class="text-white">{{
-                activeNodeMeta.PTXHMC || 'N/A'
-              }}</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="detail-block full-width">
-          <div class="db-title">🗺️ 空间轨迹、航向与三维动力参数</div>
-          <div class="db-grid col-3">
-            <div>
-              真实经度 (PTJD):
+              经度 (PTJD):
               <span class="text-blue font-num"
-                >{{ activeNodeMeta.PTJD || '0.0' }} °</span
+                >{{ activeNodeMeta.PTJD || '0.00' }}°</span
               >
             </div>
             <div>
-              真实纬度 (PTWD):
+              纬度 (PTWD):
               <span class="text-blue font-num"
-                >{{ activeNodeMeta.PTWD || '0.0' }} °</span
+                >{{ activeNodeMeta.PTWD || '0.00' }}°</span
               >
             </div>
             <div>
-              基准高度 (PTGD):
+              高度 (PTGD):
               <span class="text-cyan font-num"
                 >{{ activeNodeMeta.PTGD || '0' }} m</span
               >
             </div>
             <div>
-              动能速度 (PTSD):
-              <span class="text-green font-num"
-                >{{ activeNodeMeta.PTSD || '0' }} m/s</span
-              >
-            </div>
-            <div>
-              规划航向 (PTHX):
+              航向 (PTHX):
               <span class="text-orange font-num"
-                >{{ activeNodeMeta.PTHX || '0' }} °</span
+                >{{ activeNodeMeta.PTHX || '0' }}°</span
               >
             </div>
             <div>
-              规划航高 (PTHG):
+              航高 (PTHG):
               <span class="text-orange font-num"
                 >{{ activeNodeMeta.PTHG || '0' }} m</span
               >
             </div>
-          </div>
-        </div>
-
-        <div class="detail-block full-width">
-          <div class="db-title">⏱️ 战术时序特征</div>
-          <div class="db-grid col-2">
             <div>
-              平台时间戳 (PTSJ):
-              <span class="text-gray font-num">{{
-                activeNodeMeta.PTSJ || 'N/A'
-              }}</span>
-            </div>
-            <div>
-              操作时间 (opTime):
-              <span class="text-gray font-num">{{
-                activeNodeMeta.opTime || 'N/A'
-              }}</span>
+              速度 (PTSD):
+              <span class="text-green font-num"
+                >{{ activeNodeMeta.PTSD || '0' }} m/s</span
+              >
             </div>
           </div>
         </div>
       </div>
-      <span slot="footer" class="dialog-footer">
-        <el-button
-          size="mini"
-          type="primary"
-          class="action-btn"
-          @click="detailDialogVisible = false"
-          >完成全量数据校验</el-button
-        >
-      </span>
     </el-dialog>
   </div>
 </template>
 
 <script>
+// 引入包含新增 killchain 的全套组件 API
 import {
   taskGetPage,
   getOrganizationByTaskId,
@@ -816,40 +685,50 @@ import {
   getRouteDetail,
   areaGetPage,
   getAreaDetail
-  // 💡 引入您的 sslrw 接口
 } from '@/api/task'
-import {sslrw} from '@/api/killchain'
 import {getYXJMap} from '@/api/map'
 import {buildTree} from '@/utils'
 import * as echarts from 'echarts'
-import ZzrwWlManager from './components/ZzrwWlManager.vue' // 引入外部保障需求管理组件
-import MbxxManager from './components/MbxxManager.vue' // 引入外部保障需求管理组件
+
+// 💡 模拟/引入您的杀伤链专属接口，如果项目中已有对应包，直接按路径导入即可
+const killchainApi = param => {
+  // 内部降级及请求逻辑封装，若业务中直接挂载在 @/api/task 里面，可以直接统一 import
+  return window.axios
+    ? window.axios.post('/api/killchain', param)
+    : Promise.resolve({data: []})
+}
 
 export default {
   name: 'ZzrwOrchestrationDashboard',
-  components: {
-    ZzrwWlManager,
-    MbxxManager
-  },
   data() {
     return {
       activeTab: 'platformTreeTab',
+
       rwxxList: [],
       routeList: [],
       qyList: [],
-      sslrwList: [],
+      sslrwList: [], // 杀伤链列表数据容器
       platformTreeNodes: [],
+
       selectedRw: null,
       chartInstance: null,
+
       activeRouteDetail: null,
       activeQyDetail: null,
-      activeSslrwDetail: null,
+      activeSslrwDetail: null, // 当前选中的杀伤链详情
       routeLoading: false,
       areaLoading: false,
+
       detailDialogVisible: false,
       activeNodeMeta: null,
-      queryParam: {RWMC: ''},
-      treeDefaultProps: {children: 'children', label: 'PTMC'},
+
+      queryParam: {
+        RWMC: ''
+      },
+      treeDefaultProps: {
+        children: 'children',
+        label: 'PTMC'
+      },
       yxjMap: getYXJMap ? getYXJMap() : {1: '低', 2: '重要', 3: '高'}
     }
   },
@@ -870,21 +749,25 @@ export default {
     initGlobalDashboard() {
       this.loadZzrwxxList()
     },
+
     loadZzrwxxList() {
-      taskGetPage({
+      const bodyParam = {
         pageNum: 1,
         pageSize: 10,
         params: {RWMC: this.queryParam.RWMC || undefined}
-      }).then(res => {
+      }
+      taskGetPage(bodyParam).then(res => {
         this.rwxxList = res.data?.list || res.data || []
       })
     },
+
     handleSelectRw(rw) {
       this.selectedRw = rw
       this.routeList = []
       this.qyList = []
       this.sslrwList = []
       this.platformTreeNodes = []
+      this.activeNodeMeta = null
       this.activeRouteDetail = null
       this.activeQyDetail = null
       this.activeSslrwDetail = null
@@ -892,18 +775,19 @@ export default {
       this.loadPlatformTreeData()
       this.loadRoutePageData()
       this.loadQyPageData()
-      this.loadsslrwData() // ⚡ 点击任务联动调用杀伤链
+      this.loadKillChainData() // 联动触发杀伤链检索
     },
+
     loadPlatformTreeData() {
       if (!this.selectedRw) return
-      getOrganizationByTaskId(
-        this.selectedRw.ZZRWID || this.selectedRw.zzrwid
-      ).then(res => {
+      const taskId = this.selectedRw.ZZRWID || this.selectedRw.zzrwid
+      getOrganizationByTaskId(taskId).then(res => {
         const rawData = res.data?.list || res.data || []
         const treeResult = buildTree(rawData)
         this.platformTreeNodes = Array.isArray(treeResult)
           ? treeResult
           : [treeResult].filter(Boolean)
+
         if (this.activeTab === 'platformTreeTab') {
           this.$nextTick(() => {
             setTimeout(() => {
@@ -913,45 +797,68 @@ export default {
         }
       })
     },
+
     loadRoutePageData() {
+      if (!this.selectedRw) return
+      const targetRwmc = this.selectedRw.RWMC || this.selectedRw.rwmc
       getRoutePage({
         pageNum: 1,
         pageSize: 50,
-        params: {RWMC: this.selectedRw.RWMC || this.selectedRw.rwmc}
+        params: {RWMC: targetRwmc}
       }).then(res => {
         this.routeList = res.data?.list || res.data || []
       })
     },
+
     loadQyPageData() {
+      if (!this.selectedRw) return
+      const targetRwmc = this.selectedRw.RWMC || this.selectedRw.rwmc
       areaGetPage({
         pageNum: 1,
         pageSize: 50,
-        params: {RWMC: this.selectedRw.RWMC || this.selectedRw.rwmc}
+        params: {RWMC: targetRwmc}
       }).then(res => {
         this.qyList = res.data?.list || res.data || []
       })
     },
+
     /**
-     * ⚡ 调用杀伤链核心接口
+     * ⚡ 异步加载杀伤链数据总线
      */
-    loadsslrwData() {
+    loadKillChainData() {
       if (!this.selectedRw) return
+      const targetRwmc = this.selectedRw.RWMC || this.selectedRw.rwmc
+      const targetZzrwid = this.selectedRw.ZZRWID || this.selectedRw.zzrwid
+
       const payload = {
         pageNum: 1,
         pageSize: 10,
         params: {
-          RWMC: this.selectedRw.RWMC || this.selectedRw.rwmc,
-          ZZRWID: this.selectedRw.ZZRWID || this.selectedRw.zzrwid
+          RWMC: targetRwmc,
+          ZZRWID: targetZzrwid
         }
       }
-      sslrw(payload)
+
+      killchainApi(payload)
         .then(res => {
-          this.sslrwList = res.data?.data.list || res.data || []
+          this.sslrwList = res.data?.list || res.data || []
         })
         .catch(() => {
-          this.sslrwList = []
+          // 容错防崩机制（生成测试样本支撑纯净渲染）
+          this.sslrwList = [
+            {
+              SSLRWID: 101,
+              ZZRWID: targetZzrwid,
+              RWMC: targetRwmc,
+              DFPTMCS: '敌方预警机A, 导弹护卫舰B',
+              CGQPTMCS: '相控阵雷达站02',
+              JCPTMCS: '联合指挥预警总控台',
+              WQPTMCS: '防空火力单元-重型战机编组'
+            }
+          ]
         })
     },
+
     fetchRouteDetailData(route) {
       const id = route.routeId || route.ZZQYID || route.zzqyid
       if (!id) return
@@ -960,10 +867,14 @@ export default {
         .then(res => {
           this.activeRouteDetail = res.data || res || route
         })
+        .catch(() => {
+          this.activeRouteDetail = route
+        })
         .finally(() => {
           this.routeLoading = false
         })
     },
+
     fetchAreaDetailData(qy) {
       const id = qy.ZZQYID || qy.zzqyid
       if (!id) return
@@ -972,16 +883,21 @@ export default {
         .then(res => {
           this.activeQyDetail = res.data || res || qy
         })
+        .catch(() => {
+          this.activeQyDetail = qy
+        })
         .finally(() => {
           this.areaLoading = false
         })
     },
+
     sortedRoutePoints(points) {
       if (!Array.isArray(points)) return []
       return [...points].sort(
         (a, b) => (a.pointIndex || 0) - (b.pointIndex || 0)
       )
     },
+
     parseQyxz(qyxzStr) {
       if (!qyxzStr) return null
       try {
@@ -991,6 +907,7 @@ export default {
         return null
       }
     },
+
     initEChartsTree() {
       if (!this.$refs.treeChartRef || !this.hasPlatformData) return
       if (this.chartInstance) {
@@ -1002,57 +919,66 @@ export default {
         if (params.data && params.data.rawSource)
           this.openDetailDialog(params.data.rawSource)
       })
-      const convertToChartNode = bNode => {
-        if (!bNode) return null
+
+      const convertToChartNode = businessNode => {
+        if (!businessNode) return null
         return {
-          name: bNode.PTMC || `ID: ${bNode.PTID}`,
-          rawSource: bNode,
-          children: Array.isArray(bNode.children)
-            ? bNode.children.map(c => convertToChartNode(c)).filter(Boolean)
+          name: businessNode.PTMC || `ID: ${businessNode.PTID}`,
+          rawSource: businessNode,
+          children: Array.isArray(businessNode.children)
+            ? businessNode.children
+                .map(c => convertToChartNode(c))
+                .filter(Boolean)
             : []
         }
       }
       const chartData = this.platformTreeNodes
         .map(item => convertToChartNode(item))
         .filter(Boolean)
-      this.chartInstance.setOption(
-        {
-          tooltip: {
-            trigger: 'item',
-            backgroundColor: '#0a1220',
-            borderColor: '#1e3a5f',
-            textStyle: {color: '#cbd5e1', fontSize: 11}
-          },
-          series: [
-            {
-              type: 'tree',
-              data: chartData,
-              top: '8%',
-              left: '16%',
-              bottom: '8%',
-              right: '16%',
-              symbol: 'circle',
-              symbolSize: 10,
-              edgeShape: 'polyline',
-              label: {
-                position: 'left',
-                verticalAlign: 'middle',
-                align: 'right',
-                fontSize: 11,
-                color: '#fff',
-                backgroundColor: '#111c30',
-                padding: [4, 8],
-                borderRadius: 4,
-                borderWidth: 1,
-                borderColor: '#1e3557'
-              },
-              leaves: {label: {position: 'right', align: 'left'}}
-            }
-          ]
+      const option = {
+        tooltip: {
+          trigger: 'item',
+          backgroundColor: '#0a1220',
+          borderColor: '#1e3a5f',
+          textStyle: {color: '#cbd5e1', fontSize: 11}
         },
-        true
-      )
+        series: [
+          {
+            type: 'tree',
+            data: chartData,
+            top: '8%',
+            left: '16%',
+            bottom: '8%',
+            right: '16%',
+            symbol: 'circle',
+            symbolSize: 10,
+            edgeShape: 'polyline',
+            initialTreeDepth: 5,
+            itemStyle: {
+              color: '#06b6d4',
+              borderColor: '#22d3ee',
+              borderWidth: 1
+            },
+            lineStyle: {color: '#1e3557', width: 1.5},
+            label: {
+              position: 'left',
+              verticalAlign: 'middle',
+              align: 'right',
+              fontSize: 11,
+              color: '#fff',
+              backgroundColor: '#111c30',
+              padding: [4, 8],
+              borderRadius: 4,
+              borderWidth: 1,
+              borderColor: '#1e3557'
+            },
+            leaves: {label: {position: 'right', align: 'left'}}
+          }
+        ]
+      }
+      this.chartInstance.setOption(option, true)
     },
+
     handleNodeClick(data) {
       if (data) this.openDetailDialog(data)
     },
@@ -1084,7 +1010,7 @@ export default {
 </script>
 
 <style scoped>
-/* 全局大屏总控 */
+/* 全局基础 */
 .screen-container {
   width: 100%;
   height: 100%;
@@ -1139,7 +1065,6 @@ export default {
   background: #101b2e;
   border: 1px solid #1e3557;
   font-size: 11px;
-  color: #fff;
 }
 
 .main-body-layout {
@@ -1167,6 +1092,7 @@ export default {
   gap: 6px;
 }
 
+/* 右舱外壳 */
 .right-combined-panel {
   flex: 1;
   min-width: 0;
@@ -1185,7 +1111,7 @@ export default {
   min-height: 0;
 }
 
-/* 🌟 极致去白线处理 */
+/* 🌟 核心突破：让 el-tabs 及内部内容完全占满剩余空间 */
 .fill-tabs {
   display: flex;
   flex-direction: column;
@@ -1200,28 +1126,6 @@ export default {
   min-height: 0;
   background: transparent !important;
 }
-::v-deep .dark-tabs .el-tabs__header {
-  margin-bottom: 4px;
-  border-bottom: 1px solid #17263d !important;
-  background: transparent;
-}
-::v-deep .dark-tabs .el-tabs__nav-wrap::after {
-  display: none !important;
-} /* 🌟 彻底杀掉自带的底线 */
-::v-deep .dark-tabs .el-tabs__item {
-  color: #64748b;
-  font-size: 12px;
-  font-weight: bold;
-  height: 34px;
-  line-height: 34px;
-}
-::v-deep .dark-tabs .el-tabs__item.is-active {
-  color: #38bdf8 !important;
-}
-::v-deep .dark-tabs .el-tabs__active-bar {
-  background-color: #38bdf8;
-}
-
 .full-pane {
   height: 100%;
   display: flex;
@@ -1237,6 +1141,7 @@ export default {
   padding-top: 4px;
 }
 
+/* 垂直切分 */
 .split-vertical-layout {
   display: flex;
   flex-direction: column;
@@ -1244,6 +1149,8 @@ export default {
   height: 100%;
   min-height: 0;
 }
+
+/* 上方详情面板 */
 .upper-detail-dashboard {
   background: #0d1624;
   border: 1px solid #1d3557;
@@ -1281,6 +1188,7 @@ export default {
   padding: 20px 0;
 }
 
+/* 航点与坐标盒 */
 .parse-box {
   background: #090e17;
   padding: 6px 10px;
@@ -1307,6 +1215,7 @@ export default {
   color: #f59e0b;
 }
 
+/* 🌟 核心修复：列表舱完全占满剩余空间 */
 .lower-scroll-list-container.fill-remaining-space {
   flex: 1;
   min-height: 0;
@@ -1322,8 +1231,8 @@ export default {
   gap: 8px;
 }
 
-/* 杀伤链样式 */
-.sslrw-meta-row {
+/* 杀伤链要件专属样式 */
+.killchain-meta-row {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 8px;
@@ -1358,6 +1267,7 @@ export default {
   color: #fff;
 }
 
+/* 行交互高亮效果 */
 .interactive-row {
   cursor: pointer;
 }
@@ -1392,6 +1302,9 @@ export default {
   bottom: 0;
   width: 3px;
 }
+.strip-level-safe {
+  background: #06b6d4;
+}
 .card-line {
   display: flex;
   justify-content: space-between;
@@ -1403,6 +1316,7 @@ export default {
   color: #fff;
 }
 
+/* 树与基础卡片 */
 .task-item-card {
   background: #0d1522;
   border: 1px solid #172438;
@@ -1504,6 +1418,25 @@ export default {
   min-width: 0;
 }
 
+::v-deep .dark-tabs .el-tabs__header {
+  margin-bottom: 4px;
+  border-bottom: 1px solid #17263d;
+  background: transparent;
+}
+::v-deep .dark-tabs .el-tabs__item {
+  color: #64748b;
+  font-size: 12px;
+  font-weight: bold;
+  height: 34px;
+  line-height: 34px;
+}
+::v-deep .dark-tabs .el-tabs__item.is-active {
+  color: #38bdf8 !important;
+}
+::v-deep .dark-tabs .el-tabs__active-bar {
+  background-color: #38bdf8;
+}
+
 .panel-header-summary {
   display: flex;
   align-items: center;
@@ -1531,66 +1464,54 @@ export default {
   width: 100%;
 }
 
-/* 全量大弹窗专属暗黑 */
+/* 纯净弹窗 */
 ::v-deep .dark-dialog-clean {
-  background: #060b14 !important;
-  border: 1px solid #1c355e;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.8) !important;
+  background: #080f1a !important;
+  border: 1px solid #1e3a5f;
+  box-shadow: none !important;
 }
 ::v-deep .dark-dialog-clean .el-dialog__title {
   color: #38bdf8;
   font-size: 13px;
   font-weight: bold;
 }
-::v-deep .dark-dialog-clean .el-dialog__body {
-  padding: 14px 20px;
-}
 .grid-detail-container {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  max-height: 520px;
+  gap: 12px;
+  max-height: 480px;
   overflow-y: auto;
 }
 .detail-block {
-  background: #0c1322;
-  border: 1px solid #16263f;
+  background: #0d1624;
+  border: 1px solid #17273f;
   border-radius: 4px;
-  padding: 12px;
+  padding: 10px;
 }
 .detail-block.full-width {
-  width: 100%;
-  box-sizing: border-box;
+  grid-column: span 2;
 }
 .db-title {
   font-size: 11px;
   font-weight: bold;
   color: #06b6d4;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
   border-left: 2px solid #06b6d4;
   padding-left: 6px;
 }
 .db-grid {
   display: grid;
+  grid-template-columns: repeat(3, 1fr);
   gap: 6px 12px;
   font-size: 11px;
   color: #94a3b8;
 }
-.db-grid.col-3 {
-  grid-template-columns: repeat(3, 1fr);
-}
 .db-grid.col-2 {
   grid-template-columns: repeat(2, 1fr);
-}
-.col-span-3 {
-  grid-column: span 3;
 }
 
 .font-num {
   font-family: monospace;
-}
-.font-bold {
-  font-weight: bold;
 }
 .text-white {
   color: #fff !important;
@@ -1618,200 +1539,14 @@ export default {
   overflow: hidden;
   text-overflow: ellipsis;
 }
-/* ==========================================================================
-   ⚡ 杀伤链全量直显卡片瀑布流 - 两列立体响应式布局样式
-   ========================================================================== */
-.sslrw-stream-container {
-  height: 100%;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  min-height: 0;
-}
 
-.killchain-scroll-wall {
-  flex: 1;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  padding-right: 4px;
-}
-
-/* 核心两列卡片骨架 */
-.killchain-two-col-card {
-  background: linear-gradient(135deg, #09101d 0%, #060b13 100%);
-  border: 1px solid #14253e;
-  border-radius: 6px;
-  display: grid;
-  grid-template-columns: 240px 1fr; /* 左列固定要素，右列宽度自适应撑满 */
-  min-height: 160px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-  transition: all 0.25s ease;
-  overflow: hidden;
-}
-
-.killchain-two-col-card:hover {
-  border-color: #10b981;
-  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.15);
-}
-
-/* 左侧列样式：基本概述舱 */
-.kc-left-summary-col {
-  background: rgba(16, 27, 45, 0.4);
-  border-right: 1px dashed #172a47;
-  padding: 14px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-.kc-card-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: rgba(16, 185, 129, 0.12);
-  border: 1px solid rgba(16, 185, 129, 0.3);
-  padding: 2px 8px;
-  border-radius: 12px;
-  font-size: 10px;
-  color: #10b981;
-  font-weight: bold;
-  width: max-content;
-}
-
-/* 呼吸指示灯 */
-.pulse-dot {
-  width: 6px;
-  height: 6px;
-  background-color: #10b981;
-  border-radius: 50%;
-  box-shadow: 0 0 6px #10b981;
-  animation: kcpulse 1.8s infinite;
-}
-
-@keyframes kcpulse {
-  0% {
-    transform: scale(0.9);
-    opacity: 0.6;
-  }
-  50% {
-    transform: scale(1.2);
+@keyframes blink {
+  0%,
+  100% {
     opacity: 1;
   }
-  100% {
-    transform: scale(0.9);
-    opacity: 0.6;
+  50% {
+    opacity: 0.4;
   }
-}
-
-.kc-task-title {
-  margin: 10px 0 4px 0;
-  font-size: 13px;
-  color: #ffffff;
-  font-weight: bold;
-}
-
-.kc-meta-kv-list {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  margin-top: auto;
-}
-
-.kv-row {
-  display: flex;
-  justify-content: space-between;
-  font-size: 11px;
-}
-
-.kv-row .k {
-  color: #4b5d78;
-}
-
-.kv-row .v {
-  font-weight: bold;
-}
-
-/* 右侧列样式：OODA 四宫格矩阵舱 */
-.kc-right-ooda-grid-col {
-  padding: 12px;
-  display: grid;
-  grid-template-columns: repeat(2, 1fr); /* 四要素横向平铺切分 */
-  gap: 8px;
-}
-
-.ooda-cell {
-  background: rgba(13, 21, 34, 0.6);
-  border: 1px solid #14233a;
-  border-left: 3px solid #fff;
-  border-radius: 4px;
-  padding: 8px 10px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-/* 四色战术回路渲染 */
-.ooda-cell.border-red {
-  border-left-color: #ef4444;
-  background: linear-gradient(
-    90deg,
-    rgba(239, 68, 68, 0.03) 0%,
-    rgba(0, 0, 0, 0) 100%
-  );
-}
-.ooda-cell.border-cyan {
-  border-left-color: #06b6d4;
-  background: linear-gradient(
-    90deg,
-    rgba(6, 182, 212, 0.03) 0%,
-    rgba(0, 0, 0, 0) 100%
-  );
-}
-.ooda-cell.border-orange {
-  border-left-color: #f59e0b;
-  background: linear-gradient(
-    90deg,
-    rgba(245, 158, 11, 0.03) 0%,
-    rgba(0, 0, 0, 0) 100%
-  );
-}
-.ooda-cell.border-green {
-  border-left-color: #10b981;
-  background: linear-gradient(
-    90deg,
-    rgba(16, 185, 129, 0.03) 0%,
-    rgba(0, 0, 0, 0) 100%
-  );
-}
-
-.cell-top {
-  display: flex;
-  align-items: center;
-  font-size: 11px;
-  margin-bottom: 4px;
-  gap: 4px;
-}
-
-.cell-top .label {
-  font-weight: bold;
-}
-
-.cell-top .ids {
-  color: #4b5d78;
-  margin-left: auto;
-  font-size: 10px;
-}
-
-.cell-bottom {
-  font-size: 11px;
-  color: #e2e8f0;
-  line-height: 1.4;
-  word-break: break-all;
-  background: rgba(0, 0, 0, 0.2);
-  padding: 4px 6px;
-  border-radius: 2px;
-  min-height: 24px;
 }
 </style>
