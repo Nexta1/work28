@@ -33,7 +33,7 @@
     <div class="main-body-layout">
       <div class="left-tree-panel">
         <div class="panel-header-summary">
-          <span class="title">⚔️ 作战任务源总线 (zzrwxx)</span>
+          <span class="title">⚔️ 作战任务源总线 </span>
           <span class="badge font-num text-cyan">{{ rwxxList.length }} 项</span>
         </div>
 
@@ -877,9 +877,11 @@ export default {
         params: {RWMC: this.queryParam.RWMC || undefined}
       }).then(res => {
         this.rwxxList = res.data?.list || res.data || []
+        if (this.rwxxList.length > 0) this.handleSelectRw(this.rwxxList[0])
       })
     },
     handleSelectRw(rw) {
+      console.log(rw)
       this.selectedRw = rw
       this.routeList = []
       this.qyList = []

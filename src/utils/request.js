@@ -33,7 +33,7 @@ service.interceptors.response.use(
     if (res.code !== 0) {
       // 使用 Element UI 的错误弹窗显示后端返回的 message
       Message({
-        message: res.message || '系统错误',
+        message: res.message || '服务器异常',
         type: 'error',
         duration: 3 * 1000 // 弹窗显示 3 秒后自动关闭
       })

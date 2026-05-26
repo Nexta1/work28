@@ -33,7 +33,7 @@
     <div class="main-body-layout">
       <div class="left-tree-panel">
         <div class="panel-header-summary">
-          <span class="title">⚔️ 作战任务源总线 (zzrwxx)</span>
+          <span class="title">⚔️ 作战任务源总线 </span>
           <span class="badge font-num text-cyan">{{ rwxxList.length }} 项</span>
         </div>
 

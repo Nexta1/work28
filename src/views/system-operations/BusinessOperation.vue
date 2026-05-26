@@ -30,7 +30,7 @@
             :expand-on-click-node="false"
             @node-click="handleNodeClick"
           >
-            <span class="custom-tree-node" slot-scope="{node, data}">
+            <span class="custom-tree-node" slot-scope="{data}">
               <span>
                 <span class="tree-icon">{{
                   data.businessType === 0 ? '🗂️' : '📊'
@@ -38,18 +38,16 @@
                 <span>{{ data.businessName }}</span>
               </span>
               <span class="node-action-span">
-                <el-button
-                  type="text"
-                  size="mini"
-                  icon="el-icon-edit"
-                  @click.stop="openTreeDialog(true, data)"
-                ></el-button>
-                <el-button
-                  type="text"
-                  size="mini"
-                  icon="el-icon-delete"
+                <i
+                  class="el-icon-edit text-green"
+                  title="编辑"
+                  @click.stop="openTreeDialog(data)"
+                ></i>
+                <i
+                  class="el-icon-delete text-red"
+                  title="删除"
                   @click.stop="handleDeleteTree(data)"
-                ></el-button>
+                ></i>
               </span>
             </span>
           </el-tree>
@@ -932,7 +930,7 @@ export default {
   min-height: 0;
 }
 .panel-wing-left {
-  width: 25%;
+  width: 30%;
   background: #080e18;
   border: 1px solid #111b2b;
   border-radius: 4px;
@@ -952,15 +950,18 @@ export default {
   align-items: center;
   font-size: 12px;
   justify-content: space-between;
+  padding-right: 6px;
 }
 .tree-icon {
   margin-right: 6px;
 }
 .node-action-span {
   display: none;
+  gap: 8px;
+  font-size: 12px;
 }
 .custom-tree-node:hover .node-action-span {
-  display: inline-block;
+  display: flex;
 }
 
 .panel-wing-right {

@@ -101,6 +101,119 @@
   cursor: not-allowed;
 }
 /* ===================================================================
+ * 战术大屏 Element UI 全局按钮样式覆盖 (Danger / Warning)
+ * 特性：去阴影、全扁平化、高对比、低饱和度军事/指挥大屏质感
+ * =================================================================== */
+
+/* ----------------- 1. DANGER (危险/注销/删除) ----------------- */
+.el-button--danger {
+  background-color: rgba(244, 63, 94, 0.1) !important; /* 极低饱和度半透明红 */
+  border: 1px solid rgba(244, 63, 94, 0.45) !important; /* 鲜明扁平边框 */
+  color: #f43f5e !important; /* 高亮文本 */
+  box-shadow: none !important; /* 坚决去阴影 */
+  text-shadow: none !important;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* 悬浮态：强化边框，背景轻微提亮 */
+.el-button--danger:hover,
+.el-button--danger:focus {
+  background-color: rgba(244, 63, 94, 0.22) !important;
+  border-color: #f43f5e !important;
+  color: #fda4af !important; /* 文本颜色略微变浅增加感知 */
+  box-shadow: none !important;
+}
+
+/* 点击激活态 */
+.el-button--danger:active {
+  background-color: rgba(244, 63, 94, 0.35) !important;
+  border-color: #fda4af !important;
+  box-shadow: none !important;
+}
+
+/* 禁用态 */
+.el-button--danger.is-disabled,
+.el-button--danger.is-disabled:hover {
+  background-color: rgba(244, 63, 94, 0.03) !important;
+  border-color: rgba(244, 63, 94, 0.15) !important;
+  color: #4c262b !important;
+  cursor: not-allowed !important;
+}
+
+/* 朴素按钮 (plain) 针对大屏的微调 */
+.el-button--danger.is-plain {
+  background-color: transparent !important;
+  border-color: rgba(244, 63, 94, 0.3) !important;
+}
+
+/* ----------------- 2. WARNING (警告/调整/修正) ----------------- */
+.el-button--warning {
+  background-color: rgba(
+    245,
+    158,
+    11,
+    0.08
+  ) !important; /* 战术琥珀/橙黄半透明 */
+  border: 1px solid rgba(245, 158, 11, 0.45) !important; /* 扁平明晰边框 */
+  color: #f59e0b !important; /* 战术橙色文本 */
+  box-shadow: none !important; /* 坚决去阴影 */
+  text-shadow: none !important;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* 悬浮态：增加微光感，拉高边框对比度 */
+.el-button--warning:hover,
+.el-button--warning:focus {
+  background-color: rgba(245, 158, 11, 0.18) !important;
+  border-color: #f59e0b !important;
+  color: #fcd34d !important;
+  box-shadow: none !important;
+}
+
+/* 点击激活态 */
+.el-button--warning:active {
+  background-color: rgba(245, 158, 11, 0.28) !important;
+  border-color: #fcd34d !important;
+  box-shadow: none !important;
+}
+
+/* 禁用态 */
+.el-button--warning.is-disabled,
+.el-button--warning.is-disabled:hover {
+  background-color: rgba(245, 158, 11, 0.02) !important;
+  border-color: rgba(245, 158, 11, 0.15) !important;
+  color: #4b3616 !important;
+  cursor: not-allowed !important;
+}
+
+/* 朴素按钮 (plain) 针对大屏的微调 */
+.el-button--warning.is-plain {
+  background-color: transparent !important;
+  border-color: rgba(245, 158, 11, 0.3) !important;
+}
+
+/* ----------------- 3. 额外扩充：大屏文字按钮风格 ----------------- */
+/* 如果在卡片右上角或列表内部使用了 type="text" 且带有特定色彩类的按钮 */
+.el-button--text.color-del {
+  color: rgba(244, 63, 94, 0.85) !important;
+  padding: 0 4px;
+}
+.el-button--text.color-del:hover {
+  color: #f43f5e !important;
+  background-color: rgba(244, 63, 94, 0.12) !important;
+  border-radius: 2px;
+}
+
+.el-button--text.color-warn {
+  color: rgba(245, 158, 11, 0.85) !important;
+  padding: 0 4px;
+}
+.el-button--text.color-warn:hover {
+  color: #f59e0b !important;
+  background-color: rgba(245, 158, 11, 0.1) !important;
+  border-radius: 2px;
+}
+/* ===================================================================
    全局 Element UI 深色战术大屏表单组件覆盖（纯扁平 / 无阴影）
    =================================================================== */
 
@@ -116,7 +229,9 @@
   font-size: 11px !important;
   border-radius: 3px !important;
   box-shadow: none !important;
-  transition: border-color 0.15s ease-in-out, background-color 0.15s ease-in-out;
+  transition:
+    border-color 0.15s ease-in-out,
+    background-color 0.15s ease-in-out;
 }
 
 /* 占位符颜色调整 */
@@ -309,7 +424,9 @@
 .el-tree-node__content {
   height: 28px !important;
   box-shadow: none !important;
-  transition: background-color 0.15s ease-in-out, color 0.15s ease-in-out;
+  transition:
+    background-color 0.15s ease-in-out,
+    color 0.15s ease-in-out;
 }
 
 /* 鼠标悬停 (Hover) 态 - 战术暗灰蓝 */
@@ -560,7 +677,9 @@
   color: #94a3b8 !important;
   height: auto !important;
   box-shadow: none !important;
-  transition: background-color 0.15s, color 0.15s;
+  transition:
+    background-color 0.15s,
+    color 0.15s;
 }
 
 /* 鼠标悬停在按钮上时 */
@@ -1033,4 +1152,27 @@
    如果在 $confirm 传入了 type: 'warning'，可配合扩展样式 */
 .el-message-box__status.el-icon-warning + .el-message-box__message {
   color: #cbd5e1 !important;
+}
+.text-blue {
+  color: #38bdf8 !important;
+}
+.text-green {
+  color: #10b981 !important;
+}
+.text-cyan {
+  color: #06b6d4 !important;
+}
+.text-orange {
+  color: #f59e0b !important;
+}
+.text-red {
+  color: #ef4444 !important;
+}
+.text-gray {
+  color: #475569 !important;
+}
+.ellipsis-text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }

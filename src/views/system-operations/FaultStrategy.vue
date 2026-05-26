@@ -92,7 +92,7 @@
       <div class="right-combined-panel">
         <div class="right-top-detail-zone">
           <div class="panel-header-summary">
-            <span class="title">🔍 当前选中故障诊断详情总线</span>
+            <span class="title">🔍 当前选中故障诊断详情</span>
             <span class="badge font-num text-orange" v-if="currentSelectedNode"
               >#{{ currentSelectedNode.faultTypeId }}</span
             >
