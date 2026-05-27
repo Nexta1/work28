@@ -422,18 +422,22 @@
     <el-dialog
       :title="drillDownTitle"
       :visible.sync="drillDownVisible"
-      width="82%"
+      width="85%"
       append-to-body
       custom-class="dark-drilldown-dialog"
     >
-      <div v-loading="loadingDrillDownData" class="drilldown-body">
+      <div
+        v-if="drillDrillType === 'table'"
+        v-loading="loadingDrillDownData"
+        class="drilldown-body"
+      >
         <div class="drilldown-filter-bar">
           <el-form :inline="true" size="mini" class="dark-form-inline">
-            <el-form-item label="过滤字段 (Key)">
+            <el-form-item label="过滤字段">
               <el-select
                 v-model="drillQueryForm.itemKey"
                 clearable
-                placeholder="请选择表头字段"
+                placeholder="表头字段"
               >
                 <el-option
                   v-for="col in drillDownColumns"
@@ -443,11 +447,11 @@
                 />
               </el-select>
             </el-form-item>
-            <el-form-item label="过滤值 (Value)">
+            <el-form-item label="过滤值">
               <el-input
                 v-model="drillQueryForm.itemValue"
                 clearable
-                placeholder="请输入检索内容"
+                placeholder="检索内容"
                 :disabled="!drillQueryForm.itemKey"
               />
             </el-form-item>
@@ -467,11 +471,11 @@
 
         <el-table
           :data="drillDownTableData"
-          height="450"
           size="mini"
           stripe
           border
-          class="dark-table drilldown-table"
+          height="400"
+          class="dark-table"
         >
           <el-table-column
             v-for="col in drillDownColumns"
@@ -479,30 +483,177 @@
             :prop="col"
             :label="col"
             show-overflow-tooltip
-            min-width="130"
           />
-          <template slot="empty">
-            <span style="color: #52637a"
-              >暂无检索到相匹配的数据项或 rowData 字段为空</span
-            >
-          </template>
         </el-table>
-
         <el-pagination
           class="pager"
           small
-          background
-          layout="total, prev, pager, next, sizes"
+          layout="total, prev, pager, next"
           :current-page.sync="drillPage.pageNum"
-          :page-size.sync="drillPage.pageSize"
-          :page-sizes="[10, 20, 50]"
+          :page-size="drillPage.pageSize"
           :total="drillTotal"
           @current-change="executeDrillQuery"
-          @size-change="handleDrillSizeChange"
         />
       </div>
-    </el-dialog>
 
+      <div v-else class="drilldown-body label-workbench-dialog">
+        <el-tabs v-model="labelSubTab" class="dark-tabs">
+          <el-tab-pane label="📋 已标注历史明细" name="hasLabeled">
+            <div class="drilldown-filter-bar">
+              <el-form :inline="true" size="mini" class="dark-form-inline">
+                <el-form-item label="过滤字段">
+                  <el-select
+                    v-model="drillQueryForm.itemKey"
+                    clearable
+                    placeholder="表头字段"
+                  >
+                    <el-option
+                      v-for="col in drillDownColumns"
+                      :key="col"
+                      :label="col"
+                      :value="col"
+                    />
+                  </el-select>
+                </el-form-item>
+                <el-form-item label="过滤值">
+                  <el-input
+                    v-model="drillQueryForm.itemValue"
+                    clearable
+                    placeholder="检索内容"
+                    :disabled="!drillQueryForm.itemKey"
+                  />
+                </el-form-item>
+                <el-form-item>
+                  <el-button
+                    type="primary"
+                    icon="el-icon-search"
+                    @click="handleDrillFilterSearch"
+                    >筛选</el-button
+                  >
+                  <el-button icon="el-icon-refresh" @click="resetDrillFilter"
+                    >重置</el-button
+                  >
+                </el-form-item>
+              </el-form>
+            </div>
+
+            <el-table
+              :data="drillDownTableData"
+              size="mini"
+              stripe
+              border
+              height="400"
+              class="dark-table"
+            >
+              <el-table-column
+                v-for="col in drillDownColumns"
+                :key="col"
+                :prop="col"
+                :label="col"
+                show-overflow-tooltip
+              />
+            </el-table>
+            <el-pagination
+              class="pager"
+              small
+              layout="total, prev, pager, next"
+              :current-page.sync="drillPage.pageNum"
+              :page-size="drillPage.pageSize"
+              :total="drillTotal"
+              @current-change="executeDrillQuery"
+            />
+          </el-tab-pane>
+
+          <el-tab-pane label="✍️ 增量手工标注" name="manualLabel">
+            <div class="manual-layout" style="display: flex; gap: 15px">
+              <div
+                class="manual-selector-sidebar"
+                style="
+                  width: 260px;
+                  background: #09101d;
+                  padding: 10px;
+                  border-radius: 4px;
+                "
+              >
+                <div
+                  style="font-size: 11px; margin-bottom: 6px; color: #38bdf8"
+                >
+                  第一步：选择资产数据表
+                </div>
+                <el-cascader
+                  v-model="manualSelectedModelId"
+                  :options="dataModelTree"
+                  :props="dataModelCascaderProps"
+                  size="mini"
+                  placeholder="请选择数据目录"
+                  style="width: 100%; margin-bottom: 8px"
+                  @change="handleManualModelChange"
+                />
+                <el-select
+                  v-model="manualSelectedTable"
+                  size="mini"
+                  placeholder="请选择底层物理表"
+                  style="width: 100%"
+                  @change="fetchManualSourceData"
+                >
+                  <el-option
+                    v-for="t in manualTableOptions"
+                    :key="t"
+                    :label="t"
+                    :value="t"
+                  />
+                </el-select>
+
+                <div
+                  style="
+                    margin-top: 15px;
+                    border-top: 1px solid #1e3557;
+                    padding-top: 10px;
+                  "
+                >
+                  <el-button
+                    type="success"
+                    size="mini"
+                    icon="el-icon-check"
+                    :disabled="manualSelection.length === 0"
+                    style="width: 100%"
+                    @click="submitManualData"
+                  >
+                    提交选中的 {{ manualSelection.length }} 条标注
+                  </el-button>
+                </div>
+              </div>
+
+              <div class="manual-data-pool" style="flex: 1; min-width: 0">
+                <el-table
+                  :data="manualTableData"
+                  size="mini"
+                  stripe
+                  border
+                  height="380"
+                  class="dark-table"
+                  @selection-change="handleManualSelectionChange"
+                >
+                  <el-table-column type="selection" width="45" />
+                  <el-table-column
+                    v-for="col in manualColumns"
+                    :key="col"
+                    :prop="col"
+                    :label="col"
+                    show-overflow-tooltip
+                  />
+                  <template slot="empty">
+                    <span style="color: #52637a"
+                      >请在左侧选定资产表以拉取缓冲池数据进行人工校准标注</span
+                    >
+                  </template>
+                </el-table>
+              </div>
+            </div>
+          </el-tab-pane>
+        </el-tabs>
+      </div>
+    </el-dialog>
     <el-dialog
       :title="isEditDataModel ? '编辑数据分类模型' : '新增数据分类模型'"
       :visible.sync="dataModelDialogVisible"
@@ -839,7 +990,13 @@ export default {
       dataModelForm: this.getEmptyDataModelForm(),
       labelClassForm: this.getEmptyLabelClassForm(),
       labelModelForm: this.getEmptyLabelModelForm(),
-
+      labelSubTab: 'hasLabeled', // 默认激活“已标注”数据
+      manualSelectedModelId: null, // 手工标注选中的目录节点
+      manualSelectedTable: '', // 手工标注选中的表名
+      manualTableOptions: [], // 物理表下拉候选集
+      manualTableData: [], // 待标注的物理表原始数据
+      manualColumns: [], // 待标注数据表头
+      manualSelection: [], // 用户选中的行数组
       dataModelRules: {
         modelName: [
           {required: true, message: '请输入模型名称', trigger: 'blur'}
@@ -1099,13 +1256,23 @@ export default {
       this.drillDrillType = 'label'
       this.currentLabelModelId = model.labelModelId
       this.drillPage.pageNum = 1
-      // 打开弹窗前，重置内部过滤条件
+      this.labelSubTab = 'hasLabeled' // 重置为默认页
+
+      // 清设手工标注视图状态
+      this.manualSelectedModelId = null
+      this.manualSelectedTable = ''
+      this.manualTableOptions = []
+      this.manualTableData = []
+      this.manualColumns = []
+      this.manualSelection = []
+
       this.drillQueryForm.itemKey = ''
       this.drillQueryForm.itemValue = ''
-
       this.drillDownTitle = `🔍 标注模型数据穿透元模型视窗 -> [标签名称: ${model.labelName}]`
       this.drillDownVisible = true
-      this.executeDrillQuery(true) // 传入 true 代表首次查询，需要刷新表头候选集
+
+      // 加载已标注的列表数据
+      this.executeDrillQuery(true)
     },
 
     /**
@@ -1226,8 +1393,120 @@ export default {
       if (updateColumns || this.drillDownColumns.length === 0) {
         this.drillDownColumns = Array.from(columnSet)
       }
+      // 找到 handleDrillResponse 方法，在结尾处追加智能兜底提取逻辑：
+      if (this.drillDrillType === 'label' && rawList.length > 0) {
+        const firstItem = rawList[0]
+        // 根据需求描述，尝试从第一条记录提取特征属性进行联动兜底
+        if (firstItem.dataModelId || firstItem.tableName) {
+          this.manualSelectedModelId = firstItem.dataModelId || 5
+          this.manualSelectedTable = firstItem.tableName || 'DATAMODEL'
+
+          // 反向解析该节点拥有的物理表候选集
+          const flatNode = this.flatDataModels.find(
+            m => m.dataModelId === this.manualSelectedModelId
+          )
+          if (flatNode && flatNode.tableNames) {
+            this.manualTableOptions = flatNode.tableNames.split(',')
+          } else {
+            this.manualTableOptions = [this.manualSelectedTable]
+          }
+          // 异步自动拉取此表的候选数据供用户手工标注
+          this.fetchManualSourceData()
+        }
+      }
+    },
+    // 当手工选择数据目录树节点时，联动拉取其映射的表
+    handleManualModelChange(modelId) {
+      this.manualSelectedTable = ''
+      this.manualTableData = []
+      this.manualColumns = []
+      const matchedNode = this.flatDataModels.find(
+        item => item.dataModelId === modelId
+      )
+      if (matchedNode && matchedNode.tableNames) {
+        this.manualTableOptions = matchedNode.tableNames.split(',')
+      } else {
+        this.manualTableOptions = []
+        this.$message.warning('该分类节点未绑定任何物理实体表')
+      }
     },
 
+    // 拉取该物理表的结构化候选数据（复用 tableDataPaged 查询底座）
+    fetchManualSourceData() {
+      if (!this.manualSelectedTable) return
+      this.loadingDrillDownData = true
+
+      const payload = {
+        pageNum: 1,
+        pageSize: 50, // 宽幅拉取，便于多选
+        params: {
+          tableName: this.manualSelectedTable,
+          dataModelId: this.manualSelectedModelId
+        }
+      }
+
+      tableDataPaged(payload)
+        .then(res => {
+          const list = this.normalizeList(res)
+          const columnSet = new Set()
+
+          this.manualTableData = list.map(item => {
+            let parsed = {}
+            if (item.ROWDATA && typeof item.ROWDATA === 'string') {
+              try {
+                parsed = JSON.parse(item.ROWDATA)
+              } catch (e) {
+                parsed = {_raw: item.ROWDATA}
+              }
+            } else if (item.ROWDATA && typeof item.ROWDATA === 'object') {
+              parsed = item.ROWDATA
+            } else {
+              parsed = {...item}
+            }
+            Object.keys(parsed).forEach(k => columnSet.add(k))
+            return parsed
+          })
+          this.manualColumns = Array.from(columnSet)
+        })
+        .catch(() => {
+          this.$message.error('拉取物理表测试源数据失败')
+        })
+        .finally(() => {
+          this.loadingDrillDownData = false
+        })
+    },
+
+    // 捕获多选事件
+    handleManualSelectionChange(val) {
+      this.manualSelection = val
+    },
+
+    // 执行手工标注提交
+    submitManualData() {
+      if (this.manualSelection.length === 0) return
+
+      // 严格封装符合标准格式的 JSON 提交体
+      const payload = {
+        labelModelId: this.currentLabelModelId,
+        dataModelId: this.manualSelectedModelId,
+        tableName: this.manualSelectedTable,
+        submitRowDatas: this.manualSelection // 直接把选中的行对象数组打包提交
+      }
+
+      manual(payload)
+        .then(res => {
+          this.$message.success(
+            `成功手工向此模型打入 [${this.manualSelection.length}] 条标注血缘数据`
+          )
+          this.manualSelection = []
+          // 自动切回历史列表并刷新
+          this.labelSubTab = 'hasLabeled'
+          this.executeDrillQuery(false)
+        })
+        .catch(err => {
+          this.$message.error('手工标注写入异常，请检查接口')
+        })
+    },
     // 🌟 新增：弹窗内点击“筛选”按钮
     handleDrillFilterSearch() {
       this.drillPage.pageNum = 1 // 筛选时重置到第一页
