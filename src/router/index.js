@@ -406,6 +406,76 @@ const routes = [
       requiresAuth: true
     }
   },
+  // 资源和数据管理 - 资源管理
+  {
+    path: '/resource-management',
+    name: 'ResourceManagement',
+    component: () => import('@/views/system-resource/ResourceManagement.vue'),
+    meta: {
+      title: '资源管理',
+      subsystem: '资源和数据管理',
+      category: '资源管理',
+      icon: '📦',
+      isModule: true,
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/information-resource-management',
+    name: 'InformationResourceManagement',
+    component: () =>
+      import('@/views/system-resource/InformationResourceManagement.vue'),
+    meta: {
+      title: '信息资源管理',
+      subsystem: '资源和数据管理',
+      category: '资源管理',
+      icon: '📄',
+      parentModule: '资源管理',
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/datalink-equipment-lifecycle',
+    name: 'DatalinkEquipmentLifecycle',
+    component: () =>
+      import('@/views/system-resource/DatalinkEquipmentLifecycle.vue'),
+    meta: {
+      title: '数据链装备全生命周期管理',
+      subsystem: '资源和数据管理',
+      category: '资源管理',
+      icon: '🛰️',
+      parentModule: '资源管理',
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/datalink-spectrum-resource',
+    name: 'DatalinkSpectrumResource',
+    component: () =>
+      import('@/views/system-resource/DatalinkSpectrumResource.vue'),
+    meta: {
+      title: '数据链频谱资源管理',
+      subsystem: '资源和数据管理',
+      category: '资源管理',
+      icon: '📡',
+      parentModule: '资源管理',
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/datalink-user-info',
+    name: 'DatalinkUserInfo',
+    component: () =>
+      import('@/views/system-resource/DatalinkUserInfo.vue'),
+    meta: {
+      title: '数据链用户信息',
+      subsystem: '资源和数据管理',
+      category: '资源管理',
+      icon: '🛰️',
+      parentModule: '资源管理',
+      requiresAuth: true
+    }
+  },
   // 资源和数据管理 - 数据管理
   {
     path: '/data-management',

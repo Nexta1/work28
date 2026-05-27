@@ -1,23 +1,40 @@
 import axios from 'axios'
-// 1. 引入 Element UI 的 Message 组件
 import {Message} from 'element-ui'
 
-console.log(process.env)
+/**
+ * 防止重复弹窗
+ */
+let messageInstance = null
 
-// 2. 创建实例
+function showMessage(msg, type = 'error') {
+  if (messageInstance) return
+
+  messageInstance = Message({
+    message: msg,
+    type,
+    duration: 3000,
+    onClose: () => {
+      messageInstance = null
+    }
+  })
+}
+
 const service = axios.create({
-  baseURL: process.env.VUE_APP_BASE_API, // 自动读取环境变量中的后端接口地址
-  timeout: 5000 // 请求超时时间
+  baseURL: process.env.VUE_APP_BASE_API,
+  timeout: 15000
 })
 
-// 3. 请求拦截器
+/**
+ * 请求拦截
+ */
 service.interceptors.request.use(
   config => {
-    // 在这里给请求头添加 Token
     const token = localStorage.getItem('token')
+
     if (token) {
-      config.headers['Authorization'] = `Bearer ${token}`
+      config.headers.Authorization = `Bearer ${token}`
     }
+
     return config
   },
   error => {
@@ -25,29 +42,157 @@ service.interceptors.request.use(
   }
 )
 
-// 4. 响应拦截器
+/**
+ * 响应拦截
+ */
 service.interceptors.response.use(
   response => {
-    const res = response.data
-    // 根据后端约定的状态码处理逻辑（假设 0 为成功）
-    if (res.code !== 0) {
-      // 使用 Element UI 的错误弹窗显示后端返回的 message
-      Message({
-        message: res.message || '服务器异常',
-        type: 'error',
-        duration: 3 * 1000 // 弹窗显示 3 秒后自动关闭
-      })
-      return Promise.reject(new Error(res.message || 'Error'))
+    const contentType = response.headers['content-type'] || ''
+
+    /**
+     * 文件流直接返回
+     */
+    if (
+      response.config.responseType === 'blob' ||
+      response.config.responseType === 'arraybuffer'
+    ) {
+      return response.data
     }
-    return res
+
+    /**
+     * 后端返回 HTML
+     */
+    if (contentType.includes('text/html')) {
+      showMessage('服务器返回了 HTML 页面')
+
+      return Promise.reject(new Error('服务器返回了非预期 HTML'))
+    }
+
+    const res = response.data
+
+    /**
+     * 返回为空
+     */
+    if (res === null || res === undefined) {
+      showMessage('接口返回为空')
+
+      return Promise.reject(new Error('response is null'))
+    }
+
+    /**
+     * 字符串类型异常
+     */
+    if (typeof res === 'string') {
+      // 某些网关错误
+      if (res.includes('<html') || res.includes('Whitelabel Error Page')) {
+        showMessage('服务器内部异常')
+
+        return Promise.reject(new Error('html response'))
+      }
+
+      return res
+    }
+
+    /**
+     * 业务状态码处理
+     */
+    const code = res.code
+
+    /**
+     * 成功
+     */
+    if (code === 0 || code === 200) {
+      return res
+    }
+
+    /**
+     * token失效
+     */
+    if (code === 401) {
+      showMessage('登录已过期')
+
+      localStorage.removeItem('token')
+
+      setTimeout(() => {
+        location.href = '/login'
+      }, 500)
+
+      return Promise.reject(res)
+    }
+
+    /**
+     * 业务异常
+     */
+    showMessage(res.message || '请求失败')
+
+    return Promise.reject(res)
   },
+
   error => {
-    // 处理网络异常或请求超时的情况
-    Message({
-      message: error.message || '网络请求异常',
-      type: 'error',
-      duration: 3 * 1000
-    })
+    /**
+     * 超时
+     */
+    if (error.message && error.message.includes('timeout')) {
+      showMessage('请求超时')
+
+      return Promise.reject(error)
+    }
+
+    /**
+     * 网络异常
+     */
+    if (!error.response) {
+      showMessage('网络异常')
+
+      return Promise.reject(error)
+    }
+
+    const status = error.response.status
+
+    switch (status) {
+      case 400:
+        showMessage('请求错误')
+        break
+
+      case 401:
+        showMessage('登录失效')
+
+        localStorage.removeItem('token')
+
+        setTimeout(() => {
+          location.href = '/login'
+        }, 500)
+
+        break
+
+      case 403:
+        showMessage('无权限访问')
+        break
+
+      case 404:
+        showMessage('接口不存在')
+        break
+
+      case 500:
+        showMessage('服务器异常')
+        break
+
+      case 502:
+        showMessage('网关异常')
+        break
+
+      case 503:
+        showMessage('服务不可用')
+        break
+
+      case 504:
+        showMessage('网关超时')
+        break
+
+      default:
+        showMessage(error.message || '请求失败')
+    }
+
     return Promise.reject(error)
   }
 )
