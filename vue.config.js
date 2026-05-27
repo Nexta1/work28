@@ -29,8 +29,16 @@ module.exports = {
         // 'components': path.resolve(__dirname, 'src/components'),
       }
     }
+  },
+  css: {
+    loaderOptions: {
+      sass: {
+        sassOptions: {
+          quietDeps: true
+        }
+      }
+    }
   }
-
   // 方式 B: 或者使用 chainWebpack (如果项目里已经用了 chainWebpack，建议用这个)
   // chainWebpack: config => {
   //   config.resolve.alias

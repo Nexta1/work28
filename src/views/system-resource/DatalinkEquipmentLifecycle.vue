@@ -1,11 +1,16 @@
 <template>
   <div class="screen-container">
-    <el-tabs v-model="activeTab" class="fill-tabs dark-tabs">
+    <el-tabs v-model="activeTab" class="fill-tabs dark-tabs tab-workbench">
       <el-tab-pane label="装备信息" name="sbxx">
         <div class="tab-pane-body" v-loading="loading.sbxx">
           <div class="panel-header-summary">
             <span class="title text-cyan">装备信息 (sbxx)</span>
-            <el-button type="primary" size="mini" icon="el-icon-plus" @click="openSbxxDialog(false)">
+            <el-button
+              type="primary"
+              size="mini"
+              icon="el-icon-plus"
+              @click="openSbxxDialog(false)"
+            >
               新增装备
             </el-button>
           </div>
@@ -17,23 +22,56 @@
               placeholder="装备名称"
               class="filter-item"
             />
-            <el-button type="primary" size="mini" icon="el-icon-search" @click="searchSbxx">
+            <el-button
+              type="primary"
+              size="mini"
+              icon="el-icon-search"
+              @click="searchSbxx"
+            >
               查询
             </el-button>
           </div>
           <div class="table-container-flex">
-            <el-table :data="sbxxList" size="mini" height="100%" class="dark-dashboard-table" stripe border>
+            <el-table
+              :data="sbxxList"
+              size="mini"
+              height="100%"
+              class="dark-dashboard-table"
+              stripe
+              border
+            >
               <el-table-column prop="SBXXID" label="装备标识" width="90" />
               <el-table-column prop="SBMC" label="装备名称" min-width="140" />
               <el-table-column prop="PTMC" label="所属平台" width="120" />
-              <el-table-column prop="SBID" label="装备ID" width="110" class-name="font-num" />
+              <el-table-column
+                prop="SBID"
+                label="装备ID"
+                width="110"
+                class-name="font-num"
+              />
               <el-table-column prop="SBXHMC" label="装备型号" width="130" />
               <el-table-column prop="SBLX" label="装备类型" width="100" />
               <el-table-column prop="opTime" label="操作时间" min-width="150" />
-              <el-table-column label="操作" width="120" fixed="right" align="center">
+              <el-table-column
+                label="操作"
+                width="120"
+                fixed="right"
+                align="center"
+              >
                 <template slot-scope="scope">
-                  <el-button type="text" size="mini" @click="openSbxxDialog(true, scope.row)">修改</el-button>
-                  <el-button type="text" size="mini" class="text-red" @click="deleteSbxx(scope.row)">删除</el-button>
+                  <el-button
+                    type="text"
+                    size="mini"
+                    @click="openSbxxDialog(true, scope.row)"
+                    >修改</el-button
+                  >
+                  <el-button
+                    type="text"
+                    size="mini"
+                    class="text-red"
+                    @click="deleteSbxx(scope.row)"
+                    >删除</el-button
+                  >
                 </template>
               </el-table-column>
             </el-table>
@@ -55,7 +93,12 @@
         <div class="tab-pane-body" v-loading="loading.sbxh">
           <div class="panel-header-summary">
             <span class="title text-cyan">装备型号 (sbxhInfo)</span>
-            <el-button type="primary" size="mini" icon="el-icon-plus" @click="openSbxhDialog(false)">
+            <el-button
+              type="primary"
+              size="mini"
+              icon="el-icon-plus"
+              @click="openSbxhDialog(false)"
+            >
               新增型号
             </el-button>
           </div>
@@ -67,21 +110,54 @@
               placeholder="型号名称"
               class="filter-item"
             />
-            <el-button type="primary" size="mini" icon="el-icon-search" @click="searchSbxh">
+            <el-button
+              type="primary"
+              size="mini"
+              icon="el-icon-search"
+              @click="searchSbxh"
+            >
               查询
             </el-button>
           </div>
           <div class="table-container-flex">
-            <el-table :data="sbxhList" size="mini" height="100%" class="dark-dashboard-table" stripe border>
+            <el-table
+              :data="sbxhList"
+              size="mini"
+              height="100%"
+              class="dark-dashboard-table"
+              stripe
+              border
+            >
               <el-table-column prop="SBXHID" label="型号标识" width="90" />
               <el-table-column prop="SBXHMC" label="型号名称" min-width="160" />
               <el-table-column prop="SBLX" label="装备类型" width="120" />
-              <el-table-column prop="ZYXH" label="资源型号" width="100" class-name="font-num" />
+              <el-table-column
+                prop="ZYXH"
+                label="资源型号"
+                width="100"
+                class-name="font-num"
+              />
               <el-table-column prop="opTime" label="操作时间" min-width="150" />
-              <el-table-column label="操作" width="120" fixed="right" align="center">
+              <el-table-column
+                label="操作"
+                width="120"
+                fixed="right"
+                align="center"
+              >
                 <template slot-scope="scope">
-                  <el-button type="text" size="mini" @click="openSbxhDialog(true, scope.row)">修改</el-button>
-                  <el-button type="text" size="mini" class="text-red" @click="deleteSbxh(scope.row)">删除</el-button>
+                  <el-button
+                    type="text"
+                    size="mini"
+                    @click="openSbxhDialog(true, scope.row)"
+                    >修改</el-button
+                  >
+                  <el-button
+                    type="text"
+                    size="mini"
+                    class="text-red"
+                    @click="deleteSbxh(scope.row)"
+                    >删除</el-button
+                  >
                 </template>
               </el-table-column>
             </el-table>
@@ -135,15 +211,32 @@
                 :value="item.value"
               />
             </el-select>
-            <el-button type="primary" size="mini" icon="el-icon-search" @click="searchNetwork">
+            <el-button
+              type="primary"
+              size="mini"
+              icon="el-icon-search"
+              @click="searchNetwork"
+            >
               查询
             </el-button>
           </div>
           <div class="table-container-flex">
-            <el-table :data="networkList" size="mini" height="100%" class="dark-dashboard-table" stripe border>
+            <el-table
+              :data="networkList"
+              size="mini"
+              height="100%"
+              class="dark-dashboard-table"
+              stripe
+              border
+            >
               <el-table-column prop="SBXXID" label="装备标识" width="90" />
               <el-table-column prop="SBMC" label="装备名称" min-width="140" />
-              <el-table-column prop="SBID" label="设备ID" width="100" class-name="font-num" />
+              <el-table-column
+                prop="SBID"
+                label="设备ID"
+                width="100"
+                class-name="font-num"
+              />
               <el-table-column prop="PTMC" label="平台" width="120" />
               <el-table-column prop="zyzyzt" label="资源状态" width="100" />
               <el-table-column prop="jkzt" label="接口状态" width="100" />
@@ -170,18 +263,37 @@
       width="520px"
       append-to-body
     >
-      <el-form ref="sbxxFormRef" :model="sbxxForm" :rules="sbxxRules" label-width="100px" size="mini">
+      <el-form
+        ref="sbxxFormRef"
+        :model="sbxxForm"
+        :rules="sbxxRules"
+        label-width="100px"
+        size="mini"
+      >
         <el-form-item label="平台ID" prop="PTID">
-          <el-input-number v-model="sbxxForm.PTID" :min="0" class="full-width" />
+          <el-input-number
+            v-model="sbxxForm.PTID"
+            :min="0"
+            class="full-width"
+          />
         </el-form-item>
         <el-form-item label="装备ID" prop="SBID">
-          <el-input-number v-model="sbxxForm.SBID" :min="0" class="full-width" />
+          <el-input-number
+            v-model="sbxxForm.SBID"
+            :min="0"
+            class="full-width"
+          />
         </el-form-item>
         <el-form-item label="装备名称" prop="SBMC">
           <el-input v-model="sbxxForm.SBMC" />
         </el-form-item>
         <el-form-item label="装备型号" prop="ZYXH">
-          <el-select v-model="sbxxForm.ZYXH" filterable class="full-width" placeholder="选择型号">
+          <el-select
+            v-model="sbxxForm.ZYXH"
+            filterable
+            class="full-width"
+            placeholder="选择型号"
+          >
             <el-option
               v-for="item in sbxhListAll"
               :key="item.SBXHID || item.sbxhid"
@@ -192,8 +304,12 @@
         </el-form-item>
       </el-form>
       <span slot="footer">
-        <el-button size="mini" @click="sbxxDialogVisible = false">取消</el-button>
-        <el-button size="mini" type="primary" @click="submitSbxx">保存</el-button>
+        <el-button size="mini" @click="sbxxDialogVisible = false"
+          >取消</el-button
+        >
+        <el-button size="mini" type="primary" @click="submitSbxx"
+          >保存</el-button
+        >
       </span>
     </el-dialog>
 
@@ -203,7 +319,13 @@
       width="480px"
       append-to-body
     >
-      <el-form ref="sbxhFormRef" :model="sbxhForm" :rules="sbxhRules" label-width="100px" size="mini">
+      <el-form
+        ref="sbxhFormRef"
+        :model="sbxhForm"
+        :rules="sbxhRules"
+        label-width="100px"
+        size="mini"
+      >
         <el-form-item label="型号名称" prop="SBXHMC">
           <el-input v-model="sbxhForm.SBXHMC" />
         </el-form-item>
@@ -211,12 +333,20 @@
           <el-input v-model="sbxhForm.SBLX" />
         </el-form-item>
         <el-form-item label="资源型号" prop="ZYXH">
-          <el-input-number v-model="sbxhForm.ZYXH" :min="0" class="full-width" />
+          <el-input-number
+            v-model="sbxhForm.ZYXH"
+            :min="0"
+            class="full-width"
+          />
         </el-form-item>
       </el-form>
       <span slot="footer">
-        <el-button size="mini" @click="sbxhDialogVisible = false">取消</el-button>
-        <el-button size="mini" type="primary" @click="submitSbxh">保存</el-button>
+        <el-button size="mini" @click="sbxhDialogVisible = false"
+          >取消</el-button
+        >
+        <el-button size="mini" type="primary" @click="submitSbxh"
+          >保存</el-button
+        >
       </span>
     </el-dialog>
   </div>
@@ -313,7 +443,9 @@ export default {
             }
           : {SBXXID: null, PTID: null, SBID: null, SBMC: '', ZYXH: null}
       this.sbxxDialogVisible = true
-      this.$nextTick(() => this.$refs.sbxxFormRef && this.$refs.sbxxFormRef.clearValidate())
+      this.$nextTick(
+        () => this.$refs.sbxxFormRef && this.$refs.sbxxFormRef.clearValidate()
+      )
     },
     submitSbxx() {
       this.$refs.sbxxFormRef.validate(valid => {
@@ -330,12 +462,14 @@ export default {
     },
     deleteSbxx(row) {
       const id = this.pickRowId(row, ['SBXXID', 'sbxxid'])
-      this.$confirm('确定删除该装备信息吗？', '提示', {type: 'warning'}).then(() => {
-        apiDelete('sbxx', id).then(() => {
-          this.$message.success('删除成功')
-          this.fetchSbxx()
-        })
-      })
+      this.$confirm('确定删除该装备信息吗？', '提示', {type: 'warning'}).then(
+        () => {
+          apiDelete('sbxx', id).then(() => {
+            this.$message.success('删除成功')
+            this.fetchSbxx()
+          })
+        }
+      )
     },
     fetchSbxh() {
       this.loading.sbxh = true
@@ -368,7 +502,9 @@ export default {
             }
           : {SBXHID: null, SBXHMC: '', SBLX: '', ZYXH: 1}
       this.sbxhDialogVisible = true
-      this.$nextTick(() => this.$refs.sbxhFormRef && this.$refs.sbxhFormRef.clearValidate())
+      this.$nextTick(
+        () => this.$refs.sbxhFormRef && this.$refs.sbxhFormRef.clearValidate()
+      )
     },
     submitSbxh() {
       this.$refs.sbxhFormRef.validate(valid => {
@@ -386,20 +522,23 @@ export default {
     },
     deleteSbxh(row) {
       const id = this.pickRowId(row, ['SBXHID', 'sbxhInfoId', 'sbxhid'])
-      this.$confirm('确定删除该装备型号吗？', '提示', {type: 'warning'}).then(() => {
-        apiDelete('sbxhInfo', id).then(() => {
-          this.$message.success('删除成功')
-          this.fetchSbxh()
-          this.loadSbxhAll()
-        })
-      })
+      this.$confirm('确定删除该装备型号吗？', '提示', {type: 'warning'}).then(
+        () => {
+          apiDelete('sbxhInfo', id).then(() => {
+            this.$message.success('删除成功')
+            this.fetchSbxh()
+            this.loadSbxhAll()
+          })
+        }
+      )
     },
     fetchNetwork() {
       this.loading.network = true
       const params = {}
       if (this.networkQuery.SBID != null) params.SBID = this.networkQuery.SBID
       if (this.networkQuery.WLH != null) params.WLH = this.networkQuery.WLH
-      if (this.networkQuery.SBWLZT != null) params.SBWLZT = this.networkQuery.SBWLZT
+      if (this.networkQuery.SBWLZT != null)
+        params.SBWLZT = this.networkQuery.SBWLZT
       apiPage('sbxx', {
         pageNum: this.networkPage.pageNum,
         pageSize: this.networkPage.pageSize,
@@ -407,7 +546,8 @@ export default {
       })
         .then(res => {
           this.networkList = this.normalizeList(res)
-          this.networkTotal = (res.data && res.data.total) || this.networkList.length
+          this.networkTotal =
+            (res.data && res.data.total) || this.networkList.length
         })
         .finally(() => {
           this.loading.network = false
@@ -422,7 +562,8 @@ export default {
 </script>
 
 <style scoped lang="scss">
-@import './styles/resource-screen.scss';
+@use './styles/resource-screen.scss' as *;
+
 .filter-item {
   width: 160px;
 }
@@ -435,10 +576,31 @@ export default {
 .text-red {
   color: #f56c6c !important;
 }
-::v-deep .dark-tabs .el-tabs__header {
-  margin-bottom: 8px;
+
+::v-deep .tab-workbench.el-tabs {
+  display: flex;
+  flex-direction: column;
 }
+
+::v-deep .tab-workbench > .el-tabs__header {
+  flex-shrink: 0;
+  margin-bottom: 10px;
+}
+
+::v-deep .tab-workbench > .el-tabs__content {
+  flex: 1;
+  min-height: 0;
+}
+
+::v-deep .tab-workbench .el-tab-pane {
+  height: 100%;
+}
+
 ::v-deep .dark-tabs .el-tabs__item.is-active {
   color: #38bdf8 !important;
+}
+
+::v-deep .dark-tabs .el-tabs__nav-wrap::after {
+  background-color: #17263d;
 }
 </style>

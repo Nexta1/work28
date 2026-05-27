@@ -1187,50 +1187,6 @@ export default {
   min-height: 0;
 }
 
-/* 🌟 极致去白线处理 */
-.fill-tabs {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  flex: 1;
-  min-height: 0;
-}
-::v-deep .fill-tabs .el-tabs__content {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  min-height: 0;
-  background: transparent !important;
-}
-::v-deep .dark-tabs .el-tabs__header {
-  margin-bottom: 4px;
-  border-bottom: 1px solid #17263d !important;
-  background: transparent;
-}
-::v-deep .dark-tabs .el-tabs__nav-wrap::after {
-  display: none !important;
-} /* 🌟 彻底杀掉自带的底线 */
-::v-deep .dark-tabs .el-tabs__item {
-  color: #64748b;
-  font-size: 12px;
-  font-weight: bold;
-  height: 34px;
-  line-height: 34px;
-}
-::v-deep .dark-tabs .el-tabs__item.is-active {
-  color: #38bdf8 !important;
-}
-::v-deep .dark-tabs .el-tabs__active-bar {
-  background-color: #38bdf8;
-}
-
-.full-pane {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  min-height: 0;
-}
 .pane-content-box {
   flex: 1;
   display: flex;

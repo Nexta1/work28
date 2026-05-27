@@ -467,6 +467,7 @@
 
         <el-table
           :data="drillDownTableData"
+          height="450"
           size="mini"
           stripe
           border
@@ -660,9 +661,19 @@
     <el-dialog
       :title="isEditLabelModel ? '编辑标签模型' : '新增标签模型'"
       :visible.sync="labelModelDialogVisible"
-      width="560px"
+      width="600px"
       append-to-body
     >
+      <el-tabs
+        v-if="!isEditLabelModel"
+        v-model="labelModeTab"
+        class="dark-tabs"
+        style="margin-bottom: 15px"
+      >
+        <el-tab-pane label="手动标注" name="manual" />
+        <el-tab-pane label="自动标注" name="auto" />
+      </el-tabs>
+
       <el-form
         ref="labelModelForm"
         :model="labelModelForm"
@@ -680,22 +691,68 @@
             class="full-width"
           />
         </el-form-item>
-        <el-form-item label="标签名称" prop="labelName">
-          <el-input v-model="labelModelForm.labelName" />
-        </el-form-item>
-        <el-form-item label="模型说明">
-          <el-input
-            v-model="labelModelForm.labelMemo"
-            type="textarea"
-            :rows="3"
-          />
-        </el-form-item>
+
+        <template v-if="labelModeTab === 'manual'">
+          <el-form-item label="标签名称" prop="labelName">
+            <el-input
+              v-model="labelModelForm.labelName"
+              placeholder="请输入标签名称"
+            />
+          </el-form-item>
+          <el-form-item label="模型说明">
+            <el-input
+              v-model="labelModelForm.labelMemo"
+              type="textarea"
+              :rows="3"
+              placeholder="请输入模型注释说明"
+            />
+          </el-form-item>
+        </template>
+
+        <template v-if="labelModeTab === 'auto'">
+          <el-form-item label="数据源解析URL" required>
+            <div style="display: flex; gap: 8px">
+              <el-input
+                v-model="autoFetchUrl"
+                placeholder="输入 http:// 或 https:// 接口调取地址"
+              />
+              <el-button
+                type="success"
+                :loading="loadingUrlKeys"
+                @click="fetchKeysFromUrl"
+                >提取键值</el-button
+              >
+            </div>
+          </el-form-item>
+
+          <el-form-item label="标注属性名称" prop="labelAttrName">
+            <el-select
+              v-model="labelModelForm.labelAttrName"
+              filterable
+              clearable
+              class="full-width"
+              placeholder="请先提取键值，再选择可选项"
+            >
+              <el-option
+                v-for="key in urlParsedKeys"
+                :key="key"
+                :label="key"
+                :value="key"
+              />
+            </el-select>
+          </el-form-item>
+        </template>
       </el-form>
+
       <span slot="footer">
         <el-button size="mini" @click="labelModelDialogVisible = false"
           >取消</el-button
         >
-        <el-button size="mini" type="primary" @click="submitLabelModel"
+        <el-button
+          size="mini"
+          type="primary"
+          :loading="submittingLabel"
+          @click="submitLabelModel"
           >确认保存</el-button
         >
       </span>
@@ -707,12 +764,17 @@
 import request from '@/utils/request'
 import {apiAdd, apiDelete, apiPage, apiUpdate} from '@/api/common.js'
 // 动态引入您的物理元数据穿透服务
-import {tableDataPaged, page} from '@/api/dataInfo.js'
+import {tableDataPaged, page, manual, auto} from '@/api/dataInfo.js'
 
 export default {
   name: 'DataGovernanceModel',
   data() {
     return {
+      labelModeTab: 'manual', // 默认手动标注 'manual' / 'auto'
+      autoFetchUrl: '', // 自动标注下用户填写的 URL
+      loadingUrlKeys: false, // 提取属性加载状态
+      submittingLabel: false, // 保存中状态
+      urlParsedKeys: [], // URL 远端请求回来的 JSON 键值集
       activeTab: 'dataModel',
       loadingDataModel: false,
       loadingLabelClass: false,
@@ -794,7 +856,10 @@ export default {
         ],
         labelName: [
           {required: true, message: '请输入标签名称', trigger: 'blur'}
-        ]
+        ],
+        labelAttrName: [
+          {required: true, message: '请选择标注属性名称', trigger: 'change'}
+        ] // 自动模式校验
       }
     }
   },
@@ -864,7 +929,9 @@ export default {
         labelModelId: null,
         labelClassId: null,
         labelName: '',
-        labelMemo: ''
+        labelMemo: '',
+        labelAttrName: '', // 🌟 新增：标注对象属性名称
+        submitRowDatas: []
       }
     },
     normalizeList(res) {
@@ -1239,6 +1306,50 @@ export default {
         })
       })
     },
+    async fetchKeysFromUrl() {
+      if (!this.autoFetchUrl) {
+        this.$message.warning('请先填写调取的 URL 地址')
+        return
+      }
+      this.loadingUrlKeys = true
+      this.urlParsedKeys = []
+
+      try {
+        // 使用系统中自带的全局 axios 实例去探测目标 URL
+        const response = await request({
+          url: this.autoFetchUrl,
+          method: 'get'
+        })
+
+        // 如果返回的是标准格式如 response.data，或者直接就是数据体
+        const rawData = response.data || response
+
+        if (rawData && typeof rawData === 'object') {
+          let targetObj = rawData
+          // 兼容处理：如果是数组，取第一个对象提取键值；如果是带包裹的实体，缓存到 submitRowDatas
+          if (Array.isArray(rawData)) {
+            targetObj = rawData[0] || {}
+            this.labelModelForm.submitRowDatas = rawData
+          } else {
+            this.labelModelForm.submitRowDatas = [rawData]
+          }
+
+          this.urlParsedKeys = Object.keys(targetObj)
+          this.$message.success(
+            `成功从远端解析出 ${this.urlParsedKeys.length} 个可用属性字段！`
+          )
+        } else {
+          this.$message.error('未能在该 URL 返回的数据中解析出合法的 JSON 对象')
+        }
+      } catch (error) {
+        console.error('Fetch Dynamic URL Error:', error)
+        this.$message.error(
+          '无法连通该 URL 接口或发生跨域阻断，请检查后台连通性。'
+        )
+      } finally {
+        this.loadingUrlKeys = false
+      }
+    },
     openLabelClassDialog(isEdit, row = null) {
       this.isEditLabelClass = isEdit
       this.labelClassForm =
@@ -1286,6 +1397,10 @@ export default {
     },
     openLabelModelDialog(isEdit, row = null) {
       this.isEditLabelModel = isEdit
+      this.labelModeTab = 'manual' // 每次打开默认切回手动模式
+      this.autoFetchUrl = ''
+      this.urlParsedKeys = []
+
       if (!isEdit && row && row.labelClassId) {
         this.labelModelForm = {
           ...this.getEmptyLabelModelForm(),
@@ -1296,27 +1411,74 @@ export default {
       } else {
         this.labelModelForm = {
           ...this.getEmptyLabelModelForm(),
-          labelClassId:
-            this.activeLabelClass && this.activeLabelClass.labelClassId
+          labelClassId: this.activeLabelClass
+            ? this.activeLabelClass.labelClassId
+            : null
         }
       }
       this.labelModelDialogVisible = true
-      this.$nextTick(
-        () =>
-          this.$refs.labelModelForm && this.$refs.labelModelForm.clearValidate()
-      )
+      this.$nextTick(() => {
+        if (this.$refs.labelModelForm) this.$refs.labelModelForm.clearValidate()
+      })
     },
     submitLabelModel() {
       this.$refs.labelModelForm.validate(valid => {
         if (!valid) return
-        const action = this.isEditLabelModel
-          ? apiUpdate('labelModel', this.labelModelForm)
-          : apiAdd('labelModel', this.labelModelForm)
-        action.then(() => {
-          this.$message.success('标签模型已保存')
-          this.labelModelDialogVisible = false
-          this.fetchLabelModels()
-        })
+        this.submittingLabel = true
+
+        // 1. 判断是编辑还是新增（编辑默认走通用分支或原 common 更新）
+        if (this.isEditLabelModel) {
+          apiUpdate('labelModel', this.labelModelForm)
+            .then(() => {
+              this.$message.success('标签模型已成功更新')
+              this.labelModelDialogVisible = false
+              this.fetchLabelModels()
+            })
+            .finally(() => {
+              this.submittingLabel = false
+            })
+          return
+        }
+
+        // 2. 新增时根据 Tab 类型分发到 dataInfo.js 的两个专有接口
+        if (this.labelModeTab === 'manual') {
+          // 🌟 手动模式：调用 manual
+          manual(this.labelModelForm)
+            .then(res => {
+              this.$message.success('手动标签模型创建完成')
+              this.labelModelDialogVisible = false
+              this.fetchLabelModels()
+            })
+            .catch(err => this.$message.error(err.msg || '手动创建失败'))
+            .finally(() => {
+              this.submittingLabel = false
+            })
+        } else {
+          // 🌟 自动模式：精简参数，只保留 labelClassId, labelAttrName, submitRowDatas
+          const autoPayload = {
+            labelClassId: this.labelModelForm.labelClassId,
+            labelAttrName: this.labelModelForm.labelAttrName,
+            submitRowDatas: this.labelModelForm.submitRowDatas
+          }
+
+          // 强校验自动标注必填项
+          if (!autoPayload.labelAttrName) {
+            this.$message.error('请选择标注对象属性名称再提交！')
+            this.submittingLabel = false
+            return
+          }
+
+          auto(autoPayload)
+            .then(res => {
+              this.$message.success('自动标注标签模型创建并执行成功')
+              this.labelModelDialogVisible = false
+              this.fetchLabelModels()
+            })
+            .catch(err => this.$message.error(err.msg || '自动创建失败'))
+            .finally(() => {
+              this.submittingLabel = false
+            })
+        }
       })
     },
     deleteLabelModel(row) {

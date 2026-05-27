@@ -72,7 +72,12 @@
           border
         >
           <el-table-column prop="frequencyId" label="标识" width="70" />
-          <el-table-column prop="WLH" label="网络号" width="110" class-name="font-num" />
+          <el-table-column
+            prop="WLH"
+            label="网络号"
+            width="110"
+            class-name="font-num"
+          />
           <el-table-column
             prop="WLNM"
             label="网络内码"
@@ -89,9 +94,18 @@
           <el-table-column prop="endFrequency" label="终止频率" width="100" />
           <el-table-column prop="opUserName" label="操作人" width="90" />
           <el-table-column prop="opTime" label="操作时间" min-width="150" />
-          <el-table-column label="操作" width="120" fixed="right" align="center">
+          <el-table-column
+            label="操作"
+            width="120"
+            fixed="right"
+            align="center"
+          >
             <template slot-scope="scope">
-              <el-button type="text" size="mini" @click="openDialog(true, scope.row)">
+              <el-button
+                type="text"
+                size="mini"
+                @click="openDialog(true, scope.row)"
+              >
                 修改
               </el-button>
               <el-button
@@ -125,7 +139,13 @@
       width="520px"
       append-to-body
     >
-      <el-form ref="formRef" :model="form" :rules="rules" label-width="110px" size="mini">
+      <el-form
+        ref="formRef"
+        :model="form"
+        :rules="rules"
+        label-width="110px"
+        size="mini"
+      >
         <el-form-item label="网络号" prop="WLH">
           <el-input-number v-model="form.WLH" :min="0" class="full-width" />
         </el-form-item>
@@ -168,7 +188,9 @@
       </el-form>
       <span slot="footer">
         <el-button size="mini" @click="dialogVisible = false">取消</el-button>
-        <el-button size="mini" type="primary" @click="submitForm">保存</el-button>
+        <el-button size="mini" type="primary" @click="submitForm"
+          >保存</el-button
+        >
       </span>
     </el-dialog>
   </div>
@@ -281,7 +303,9 @@ export default {
             }
           : this.getEmptyForm()
       this.dialogVisible = true
-      this.$nextTick(() => this.$refs.formRef && this.$refs.formRef.clearValidate())
+      this.$nextTick(
+        () => this.$refs.formRef && this.$refs.formRef.clearValidate()
+      )
     },
     submitForm() {
       this.$refs.formRef.validate(valid => {
@@ -299,19 +323,21 @@ export default {
     handleDelete(row) {
       const id = this.pickRowId(row, ['frequencyId', 'frequencyInfoId'])
       if (!id) return
-      this.$confirm('确定删除该频谱记录吗？', '提示', {type: 'warning'}).then(() => {
-        apiDelete(this.baseUrl, id).then(() => {
-          this.$message.success('删除成功')
-          this.fetchList()
-        })
-      })
+      this.$confirm('确定删除该频谱记录吗？', '提示', {type: 'warning'}).then(
+        () => {
+          apiDelete(this.baseUrl, id).then(() => {
+            this.$message.success('删除成功')
+            this.fetchList()
+          })
+        }
+      )
     }
   }
 }
 </script>
 
 <style scoped lang="scss">
-@import './styles/resource-screen.scss';
+@use './styles/resource-screen.scss' as *;
 .filter-item {
   width: 160px;
 }

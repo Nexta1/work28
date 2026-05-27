@@ -1,120 +1,128 @@
 <template>
   <div class="screen-container">
-    <el-tabs
-      v-model="domain"
-      class="fill-tabs dark-tabs"
-      @tab-click="handleDomainChange"
-    >
-      <el-tab-pane label="平台" name="platform" />
-      <el-tab-pane label="武器" name="weapon" />
-      <el-tab-pane label="传感器" name="sensor" />
-    </el-tabs>
-
-    <div class="main-panel" v-loading="loading">
-      <div class="panel-header-summary">
-        <span class="title text-cyan">{{ panelTitle }}</span>
-        <el-radio-group v-model="level" size="mini" @change="handleLevelChange">
-          <el-radio-button label="model">型号</el-radio-button>
-          <el-radio-button label="instance">实例信息</el-radio-button>
-        </el-radio-group>
-        <el-button
-          type="primary"
-          size="mini"
-          icon="el-icon-plus"
-          @click="openDialog(false)"
+    <div class="tab-workbench-shell">
+      <el-tabs
+        v-model="domain"
+        class="dark-tabs"
+        @tab-click="handleDomainChange"
+      >
+        <el-tab-pane
+          :label="i.label"
+          :name="i.name"
+          v-for="i in listTab"
+          :key="i.label"
         >
-          {{ addButtonText }}
-        </el-button>
-      </div>
-
-      <div class="filter-action-row">
-        <div v-for="field in currentQueryFields" :key="field.key">
-          <el-input
-            v-if="field.type === 'input'"
-            v-model="query[field.key]"
-            size="mini"
-            clearable
-            :placeholder="field.placeholder"
-            class="filter-item"
-          />
-        </div>
-        <el-button
-          type="primary"
-          size="mini"
-          icon="el-icon-search"
-          @click="handleSearch"
-        >
-          查询
-        </el-button>
-        <el-button size="mini" icon="el-icon-refresh" @click="resetQuery"
-          >重置</el-button
-        >
-      </div>
-
-      <div class="table-container-flex">
-        <el-table
-          :data="tableData"
-          size="mini"
-          height="100%"
-          class="dark-dashboard-table"
-          stripe
-          border
-          :key="moduleKey"
-        >
-          <el-table-column
-            v-for="col in currentColumns"
-            :key="col.prop"
-            :prop="col.prop"
-            :label="col.label"
-            :min-width="col.minWidth || 100"
-            :width="col.width"
-            show-overflow-tooltip
-          >
-            <template slot-scope="scope">
-              {{
-                col.mapOptions
-                  ? mapLabel(col.mapOptions, scope.row[col.prop])
-                  : scope.row[col.prop]
-              }}
-            </template>
-          </el-table-column>
-          <el-table-column
-            label="操作"
-            width="120"
-            fixed="right"
-            align="center"
-          >
-            <template slot-scope="scope">
-              <el-button
-                type="text"
+          <div class="tab-pane-panel" v-loading="loading">
+            <div class="panel-header-summary">
+              <span class="title text-cyan">{{ panelTitle }}</span>
+              <el-radio-group
+                v-model="level"
                 size="mini"
-                @click="openDialog(true, scope.row)"
+                @change="handleLevelChange"
               >
-                修改
-              </el-button>
+                <el-radio-button label="model">型号</el-radio-button>
+                <el-radio-button label="instance">实例信息</el-radio-button>
+              </el-radio-group>
               <el-button
-                type="text"
+                type="primary"
                 size="mini"
-                class="text-red"
-                @click="handleDelete(scope.row)"
+                icon="el-icon-plus"
+                @click="openDialog(false)"
               >
-                删除
+                {{ addButtonText }}
               </el-button>
-            </template>
-          </el-table-column>
-        </el-table>
-      </div>
+            </div>
 
-      <div class="pagination-row">
-        <el-pagination
-          small
-          layout="total, prev, pager, next"
-          :current-page.sync="page.pageNum"
-          :page-size="page.pageSize"
-          :total="total"
-          @current-change="fetchList"
-        />
-      </div>
+            <div class="filter-action-row">
+              <div v-for="field in currentQueryFields" :key="field.key">
+                <el-input
+                  v-if="field.type === 'input'"
+                  v-model="query[field.key]"
+                  size="mini"
+                  clearable
+                  :placeholder="field.placeholder"
+                  class="filter-item"
+                />
+              </div>
+              <el-button
+                type="primary"
+                size="mini"
+                icon="el-icon-search"
+                @click="handleSearch"
+              >
+                查询
+              </el-button>
+              <el-button size="mini" icon="el-icon-refresh" @click="resetQuery"
+                >重置</el-button
+              >
+            </div>
+
+            <div class="table-container-flex">
+              <el-table
+                :data="tableData"
+                size="mini"
+                height="100%"
+                class="dark-dashboard-table"
+                stripe
+                border
+                :key="moduleKey"
+              >
+                <el-table-column
+                  v-for="col in currentColumns"
+                  :key="col.prop"
+                  :prop="col.prop"
+                  :label="col.label"
+                  :min-width="col.minWidth || 100"
+                  :width="col.width"
+                  show-overflow-tooltip
+                >
+                  <template slot-scope="scope">
+                    {{
+                      col.mapOptions
+                        ? mapLabel(col.mapOptions, scope.row[col.prop])
+                        : scope.row[col.prop]
+                    }}
+                  </template>
+                </el-table-column>
+                <el-table-column
+                  label="操作"
+                  width="120"
+                  fixed="right"
+                  align="center"
+                >
+                  <template slot-scope="scope">
+                    <el-button
+                      type="text"
+                      size="mini"
+                      @click="openDialog(true, scope.row)"
+                    >
+                      修改
+                    </el-button>
+                    <el-button
+                      type="text"
+                      size="mini"
+                      class="text-red"
+                      @click="handleDelete(scope.row)"
+                    >
+                      删除
+                    </el-button>
+                  </template>
+                </el-table-column>
+              </el-table>
+            </div>
+
+            <div class="pagination-row">
+              <el-pagination
+                small
+                layout="total, prev, pager, next"
+                :current-page.sync="page.pageNum"
+                :page-size="page.pageSize"
+                :total="total"
+                @current-change="fetchList"
+              />
+            </div></div
+        ></el-tab-pane>
+      </el-tabs>
     </div>
 
     <el-dialog
@@ -509,6 +517,11 @@ export default {
   mixins: [resourcePageMixin],
   data() {
     return {
+      listTab: [
+        {label: '作战平台', name: 'platform'},
+        {label: '武器平台', name: 'weapon'},
+        {label: '传感器平台', name: 'sensor'}
+      ],
       domain: 'platform',
       level: 'model',
       loading: false,
@@ -707,16 +720,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-@import './styles/resource-screen.scss';
-
-.main-panel {
-  flex: 1;
-  min-height: 0;
-}
-
-.panel-header-summary {
-  gap: 12px;
-}
+@use './styles/resource-screen.scss' as *;
 
 .filter-item {
   width: 160px;
@@ -724,23 +728,5 @@ export default {
 
 .full-width {
   width: 100%;
-}
-
-.text-red {
-  color: #f56c6c !important;
-}
-
-::v-deep .dark-tabs .el-tabs__header {
-  margin-bottom: 8px;
-  flex-shrink: 0;
-}
-
-::v-deep .dark-tabs .el-tabs__item.is-active {
-  color: #38bdf8 !important;
-}
-
-.screen-container {
-  display: flex;
-  flex-direction: column;
 }
 </style>

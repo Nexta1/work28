@@ -10,6 +10,42 @@
   padding: 12px;
 }
 
+/* 带 Tab 的工作台外框 */
+.tab-workbench,
+.tab-workbench-shell {
+  flex: 1;
+  min-height: 0;
+  background: #080e18;
+  border: 1px solid #111b2b;
+  border-radius: 4px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.main-panel {
+  flex: 1;
+  min-height: 0;
+  background: #080e18;
+  border: 1px solid #111b2b;
+  border-radius: 4px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.tab-pane-panel {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
 .panel-header-summary {
   display: flex;
   align-items: center;
@@ -18,12 +54,15 @@
   padding-bottom: 8px;
   border-bottom: 1px solid #111b2b;
   flex-shrink: 0;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 
 .panel-header-summary .title {
   font-size: 13px;
   font-weight: bold;
   color: #38bdf8;
+  flex-shrink: 0;
 }
 
 .filter-action-row {
@@ -46,38 +85,20 @@
   flex-shrink: 0;
 }
 
-.main-panel {
-  flex: 1;
-  min-height: 0;
-  background: #080e18;
-  border: 1px solid #111b2b;
-  border-radius: 4px;
-  padding: 12px;
-  display: flex;
-  flex-direction: column;
-}
-
 .fill-tabs {
   flex: 1;
   min-height: 0;
   display: flex;
   flex-direction: column;
-}
-
-::v-deep .fill-tabs .el-tabs__content {
-  flex: 1;
-  min-height: 0;
-}
-
-::v-deep .fill-tabs .el-tab-pane {
-  height: 100%;
+  overflow: hidden;
 }
 
 .tab-pane-body {
   height: 100%;
+  min-height: 0;
   display: flex;
   flex-direction: column;
-  min-height: 0;
+  overflow: hidden;
 }
 
 .text-cyan {
