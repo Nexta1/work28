@@ -149,8 +149,7 @@
             </div>
           </div>
           <div v-else class="sub-empty-info">
-            💡
-            请在左侧运控树中点击选择任意具体“属性节点”，以激活全要素状态总线监测
+            💡 请在左侧运控树中点击选择任意具体“属性节点”，以激活全要素状态监测
           </div>
         </div>
 
@@ -420,7 +419,7 @@ export default {
   },
   methods: {
     /**
-     * 核心初始化总线：全量并行获取数据，并在前端组装树结构
+     * 核心初始化：全量并行获取数据，并在前端组装树结构
      */
     async initGlobalStrategyData() {
       this.pageLoading = true
@@ -453,7 +452,7 @@ export default {
           this.currentOperators = this.allOperators
         }
       } catch (e) {
-        console.error('分级运控总线初始化级联故障:', e)
+        console.error('分级运控初始化级联故障:', e)
       } finally {
         this.pageLoading = false
       }
@@ -802,7 +801,7 @@ export default {
   display: flex;
 }
 
-/* 右侧核心综合调度总线（上下二分） */
+/* 右侧核心综合调度（上下二分） */
 .right-combined-panel {
   flex: 7;
   display: flex;

@@ -69,7 +69,7 @@
             :class="{active: activeLeftTab === 'xxlltj'}"
             @click="activeLeftTab = 'xxlltj'"
           >
-            流量总线
+            流量
           </button>
           <button
             class="tab-btn"
@@ -90,7 +90,7 @@
         <div class="tab-content-container">
           <div v-if="activeLeftTab === 'xxlltj'" class="tab-scroll-pane">
             <div v-if="trafficList.length === 0" class="empty-hint-dark">
-              当前周期无流量总线快照
+              当前周期无流量快照
             </div>
             <div
               v-for="item in trafficList"

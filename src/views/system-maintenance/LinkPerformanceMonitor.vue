@@ -584,7 +584,7 @@ export default {
           this.selectDevice(this.deviceList[0])
         }
       } catch (e) {
-        console.warn('硬件外设总线扫描阻断')
+        console.warn('硬件外设扫描阻断')
       }
     },
     async fetchWlztPage() {

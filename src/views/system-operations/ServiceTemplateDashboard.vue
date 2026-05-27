@@ -12,7 +12,7 @@
         <div v-show="activeTemplateId" class="cascade-content-wrapper">
           <div class="panel-header-summary">
             <span class="title text-cyan"
-              >🛰️ 服务信息总线（所属模板：{{ activeTemplateName }}）</span
+              >🛰️ 服务信息（所属模板：{{ activeTemplateName }}）</span
             >
             <el-button
               type="primary"

@@ -2,7 +2,7 @@
   <div class="screen-container">
     <div class="top-search-header">
       <div class="search-flex">
-        <span class="hub-title">🗺️ 作战任务编排路线与编成空间态势大屏总线</span>
+        <span class="hub-title">🗺️ 作战任务编排路线与编成空间态势大屏</span>
 
         <div class="search-item">
           <label>作战任务名称 (RWMC)</label>
@@ -33,7 +33,7 @@
     <div class="main-body-layout">
       <div class="left-tree-panel">
         <div class="panel-header-summary">
-          <span class="title">⚔️ 作战任务源总线 </span>
+          <span class="title">⚔️ 作战任务源 </span>
           <span class="badge font-num text-cyan">{{ rwxxList.length }} 项</span>
         </div>
 

@@ -138,8 +138,7 @@
             </div>
           </div>
           <div v-else class="sub-empty-info">
-            💡
-            请在左侧拓扑谱系树中选择任意故障节点，以同步下发右侧全要素数据总线
+            💡 请在左侧拓扑谱系树中选择任意故障节点，以同步下发右侧全要素数据
           </div>
         </div>
 
@@ -424,7 +423,7 @@ export default {
   },
   methods: {
     /**
-     * 初始化核心总线
+     * 初始化核心
      */
     async initGlobalCoreData() {
       this.listLoading = true
@@ -456,7 +455,7 @@ export default {
           if (stillExist) this.handleTreeNodeClick(stillExist)
         }
       } catch (e) {
-        console.error('全视数据链维护舱总线异常:', e)
+        console.error('全视数据链维护舱异常:', e)
       } finally {
         this.listLoading = false
       }
@@ -791,7 +790,7 @@ export default {
   display: flex;
 }
 
-/* 右侧多维总线舱 */
+/* 右侧多维舱 */
 .right-combined-panel {
   flex: 7;
   display: flex;

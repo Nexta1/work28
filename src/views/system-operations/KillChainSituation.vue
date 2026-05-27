@@ -73,7 +73,7 @@
       <div class="drawer-inner-body" v-if="leftControlVisible">
         <div class="panel-section-title">
           <div class="pulse-indicator"></div>
-          <span>多目标杀伤链流水总线</span>
+          <span>多目标杀伤链流水</span>
         </div>
 
         <div class="status-cards-scroll-container">
@@ -416,7 +416,7 @@ export default {
           await this.loadMembersData(currentGroupId)
         }
       } catch (e) {
-        console.error('控制台同步核心总线错误:', e)
+        console.error('控制台同步核心错误:', e)
       }
     },
     async loadMembersData(groupName) {

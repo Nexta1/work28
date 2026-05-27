@@ -147,7 +147,7 @@
     </div>
 
     <el-dialog
-      title="📋 战术网链策略 · 详细信息总线"
+      title="📋 战术网链策略 · 详细信息"
       :visible.sync="detailVisible"
       width="520px"
       custom-class="dark-custom-dialog"
@@ -536,7 +536,7 @@ export default {
         this.platformTree = this.formatTreeData(treeRes.data || treeRes || [])
         this.buildFlatMap(this.platformTree)
       } catch (e) {
-        console.error('动态网络总线字典绑定异常:', e)
+        console.error('动态网络字典绑定异常:', e)
       }
     },
     formatTreeData(data) {
@@ -651,7 +651,7 @@ export default {
       this.$refs['dataForm'].validate(valid => {
         if (!valid) {
           this.$message.error(
-            '策略总线：存在未完成或不合规的战术指标参数，拒绝下发'
+            '策略：存在未完成或不合规的战术指标参数，拒绝下发'
           )
           return false
         }
@@ -695,7 +695,7 @@ export default {
         cancelButtonText: '维持链路'
       }).then(() => {
         apiDelete(this.moduleBaseUrl, row.scenarioStrategyId).then(() => {
-          this.$message.success('该链路策略已从控制总线剥离销毁')
+          this.$message.success('该链路策略已从控制剥离销毁')
           this.getGlobalStrategyList()
         })
       })

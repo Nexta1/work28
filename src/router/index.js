@@ -394,6 +394,18 @@ const routes = [
       requiresAuth: true
     }
   },
+  {
+    path: '/data-collection',
+    name: 'DataCollection',
+    meta: {
+      title: '数据采集',
+      subsystem: '资源和数据管理',
+      category: '数据采集',
+      icon: '💾',
+      isModule: true,
+      requiresAuth: true
+    }
+  },
   // 资源和数据管理 - 数据管理
   {
     path: '/data-management',
@@ -408,6 +420,7 @@ const routes = [
       requiresAuth: true
     }
   },
+
   {
     path: '/permission-management',
     name: 'PermissionManagement',
@@ -437,7 +450,8 @@ const routes = [
   {
     path: '/classification-storage',
     name: 'ClassificationStorage',
-    component: () => import('@/views/system-resource/ClassificationStorage.vue'),
+    component: () =>
+      import('@/views/system-resource/ClassificationStorage.vue'),
     meta: {
       title: '分类存储',
       subsystem: '资源和数据管理',
@@ -450,13 +464,28 @@ const routes = [
   {
     path: '/subscription-distribution',
     name: 'SubscriptionDistribution',
-    component: () => import('@/views/system-resource/SubscriptionDistribution.vue'),
+    component: () =>
+      import('@/views/system-resource/SubscriptionDistribution.vue'),
     meta: {
       title: '订阅分发',
       subsystem: '资源和数据管理',
       category: '数据管理',
       icon: '📤',
       parentModule: '数据管理',
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/data-collection-project',
+    name: 'DataCollectionProject',
+    component: () =>
+      import('@/views/system-resource/DataCollectionProject.vue'),
+    meta: {
+      title: '数据采集项目',
+      subsystem: '资源和数据管理',
+      category: '数据采集',
+      icon: '🛰️',
+      parentModule: '数据采集',
       requiresAuth: true
     }
   },
