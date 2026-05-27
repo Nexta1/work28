@@ -1129,7 +1129,14 @@ export default {
 
       this.drillDownTableData = rawList.map(item => {
         let parsedData = {}
-        if (item[row] && typeof item[row] === 'string') {
+        if (row == 'rowData') {
+          parsedData = {
+            labelName: item.labelName,
+            rowData: item.rowData,
+            opUserName: item.opUserName,
+            opTime: item.opTime
+          }
+        } else if (item[row] && typeof item[row] === 'string') {
           try {
             parsedData = JSON.parse(item[row])
           } catch (e) {
