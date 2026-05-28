@@ -403,7 +403,7 @@
 }
 .el-radio__inner::after,
 .el-checkbox__inner::after {
-  background-color: #03060c !important;
+  // background-color: #03060c !important;
   border-color: #03060c !important;
 } /* 内部对勾/圆点反黑 */
 .el-radio__input.is-checked + .el-radio__label,

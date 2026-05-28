@@ -626,7 +626,7 @@
 
               <div class="manual-data-pool" style="flex: 1; min-width: 0">
                 <el-table
-                  :data="manualTableData"
+                  :data="paginatedManualTableData"
                   size="mini"
                   stripe
                   border
@@ -648,6 +648,21 @@
                     >
                   </template>
                 </el-table>
+                <div
+                  class="pagination-container"
+                  style="margin-top: 10px; text-align: right"
+                >
+                  <el-pagination
+                    background
+                    layout="total, sizes, prev, pager, next, jumper"
+                    :total="manualTablePage.total"
+                    :page-size="manualTablePage.pageSize"
+                    :current-page="manualTablePage.pageNum"
+                    :page-sizes="[10, 20, 50, 100]"
+                    @size-change="handleManualPageSizeChange"
+                    @current-change="handleManualPageNumChange"
+                  />
+                </div>
               </div>
             </div>
           </el-tab-pane>
@@ -913,7 +928,13 @@
 
 <script>
 import request from '@/utils/request'
-import {apiAdd, apiDelete, apiPage, apiUpdate} from '@/api/common.js'
+import {
+  apiAdd,
+  apiDelete,
+  apiPage,
+  apiUpdate,
+  apiGetDetail
+} from '@/api/common.js'
 // 动态引入您的物理元数据穿透服务
 import {tableDataPaged, page, manual, auto} from '@/api/dataInfo.js'
 
@@ -994,9 +1015,11 @@ export default {
       manualSelectedModelId: null, // 手工标注选中的目录节点
       manualSelectedTable: '', // 手工标注选中的表名
       manualTableOptions: [], // 物理表下拉候选集
-      manualTableData: [], // 待标注的物理表原始数据
+      manualTableData: [], // 待标注的物理表原始数据（全部数据）
       manualColumns: [], // 待标注数据表头
       manualSelection: [], // 用户选中的行数组
+      // 手工标注表格分页配置
+      manualTablePage: {pageNum: 1, pageSize: 10, total: 0},
       dataModelRules: {
         modelName: [
           {required: true, message: '请输入模型名称', trigger: 'blur'}
@@ -1037,6 +1060,13 @@ export default {
     },
     labelClassCount() {
       return this.flattenTree(this.labelClassTree).length
+    },
+    // 手工标注表格分页数据计算属性
+    paginatedManualTableData() {
+      const start =
+        (this.manualTablePage.pageNum - 1) * this.manualTablePage.pageSize
+      const end = start + this.manualTablePage.pageSize
+      return this.manualTableData.slice(start, end)
     }
   },
   watch: {
@@ -1467,6 +1497,9 @@ export default {
             return parsed
           })
           this.manualColumns = Array.from(columnSet)
+          // 更新分页总数
+          this.manualTablePage.total = this.manualTableData.length
+          this.manualTablePage.pageNum = 1
         })
         .catch(() => {
           this.$message.error('拉取物理表测试源数据失败')
@@ -1479,6 +1512,17 @@ export default {
     // 捕获多选事件
     handleManualSelectionChange(val) {
       this.manualSelection = val
+    },
+
+    // 手工标注表格分页 - 每页条数变化
+    handleManualPageSizeChange(val) {
+      this.manualTablePage.pageSize = val
+      this.manualTablePage.pageNum = 1
+    },
+
+    // 手工标注表格分页 - 页码变化
+    handleManualPageNumChange(val) {
+      this.manualTablePage.pageNum = val
     },
 
     // 执行手工标注提交
@@ -2344,5 +2388,47 @@ export default {
   background: #0c121c !important;
   border-color: #122035 !important;
   color: #475569 !important;
+}
+
+/* 手工标注表格分页组件暗黑主题样式 */
+.pagination-container ::v-deep .el-pagination {
+  color: #cbd5e1;
+}
+.pagination-container ::v-deep .el-pagination button {
+  background: #0d1522;
+  color: #cbd5e1;
+  border: 1px solid #1e3557;
+}
+.pagination-container ::v-deep .el-pagination button:hover:not(:disabled) {
+  color: #38bdf8;
+  border-color: #38bdf8;
+}
+.pagination-container ::v-deep .el-pagination button:disabled {
+  background: #0a1018;
+  color: #475569;
+  border-color: #152030;
+}
+.pagination-container ::v-deep .el-pager li {
+  background: #0d1522;
+  color: #cbd5e1;
+  border: 1px solid #1e3557;
+}
+.pagination-container ::v-deep .el-pager li:hover {
+  color: #38bdf8;
+  border-color: #38bdf8;
+}
+.pagination-container ::v-deep .el-pager li.active {
+  background: #0f2238;
+  color: #38bdf8;
+  border-color: #38bdf8;
+}
+.pagination-container ::v-deep .el-pagination__total,
+.pagination-container ::v-deep .el-pagination__jump {
+  color: #94a3b8;
+}
+.pagination-container ::v-deep .el-pagination__sizes .el-input__inner {
+  background: #0d1522;
+  border-color: #1e3557;
+  color: #cbd5e1;
 }
 </style>
