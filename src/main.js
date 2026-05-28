@@ -17,6 +17,7 @@ window.addEventListener('error', e => {
   }
 })
 // 挂载到原型
+import store from './store' // 自动引入 store/index.js
 Vue.prototype.$http = request
 Vue.use(ElementUI)
 new Vue({
