@@ -533,7 +533,10 @@ export default {
       type: Array,
       default: () => []
     },
-    selectedTask: {type: Object, default: () => null}
+    selectedTask: {
+      type: Object,
+      default: () => {}
+    }
   },
   data() {
     return {
@@ -588,7 +591,6 @@ export default {
   watch: {
     selectedTask: {
       deep: true,
-      immediate: true,
       handler() {
         this.fetchGroupList()
         this.loadNetworkTreeStructure()
