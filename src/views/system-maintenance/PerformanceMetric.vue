@@ -19,9 +19,9 @@
           >
             <el-option
               v-for="item in dataTypeOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
+              :key="item"
+              :label="item"
+              :value="item"
             />
           </el-select>
         </el-form-item>
@@ -178,9 +178,9 @@
               >
                 <el-option
                   v-for="item in dataTypeOptions"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
+                  :key="item"
+                  :label="item"
+                  :value="item"
                 />
               </el-select>
             </el-form-item>
@@ -245,9 +245,9 @@
               >
                 <el-option
                   v-for="item in accumulateMethodOptions"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
+                  :key="item"
+                  :label="item"
+                  :value="item"
                 />
               </el-select>
             </el-form-item>

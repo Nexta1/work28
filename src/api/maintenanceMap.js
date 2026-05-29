@@ -38,7 +38,7 @@ export function intervalTypes() {
 // 查询所有性评价
 export function performanceEvaluations() {
   return request({
-    url: `/rest/performanceStandard/intervalTypes`,
+    url: `/rest/performanceStandard/performanceEvaluations`,
     method: 'get'
   })
 }

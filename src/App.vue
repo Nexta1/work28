@@ -287,9 +287,14 @@ body,
 }
 
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
-    'PingFang SC', 'Microsoft YaHei', sans-serif;
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue',
+    Arial, 'Noto Sans', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei',
+    sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
 
+  /* 字体平滑抗锯齿渲染优化，配合解决清晰度不一致问题 */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   background: #050508;
   color: #e0e0e0;
 }
@@ -454,7 +459,9 @@ body {
 
   border-right: 1px solid rgba(120, 210, 255, 0.12);
 
-  transition: width 0.28s ease, border 0.28s ease;
+  transition:
+    width 0.28s ease,
+    border 0.28s ease;
 
   overflow: hidden;
 
@@ -666,7 +673,10 @@ body {
 
 .menu-expand-enter-active,
 .menu-expand-leave-active {
-  transition: opacity 0.22s ease, transform 0.22s ease, max-height 0.22s ease;
+  transition:
+    opacity 0.22s ease,
+    transform 0.22s ease,
+    max-height 0.22s ease;
 
   overflow: hidden;
 
