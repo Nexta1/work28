@@ -847,7 +847,6 @@ export default {
 .detail-cell .val {
   font-size: 12px;
   color: #f8fafc;
-  font-family: monospace;
 }
 
 /* 右下：响应操作池（放底部） */
@@ -1028,7 +1027,6 @@ export default {
 
 /* 配色通用类工具 */
 .font-num {
-  font-family: monospace;
 }
 .text-blue {
   color: #38bdf8 !important;

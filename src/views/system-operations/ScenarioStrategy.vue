@@ -32,13 +32,12 @@
           新增战略策略
         </el-button>
         <el-button
-          type="info"
           size="mini"
           icon="el-icon-refresh"
           class="action-btn"
           @click="resetSearch"
         >
-          重置全局遥测
+          重置查询
         </el-button>
       </div>
     </div>
@@ -49,11 +48,21 @@
           v-for="(taskName, taskTypeKey) in taskTypeMap"
           :key="taskTypeKey"
           class="monitor-column-panel"
-          :class="{'is-active-panel': activeTaskType === Number(taskTypeKey)}"
           @click="activeTaskType = Number(taskTypeKey)"
         >
           <div class="panel-header-summary">
-            <span class="title">⚔️ {{ taskName }}</span>
+            <span class="title">
+              <Icon
+                icon="lucide:swords"
+                :size="14"
+                style="
+                  vertical-align: middle;
+                  margin-right: 4px;
+                  color: var(--color-danger, #ef4444);
+                "
+              />
+              {{ taskName }}
+            </span>
             <span class="badge font-num text-cyan">
               {{ getTaskStrategyList(taskTypeKey).length }} 条
             </span>
@@ -109,36 +118,51 @@
               </div>
 
               <div class="card-line metric-line">
-                <span class="metric-item"
-                  >带宽要求
+                <span class="metric-item">
+                  <Icon
+                    icon="lucide:activity"
+                    :size="12"
+                    color="var(--color-primary, #38bdf8)"
+                    style="vertical-align: middle; margin-right: 3px"
+                  />
+                  带宽
                   <span class="text-blue">{{
                     item.bandwidthRequirement || 0
                   }}</span
-                  >M</span
-                >
-                <span class="metric-item"
-                  >时延要求
+                  >M
+                </span>
+
+                <span class="metric-item">
+                  <Icon
+                    icon="lucide:timer"
+                    :size="12"
+                    color="var(--color-warning, #f59e0b)"
+                    style="vertical-align: middle; margin-right: 3px"
+                  />
+                  时延
                   <span class="text-orange">{{
                     item.latencyRequirement || 0
                   }}</span
-                  >ms</span
-                >
-                <span class="metric-item"
-                  >成员规模
+                  >ms
+                </span>
+
+                <span class="metric-item">
+                  成员规模
                   <span class="text-green">{{
                     item.WLCYSL || item.wlcysl || 0
-                  }}</span
-                  >机</span
-                >
-                <span class="metric-item"
-                  >平台数量
+                  }}</span>
+                  机
+                </span>
+
+                <span class="metric-item">
+                  平台类型
                   <span class="text-cyan">{{
                     item.memberPTXHIDs
                       ? item.memberPTXHIDs.split(',').length
                       : 0
                   }}</span
-                  >型</span
-                >
+                  >型
+                </span>
               </div>
             </div>
           </div>
@@ -147,7 +171,7 @@
     </div>
 
     <el-dialog
-      title="📋 战术网链策略 · 详细信息"
+      title="任务群组策略 · 详细信息"
       :visible.sync="detailVisible"
       width="520px"
       custom-class="dark-custom-dialog"
@@ -213,14 +237,14 @@
           }}</span>
         </div>
         <div class="detail-row span-2">
-          <span class="lbl">激活外设业务谱系</span>
+          <span class="lbl">通联业务谱系</span>
           <span class="val text-cyan">{{
             selectedDetail.serviceTypes || '暂无业务'
           }}</span>
         </div>
         <div class="detail-row span-2">
           <span class="lbl"
-            >协同联合作战平台列表 ({{
+            >成员类型 ({{
               selectedDetail.memberPTXHIDs
                 ? selectedDetail.memberPTXHIDs.split(',').length
                 : 0
@@ -228,14 +252,60 @@
             型)</span
           >
           <span class="val text-blue font-platform-list">
-            {{
-              selectedDetail.memberPTXHNames ||
-              formatPlatformIds(selectedDetail.memberPTXHIDs)
-            }}
+            <el-popover
+              placement="top-start"
+              width="320"
+              trigger="hover"
+              popper-class="dark-popover-tech"
+              :disabled="!splitPlatforms(selectedDetail).length"
+            >
+              <div class="popover-tags-grid">
+                <span
+                  v-for="(name, index) in splitPlatforms(selectedDetail)"
+                  :key="index"
+                  class="matrix-tag-item"
+                >
+                  <Icon
+                    icon="lucide:cpu"
+                    :size="11"
+                    color="var(--color-cyan)"
+                    style="margin-right: 3px"
+                  />
+                  {{ name }}
+                </span>
+              </div>
+
+              <div slot="reference" class="inline-tags-ellipsis">
+                <span
+                  v-for="(name, index) in splitPlatforms(selectedDetail).splice(
+                    0,
+                    4
+                  )"
+                  :key="index"
+                  class="matrix-tag-item"
+                >
+                  <Icon
+                    icon="lucide:cpu"
+                    :size="11"
+                    color="var(--color-cyan)"
+                    style="margin-right: 3px"
+                  />
+                  {{ name }}
+                </span>
+                <span v-show="splitPlatforms(selectedDetail).length > 4"
+                  >...</span
+                >
+                <span
+                  v-if="!splitPlatforms(selectedDetail).length"
+                  class="text-gray-muted"
+                  >未指派平台</span
+                >
+              </div>
+            </el-popover>
           </span>
         </div>
         <div class="detail-row span-2">
-          <span class="lbl">安全认证保障保障指引</span>
+          <span class="lbl">安全认证保障</span>
           <span class="val" style="color: #94a3b8">{{
             selectedDetail.safeRequirement || '未设定特殊限制'
           }}</span>
@@ -250,7 +320,7 @@
           >编辑此策略</el-button
         >
         <el-button type="danger" size="mini" @click="handleDeleteFromDetail"
-          >熔断删除</el-button
+          >删 除</el-button
         >
         <el-button
           @click="detailVisible = false"
@@ -265,149 +335,144 @@
       :title="dialogTitle"
       :visible.sync="dialogVisible"
       width="580px"
-      custom-class="dark-custom-dialog"
       append-to-body
       @close="resetForm"
     >
-      <el-form :model="form" :rules="rules" ref="dataForm" size="mini">
-        <div class="dialog-detail-matrix">
-          <div class="detail-row span-2">
-            <span class="lbl required-lbl">策略控制名称</span>
-            <el-form-item prop="strategyName">
-              <input
-                type="text"
+      <el-form
+        :model="form"
+        :rules="rules"
+        ref="dataForm"
+        size="mini"
+        label-width="120px"
+      >
+        <!-- 使用 el-row 并设置分栏间隔 :gutter="20" 保证左右间距美观 -->
+        <el-row :gutter="20">
+          <!-- 满宽项 (相当于之前的 span-2) -->
+          <el-col :span="24">
+            <el-form-item label="策略控制名称" prop="strategyName" required>
+              <el-input
                 v-model="form.strategyName"
-                class="inner-input"
                 placeholder="例如：指挥协同策略01"
+                clearable
+                style="width: 100%"
               />
             </el-form-item>
-          </div>
+          </el-col>
 
-          <div class="detail-row">
-            <span class="lbl required-lbl">任务类型调度</span>
-            <el-form-item prop="taskType">
-              <select v-model="form.taskType" class="inner-select">
-                <option
+          <!-- 半宽项 (两列平铺) -->
+          <el-col :span="12">
+            <el-form-item label="任务类型调度" prop="taskType" required>
+              <el-select
+                v-model="form.taskType"
+                placeholder="请选择任务类型"
+                style="width: 100%"
+              >
+                <el-option
                   v-for="(label, value) in taskTypeMap"
                   :key="value"
+                  :label="label"
                   :value="Number(value)"
-                >
-                  {{ label }}
-                </option>
-              </select>
+                />
+              </el-select>
             </el-form-item>
-          </div>
+          </el-col>
 
-          <div class="detail-row">
-            <span class="lbl required-lbl">网络组网体制类型</span>
-            <el-form-item prop="WLLX">
-              <select v-model="form.WLLX" class="inner-select">
-                <option
+          <el-col :span="12">
+            <el-form-item label="网络组网体制类型" prop="WLLX" required>
+              <el-select
+                v-model="form.WLLX"
+                placeholder="请选择体制类型"
+                style="width: 100%"
+              >
+                <el-option
                   v-for="(label, value) in wllxMapData"
                   :key="value"
+                  :label="label"
                   :value="String(value)"
-                >
-                  {{ label }}
-                </option>
-              </select>
+                />
+              </el-select>
             </el-form-item>
-          </div>
+          </el-col>
 
-          <div class="detail-row">
-            <span class="lbl required-lbl">网链成员数量</span>
-            <el-form-item prop="WLCYSL">
-              <input
+          <el-col :span="12">
+            <el-form-item label="网链成员数量" prop="WLCYSL" required>
+              <el-input
                 type="number"
                 v-model.number="form.WLCYSL"
-                class="inner-input"
-              />
-            </el-form-item>
-          </div>
-
-          <div class="detail-row">
-            <span class="lbl required-lbl">高敏延迟需求 (ms)</span>
-            <el-form-item prop="latencyRequirement">
-              <input
-                type="text"
-                v-model="form.latencyRequirement"
-                class="inner-input"
-              />
-            </el-form-item>
-          </div>
-
-          <div class="detail-row">
-            <span class="lbl required-lbl">规划带宽需求 (Mbps)</span>
-            <el-form-item prop="bandwidthRequirement">
-              <input
-                type="text"
-                v-model="form.bandwidthRequirement"
-                class="inner-input"
-              />
-            </el-form-item>
-          </div>
-
-          <!-- <div class="detail-row">
-            <span class="lbl">成员配额比例 (%)</span>
-            <el-form-item prop="memberScale">
-              <input
-                type="number"
-                v-model.number="form.memberScale"
-                class="inner-input"
-              />
-            </el-form-item>
-          </div> -->
-
-          <div class="detail-row span-2">
-            <span class="lbl">通联业务选择</span>
-            <el-form-item prop="serviceTypesArray">
-              <div class="checkbox-matrix">
-                <el-checkbox-group
-                  v-model="form.serviceTypesArray"
-                  @change="$forceUpdate()"
-                >
-                  <el-checkbox
-                    v-for="item in serviceTypeList"
-                    :key="item"
-                    :label="item"
-                    >{{ item }}</el-checkbox
-                  >
-                </el-checkbox-group>
-              </div>
-            </el-form-item>
-          </div>
-
-          <div class="detail-row span-2">
-            <span class="lbl">作战任务平铺协同平台结构选择</span>
-            <el-form-item prop="platformIdsArray">
-              <el-cascader
-                v-model="form.platformIdsArray"
-                :options="platformTree"
-                :props="cascaderProps"
-                clearable
-                size="mini"
-                placeholder="点击指派树形作战节点"
                 style="width: 100%"
-                popper-class="dark-cascader-popper"
-                collapse-tags
               />
             </el-form-item>
-          </div>
+          </el-col>
 
-          <div class="detail-row span-2">
+          <el-col :span="12">
             <el-form-item
-              label="安全保密级别"
-              class="secret-form-item"
-              prop="safeRequirement"
+              label="高敏延迟需求 (ms)"
+              prop="latencyRequirement"
+              required
             >
+              <el-input v-model="form.latencyRequirement" style="width: 100%" />
+            </el-form-item>
+          </el-col>
+
+          <el-col :span="12">
+            <el-form-item
+              label="带宽需求 (Mbps)"
+              prop="bandwidthRequirement"
+              required
+            >
+              <el-input
+                v-model="form.bandwidthRequirement"
+                style="width: 100%"
+              />
+            </el-form-item>
+          </el-col>
+
+          <!-- 满宽项 -->
+          <el-col :span="24">
+            <el-form-item label="通联业务选择" prop="serviceTypesArray">
+              <el-checkbox-group v-model="form.serviceTypesArray">
+                <el-checkbox
+                  v-for="item in serviceTypeList"
+                  :key="item"
+                  :label="item"
+                >
+                  {{ item }}
+                </el-checkbox>
+              </el-checkbox-group>
+            </el-form-item>
+          </el-col>
+
+          <el-col :span="24">
+            <el-form-item label="成员型号" prop="platformIdsArray">
+              <el-select
+                v-model="form.platformIdsArray"
+                placeholder="请选择成员型号"
+                clearable
+                multiple
+                style="width: 100%"
+              >
+                <el-option
+                  :label="i.PTXHMC"
+                  :value="i.PTXHID"
+                  v-for="i in platformTree"
+                  :key="i.PTLX"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+
+          <el-col :span="24">
+            <el-form-item label="安全保密级别" prop="safeRequirement">
               <el-radio-group v-model="form.safeRequirement">
                 <el-radio v-for="item in aqbmOptions" :key="item" :label="item">
                   {{ item }}级保密
                 </el-radio>
               </el-radio-group>
             </el-form-item>
-          </div>
-        </div>
+          </el-col>
+        </el-row>
       </el-form>
+
       <div slot="footer" class="dialog-footer">
         <el-button
           @click="dialogVisible = false"
@@ -430,8 +495,8 @@
 <script>
 import {apiPage, apiAdd, apiUpdate, apiDelete} from '@/api/common'
 // 3. 完美引入通联业务和安全保密要求字典函数
-import {wllxMap, rwlxMap, tlywList, zzrwwlTrees, aqbmList} from '@/api/map'
-
+import {wllxMap, rwlxMap, tlywList, aqbmList} from '@/api/map'
+import {getPtxhInfos} from '@/api/resourceManagement.js'
 export default {
   name: 'ScenarioStrategyCleanDashboard',
   data() {
@@ -449,14 +514,6 @@ export default {
 
       detailVisible: false,
       selectedDetail: null,
-
-      cascaderProps: {
-        multiple: true,
-        value: 'id',
-        label: 'ptmc',
-        children: 'children',
-        emitPath: false
-      },
 
       listLoading: false,
       globalStrategies: [],
@@ -532,29 +589,13 @@ export default {
       try {
         const wllxRes = await wllxMap()
         this.wllxMapData = wllxRes.data || wllxRes || {}
-        const treeRes = await zzrwwlTrees()
-        this.platformTree = this.formatTreeData(treeRes.data || treeRes || [])
-        this.buildFlatMap(this.platformTree)
+        const treeRes = await getPtxhInfos()
+        this.platformTree = treeRes.data
       } catch (e) {
         console.error('动态网络字典绑定异常:', e)
       }
     },
-    formatTreeData(data) {
-      return data.map(node => ({
-        id: node.zzrwptid || node.ZZRWPTID || node.ptid || node.PTID,
-        ptmc: node.ptmc || node.PTMC || node.rwmc || node.RWMC || '未知单元',
-        children:
-          node.children && node.children.length
-            ? this.formatTreeData(node.children)
-            : null
-      }))
-    },
-    buildFlatMap(nodes) {
-      nodes.forEach(node => {
-        this.platformFlatMap[node.id] = node.ptmc
-        if (node.children) this.buildFlatMap(node.children)
-      })
-    },
+
     formatPlatformIds(idsString) {
       if (!idsString) return '未指派联合作战节点'
       return idsString
@@ -574,7 +615,9 @@ export default {
       apiPage(this.moduleBaseUrl, {
         pageNum: 1,
         pageSize: 100,
-        WLLX: this.listQuery.WLLX || undefined
+        params: {
+          WLLX: this.listQuery.WLLX || undefined
+        }
       })
         .then(res => {
           this.globalStrategies = res.data.list || res.data || []
@@ -615,12 +658,22 @@ export default {
 
     handleCreate() {
       this.resetForm()
-      this.dialogTitle = '⚡ 下发全新网链规划策略'
+      this.dialogTitle = '下发任务群组策略'
       this.dialogVisible = true
+    },
+    splitPlatforms(detail) {
+      if (!detail) return []
+      // 优先拿纯文本名称，没有就拿 ID 格式化后的文本
+      const rawStr =
+        detail.memberPTXHNames || this.formatPlatformIds(detail.memberPTXHIDs)
+      if (!rawStr) return []
+
+      // 支持中英文逗号、空格、顿号切分
+      return rawStr.split(/[\s,，、]+/).filter(Boolean)
     },
     handleUpdate(row) {
       this.resetForm()
-      this.dialogTitle = '⚙️ 修正已有战术配置策略'
+      this.dialogTitle = '修正任务群组策略'
 
       const targetForm = Object.assign({}, row)
 
@@ -645,6 +698,7 @@ export default {
 
       // 将解析后的形态深拷贝至 Vue 响应式实例中
       this.form = targetForm
+      console.log('待编辑的策略数据:', this.form)
       this.dialogVisible = true
     },
     submitForm() {
@@ -690,15 +744,19 @@ export default {
       })
     },
     handleDelete(row) {
-      this.$confirm('确定注销并完全断开该战术网链控制策略?', '战略熔断警告', {
-        confirmButtonText: '熔断销毁',
-        cancelButtonText: '维持链路'
-      }).then(() => {
-        apiDelete(this.moduleBaseUrl, row.scenarioStrategyId).then(() => {
-          this.$message.success('该链路策略已从控制剥离销毁')
-          this.getGlobalStrategyList()
-        })
+      this.$confirm('确定注销并完全断开该策略?', '警告', {
+        confirmButtonText: '销毁',
+        cancelButtonText: '取消'
       })
+        .then(() => {
+          apiDelete(this.moduleBaseUrl, row.scenarioStrategyId).then(() => {
+            this.$message.success('该链路策略已从控制剥离销毁')
+            this.getGlobalStrategyList()
+          })
+        })
+        .catch(() => {
+          this.$message.info('已取消')
+        })
     },
     resetForm() {
       this.form = {
@@ -727,7 +785,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .screen-container {
   width: 100%;
   height: 100%;
@@ -823,7 +881,7 @@ export default {
   color: #fff;
 }
 .panel-header-summary .badge {
-  font-size: 10px;
+  font-size: 11px;
   background: rgba(6, 182, 212, 0.1);
   padding: 1px 6px;
   border-radius: 4px;
@@ -892,35 +950,20 @@ export default {
   color: #fff;
 }
 .metric-line {
-  justify-content: flex-start;
+  /* justify-content: flex-start; */
   gap: 10px;
   color: #64748b;
-  font-size: 10px;
+  font-size: 11px;
   margin-top: 1px;
 }
 .metric-item {
-  font-family: monospace;
 }
 
 .sub-empty {
   text-align: center;
-  font-size: 10px;
+  font-size: 11px;
   color: #334155;
   padding-top: 25px;
-}
-
-/* 深色详情与配置维护弹窗组 */
-::v-deep .dark-custom-dialog {
-  background: #0c1424 !important;
-  border: 1px solid #1a293d !important;
-}
-::v-deep .dark-custom-dialog .el-dialog__title {
-  color: #38bdf8 !important;
-  font-size: 12px;
-  font-weight: bold;
-}
-::v-deep .dark-custom-dialog .el-dialog__body {
-  padding: 12px 20px;
 }
 
 .dialog-detail-matrix {
@@ -938,29 +981,12 @@ export default {
   flex-direction: column;
   justify-content: center;
 }
-::v-deep .detail-row .el-form-item {
-  margin-bottom: 0px !important; /* 强制清空表单项下边距，保证绝对紧凑 */
-  width: 100%;
-}
-::v-deep .detail-row .el-form-item__content {
-  line-height: unset !important; /* 抹除默认 40px 的巨大高 */
-}
-
-/* 🌟 纠偏定位：校验不合规提示绝对定位，不破坏两列网格 */
-::v-deep .detail-row .el-form-item__error {
-  padding-top: 0px;
-  top: auto;
-  bottom: -1px;
-  right: 10px;
-  font-size: 10px;
-  color: #f87171;
-}
 
 .span-2 {
   grid-column: span 2;
 }
 .detail-row .lbl {
-  font-size: 10px;
+  font-size: 11px;
   color: #52637a;
   margin-bottom: 2px;
 }
@@ -973,10 +999,12 @@ export default {
   color: #f8fafc;
 }
 .font-platform-list {
-  font-size: 10px !important;
+  font-size: 11px !important;
   color: #93c5fd !important;
   line-height: 14px;
   text-align: justify;
+  max-height: 60px;
+  overflow: auto;
 }
 
 .inner-input,
@@ -986,7 +1014,7 @@ export default {
   color: #fff;
   padding: 4px;
   border-radius: 3px;
-  font-size: 10px;
+  font-size: 11px;
   outline: none;
   width: 100%;
   box-sizing: border-box;
@@ -999,7 +1027,7 @@ export default {
 ::v-deep .el-checkbox__label,
 ::v-deep .el-radio__label {
   color: #cbd5e1 !important;
-  font-size: 10px;
+  font-size: 11px;
 }
 ::v-deep .el-checkbox__inner,
 ::v-deep .el-radio__inner {
@@ -1019,14 +1047,55 @@ export default {
 }
 ::v-deep .secret-form-item .el-form-item__label {
   color: #52637a !important;
-  font-size: 10px;
+  font-size: 11px;
   line-height: 14px;
   text-align: left;
   padding: 0 0 2px 0;
 }
+/* 限制主界面单行显示，超出隐藏 */
+.inline-tags-ellipsis {
+  display: flex;
+  gap: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%; /* 或者给定一个固定宽度如 240px */
+  cursor: pointer;
+}
 
-.font-num {
-  font-family: monospace;
+/* 战术胶囊标签基础样式 */
+.matrix-tag-item {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(6, 182, 212, 0.08); /* 科技青透明底 */
+  border: 1px solid rgba(6, 182, 212, 0.25);
+  color: var(--color-cyan, #06b6d4);
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 11px;
+  height: 18px;
+  line-height: 16px;
+  flex-shrink: 0; /* 防止在行内被压扁 */
+}
+
+/* 气泡弹窗深色扁平化重写 */
+.el-popover.dark-popover-tech {
+  background: #0c1424 !important;
+  border: 1px solid #1e293b !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  padding: 12px;
+
+  .popover-tags-grid {
+    display: flex;
+    flex-wrap: wrap; /* 气泡里允许换行平铺 */
+    gap: 6px;
+  }
+
+  /* 气泡小三角颜色修正 */
+  .popper__arrow::after {
+    border-top-color: #0c1424 !important;
+    border-bottom-color: #0c1424 !important;
+  }
 }
 .text-blue {
   color: #38bdf8 !important;

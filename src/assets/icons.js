@@ -10,45 +10,57 @@ Vue.component('Icon', {
     size: {
       type: [String, Number],
       default: '1em'
+    },
+    // ✨ 核心：增加一个明确的 color 属性，用来强制触发 Vue 的响应式更新
+    color: {
+      type: String,
+      default: ''
     }
   },
   render(h) {
-    // 1. 获取外界在使用 <Icon :style="..." :class="..." /> 时传进来的原生样式
     const inlineStyle = this.$vnode.data.style || {}
     const inlineClass = this.$vnode.data.class || ''
 
-    // 2. 将基础的长宽样式与外界传进来的颜色、滤镜等样式进行深度融合
     const baseStyle = {
       display: 'inline-block',
       width: typeof this.size === 'number' ? `${this.size}px` : this.size,
       height: typeof this.size === 'number' ? `${this.size}px` : this.size,
       verticalAlign: '-0.125em',
-      // 核心：Iconify 变色依赖 currentColor，确保 fill 被正确继承
       fill: 'currentColor'
+    }
+
+    // ✨ 核心：如果传了 color 属性，其优先级最高；如果没传，则降级看外界写没写行内 style.color
+    if (this.color) {
+      baseStyle.color = this.color
     }
 
     return h('span', {
       key: this.icon,
-      // 3. 把外部传进来的 Class 和 iconify 拼接起来，方便用 Class 控制颜色
       class: ['iconify', inlineClass].filter(Boolean).join(' '),
       attrs: {
         'data-icon': this.icon
       },
-      // 4. 合并样式，外界传入的 style（如 color）拥有最高优先级
       style: Object.assign({}, baseStyle, inlineStyle)
     })
   },
+  // ✨ 核心：同时监听 icon 和 color 的变化，任何一个变了，都必须通知 Iconify 重新扫描替换 DOM
   watch: {
     icon() {
-      this.$nextTick(() => {
-        this.scanIcon()
-      })
+      this.reScan()
+    },
+    color() {
+      this.reScan()
     }
   },
   mounted() {
     this.scanIcon()
   },
   methods: {
+    reScan() {
+      this.$nextTick(() => {
+        this.scanIcon()
+      })
+    },
     scanIcon() {
       if (window.Iconify) {
         if (typeof window.Iconify.checkAndReplace === 'function') {

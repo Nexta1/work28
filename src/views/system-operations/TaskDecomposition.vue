@@ -2,17 +2,10 @@
   <div class="screen-container">
     <div class="top-search-header">
       <div class="search-flex">
-        <span class="hub-title">
-          <Icon
-            icon="lucide:map"
-            :size="18"
-            style="vertical-align: middle; margin-right: 6px"
-          />
-          作战筹划信息获取与数据链保障需求生成
-        </span>
+        <span class="hub-title">🗺️ 作战筹划信息获取与数据链保障需求生成</span>
 
         <div class="search-item">
-          <label>作战任务名称</label>
+          <label>作战任务名称 (RWMC)</label>
           <input
             type="text"
             v-model="queryParam.RWMC"
@@ -28,14 +21,10 @@
         <el-button
           type="info"
           size="mini"
+          icon="el-icon-refresh"
           class="action-btn"
           @click="initGlobalDashboard"
         >
-          <Icon
-            icon="lucide:refresh-cw"
-            :size="13"
-            style="vertical-align: middle; margin-right: 4px"
-          />
           同步全要素数据源
         </el-button>
       </div>
@@ -44,14 +33,7 @@
     <div class="main-body-layout">
       <div class="left-tree-panel">
         <div class="panel-header-summary">
-          <span class="title">
-            <Icon
-              icon="lucide:swords"
-              :size="16"
-              style="vertical-align: middle; margin-right: 4px"
-            />
-            作战任务源
-          </span>
+          <span class="title">⚔️ 作战任务源 </span>
           <span class="badge font-num text-cyan">{{ rwxxList.length }} 项</span>
         </div>
 
@@ -64,14 +46,9 @@
             @click="handleSelectRw(rw)"
           >
             <div class="task-card-header">
-              <span class="rw-title ellipsis-text" :title="rw.RWMC || rw.rwmc">
-                <Icon
-                  icon="lucide:layers"
-                  :size="12"
-                  style="color: var(--color-primary); margin-right: 4px"
-                />
-                {{ rw.RWMC || rw.rwmc }}
-              </span>
+              <span class="rw-title ellipsis-text" :title="rw.RWMC || rw.rwmc"
+                >🔹 {{ rw.RWMC || rw.rwmc }}</span
+              >
               <span
                 class="status-tag"
                 :class="rw.STATE === 1 ? 'tag-active' : 'tag-pending'"
@@ -104,16 +81,6 @@
                     yxjMap[rw.RWYXJ] || rw.RWYXJ || '常态'
                   }}</span>
                 </div>
-                <div>
-                  开始时间:
-                  <span>{{ formatStartTime(rw.STARTTIME) }}</span>
-                </div>
-                <div>
-                  任务时长:
-                  <span class="text-cyan font-num">{{
-                    formatTaskDuration(rw.RWSJ)
-                  }}</span>
-                </div>
               </div>
             </div>
           </div>
@@ -128,14 +95,7 @@
             @tab-click="handleTabClick"
           >
             <el-tab-pane name="platformTreeTab" class="full-pane">
-              <span slot="label">
-                <Icon
-                  icon="lucide:network"
-                  :size="14"
-                  style="vertical-align: middle; margin-right: 4px"
-                />
-                体系编成编组拓扑
-              </span>
+              <span slot="label">📡 体系编成编组拓扑</span>
 
               <div class="pane-content-box echarts-layout-box">
                 <div
@@ -143,15 +103,10 @@
                   class="sub-empty"
                   style="padding-top: 80px; width: 100%"
                 >
-                  <Icon
-                    icon="lucide:info"
-                    :size="16"
-                    style="vertical-align: middle; margin-right: 4px"
-                  />
-                  请先在左侧选择一个作战任务，以同步渲染编成架构。
+                  💡 请先在左侧选择一个作战任务，以同步渲染编成架构。
                 </div>
                 <div
-                  v-if="selectedRw && !hasPlatformData"
+                  v-else-if="!hasPlatformData"
                   class="sub-empty"
                   style="padding-top: 80px; width: 100%"
                 >
@@ -165,14 +120,7 @@
                   <div ref="treeChartRef" class="chart-split-dom"></div>
 
                   <div class="tree-directory-panel">
-                    <div class="panel-inner-title">
-                      <Icon
-                        icon="lucide:git-merge"
-                        :size="14"
-                        style="vertical-align: middle; margin-right: 4px"
-                      />
-                      编成节点树
-                    </div>
+                    <div class="panel-inner-title">🌲 编成节点树形目录</div>
                     <div class="tree-scroll-container">
                       <el-tree
                         :data="platformTreeNodes"
@@ -188,13 +136,7 @@
                           class="custom-tree-node"
                           slot-scope="{node, data}"
                         >
-                          <span class="node-icon">
-                            <Icon
-                              icon="lucide:orbit"
-                              :size="13"
-                              style="color: var(--color-cyan)"
-                            />
-                          </span>
+                          <span class="node-icon">🛰️</span>
                           <span
                             class="node-text ellipsis-text"
                             :title="data.PTMC"
@@ -209,34 +151,26 @@
             </el-tab-pane>
 
             <el-tab-pane name="routeInfoTab" class="full-pane">
-              <span slot="label">
-                <Icon
-                  icon="lucide:route"
-                  :size="14"
-                  style="vertical-align: middle; margin-right: 4px"
-                />
-                任务编排路线
+              <span slot="label"
+                >📌 任务编排路线
                 <small class="text-cyan font-num" v-if="selectedRw"
                   >({{ routeList.length }} 条)</small
-                >
-              </span>
+                ></span
+              >
 
               <div class="pane-content-box split-vertical-layout">
-                <template>
+                <div
+                  v-if="!selectedRw"
+                  class="sub-empty"
+                  style="padding-top: 40px"
+                >
+                  💡 请先在左侧选择一个作战任务，以加载对应的编排路线
+                </div>
+
+                <template v-else>
                   <div class="upper-detail-dashboard">
                     <div class="dash-inner-header">
-                      <span>
-                        <Icon
-                          icon="lucide:activity"
-                          :size="14"
-                          style="
-                            vertical-align: middle;
-                            margin-right: 4px;
-                            color: var(--color-cyan);
-                          "
-                        />
-                        路线三维节点流明细
-                      </span>
+                      <span>🛰️ 路线三维节点流明细 (getRouteDetail)</span>
                       <span
                         v-if="routeLoading"
                         class="text-cyan font-num loader-text"
@@ -245,7 +179,7 @@
                     </div>
                     <div v-if="activeRouteDetail" class="dash-grid-content">
                       <div>
-                        路线名称:
+                        路线名称 (routeName):
                         <span class="text-white">{{
                           activeRouteDetail.routeName ||
                           activeRouteDetail.QYMC ||
@@ -253,7 +187,7 @@
                         }}</span>
                       </div>
                       <div>
-                        唯一流水:
+                        唯一流水 (routeId):
                         <span class="text-blue font-num"
                           >#{{
                             activeRouteDetail.routeId ||
@@ -263,19 +197,19 @@
                         >
                       </div>
                       <div>
-                        类型体系:
+                        类型体系 (typeName):
                         <span class="text-green">{{
                           activeRouteDetail.typeName || '空中保障路线'
                         }}</span>
                       </div>
                       <div>
-                        绑定任务:
+                        绑定任务 (RWMC):
                         <span class="text-cyan">{{
                           activeRouteDetail.RWMC || activeRouteDetail.rwmc
                         }}</span>
                       </div>
                       <div>
-                        作战ID:
+                        作战ID (ZZRWID):
                         <span class="font-num text-orange"
                           >#{{
                             activeRouteDetail.ZZRWID || activeRouteDetail.zzrwid
@@ -283,7 +217,7 @@
                         >
                       </div>
                       <div>
-                        更新时间:
+                        更新时间 (opTime):
                         <span class="font-num text-gray">{{
                           activeRouteDetail.opTime || 'N/A'
                         }}</span>
@@ -296,13 +230,8 @@
                           activeRouteDetail.routePoints.length > 0
                         "
                       >
-                        <span class="text-cyan">
-                          <Icon
-                            icon="lucide:navigation"
-                            :size="13"
-                            style="vertical-align: middle; margin-right: 4px"
-                          />
-                          战术时序三维路径链 (按序号排序):
+                        <span class="text-cyan"
+                          >✈️ 战术时序三维路径链 (按 Index 排序):
                         </span>
                         <div class="points-flex-wrap">
                           <span
@@ -321,13 +250,14 @@
                         </div>
                       </div>
                       <div class="full-row text-gray">
-                        路线战略备忘录:
+                        路线战略备忘录 (routeMemo):
                         <span class="text-white">{{
                           activeRouteDetail.routeMemo || '暂无说明信息'
                         }}</span>
                       </div>
                     </div>
                     <div v-else class="dash-empty-tip">
+                      👇
                       请在下方列表中任意单击一行路线，以纵向占满调取全量三维轨迹链
                     </div>
                   </div>
@@ -355,18 +285,12 @@
                       >
                         <div class="alarm-strip strip-level-safe"></div>
                         <div class="card-line">
-                          <span class="wl-name ellipsis-text">
-                            <Icon
-                              icon="lucide:milestone"
-                              :size="13"
-                              style="
-                                vertical-align: middle;
-                                margin-right: 4px;
-                                color: var(--color-primary);
-                              "
-                            />
-                            {{ route.routeName || route.QYMC || route.qymc }}
-                          </span>
+                          <span class="wl-name ellipsis-text"
+                            >🛣️
+                            {{
+                              route.routeName || route.QYMC || route.qymc
+                            }}</span
+                          >
                           <span class="status-tag tag-active"
                             >#{{
                               route.routeId || route.ZZQYID || route.zzqyid
@@ -381,33 +305,29 @@
             </el-tab-pane>
 
             <el-tab-pane name="qyTab" class="full-pane">
-              <span slot="label">
-                <Icon
-                  icon="lucide:globe"
-                  :size="14"
-                  style="vertical-align: middle; margin-right: 4px"
-                />
-                空间地理区域
+              <span slot="label"
+                >🗺️ 空间地理区域
                 <small class="text-orange font-num" v-if="selectedRw"
                   >({{ qyList.length }} 域)</small
-                >
-              </span>
+                ></span
+              >
 
               <div class="pane-content-box split-vertical-layout">
-                <template>
+                <div
+                  v-if="!selectedRw"
+                  class="sub-empty"
+                  style="padding-top: 40px"
+                >
+                  💡 请先在左侧选择一个作战任务，以同步检索地理战区划
+                </div>
+
+                <template v-else>
                   <div
                     class="upper-detail-dashboard"
                     style="border-left: 3px solid #f59e0b"
                   >
                     <div class="dash-inner-header" style="color: #f59e0b">
-                      <span>
-                        <Icon
-                          icon="lucide:map-pin"
-                          :size="14"
-                          style="vertical-align: middle; margin-right: 4px"
-                        />
-                        空间区域原始要素明细
-                      </span>
+                      <span>🌐 空间区域原始要素明细 (getAreaDetail)</span>
                       <span
                         v-if="areaLoading"
                         class="text-orange font-num loader-text"
@@ -416,19 +336,19 @@
                     </div>
                     <div v-if="activeQyDetail" class="dash-grid-content">
                       <div>
-                        区域名称:
+                        区域名称 (QYMC):
                         <span class="text-orange">{{
                           activeQyDetail.QYMC || activeQyDetail.qymc
                         }}</span>
                       </div>
                       <div>
-                        区域内码:
+                        区域内码 (QYNM):
                         <span class="text-white font-num">{{
                           activeQyDetail.QYNM || activeQyDetail.qynm
                         }}</span>
                       </div>
                       <div>
-                        特征属性:
+                        特征属性 (QYLX):
                         <span class="text-blue">{{
                           activeQyDetail.QYLX ||
                           activeQyDetail.qylx ||
@@ -436,7 +356,7 @@
                         }}</span>
                       </div>
                       <div>
-                        地理唯一ID:
+                        地理唯一ID (ZZQYID):
                         <span class="text-cyan font-num"
                           >#{{
                             activeQyDetail.ZZQYID || activeQyDetail.zzqyid
@@ -444,13 +364,13 @@
                         >
                       </div>
                       <div>
-                        所属任务:
+                        所属任务 (RWMC):
                         <span class="text-green">{{
                           activeQyDetail.RWMC || activeQyDetail.rwmc
                         }}</span>
                       </div>
                       <div>
-                        任务内码:
+                        任务内码 (ZZRWID):
                         <span class="text-gray font-num"
                           >#{{
                             activeQyDetail.ZZRWID || activeQyDetail.zzrwid
@@ -465,14 +385,7 @@
                           parseQyxz(activeQyDetail.QYXZ || activeQyDetail.qyxz)
                         "
                       >
-                        <span class="text-orange">
-                          <Icon
-                            icon="lucide:component"
-                            :size="13"
-                            style="vertical-align: middle; margin-right: 4px"
-                          />
-                          围栏多边形顶点阵列:
-                        </span>
+                        <span class="text-orange">📍 围栏多边形顶点阵列: </span>
                         <span class="font-num text-white">
                           [垂直净空高度:
                           {{
@@ -492,7 +405,7 @@
                         </span>
                       </div>
                       <div class="full-row text-gray">
-                        全局战略描述:
+                        全局战略描述 (MS):
                         <span class="text-white">{{
                           activeQyDetail.MS ||
                           activeQyDetail.ms ||
@@ -501,7 +414,7 @@
                       </div>
                     </div>
                     <div v-else class="dash-empty-tip">
-                      请在下方列表中任意单击一行区域，以纵向占满调取态势数据
+                      👇 请在下方列表中任意单击一行区域，以纵向占满调取态势数据
                     </div>
                   </div>
 
@@ -527,14 +440,9 @@
                         @click="fetchAreaDetailData(qy)"
                       >
                         <div class="card-line">
-                          <span class="wl-name text-orange ellipsis-text">
-                            <Icon
-                              icon="lucide:radar"
-                              :size="13"
-                              style="vertical-align: middle; margin-right: 4px"
-                            />
-                            {{ qy.QYMC || qy.qymc }}
-                          </span>
+                          <span class="wl-name text-orange ellipsis-text"
+                            >🌐 {{ qy.QYMC || qy.qymc }}</span
+                          >
                           <span
                             class="text-gray font-num"
                             style="font-size: 11px"
@@ -549,17 +457,12 @@
             </el-tab-pane>
 
             <el-tab-pane name="sslrwTab" class="full-pane">
-              <span slot="label">
-                <Icon
-                  icon="lucide:zap"
-                  :size="14"
-                  style="vertical-align: middle; margin-right: 4px"
-                />
-                杀伤链任务
+              <span slot="label"
+                >⚡ 杀伤链任务
                 <small class="text-green font-num" v-if="selectedRw"
                   >({{ sslrwList.length }} 链)</small
-                >
-              </span>
+                ></span
+              >
 
               <div class="pane-content-box sslrw-stream-container">
                 <div
@@ -567,12 +470,7 @@
                   class="sub-empty"
                   style="padding-top: 60px"
                 >
-                  <Icon
-                    icon="lucide:info"
-                    :size="16"
-                    style="vertical-align: middle; margin-right: 4px"
-                  />
-                  请先在左侧选择一个作战任务，以自动加载关联的杀伤链全量网格
+                  💡 请先在左侧选择一个作战任务，以自动加载关联的杀伤链全量网格
                 </div>
 
                 <template v-else>
@@ -584,7 +482,7 @@
                     当前任务未检索到任何挂载的杀伤链协同网络。
                   </div>
 
-                  <div class="killchain-scroll-wall">
+                  <div v-else class="killchain-scroll-wall">
                     <div
                       v-for="chain in sslrwList"
                       :key="chain.SSLRWID || chain.sslrwid"
@@ -594,7 +492,9 @@
                         <div class="kc-card-badge">
                           <span class="pulse-dot"></span>
                           <span
-                            >杀伤链 #{{ chain.SSLRWID || chain.sslrwid }}</span
+                            >KILLCHAIN #{{
+                              chain.SSLRWID || chain.sslrwid
+                            }}</span
                           >
                         </div>
                         <h4
@@ -633,13 +533,10 @@
                       <div class="kc-right-ooda-grid-col">
                         <div class="ooda-cell border-red">
                           <div class="cell-top">
-                            <Icon
-                              icon="lucide:crosshair"
-                              :size="13"
-                              class="icon"
-                              style="color: var(--color-danger)"
-                            />
-                            <span class="label text-red">敌方目标平台</span>
+                            <span class="icon">🎯</span>
+                            <span class="label text-red"
+                              >敌方目标平台 (DFPTMCS)</span
+                            >
                             <span class="ids font-num"
                               >ID:[{{
                                 chain.DFPTIDS || chain.dfptids || '无'
@@ -657,13 +554,10 @@
 
                         <div class="ooda-cell border-cyan">
                           <div class="cell-top">
-                            <Icon
-                              icon="lucide:eye"
-                              :size="13"
-                              class="icon"
-                              style="color: var(--color-cyan)"
-                            />
-                            <span class="label text-cyan">传感器平台</span>
+                            <span class="icon">👁️</span>
+                            <span class="label text-cyan"
+                              >传感器平台 (CGQPTMCS)</span
+                            >
                             <span class="ids font-num"
                               >ID:[{{
                                 chain.CGQPTIDS || chain.cgqptids || '无'
@@ -681,13 +575,10 @@
 
                         <div class="ooda-cell border-orange">
                           <div class="cell-top">
-                            <Icon
-                              icon="lucide:brain"
-                              :size="13"
-                              class="icon"
-                              style="color: var(--color-warning)"
-                            />
-                            <span class="label text-orange">核心决策平台</span>
+                            <span class="icon">🧠</span>
+                            <span class="label text-orange"
+                              >核心决策平台 (JCPTMCS)</span
+                            >
                             <span class="ids font-num"
                               >ID:[{{
                                 chain.JCPTIDS || chain.jcptids || '无'
@@ -705,13 +596,10 @@
 
                         <div class="ooda-cell border-green">
                           <div class="cell-top">
-                            <Icon
-                              icon="lucide:rocket"
-                              :size="13"
-                              class="icon"
-                              style="color: var(--color-success)"
-                            />
-                            <span class="label text-green">远程武器平台</span>
+                            <span class="icon">🚀</span>
+                            <span class="label text-green"
+                              >远程武器平台 (WQPTMCS)</span
+                            >
                             <span class="ids font-num"
                               >ID:[{{
                                 chain.WQPTIDS || chain.wqptids || '无'
@@ -733,18 +621,7 @@
               </div>
             </el-tab-pane>
             <el-tab-pane name="mbTab" class="full-pane">
-              <span slot="label">
-                <Icon
-                  icon="lucide:crosshair"
-                  :size="14"
-                  style="
-                    vertical-align: middle;
-                    margin-right: 4px;
-                    color: var(--color-danger);
-                  "
-                />
-                作战敌方目标
-              </span>
+              <span slot="label">🔗 作战敌方目标</span>
               <div class="pane-content-box" style="height: 100%">
                 <mbxx-manager
                   :selected-task="selectedRw"
@@ -753,18 +630,7 @@
               </div>
             </el-tab-pane>
             <el-tab-pane name="dataLinkTab" class="full-pane">
-              <span slot="label">
-                <Icon
-                  icon="lucide:file-output"
-                  :size="14"
-                  style="
-                    vertical-align: middle;
-                    margin-right: 4px;
-                    color: var(--color-primary);
-                  "
-                />
-                数据链保障需求生成
-              </span>
+              <span slot="label">🔗 数据链保障需求生成</span>
               <div class="pane-content-box" style="height: 100%">
                 <zzrw-wl-manager
                   :selected-task="selectedRw"
@@ -778,7 +644,7 @@
     </div>
 
     <el-dialog
-      title="平台全要素战略态势核心指标大盘"
+      title="📡 平台全要素战略态势核心指标大盘"
       :visible.sync="detailDialogVisible"
       width="780px"
       append-to-body
@@ -786,49 +652,38 @@
     >
       <div v-if="activeNodeMeta" class="grid-detail-container">
         <div class="detail-block full-width">
-          <div class="db-title">
-            <Icon
-              icon="lucide:anchor"
-              :size="14"
-              style="
-                vertical-align: middle;
-                margin-right: 4px;
-                color: var(--color-primary);
-              "
-            />
-            核心链属关系与通联头标
-          </div>
+          <div class="db-title">⚓ 核心链属关系与通联头标</div>
           <div class="db-grid col-3">
             <div>
-              平台名称:
+              平台名称 (PTMC):
               <span class="text-white font-bold">{{
                 activeNodeMeta.PTMC || 'N/A'
               }}</span>
             </div>
             <div>
-              上级名称:
+              上级名称 (PARENTPTMC):
               <span class="text-orange">{{
                 activeNodeMeta.PARENTPTMC || '无 (根控主单元)'
               }}</span>
             </div>
             <div>
-              作战任务:
+              作战任务 (RWMC):
               <span class="text-green">{{ activeNodeMeta.RWMC || 'N/A' }}</span>
             </div>
             <div>
-              平台标识:
+              平台标识 (PTBSH):
               <span class="text-cyan font-num">{{
                 activeNodeMeta.PTBSH || 'N/A'
               }}</span>
             </div>
             <div>
-              平台类型:
+              平台类型 (PTLX):
               <span class="text-white font-num">{{
                 activeNodeMeta.PTLX || 'N/A'
               }}</span>
             </div>
             <div>
-              分域指控:
+              分域指控 (PTFY):
               <span class="text-orange font-num">{{
                 activeNodeMeta.PTFY || 'N/A'
               }}</span>
@@ -837,53 +692,42 @@
         </div>
 
         <div class="detail-block full-width">
-          <div class="db-title">
-            <Icon
-              icon="lucide:settings"
-              :size="14"
-              style="
-                vertical-align: middle;
-                margin-right: 4px;
-                color: var(--color-cyan);
-              "
-            />
-            底层流水线 ID 链核验 (全量)
-          </div>
+          <div class="db-title">⚙️ 底层流水线 ID 链核验 (全量)</div>
           <div class="db-grid col-3">
             <div>
-              任务平台标识:
+              任务平台标识 (ZZRWPTID):
               <span class="text-cyan font-num"
                 >#{{ activeNodeMeta.ZZRWPTID }}</span
               >
             </div>
             <div>
-              平台ID:
+              平台ID (PTID):
               <span class="text-blue font-num">{{ activeNodeMeta.PTID }}</span>
             </div>
             <div>
-              任务ID:
+              任务ID (ZZRWID):
               <span class="text-blue font-num">{{
                 activeNodeMeta.ZZRWID
               }}</span>
             </div>
             <div>
-              上级任务平台:
+              上级任务平台 (PARENTZZRWPTID):
               <span class="font-num">{{
                 activeNodeMeta.PARENTZZRWPTID || 'N/A'
               }}</span>
             </div>
             <div>
-              上级平台ID:
+              上级平台ID (PARENTPTID):
               <span class="font-num">{{
                 activeNodeMeta.PARENTPTID || 'N/A'
               }}</span>
             </div>
             <div>
-              型号标识:
+              型号标识 (PTXHID):
               <span class="font-num">{{ activeNodeMeta.PTXHID || 'N/A' }}</span>
             </div>
             <div class="col-span-3">
-              型号名称:
+              型号名称 (PTXHMC):
               <span class="text-white">{{
                 activeNodeMeta.PTXHMC || 'N/A'
               }}</span>
@@ -892,51 +736,40 @@
         </div>
 
         <div class="detail-block full-width">
-          <div class="db-title">
-            <Icon
-              icon="lucide:sliders"
-              :size="14"
-              style="
-                vertical-align: middle;
-                margin-right: 4px;
-                color: var(--color-warning);
-              "
-            />
-            空间轨迹、航向与三维动力参数
-          </div>
+          <div class="db-title">🗺️ 空间轨迹、航向与三维动力参数</div>
           <div class="db-grid col-3">
             <div>
-              真实经度:
+              真实经度 (PTJD):
               <span class="text-blue font-num"
                 >{{ activeNodeMeta.PTJD || '0.0' }} °</span
               >
             </div>
             <div>
-              真实纬度:
+              真实纬度 (PTWD):
               <span class="text-blue font-num"
                 >{{ activeNodeMeta.PTWD || '0.0' }} °</span
               >
             </div>
             <div>
-              基准高度:
+              基准高度 (PTGD):
               <span class="text-cyan font-num"
                 >{{ activeNodeMeta.PTGD || '0' }} m</span
               >
             </div>
             <div>
-              动能速度:
+              动能速度 (PTSD):
               <span class="text-green font-num"
                 >{{ activeNodeMeta.PTSD || '0' }} m/s</span
               >
             </div>
             <div>
-              规划航向:
+              规划航向 (PTHX):
               <span class="text-orange font-num"
                 >{{ activeNodeMeta.PTHX || '0' }} °</span
               >
             </div>
             <div>
-              规划航高:
+              规划航高 (PTHG):
               <span class="text-orange font-num"
                 >{{ activeNodeMeta.PTHG || '0' }} m</span
               >
@@ -945,27 +778,16 @@
         </div>
 
         <div class="detail-block full-width">
-          <div class="db-title">
-            <Icon
-              icon="lucide:clock"
-              :size="14"
-              style="
-                vertical-align: middle;
-                margin-right: 4px;
-                color: var(--color-text-main);
-              "
-            />
-            战术时序特征
-          </div>
+          <div class="db-title">⏱️ 战术时序特征</div>
           <div class="db-grid col-2">
             <div>
-              平台时间戳:
+              平台时间戳 (PTSJ):
               <span class="text-gray font-num">{{
                 activeNodeMeta.PTSJ || 'N/A'
               }}</span>
             </div>
             <div>
-              操作时间:
+              操作时间 (opTime):
               <span class="text-gray font-num">{{
                 activeNodeMeta.opTime || 'N/A'
               }}</span>
@@ -979,13 +801,13 @@
           type="primary"
           class="action-btn"
           @click="detailDialogVisible = false"
+          >完成全量数据校验</el-button
         >
-          完成全量数据校验
-        </el-button>
       </span>
     </el-dialog>
   </div>
 </template>
+
 <script>
 import {
   taskGetPage,
@@ -1059,6 +881,7 @@ export default {
       })
     },
     handleSelectRw(rw) {
+      console.log(rw)
       this.selectedRw = rw
       this.routeList = []
       this.qyList = []
@@ -1095,7 +918,7 @@ export default {
     loadRoutePageData() {
       getRoutePage({
         pageNum: 1,
-        pageSize: 9999,
+        pageSize: 50,
         params: {RWMC: this.selectedRw.RWMC || this.selectedRw.rwmc}
       }).then(res => {
         this.routeList = res.data?.list || res.data || []
@@ -1104,7 +927,7 @@ export default {
     loadQyPageData() {
       areaGetPage({
         pageNum: 1,
-        pageSize: 9999,
+        pageSize: 50,
         params: {RWMC: this.selectedRw.RWMC || this.selectedRw.rwmc}
       }).then(res => {
         this.qyList = res.data?.list || res.data || []
@@ -1257,67 +1080,6 @@ export default {
         ? this.selectedRw.ZZRWID || this.selectedRw.zzrwid
         : null
       return {'task-active': curId && curId === (rw.ZZRWID || rw.zzrwid)}
-    },
-    /**
-     * 格式化开始时间（毫秒时间戳转为可读格式）
-     */
-    formatStartTime(timestamp) {
-      if (!timestamp) return '--'
-      const date = new Date(Number(timestamp))
-      const year = date.getFullYear()
-      const month = String(date.getMonth() + 1).padStart(2, '0')
-      const day = String(date.getDate()).padStart(2, '0')
-      const hours = String(date.getHours()).padStart(2, '0')
-      const minutes = String(date.getMinutes()).padStart(2, '0')
-      return `${year}-${month}-${day} ${hours}:${minutes}`
-    },
-    /**
-     * 格式化任务时长（秒转为合适的单位显示）
-     * 优化策略：
-     * - 小于1分钟：显示秒
-     * - 1分钟~1小时：显示分钟
-     * - 1小时~24小时：显示小时（+分钟）
-     * - 1天~30天：显示天（+小时）
-     * - 超过30天：显示天
-     */
-    formatTaskDuration(seconds) {
-      if (!seconds && seconds !== 0) return '--'
-      const totalSeconds = Number(seconds / 1000)
-
-      // 小于1分钟，显示秒
-      if (totalSeconds < 60) {
-        return `${totalSeconds} 秒`
-      }
-
-      const minutes = Math.floor(totalSeconds / 60)
-
-      // 小于1小时，显示分钟
-      if (minutes < 60) {
-        return `${minutes} 分钟`
-      }
-
-      const hours = Math.floor(totalSeconds / 3600)
-
-      // 小于24小时，显示小时和剩余分钟
-      if (hours < 24) {
-        const remainingMinutes = minutes % 60
-        return remainingMinutes > 0
-          ? `${hours} 小时 ${remainingMinutes} 分钟`
-          : `${hours} 小时`
-      }
-
-      const days = Math.floor(hours / 24)
-
-      // 小于30天，显示天和剩余小时
-      if (days < 30) {
-        const remainingHours = hours % 24
-        return remainingHours > 0
-          ? `${days} 天 ${remainingHours} 小时`
-          : `${days} 天`
-      }
-
-      // 超过30天，只显示天数
-      return `${days} 天`
     }
   }
 }
@@ -1393,7 +1155,7 @@ export default {
   gap: 12px;
 }
 .left-tree-panel {
-  width: 370px;
+  width: 380px;
   flex-shrink: 0;
   background: #080e18;
   border: 1px solid #111b2b;
@@ -1617,7 +1379,6 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 6px;
 }
 .rw-title {
   font-size: 12px;
@@ -1699,7 +1460,7 @@ export default {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 12px;
+  font-size: 11px;
   width: 100%;
   min-width: 0;
 }
@@ -1806,12 +1567,6 @@ export default {
 }
 .text-orange {
   color: #f59e0b !important;
-}
-.text-purple {
-  color: #a855f7 !important;
-}
-.text-yellow {
-  color: #eab308 !important;
 }
 .text-red {
   color: #ef4444 !important;

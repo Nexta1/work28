@@ -989,7 +989,6 @@ export default {
   border-radius: 4px;
 }
 .font-mono {
-  font-family: monospace;
 }
 .text-cyan {
   color: #38bdf8 !important;

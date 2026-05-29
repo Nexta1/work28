@@ -1261,7 +1261,6 @@ export default {
 }
 
 .font-num {
-  font-family: monospace;
 }
 
 .text-blue {

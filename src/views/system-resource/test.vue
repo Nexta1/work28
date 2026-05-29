@@ -1981,7 +1981,6 @@ export default {
 .token-text {
   font-size: 12px;
   color: #38bdf8;
-  font-family: monospace;
 }
 .interactive-token {
   cursor: pointer;
@@ -2197,7 +2196,6 @@ export default {
   text-align: right;
 }
 .font-num {
-  font-family: monospace;
 }
 .text-blue {
   color: #38bdf8 !important;

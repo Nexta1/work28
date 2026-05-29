@@ -11,23 +11,6 @@
           />
         </el-form-item>
 
-        <el-form-item label="关联指标">
-          <el-select
-            v-model="queryForm.operationMetricId"
-            placeholder="请选择指标"
-            clearable
-            filterable
-            style="width: 180px"
-          >
-            <el-option
-              v-for="item in metricOptions"
-              :key="item.operationMetricId"
-              :label="item.metricName"
-              :value="item.operationMetricId"
-            />
-          </el-select>
-        </el-form-item>
-
         <el-form-item label="质量状态">
           <el-select
             v-model="queryForm.qualityState"
@@ -106,15 +89,11 @@
               :class="[
                 'custom-state-badge',
                 scope.row.qualityState === '绿色'
-                  ? 'state-green'
-                  : scope.row.qualityState === '黄色'
-                    ? 'state-yellow'
-                    : scope.row.qualityState === '红色'
-                      ? 'state-red'
-                      : ''
+                  ? 'state-normal'
+                  : 'state-abnormal'
               ]"
             >
-              {{ scope.row.qualityState || '--' }}
+              {{ scope.row.qualityState === '绿色' ? '正常' : '异常' }}
             </span>
           </template>
         </el-table-column>
@@ -258,9 +237,9 @@
               >
                 <el-option
                   v-for="item in intervalTypeOptions"
-                  :key="item"
-                  :label="item"
-                  :value="item"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
                 />
               </el-select>
             </el-form-item>
@@ -269,10 +248,10 @@
             <el-form-item label="质量状态" prop="qualityState">
               <el-radio-group v-model="formData.qualityState">
                 <el-radio
-                  :label="item"
-                  v-for="item in qualityStateOptions"
-                  :key="item"
-                  >{{ item }}</el-radio
+                  :label="i"
+                  v-for="i in qualityStateOptions"
+                  :key="i"
+                  >{{ i }}</el-radio
                 >
               </el-radio-group>
             </el-form-item>
@@ -293,7 +272,7 @@
               <el-select
                 v-model="formData.warnLevel"
                 placeholder="请选择告警级别"
-                :disabled="formData.isWarn !== '是'"
+                :disabled="formData.isWarn !== '1'"
                 style="width: 100%"
               >
                 <el-option label="一般" :value="1" />
@@ -353,7 +332,7 @@ export default {
   data() {
     return {
       loading: false,
-      queryForm: {standardName: '', operationMetricId: null, qualityState: ''},
+      queryForm: {standardName: '', qualityState: ''},
       tableData: [],
       page: {pageNum: 1, pageSize: 20, total: 0},
       dialogVisible: false,
@@ -428,11 +407,7 @@ export default {
       this.loadData()
     },
     resetQuery() {
-      this.queryForm = {
-        standardName: '',
-        operationMetricId: null,
-        qualityState: ''
-      }
+      this.queryForm = {standardName: '', qualityState: ''}
       this.handleSearch()
     },
     handleSizeChange(val) {
@@ -448,11 +423,7 @@ export default {
       this.dialogTitle = type === 'add' ? '新增标准' : '编辑标准'
       if (type === 'edit' && row) {
         let faultTypeId = null
-        if (row.faultTypeId) faultTypeId = row.faultTypeId
-        // 确保 qualityState 是字符串，以匹配 el-radio 的 label
-        const qualityStateVal = row.qualityState
-          ? String(row.qualityState)
-          : '绿色'
+        if (row.faultTypeId) faultTypeId = [row.faultTypeId]
         this.formData = {
           operationStandardId: row.operationStandardId,
           operationMetricId: row.operationMetricId,
@@ -460,7 +431,7 @@ export default {
           upperLimit: row.upperLimit,
           lowerLimit: row.lowerLimit,
           intervalType: row.intervalType,
-          qualityState: qualityStateVal,
+          qualityState: row.qualityState || '1',
           isWarn: row.isWarn || '0',
           warnLevel: row.warnLevel,
           faultTypeId: faultTypeId,
@@ -580,17 +551,12 @@ export default {
   font-family: monospace, 'Microsoft YaHei';
   border: 1px solid transparent;
 }
-.state-green {
+.state-normal {
   background-color: rgba(16, 185, 129, 0.12);
   color: var(--color-success);
   border-color: rgba(16, 185, 129, 0.6);
 }
-.state-yellow {
-  background-color: rgba(245, 158, 11, 0.12);
-  color: var(--color-warning);
-  border-color: rgba(245, 158, 11, 0.6);
-}
-.state-red {
+.state-abnormal {
   background-color: rgba(244, 63, 94, 0.15);
   color: var(--color-danger);
   border-color: rgba(244, 63, 94, 0.5);

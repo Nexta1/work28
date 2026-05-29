@@ -1264,7 +1264,7 @@ export default {
 
 .alarm-time {
   color: #8ba3c7;
-  font-family: monospace;
+
   font-size: 10px;
 }
 

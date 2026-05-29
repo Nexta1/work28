@@ -1284,7 +1284,6 @@ export default {
   font-size: 8px;
   padding: 1px 4px;
   border-radius: 2px;
-  font-family: monospace;
 }
 .light-green {
   color: #10b981;
@@ -1378,7 +1377,6 @@ export default {
   border: 1px dashed #111b2b;
 }
 .font-num {
-  font-family: monospace;
 }
 .text-green {
   color: #10b981 !important;

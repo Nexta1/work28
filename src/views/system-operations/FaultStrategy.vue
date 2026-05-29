@@ -836,7 +836,6 @@ export default {
 .detail-cell .val {
   font-size: 12px;
   color: #f8fafc;
-  font-family: monospace;
 }
 .font-platform-list {
   line-height: 16px;
@@ -1024,7 +1023,6 @@ export default {
 
 /* 文本工具色 */
 .font-num {
-  font-family: monospace;
 }
 .text-blue {
   color: #38bdf8 !important;

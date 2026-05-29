@@ -23,10 +23,22 @@
         </div>
       </div>
       <div class="monitor-legend">
-        <el-button type="primary" size="mini" icon="el-icon-plus" class="action-btn" @click="openProjectDialog(false)">
+        <el-button
+          type="primary"
+          size="mini"
+          icon="el-icon-plus"
+          class="action-btn"
+          @click="openProjectDialog(false)"
+        >
           新建项目
         </el-button>
-        <el-button type="info" size="mini" icon="el-icon-refresh" class="action-btn" @click="initPage">
+        <el-button
+          type="info"
+          size="mini"
+          icon="el-icon-refresh"
+          class="action-btn"
+          @click="initPage"
+        >
           同步数据源
         </el-button>
       </div>
@@ -55,7 +67,9 @@
       </div>
       <div class="stat-card">
         <span>数据源</span>
-        <strong class="font-num text-orange">{{ dataSourceOptions.length }}</strong>
+        <strong class="font-num text-orange">{{
+          dataSourceOptions.length
+        }}</strong>
         <small>可绑定数据源</small>
       </div>
     </div>
@@ -72,31 +86,88 @@
             v-for="project in projectList"
             :key="project.dataProjectId"
             class="task-item-card"
-            :class="{'task-active': activeProject && activeProject.dataProjectId === project.dataProjectId}"
+            :class="{
+              'task-active':
+                activeProject &&
+                activeProject.dataProjectId === project.dataProjectId
+            }"
             @click="selectProject(project)"
           >
             <div class="task-card-header">
-              <span class="rw-title ellipsis-text" :title="project.projectName">🔹 {{ project.projectName }}</span>
-              <span class="status-tag" :class="project.projectState === 2 ? 'tag-active' : 'tag-pending'">
+              <span class="rw-title ellipsis-text" :title="project.projectName"
+                >🔹 {{ project.projectName }}</span
+              >
+              <span
+                class="status-tag"
+                :class="
+                  project.projectState === 2 ? 'tag-active' : 'tag-pending'
+                "
+              >
                 {{ projectStateText(project.projectState) }}
               </span>
             </div>
             <div class="task-card-body">
               <div class="meta-grid">
-                <div>分组: <span class="text-green">{{ project.projectGroup || '未分组' }}</span></div>
-                <div>源: <span class="text-cyan">{{ project.sourceName || '-' }}</span></div>
-                <div>间隔: <span class="text-blue font-num">{{ project.execIntervalMinutes || 0 }} min</span></div>
-                <div>组件: <span class="text-orange">{{ project.execComponent || '-' }}</span></div>
+                <div>
+                  分组:
+                  <span class="text-green">{{
+                    project.projectGroup || '未分组'
+                  }}</span>
+                </div>
+                <div>
+                  源:
+                  <span class="text-cyan">{{ project.sourceName || '-' }}</span>
+                </div>
+                <div>
+                  间隔:
+                  <span class="text-blue font-num"
+                    >{{ project.execIntervalMinutes || 0 }} min</span
+                  >
+                </div>
+                <div>
+                  组件:
+                  <span class="text-orange">{{
+                    project.execComponent || '-'
+                  }}</span>
+                </div>
               </div>
             </div>
             <div class="card-actions">
-              <el-button type="text" size="mini" icon="el-icon-video-play" @click.stop="toggleProject(project, true)">启动</el-button>
-              <el-button type="text" size="mini" icon="el-icon-video-pause" @click.stop="toggleProject(project, false)">停止</el-button>
-              <el-button type="text" size="mini" icon="el-icon-edit" @click.stop="openProjectDialog(true, project)">编辑</el-button>
-              <el-button type="text" size="mini" class="danger-link" icon="el-icon-delete" @click.stop="deleteProject(project)">删除</el-button>
+              <el-button
+                type="text"
+                size="mini"
+                icon="el-icon-video-play"
+                @click.stop="toggleProject(project, true)"
+                >启动</el-button
+              >
+              <el-button
+                type="text"
+                size="mini"
+                icon="el-icon-video-pause"
+                @click.stop="toggleProject(project, false)"
+                >停止</el-button
+              >
+              <el-button
+                type="text"
+                size="mini"
+                icon="el-icon-edit"
+                @click.stop="openProjectDialog(true, project)"
+                >编辑</el-button
+              >
+              <el-button
+                type="text"
+                size="mini"
+                class="danger-link"
+                icon="el-icon-delete"
+                @click.stop="deleteProject(project)"
+                >删除</el-button
+              >
             </div>
           </div>
-          <el-empty v-if="!projectList.length && !loadingProjects" description="暂无数据采集项目" />
+          <el-empty
+            v-if="!projectList.length && !loadingProjects"
+            description="暂无数据采集项目"
+          />
         </div>
 
         <el-pagination
@@ -114,15 +185,37 @@
         <div class="canvas-top-bar">
           <div class="active-tip">
             当前项目:
-            <span class="active-flow-name">{{ activeProject ? activeProject.projectName : '未选择' }}</span>
-            <span v-if="activeProject" class="flow-state-tag">状态: {{ projectStateText(activeProject.projectState) }}</span>
+            <span class="active-flow-name">{{
+              activeProject ? activeProject.projectName : '未选择'
+            }}</span>
+            <span v-if="activeProject" class="flow-state-tag"
+              >状态: {{ projectStateText(activeProject.projectState) }}</span
+            >
           </div>
           <div class="action-btn-group">
-            <el-button type="primary" size="mini" icon="el-icon-plus" :disabled="!activeProject" @click="openStepDialog(false)">
+            <el-button
+              type="primary"
+              size="mini"
+              icon="el-icon-plus"
+              :disabled="!activeProject"
+              @click="openStepDialog(false)"
+            >
               新增步骤
             </el-button>
-            <el-button type="warning" size="mini" icon="el-icon-rank" @click="layoutGraph">自动编排</el-button>
-            <el-button type="info" size="mini" icon="el-icon-refresh" @click="renderStepGraph">刷新画布</el-button>
+            <el-button
+              type="warning"
+              size="mini"
+              icon="el-icon-rank"
+              @click="layoutGraph"
+              >自动编排</el-button
+            >
+            <el-button
+              type="info"
+              size="mini"
+              icon="el-icon-refresh"
+              @click="renderStepGraph"
+              >刷新画布</el-button
+            >
           </div>
         </div>
 
@@ -138,25 +231,60 @@
           <div class="step-table-panel">
             <div class="panel-header-summary">
               <span class="title">⚙️ 项目步骤参数</span>
-              <span class="badge font-num text-cyan">{{ stepList.length }} 步</span>
+              <span class="badge font-num text-cyan"
+                >{{ stepList.length }} 步</span
+              >
             </div>
-            <el-table :data="stepList" size="mini" stripe border class="dark-table" v-loading="loadingSteps">
+            <el-table
+              :data="stepList"
+              size="mini"
+              stripe
+              border
+              class="dark-table"
+              v-loading="loadingSteps"
+            >
               <el-table-column prop="stepNumber" label="序号" width="70" />
-              <el-table-column prop="stepName" label="步骤名称" min-width="130" show-overflow-tooltip />
+              <el-table-column
+                prop="stepName"
+                label="步骤名称"
+                min-width="130"
+                show-overflow-tooltip
+              />
               <el-table-column prop="inputFormat" label="输入" width="105" />
-              <el-table-column prop="opTransform" label="转换" min-width="120" show-overflow-tooltip />
+              <el-table-column
+                prop="opTransform"
+                label="转换"
+                min-width="120"
+                show-overflow-tooltip
+              />
               <el-table-column prop="outputFormat" label="输出" width="90" />
               <el-table-column prop="stepState" label="状态" width="80">
                 <template slot-scope="scope">
-                  <el-tag size="mini" :type="scope.row.stepState === 1 ? 'success' : 'info'">
+                  <el-tag
+                    size="mini"
+                    :type="scope.row.stepState === 1 ? 'success' : 'info'"
+                  >
                     {{ stepStateText(scope.row.stepState) }}
                   </el-tag>
                 </template>
               </el-table-column>
               <el-table-column label="操作" width="135" fixed="right">
                 <template slot-scope="scope">
-                  <el-button type="text" size="mini" icon="el-icon-edit" @click="openStepDialog(true, scope.row)">编辑</el-button>
-                  <el-button type="text" size="mini" class="danger-link" icon="el-icon-delete" @click="deleteStep(scope.row)">删除</el-button>
+                  <el-button
+                    type="text"
+                    size="mini"
+                    icon="el-icon-edit"
+                    @click="openStepDialog(true, scope.row)"
+                    >编辑</el-button
+                  >
+                  <el-button
+                    type="text"
+                    size="mini"
+                    class="danger-link"
+                    icon="el-icon-delete"
+                    @click="deleteStep(scope.row)"
+                    >删除</el-button
+                  >
                 </template>
               </el-table-column>
             </el-table>
@@ -165,8 +293,19 @@
       </div>
     </div>
 
-    <el-dialog :title="isEditProject ? '编辑数据采集项目' : '新增数据采集项目'" :visible.sync="projectDialogVisible" width="680px" append-to-body>
-      <el-form ref="projectForm" :model="projectForm" :rules="projectRules" label-width="120px" size="mini">
+    <el-dialog
+      :title="isEditProject ? '编辑数据采集项目' : '新增数据采集项目'"
+      :visible.sync="projectDialogVisible"
+      width="680px"
+      append-to-body
+    >
+      <el-form
+        ref="projectForm"
+        :model="projectForm"
+        :rules="projectRules"
+        label-width="120px"
+        size="mini"
+      >
         <el-row :gutter="8">
           <el-col :span="12">
             <el-form-item label="项目名称" prop="projectName">
@@ -175,14 +314,29 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="项目分组">
-              <el-select v-model="projectForm.projectGroup" filterable allow-create class="full-width">
-                <el-option v-for="item in projectGroups" :key="item" :label="item" :value="item" />
+              <el-select
+                v-model="projectForm.projectGroup"
+                filterable
+                allow-create
+                class="full-width"
+              >
+                <el-option
+                  v-for="item in projectGroups"
+                  :key="item"
+                  :label="item"
+                  :value="item"
+                />
               </el-select>
             </el-form-item>
           </el-col>
         </el-row>
         <el-form-item label="数据源">
-          <el-select v-model="projectForm.dataSourceId" filterable clearable class="full-width">
+          <el-select
+            v-model="projectForm.dataSourceId"
+            filterable
+            clearable
+            class="full-width"
+          >
             <el-option
               v-for="item in dataSourceOptions"
               :key="item.dataSourceId"
@@ -194,41 +348,83 @@
         <el-row :gutter="8">
           <el-col :span="8">
             <el-form-item label="开始时间">
-              <el-time-picker v-model="projectForm.execStartTime" value-format="HH:mm:ss" placeholder="选择时间" class="full-width" />
+              <el-time-picker
+                v-model="projectForm.execStartTime"
+                value-format="HH:mm:ss"
+                placeholder="选择时间"
+                class="full-width"
+              />
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="间隔分钟">
-              <el-input-number v-model="projectForm.execIntervalMinutes" :min="1" controls-position="right" class="full-width" />
+              <el-input-number
+                v-model="projectForm.execIntervalMinutes"
+                :min="1"
+                controls-position="right"
+                class="full-width"
+              />
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="项目状态">
               <el-select v-model="projectForm.projectState" class="full-width">
-                <el-option v-for="(label, value) in projectStateMap" :key="value" :label="label" :value="Number(value)" />
+                <el-option
+                  v-for="(label, value) in projectStateMap"
+                  :key="value"
+                  :label="label"
+                  :value="Number(value)"
+                />
               </el-select>
             </el-form-item>
           </el-col>
         </el-row>
         <el-form-item label="执行组件">
-          <el-input v-model="projectForm.execComponent" placeholder="采集执行组件或处理器名称" />
+          <el-input
+            v-model="projectForm.execComponent"
+            placeholder="采集执行组件或处理器名称"
+          />
         </el-form-item>
         <el-form-item label="项目描述">
-          <el-input v-model="projectForm.projectMemo" type="textarea" :rows="3" />
+          <el-input
+            v-model="projectForm.projectMemo"
+            type="textarea"
+            :rows="3"
+          />
         </el-form-item>
       </el-form>
       <span slot="footer">
-        <el-button size="mini" @click="projectDialogVisible = false">取消</el-button>
-        <el-button size="mini" type="primary" @click="submitProject">保存</el-button>
+        <el-button size="mini" @click="projectDialogVisible = false"
+          >取消</el-button
+        >
+        <el-button size="mini" type="primary" @click="submitProject"
+          >保存</el-button
+        >
       </span>
     </el-dialog>
 
-    <el-dialog :title="isEditStep ? '编辑采集步骤' : '新增采集步骤'" :visible.sync="stepDialogVisible" width="760px" append-to-body>
-      <el-form ref="stepForm" :model="stepForm" :rules="stepRules" label-width="120px" size="mini">
+    <el-dialog
+      :title="isEditStep ? '编辑采集步骤' : '新增采集步骤'"
+      :visible.sync="stepDialogVisible"
+      width="760px"
+      append-to-body
+    >
+      <el-form
+        ref="stepForm"
+        :model="stepForm"
+        :rules="stepRules"
+        label-width="120px"
+        size="mini"
+      >
         <el-row :gutter="8">
           <el-col :span="8">
             <el-form-item label="步骤序号" prop="stepNumber">
-              <el-input-number v-model="stepForm.stepNumber" :min="1" controls-position="right" class="full-width" />
+              <el-input-number
+                v-model="stepForm.stepNumber"
+                :min="1"
+                controls-position="right"
+                class="full-width"
+              />
             </el-form-item>
           </el-col>
           <el-col :span="16">
@@ -238,7 +434,13 @@
           </el-col>
         </el-row>
         <el-form-item label="依赖输入步骤">
-          <el-select v-model="stepInputIds" multiple filterable clearable class="full-width">
+          <el-select
+            v-model="stepInputIds"
+            multiple
+            filterable
+            clearable
+            class="full-width"
+          >
             <el-option
               v-for="item in stepList"
               :key="item.dataProjectStepId"
@@ -252,21 +454,36 @@
           <el-col :span="8">
             <el-form-item label="输入格式">
               <el-select v-model="stepForm.inputFormat" class="full-width">
-                <el-option v-for="item in inputFormats" :key="item" :label="item" :value="item" />
+                <el-option
+                  v-for="item in inputFormats"
+                  :key="item"
+                  :label="item"
+                  :value="item"
+                />
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="转换操作">
               <el-select v-model="stepForm.opTransform" class="full-width">
-                <el-option v-for="item in transformOptions" :key="item" :label="item" :value="item" />
+                <el-option
+                  v-for="item in transformOptions"
+                  :key="item"
+                  :label="item"
+                  :value="item"
+                />
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="输出格式">
               <el-select v-model="stepForm.outputFormat" class="full-width">
-                <el-option v-for="item in outputFormats" :key="item" :label="item" :value="item" />
+                <el-option
+                  v-for="item in outputFormats"
+                  :key="item"
+                  :label="item"
+                  :value="item"
+                />
               </el-select>
             </el-form-item>
           </el-col>
@@ -275,7 +492,11 @@
           <el-input v-model="stepForm.inputParams" type="textarea" :rows="2" />
         </el-form-item>
         <el-form-item label="转换参数">
-          <el-input v-model="stepForm.transformParams" type="textarea" :rows="2" />
+          <el-input
+            v-model="stepForm.transformParams"
+            type="textarea"
+            :rows="2"
+          />
         </el-form-item>
         <el-form-item label="输出参数">
           <el-input v-model="stepForm.outputParams" type="textarea" :rows="2" />
@@ -288,8 +509,12 @@
         </el-form-item>
       </el-form>
       <span slot="footer">
-        <el-button size="mini" @click="stepDialogVisible = false">取消</el-button>
-        <el-button size="mini" type="primary" @click="submitStep">保存</el-button>
+        <el-button size="mini" @click="stepDialogVisible = false"
+          >取消</el-button
+        >
+        <el-button size="mini" type="primary" @click="submitStep"
+          >保存</el-button
+        >
       </span>
     </el-dialog>
   </div>
@@ -321,23 +546,44 @@ export default {
       projectForm: this.getEmptyProjectForm(),
       stepForm: this.getEmptyStepForm(),
       stepInputIds: [],
-      projectGroups: ['数据清洗', '型号清洗', '接口数据采集', 'JSON文件', 'EXCEL文件', '数据库数据源', 'DDS采集消息'],
+      projectGroups: [
+        '数据清洗',
+        '型号清洗',
+        '接口数据采集',
+        'JSON文件',
+        'EXCEL文件',
+        '数据库数据源',
+        'DDS采集消息'
+      ],
       projectStateMap: {0: '停用', 1: '创建', 2: '启用'},
       inputFormats: ['JSON', 'REST Client', '数据表', 'DDS消费者'],
       outputFormats: ['数据表', 'JSON'],
-      transformOptions: ['不转换', '字段抽取', '合并集合', '值填充', '笛卡尔连接', '关键字过滤', 'JSON转数据表'],
+      transformOptions: [
+        '不转换',
+        '字段抽取',
+        '合并集合',
+        '值填充',
+        '笛卡尔连接',
+        '关键字过滤',
+        'JSON转数据表'
+      ],
       projectRules: {
-        projectName: [{required: true, message: '请输入项目名称', trigger: 'blur'}]
+        projectName: [
+          {required: true, message: '请输入项目名称', trigger: 'blur'}
+        ]
       },
       stepRules: {
-        stepNumber: [{required: true, message: '请输入步骤序号', trigger: 'blur'}],
+        stepNumber: [
+          {required: true, message: '请输入步骤序号', trigger: 'blur'}
+        ],
         stepName: [{required: true, message: '请输入步骤名称', trigger: 'blur'}]
       }
     }
   },
   computed: {
     runningProjectCount() {
-      return this.projectList.filter(item => Number(item.projectState) === 2).length
+      return this.projectList.filter(item => Number(item.projectState) === 2)
+        .length
     },
     enabledStepCount() {
       return this.stepList.filter(item => Number(item.stepState) === 1).length
@@ -393,7 +639,10 @@ export default {
     toIdArray(value) {
       if (!value) return []
       if (Array.isArray(value)) return value.map(v => Number(v)).filter(Boolean)
-      return String(value).split(',').map(v => Number(v)).filter(Boolean)
+      return String(value)
+        .split(',')
+        .map(v => Number(v))
+        .filter(Boolean)
     },
     toIdString(ids) {
       return (ids || []).filter(Boolean).join(',')
@@ -405,7 +654,11 @@ export default {
         this.graph = new Graph({
           container,
           background: {color: '#070c14'},
-          grid: {visible: true, type: 'dot', args: {color: '#1f2d44', thickness: 1}},
+          grid: {
+            visible: true,
+            type: 'dot',
+            args: {color: '#1f2d44', thickness: 1}
+          },
           panning: true,
           mousewheel: {enabled: true, modifiers: ['ctrl', 'meta']},
           connecting: {
@@ -420,13 +673,16 @@ export default {
     resizeGraph() {
       if (!this.graph) return
       const container = document.getElementById('data-project-x6-canvas')
-      if (container) this.graph.resize(container.clientWidth, container.clientHeight)
+      if (container)
+        this.graph.resize(container.clientWidth, container.clientHeight)
       this.graph.centerContent()
     },
     fetchDataSources() {
-      request({url: '/rest/dataSource/dataSources', method: 'get'}).then(res => {
-        this.dataSourceOptions = this.normalizeList(res)
-      })
+      request({url: '/rest/dataSource/dataSources', method: 'get'}).then(
+        res => {
+          this.dataSourceOptions = this.normalizeList(res)
+        }
+      )
     },
     fetchProjects() {
       this.loadingProjects = true
@@ -437,8 +693,10 @@ export default {
       })
         .then(res => {
           this.projectList = this.normalizeList(res)
-          this.projectTotal = (res.data && res.data.total) || this.projectList.length
-          if (!this.activeProject && this.projectList.length) this.selectProject(this.projectList[0])
+          this.projectTotal =
+            (res.data && res.data.total) || this.projectList.length
+          if (!this.activeProject && this.projectList.length)
+            this.selectProject(this.projectList[0])
         })
         .finally(() => {
           this.loadingProjects = false
@@ -466,7 +724,9 @@ export default {
         .then(res => {
           const projectId = this.activeProject.dataProjectId
           this.stepList = this.normalizeList(res)
-            .filter(item => !item.dataProjectId || item.dataProjectId === projectId)
+            .filter(
+              item => !item.dataProjectId || item.dataProjectId === projectId
+            )
             .sort((a, b) => (a.stepNumber || 0) - (b.stepNumber || 0))
           this.renderStepGraph()
         })
@@ -484,7 +744,9 @@ export default {
       const rowHeight = 110
       const nodeMap = {}
       steps.forEach((step, index) => {
-        const level = this.toIdArray(step.inputStepIds).length ? 1 + Math.floor(index / 3) : 0
+        const level = this.toIdArray(step.inputStepIds).length
+          ? 1 + Math.floor(index / 3)
+          : 0
         const row = index % 3
         const node = this.graph.addNode({
           id: `step-${step.dataProjectStepId}`,
@@ -549,12 +811,16 @@ export default {
       this.isEditProject = isEdit
       this.projectForm = isEdit && row ? {...row} : this.getEmptyProjectForm()
       this.projectDialogVisible = true
-      this.$nextTick(() => this.$refs.projectForm && this.$refs.projectForm.clearValidate())
+      this.$nextTick(
+        () => this.$refs.projectForm && this.$refs.projectForm.clearValidate()
+      )
     },
     submitProject() {
       this.$refs.projectForm.validate(valid => {
         if (!valid) return
-        const action = this.isEditProject ? apiUpdate('dataProject', this.projectForm) : apiAdd('dataProject', this.projectForm)
+        const action = this.isEditProject
+          ? apiUpdate('dataProject', this.projectForm)
+          : apiAdd('dataProject', this.projectForm)
         action.then(() => {
           this.$message.success('数据采集项目已保存')
           this.projectDialogVisible = false
@@ -563,10 +829,16 @@ export default {
       })
     },
     deleteProject(row) {
-      this.$confirm(`确定删除项目 [${row.projectName}] 吗？`, '提示', {type: 'warning'}).then(() => {
+      this.$confirm(`确定删除项目 [${row.projectName}] 吗？`, '提示', {
+        type: 'warning'
+      }).then(() => {
         apiDelete('dataProject', row.dataProjectId).then(() => {
           this.$message.success('删除成功')
-          if (this.activeProject && this.activeProject.dataProjectId === row.dataProjectId) this.activeProject = null
+          if (
+            this.activeProject &&
+            this.activeProject.dataProjectId === row.dataProjectId
+          )
+            this.activeProject = null
           this.fetchProjects()
           this.fetchSteps()
         })
@@ -584,18 +856,31 @@ export default {
     openStepDialog(isEdit, row) {
       if (!this.activeProject) return
       this.isEditStep = isEdit
-      this.stepForm = isEdit && row
-        ? {...row}
-        : {...this.getEmptyStepForm(), dataProjectId: this.activeProject.dataProjectId, stepNumber: this.stepList.length + 1}
+      this.stepForm =
+        isEdit && row
+          ? {...row}
+          : {
+              ...this.getEmptyStepForm(),
+              dataProjectId: this.activeProject.dataProjectId,
+              stepNumber: this.stepList.length + 1
+            }
       this.stepInputIds = this.toIdArray(this.stepForm.inputStepIds)
       this.stepDialogVisible = true
-      this.$nextTick(() => this.$refs.stepForm && this.$refs.stepForm.clearValidate())
+      this.$nextTick(
+        () => this.$refs.stepForm && this.$refs.stepForm.clearValidate()
+      )
     },
     submitStep() {
       this.$refs.stepForm.validate(valid => {
         if (!valid) return
-        const payload = {...this.stepForm, inputStepIds: this.toIdString(this.stepInputIds), dataProjectId: this.activeProject.dataProjectId}
-        const action = this.isEditStep ? apiUpdate('dataProjectStep', payload) : apiAdd('dataProjectStep', payload)
+        const payload = {
+          ...this.stepForm,
+          inputStepIds: this.toIdString(this.stepInputIds),
+          dataProjectId: this.activeProject.dataProjectId
+        }
+        const action = this.isEditStep
+          ? apiUpdate('dataProjectStep', payload)
+          : apiAdd('dataProjectStep', payload)
         action.then(() => {
           this.$message.success('采集步骤已保存')
           this.stepDialogVisible = false
@@ -604,7 +889,9 @@ export default {
       })
     },
     deleteStep(row) {
-      this.$confirm(`确定删除步骤 [${row.stepName}] 吗？`, '提示', {type: 'warning'}).then(() => {
+      this.$confirm(`确定删除步骤 [${row.stepName}] 吗？`, '提示', {
+        type: 'warning'
+      }).then(() => {
         apiDelete('dataProjectStep', row.dataProjectStepId).then(() => {
           this.$message.success('删除成功')
           this.fetchSteps()
@@ -893,7 +1180,6 @@ export default {
   flex-shrink: 0;
 }
 .font-num {
-  font-family: monospace;
 }
 .text-blue {
   color: #38bdf8 !important;

@@ -859,7 +859,6 @@ export default {
   background: rgba(6, 182, 212, 0.1);
   padding: 2px 6px;
   border-radius: 10px;
-  font-family: monospace;
 }
 
 .platform-scroll-list {
@@ -920,7 +919,6 @@ export default {
 }
 .bsh-txt {
   color: #415169;
-  font-family: monospace;
 }
 .pt-type-tag {
   color: #64748b;
@@ -931,7 +929,6 @@ export default {
   margin-top: 5px;
   font-size: 10px;
   color: #8a99ad;
-  font-family: monospace;
 }
 
 .scroll-loading-tip {
@@ -1027,7 +1024,6 @@ export default {
   display: inline-block;
 }
 .indicator-item .count-num {
-  font-family: monospace;
   font-size: 13px;
   font-weight: bold;
   background: rgba(255, 255, 255, 0.04);

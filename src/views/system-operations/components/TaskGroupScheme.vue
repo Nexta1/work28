@@ -1063,7 +1063,6 @@ export default {
 }
 .bsh-txt {
   color: #475569;
-  font-family: monospace;
 }
 .state-txt-tag {
   font-size: 9px;
@@ -1338,7 +1337,6 @@ export default {
   color: #334155;
 }
 .font-num {
-  font-family: monospace;
 }
 
 /* 深色表单弹窗及组件级联样式穿透 */

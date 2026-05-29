@@ -593,7 +593,7 @@ export default {
   border-radius: 2px; /* 扁平化圆角 */
   font-size: 11px;
   font-weight: 500;
-  font-family: monospace, 'Microsoft YaHei';
+
   border: 1px solid transparent;
 }
 
@@ -629,7 +629,7 @@ export default {
   padding: 3px 8px;
   border-radius: 2px;
   font-size: 11px;
-  font-family: monospace, 'Microsoft YaHei';
+
   border: 1px solid transparent;
 }
 

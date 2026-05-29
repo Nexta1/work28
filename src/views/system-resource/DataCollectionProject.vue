@@ -1724,7 +1724,6 @@ export default {
   flex-shrink: 0;
 }
 .font-num {
-  font-family: monospace;
 }
 .text-blue {
   color: #38bdf8 !important;

@@ -877,7 +877,6 @@ export default {
 }
 .bsh-txt {
   color: #52637a;
-  font-family: monospace;
 }
 .pt-type-tag {
   color: #64748b;
@@ -990,7 +989,6 @@ export default {
 .strategy-id-tag {
   font-size: 10px;
   color: #475569;
-  font-family: monospace;
 }
 .header-right-actions {
   display: flex;
@@ -1085,7 +1083,6 @@ export default {
   color: #10b981;
 }
 .font-num {
-  font-family: monospace;
 }
 
 /* 动态表单分界样式 */

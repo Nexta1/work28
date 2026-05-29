@@ -427,7 +427,7 @@ export default {
   border-radius: 2px;
   font-size: 11px;
   font-weight: 500;
-  font-family: monospace, 'Microsoft YaHei';
+
   border: 1px solid transparent;
 }
 

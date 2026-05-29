@@ -716,7 +716,6 @@ export default {
 .card-tag {
   font-size: 10px;
   color: #4b5563;
-  font-family: monospace;
 }
 .target-info {
   display: flex;
@@ -1020,7 +1019,6 @@ export default {
 }
 
 .font-mono {
-  font-family: monospace;
 }
 .empty-data-hint {
   text-align: center;
