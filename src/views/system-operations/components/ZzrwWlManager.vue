@@ -3,7 +3,14 @@
     <div class="top-search-header">
       <div class="search-flex">
         <div class="search-item">
-          <label>网络检索</label>
+          <label>
+            <Icon
+              icon="lucide:search"
+              :size="13"
+              style="vertical-align: middle; margin-right: 4px"
+            />
+            网络检索
+          </label>
           <input
             type="text"
             v-model="searchQuery.WLMC"
@@ -12,13 +19,14 @@
           />
         </div>
         <div class="search-btn-group">
-          <el-button
-            type="success"
-            size="mini"
-            icon="el-icon-plus"
-            @click="openCreateDialog"
-            >生成新网络需求</el-button
-          >
+          <el-button type="success" size="mini" @click="openCreateDialog">
+            <Icon
+              icon="lucide:plus"
+              :size="13"
+              style="vertical-align: middle; margin-right: 4px"
+            />
+            生成新网络需求
+          </el-button>
         </div>
       </div>
 
@@ -43,7 +51,14 @@
     <div class="main-body-layout">
       <div class="left-platform-sidebar">
         <div class="sidebar-header-summary">
-          <span class="title">🛡️ 战术网络需求</span>
+          <span class="title">
+            <Icon
+              icon="lucide:shield-alert"
+              :size="14"
+              style="vertical-align: middle; margin-right: 4px"
+            />
+            战术网络需求
+          </span>
           <el-radio-group
             v-model="layoutMode"
             size="mini"
@@ -70,15 +85,36 @@
             @click="selectNetwork(net)"
           >
             <div class="card-top">
-              <span class="pt-name" :title="net.WLMC">{{ net.WLMC }}</span>
+              <span class="pt-name" :title="net.WLMC">
+                <Icon
+                  icon="lucide:git-commit"
+                  :size="12"
+                  style="color: var(--color-primary); margin-right: 4px"
+                />
+                {{ net.WLMC }}
+              </span>
             </div>
             <div class="card-sub-info">
               <span class="bsh-txt">编号: {{ net.ZZRWWLID }}</span>
               <span class="pt-type-tag">代号: {{ net.WLH }}</span>
             </div>
             <div class="brief-dynamics">
-              <span>⚡ {{ net.bandwidthRequirement || 0 }} Mbps</span>
-              <span>🧭 {{ net.latencyRequirement || 0 }} ms</span>
+              <span>
+                <Icon
+                  icon="lucide:activity"
+                  :size="11"
+                  style="vertical-align: middle; margin-right: 2px"
+                />
+                {{ net.bandwidthRequirement || 0 }} Mbps
+              </span>
+              <span>
+                <Icon
+                  icon="lucide:timer"
+                  :size="11"
+                  style="vertical-align: middle; margin-right: 2px"
+                />
+                {{ net.latencyRequirement || 0 }} ms
+              </span>
             </div>
             <div
               class="card-status-dot"
@@ -90,6 +126,7 @@
           </div>
         </div>
 
+        <!-- 💡 树形插槽内图标色彩与状态动态关联 -->
         <div v-else class="platform-tree-box" v-loading="loading">
           <el-tree
             :data="networkTree"
@@ -108,6 +145,27 @@
                   data.networkingState === 1 ? 'bg-running' : 'bg-offline'
                 ]"
               ></span>
+              <!-- 精准色彩控制线：根据部署就绪状态注入不同的色彩和发光滤镜 -->
+              <span
+                class="tree-icon-wrapper"
+                style="
+                  margin-right: 6px;
+                  display: inline-flex;
+                  align-items: center;
+                "
+              >
+                <Icon
+                  :icon="
+                    data.children && data.children.length > 0
+                      ? 'lucide:network'
+                      : 'lucide:git-fork'
+                  "
+                  :size="13"
+                  :style="{
+                    color: 'var(--color-cyan)'
+                  }"
+                />
+              </span>
               <span
                 class="tree-label-txt"
                 :class="{'text-active': activeNetId === data.ZZRWWLID}"
@@ -145,39 +203,54 @@
         >
           <div class="detail-param-dashboard">
             <div class="panel-inner-title-flex">
-              <span>🛰️ 保障核心视角：{{ selectedNetwork.WLMC }}</span>
+              <span>
+                <Icon
+                  icon="lucide:satellite-dish"
+                  :size="14"
+                  style="
+                    vertical-align: middle;
+                    margin-right: 4px;
+                    color: var(--color-primary);
+                  "
+                />
+                保障核心视角：{{ selectedNetwork.WLMC }}
+              </span>
               <div class="action-control-bus">
                 <el-button
                   type="text"
                   class="mini-text-btn btn-modify"
-                  icon="el-icon-edit"
                   @click="handleEdit(selectedNetwork)"
-                  >修改</el-button
                 >
+                  <Icon
+                    icon="lucide:edit-3"
+                    :size="12"
+                    style="vertical-align: middle; margin-right: 2px"
+                  />
+                  修改
+                </el-button>
                 <el-button
                   type="text"
                   class="mini-text-btn btn-release"
-                  icon="el-icon-delete"
                   @click="handleDelete(selectedNetwork)"
-                  >释放</el-button
                 >
+                  <Icon
+                    icon="lucide:trash-2"
+                    :size="12"
+                    style="vertical-align: middle; margin-right: 2px"
+                  />
+                  释放
+                </el-button>
               </div>
             </div>
 
             <div class="params-matrix">
               <div class="matrix-item">
-                <label>网络主键标识</label>
-                <span class="val text-cyan font-num">{{
-                  selectedNetwork.ZZRWWLID
-                }}</span>
-              </div>
-              <div class="matrix-item">
-                <label>战术网络代号</label>
+                <label>网络号</label>
                 <span class="val text-blue font-num">{{
                   selectedNetwork.WLH
                 }}</span>
               </div>
-              <div class="matrix-item">
+              <div class="matrix-item" style="grid-column: span 2">
                 <label>物理网络类型</label>
                 <span class="val text-orange">{{
                   wllxText(selectedNetwork.WLLX)
@@ -216,7 +289,18 @@
 
           <div class="sub-fluid-layout">
             <div class="matrix-column-left">
-              <div class="column-title">📊 物理链路保障要求 (QoS)</div>
+              <div class="column-title">
+                <Icon
+                  icon="lucide:bar-chart-3"
+                  :size="14"
+                  style="
+                    vertical-align: middle;
+                    margin-right: 4px;
+                    color: var(--color-cyan);
+                  "
+                />
+                物理链路保障要求
+              </div>
               <div class="performance-flex-box">
                 <div class="monitor-node node-performance">
                   <div class="node-name-bar">时延保障上限</div>
@@ -239,7 +323,16 @@
               </div>
 
               <div class="column-title" style="margin-top: 12px">
-                🛡️ 业务通联与安全策略
+                <Icon
+                  icon="lucide:shield-check"
+                  :size="14"
+                  style="
+                    vertical-align: middle;
+                    margin-right: 4px;
+                    color: var(--color-success);
+                  "
+                />
+                业务通联与安全策略
               </div>
               <div class="monitor-node node-combined-block">
                 <div class="combined-item">
@@ -274,7 +367,16 @@
 
             <div class="matrix-column-right">
               <div class="column-title">
-                📡 战术平台组网状态监测 (根据当前网络选择计算)
+                <Icon
+                  icon="lucide:radar"
+                  :size="14"
+                  style="
+                    vertical-align: middle;
+                    margin-right: 4px;
+                    color: var(--color-warning);
+                  "
+                />
+                战术平台组网状态监测 (根据当前网络选择计算)
               </div>
               <div class="matrix-scroll-box platform-status-grid">
                 <div
@@ -288,7 +390,18 @@
                   "
                 >
                   <div class="pt-card-header">
-                    <span class="pt-mc-text">{{ pt.PTMC || '未知平台' }}</span>
+                    <span class="pt-mc-text">
+                      <Icon
+                        icon="lucide:cpu"
+                        :size="12"
+                        style="
+                          vertical-align: middle;
+                          margin-right: 4px;
+                          color: var(--color-cyan);
+                        "
+                      />
+                      {{ pt.PTMC || '未知平台' }}
+                    </span>
                     <span class="status-indicator-tag">
                       {{
                         isPlatformInNetwork(pt.ZZRWPTID)
@@ -313,12 +426,24 @@
     </div>
 
     <el-dialog
-      :title="isEdit ? '🛠️ 调整战术网络保障参数' : '🚀 录入全新战术组网需求'"
       :visible.sync="dialogVisible"
       width="680px"
       append-to-body
       custom-class="dark-dialog-clean"
     >
+      <span slot="title" class="dialog-title-slot">
+        <Icon
+          :icon="isEdit ? 'lucide:sliders' : 'lucide:rocket'"
+          :size="16"
+          style="
+            vertical-align: middle;
+            margin-right: 6px;
+            color: var(--color-primary);
+          "
+        />
+        {{ isEdit ? '调整战术网络保障参数' : '录入全新战术组网需求' }}
+      </span>
+
       <el-form
         :model="form"
         ref="netForm"
@@ -454,7 +579,6 @@
     </el-dialog>
   </div>
 </template>
-
 <script>
 // 1. 引入统一封装的通用动态接口
 import {apiPage, apiAdd, apiUpdate, apiDelete, apiGetAll} from '@/api/common.js'
@@ -496,7 +620,6 @@ export default {
   computed: {
     // 平铺外部传入的深层作战任务平台树，方便匹配、状态看板以及下拉框渲染
     flattenPlatforms() {
-      console.log(this.platformTreeNodes)
       const result = []
       const format = nodes => {
         nodes.forEach(node => {
@@ -637,7 +760,8 @@ export default {
     },
     selectNetwork(net) {
       if (!net) return
-      this.selectedNetwork = net
+      // console.log('选中网络:', net)
+      this.selectedNetwork = {...net, parentWLID: Number(net.parentWLID)}
       this.activeNetId = net.ZZRWWLID
     },
     resetActiveState() {
@@ -711,7 +835,6 @@ export default {
 .screen-container {
   width: 100%;
   height: 100%;
-  background-color: #03060c;
   color: #cbd5e1;
   display: flex;
   flex-direction: column;
@@ -850,36 +973,6 @@ export default {
   background: #070c14;
   border-radius: 4px;
   padding: 6px;
-}
-
-/* 战术树形节点深度覆盖 */
-::v-deep .dark-custom-tree {
-  background: transparent;
-  color: #cbd5e1;
-}
-::v-deep .dark-custom-tree .el-tree-node__content:hover {
-  background-color: #111b2b;
-}
-::v-deep .dark-custom-tree .el-tree-node:focus > .el-tree-node__content {
-  background-color: #13233c;
-}
-.custom-tree-node {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 11px;
-}
-.tree-dot {
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-}
-.tree-label-txt {
-  color: #94a3b8;
-}
-.text-active {
-  color: #38bdf8 !important;
-  font-weight: bold;
 }
 
 /* 战术需求卡片 */
@@ -1233,33 +1326,6 @@ export default {
   font-family: monospace;
 }
 
-/* 弹窗及表单深色定制微调 */
-::v-deep .dark-dialog-clean {
-  background-color: #090f1c !important;
-  border: 1px solid #1e293b;
-}
-::v-deep .dark-dialog-clean .el-dialog__title {
-  color: #fff;
-  font-size: 12px;
-}
-::v-deep .dark-form .el-form-item__label {
-  color: #94a3b8;
-  font-size: 11px;
-}
-::v-deep .dark-form .el-input__inner,
-::v-deep .dark-form .el-checkbox__label,
-::v-deep .dark-form .el-radio__label,
-::v-deep .dark-form .el-textarea__inner {
-  background-color: #050b14;
-  border-color: #1e293b;
-  color: #fff;
-  font-size: 11px;
-}
-::v-deep .dark-form .el-checkbox__inner,
-::v-deep .dark-form .el-radio__inner {
-  background-color: #050b14;
-  border-color: #1e293b;
-}
 .form-grid-2col {
   display: grid;
   grid-template-columns: 1fr 1fr;

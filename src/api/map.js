@@ -74,9 +74,8 @@ export function getAttrTypes() {
 }
 export function getYXJMap() {
   return {
-    1: '低',
-    2: '重要',
-    3: '高'
+    '01': '一般',
+    '02': '重要',
+    '03': '核心'
   }
 }
-

@@ -547,7 +547,14 @@
 .el-tree-node__expand-icon.is-leaf {
   color: transparent !important;
 }
-
+.custom-tree-node {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  width: 100%;
+  min-width: 0;
+}
 /* --------------------------------------------------------
    4. 分页、开关与高级卡片布局 (el-pagination / el-switch / el-card / el-tabs)
    -------------------------------------------------------- */

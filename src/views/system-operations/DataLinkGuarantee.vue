@@ -2,7 +2,7 @@
   <div class="screen-container">
     <div class="top-search-header">
       <div class="search-flex">
-        <span class="hub-title">🗺️ 作战任务编排路线与编成空间态势大屏总线</span>
+        <span class="hub-title">🗺️ 作战筹划信息获取和数据链保障需求生成</span>
 
         <div class="search-item">
           <label>作战任务名称 (RWMC)</label>

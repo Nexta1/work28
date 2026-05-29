@@ -13,20 +13,29 @@ Vue.component('Icon', {
     }
   },
   render(h) {
-    // 关键优化：给元素加一个 key，每次 icon 改变时强行让 Vue 重新创建这个 DOM
-    // 这样 Iconify 就能百分之百监听到新 DOM 并进行替换
+    // 1. 获取外界在使用 <Icon :style="..." :class="..." /> 时传进来的原生样式
+    const inlineStyle = this.$vnode.data.style || {}
+    const inlineClass = this.$vnode.data.class || ''
+
+    // 2. 将基础的长宽样式与外界传进来的颜色、滤镜等样式进行深度融合
+    const baseStyle = {
+      display: 'inline-block',
+      width: typeof this.size === 'number' ? `${this.size}px` : this.size,
+      height: typeof this.size === 'number' ? `${this.size}px` : this.size,
+      verticalAlign: '-0.125em',
+      // 核心：Iconify 变色依赖 currentColor，确保 fill 被正确继承
+      fill: 'currentColor'
+    }
+
     return h('span', {
       key: this.icon,
-      class: 'iconify',
+      // 3. 把外部传进来的 Class 和 iconify 拼接起来，方便用 Class 控制颜色
+      class: ['iconify', inlineClass].filter(Boolean).join(' '),
       attrs: {
         'data-icon': this.icon
       },
-      style: {
-        display: 'inline-block',
-        width: typeof this.size === 'number' ? `${this.size}px` : this.size,
-        height: typeof this.size === 'number' ? `${this.size}px` : this.size,
-        verticalAlign: '-0.125em'
-      }
+      // 4. 合并样式，外界传入的 style（如 color）拥有最高优先级
+      style: Object.assign({}, baseStyle, inlineStyle)
     })
   },
   watch: {
@@ -42,7 +51,6 @@ Vue.component('Icon', {
   methods: {
     scanIcon() {
       if (window.Iconify) {
-        // 使用 checkAndReplace 更加稳妥，如果不行再降级回 scan
         if (typeof window.Iconify.checkAndReplace === 'function') {
           window.Iconify.checkAndReplace(this.$el)
         } else if (typeof window.Iconify.scan === 'function') {

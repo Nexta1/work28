@@ -4,7 +4,7 @@
       <div class="form-inputs">
         <el-input
           v-model="searchQuery.MBMC"
-          placeholder="搜索目标名称 (MBMC)..."
+          placeholder="搜索目标名称"
           size="mini"
           class="dark-mini-input"
           clearable
@@ -22,6 +22,7 @@
           size="mini"
           icon="el-icon-plus"
           @click="openCreateDialog"
+          :disabled="true"
           >探测登记新目标</el-button
         >
       </div>
@@ -151,6 +152,7 @@
               class="btn-modify"
               icon="el-icon-edit"
               @click="handleEdit(scope.row)"
+              :disabled="true"
               >修改</el-button
             >
             <el-button
@@ -159,6 +161,7 @@
               class="btn-release"
               icon="el-icon-delete"
               @click="handleDelete(scope.row)"
+              :disabled="true"
               >释放</el-button
             >
           </template>
@@ -441,7 +444,7 @@ export default {
 .network-manager-layout {
   width: 100%;
   height: 100%;
-  background-color: #03060c;
+
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -540,10 +543,10 @@ export default {
 
 /* 微细缩控制文字按钮 */
 .btn-modify {
-  color: #38bdf8 !important;
+  color: #38bdf8;
 }
 .btn-release {
-  color: #f43f5e !important;
+  color: #f43f5e;
 }
 
 /* 弹出表单双列栅格 */
