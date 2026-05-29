@@ -230,13 +230,7 @@
 
       <!-- 告警信息处理 Tab 组 -->
       <el-tab-pane label="告警信息处理" name="warnProcess">
-        <el-tabs
-          v-model="processActiveTab"
-          tab-position="left"
-          style="height: 250px"
-          class="sidebar-tabs"
-        >
-          <!-- 告警清除规则 -->
+        <el-tabs v-model="processActiveTab" class="nested-tabs">
           <el-tab-pane label="告警清除规则" name="warnClear">
             <div class="tab-content-wrapper">
               <warn-clear
@@ -245,18 +239,52 @@
               />
             </div>
           </el-tab-pane>
-
-          <!-- 告警屏蔽规则 -->
           <el-tab-pane label="告警屏蔽规则" name="warnBlock">
             <div class="tab-content-wrapper">
               <warn-block :fault-type-options="faultTreeOptions" />
             </div>
           </el-tab-pane>
-
-          <!-- 告警归并规则 -->
           <el-tab-pane label="告警归并规则" name="warnMerge">
             <div class="tab-content-wrapper">
               <warn-merge :fault-type-options="faultTreeOptions" />
+            </div>
+          </el-tab-pane>
+        </el-tabs>
+      </el-tab-pane>
+
+      <!-- 业务质量标准 Tab 组 -->
+      <el-tab-pane label="业务质量标准" name="operationQuality">
+        <el-tabs v-model="qualityActiveTab" class="nested-tabs">
+          <el-tab-pane label="业务质量指标" name="operationMetric">
+            <div class="tab-content-wrapper">
+              <operation-metric />
+            </div>
+          </el-tab-pane>
+          <el-tab-pane label="业务质量标准" name="operationStandard">
+            <div class="tab-content-wrapper">
+              <operation-standard
+                :fault-type-options="faultTreeOptions"
+                :metric-options="metricOptions"
+              />
+            </div>
+          </el-tab-pane>
+        </el-tabs>
+      </el-tab-pane>
+
+      <!-- 性能监控 Tab 组 -->
+      <el-tab-pane label="性能监控" name="performanceMonitor">
+        <el-tabs v-model="performanceActiveTab" class="nested-tabs">
+          <el-tab-pane label="性能指标" name="performanceMetric">
+            <div class="tab-content-wrapper">
+              <performance-metric />
+            </div>
+          </el-tab-pane>
+          <el-tab-pane label="性能标准" name="performanceStandard">
+            <div class="tab-content-wrapper">
+              <performance-standard
+                :fault-type-options="faultTreeOptions"
+                :metric-options="performanceMetricOptions"
+              />
             </div>
           </el-tab-pane>
         </el-tabs>
@@ -266,23 +294,32 @@
 </template>
 
 <script>
-// 🛰️ 变更：引入 mainPage, mainDelete, apiGetAll
 import {mainPage, mainDelete, apiGetAll} from '@/api/common'
 import WarnClear from './WarnClear.vue'
 import WarnBlock from './WarnBlock.vue'
 import WarnMerge from './WarnMerge.vue'
+import OperationMetric from './OperationMetric.vue'
+import OperationStandard from './OperationStandard.vue'
+import PerformanceMetric from './PerformanceMetric.vue'
+import PerformanceStandard from './PerformanceStandard.vue'
 
 export default {
   name: 'WarnInfoDashboard',
   components: {
     WarnClear,
     WarnBlock,
-    WarnMerge
+    WarnMerge,
+    OperationMetric,
+    OperationStandard,
+    PerformanceMetric,
+    PerformanceStandard
   },
   data() {
     return {
-      activeTab: 'warnInfo', // 默认激活告警信息Tab
-      processActiveTab: 'warnClear', // 告警信息处理子Tab默认值
+      activeTab: 'warnInfo',
+      processActiveTab: 'warnClear',
+      qualityActiveTab: 'operationMetric',
+      performanceActiveTab: 'performanceMetric',
       loading: false,
       queryForm: {
         faultTypeId: null,
@@ -293,6 +330,8 @@ export default {
       selectedFaultKeys: [], // 级联选择器数组
       faultTreeOptions: [], // 故障类型树
       deviceOptions: [], // 设备选项列表
+      metricOptions: [],
+      performanceMetricOptions: [],
       cascadeProps: {
         value: 'faultTypeId',
         label: 'faultName',
@@ -310,6 +349,8 @@ export default {
   mounted() {
     this.loadFaultTree()
     this.loadDevices()
+    this.loadMetrics()
+    this.loadPerformanceMetrics()
     this.loadWarnInfos()
   },
   methods: {
@@ -352,6 +393,26 @@ export default {
         this.deviceOptions = res.data || []
       } catch (e) {
         console.error('设备数据拉取失败:', e)
+      }
+    },
+
+    // 3. 获取业务质量指标列表
+    async loadMetrics() {
+      try {
+        const res = await apiGetAll('operationMetric', {}, 'operationMetrics')
+        this.metricOptions = res.data || []
+      } catch (e) {
+        console.error('业务质量指标数据拉取失败:', e)
+      }
+    },
+
+    // 4. 获取性能指标列表
+    async loadPerformanceMetrics() {
+      try {
+        const res = await apiGetAll('performanceMetric', {}, 'performanceMetrics')
+        this.performanceMetricOptions = res.data || []
+      } catch (e) {
+        console.error('性能指标数据拉取失败:', e)
       }
     },
 
@@ -477,6 +538,20 @@ export default {
 .tab-content-wrapper {
   display: flex;
   flex-direction: column;
+  height: 100%;
+}
+
+/* 嵌套 Tab 样式 */
+::v-deep .nested-tabs {
+  height: 100%;
+}
+
+::v-deep .nested-tabs .el-tabs__content {
+  height: calc(100% - 40px);
+  overflow: hidden;
+}
+
+::v-deep .nested-tabs .el-tab-pane {
   height: 100%;
 }
 

@@ -82,7 +82,7 @@ export function apiDelete(baseUrl, id) {
 export function mainDelete(baseUrl, id) {
   return request({
     url: `/rest/${baseUrl}/${id}`,
-    method: 'delete'
+    method: 'post'
   })
 }
 

@@ -94,6 +94,13 @@ service.interceptors.response.use(
     }
 
     /**
+     * 数组类型直接返回
+     */
+    if (Array.isArray(res)) {
+      return res
+    }
+
+    /**
      * 业务状态码处理
      */
     const code = res.code

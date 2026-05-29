@@ -8,17 +8,23 @@ export function unitInfo() {
   })
 }
 // 查询所有窗口类型
-
-export function dataTypes() {
+export function windowTypes() {
   return request({
-    url: `/rest/performanceMetric/dataTypes`,
+    url: `/rest/performanceMetric/windowTypes`,
     method: 'get'
   })
 }
+
 // 查询所有聚合方法
 export function accumulateMethods() {
   return request({
     url: `/rest/performanceMetric/accumulateMethods`,
+    method: 'get'
+  })
+}
+export function dataTypes() {
+  return request({
+    url: `/rest/performanceMetric/dataTypes`,
     method: 'get'
   })
 }
@@ -39,7 +45,7 @@ export function performanceEvaluations() {
 // 所有业务状态
 export function qualityStates() {
   return request({
-    url: `/rest/performanceStandard/qualityStates`,
+    url: `/rest/operationStandard/qualityStates`,
     method: 'get'
   })
 }

@@ -29,7 +29,7 @@
             v-model="queryForm.keyword"
             placeholder="请输入关键词"
             clearable
-            style="width: 180px"
+            style="width: 150px"
           />
         </el-form-item>
 
@@ -78,14 +78,14 @@
 
         <el-table-column label="时间范围" width="180" align="center">
           <template slot-scope="scope">
-            {{ formatTimeRange(scope.row.timeBegin, scope.row.timeEnd) }}
+            {{ scope.row.timeBegin }} - {{ scope.row.timeEnd }}
           </template>
         </el-table-column>
 
         <el-table-column
           prop="deviceTypes"
-          label="设备类型列表"
-          width="150"
+          label="设备类型"
+          min-width="150"
           align="center"
           show-overflow-tooltip
         />
@@ -157,7 +157,7 @@
     <el-dialog
       :title="dialogTitle"
       :visible.sync="dialogVisible"
-      width="600px"
+      width="700px"
       :close-on-click-modal="false"
     >
       <el-form
@@ -189,23 +189,30 @@
           />
         </el-form-item>
 
-        <el-form-item label="时间范围" prop="timeRange">
-          <el-time-picker
-            v-model="formData.timeBegin"
-            placeholder="开始时间"
-            format="HH:mm:ss"
-            value-format="HH:mm:ss"
-            style="width: 45%; margin-right: 10px"
-          />
-          <span style="margin: 0 5px">至</span>
-          <el-time-picker
-            v-model="formData.timeEnd"
-            placeholder="结束时间"
-            format="HH:mm:ss"
-            value-format="HH:mm:ss"
-            style="width: 45%"
-          />
-        </el-form-item>
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <el-form-item label="开始时间" prop="timeBegin">
+              <el-time-picker
+                v-model="formData.timeBegin"
+                format="HH:mm:ss"
+                value-format="HH:mm:ss"
+                placeholder="选择时间"
+                style="width: 100%"
+              />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="结束时间" prop="timeEnd">
+              <el-time-picker
+                v-model="formData.timeEnd"
+                format="HH:mm:ss"
+                value-format="HH:mm:ss"
+                placeholder="选择时间"
+                style="width: 100%"
+              />
+            </el-form-item>
+          </el-col>
+        </el-row>
 
         <el-form-item label="设备类型" prop="deviceTypes">
           <el-select
@@ -225,14 +232,10 @@
         </el-form-item>
 
         <el-form-item label="关键词" prop="keyword">
-          <el-input
-            v-model="formData.keyword"
-            placeholder="请输入关键词"
-            clearable
-          />
+          <el-input v-model="formData.keyword" placeholder="请输入关键词" />
         </el-form-item>
 
-        <el-form-item label="是否自动清除" prop="isAuto">
+        <el-form-item label="是否自动" prop="isAuto">
           <el-radio-group v-model="formData.isAuto">
             <el-radio label="1">是</el-radio>
             <el-radio label="0">否</el-radio>
@@ -254,12 +257,10 @@ import {mainPage, mainDelete, apiAdd, apiUpdate} from '@/api/common'
 export default {
   name: 'WarnClear',
   props: {
-    // 故障类型选项列表（由父组件传递）
     faultTypeOptions: {
       type: Array,
       default: () => []
     },
-    // 设备信息列表（由父组件传递）
     deviceOptions: {
       type: Array,
       default: () => []
@@ -287,7 +288,7 @@ export default {
         srcFaultTypeIds: [],
         timeBegin: '',
         timeEnd: '',
-        deviceTypes: '',
+        deviceTypes: [],
         keyword: '',
         isAuto: '1'
       },
@@ -311,7 +312,6 @@ export default {
     this.loadData()
   },
   methods: {
-    // 加载分页数据
     async loadData() {
       this.loading = true
       try {
@@ -331,13 +331,11 @@ export default {
       }
     },
 
-    // 搜索
     handleSearch() {
       this.page.pageNum = 1
       this.loadData()
     },
 
-    // 重置查询
     resetQuery() {
       this.queryForm = {
         ruleName: '',
@@ -347,46 +345,28 @@ export default {
       this.handleSearch()
     },
 
-    // 分页大小变化
     handleSizeChange(val) {
       this.page.pageSize = val
       this.loadData()
     },
 
-    // 页码变化
     handleCurrentChange(val) {
       this.page.pageNum = val
       this.loadData()
     },
 
-    // 打开对话框
     openDialog(type, row = null) {
       this.dialogTitle = type === 'add' ? '新增规则' : '编辑规则'
       if (type === 'edit' && row) {
-        // 编辑模式：填充表单数据
-
-        // 处理故障类型ID，将逗号分隔字符串转换为级联选择器需要的路径数组格式
         let faultTypeIds = []
         if (row.srcFaultTypeIds) {
-          // 假设后端存储的是 faultTypeId 的逗号分隔字符串
-          const ids = Array.isArray(row.srcFaultTypeIds)
-            ? row.srcFaultTypeIds
-            : row.srcFaultTypeIds.split(',').map(Number)
-
-          // 将扁平的 ID 数组转换为级联选择器需要的路径数组
-          // 例如: [1, 2, 3] -> [[1], [2], [3]] 或根据实际层级结构转换
+          const ids = row.srcFaultTypeIds.split(',').map(Number)
           faultTypeIds = ids.map(id => [id])
         }
 
-        // 处理设备类型ID，确保为数组格式以适配 select multiple
         let deviceIds = []
         if (row.deviceTypes) {
-          deviceIds = Array.isArray(row.deviceTypes)
-            ? row.deviceTypes
-            : row.deviceTypes.split(',').map(item => {
-                const num = Number(item)
-                return isNaN(num) ? item : num
-              })
+          deviceIds = row.deviceTypes.split(',').map(item => Number(item))
         }
 
         this.formData = {
@@ -400,7 +380,6 @@ export default {
           isAuto: row.isAuto || '1'
         }
       } else {
-        // 新增模式：重置表单
         this.formData = {
           warnClearId: null,
           ruleName: '',
@@ -418,35 +397,23 @@ export default {
       })
     },
 
-    // 提交表单
     handleSubmit() {
       this.$refs.form.validate(async valid => {
         if (!valid) return
 
         try {
-          // 准备提交数据，将数组转换回逗号分隔的字符串
           const submitData = {
             ...this.formData,
-            // 故障类型 ID：级联选择器返回的是路径数组 [[id1], [id2]]，需要提取最后一个元素并转字符串
-            srcFaultTypeIds: Array.isArray(this.formData.srcFaultTypeIds)
-              ? this.formData.srcFaultTypeIds
-                  .map(path =>
-                    Array.isArray(path) ? path[path.length - 1] : path
-                  )
-                  .join(',')
-              : this.formData.srcFaultTypeIds,
-            // 设备类型 ID 数组转字符串
-            deviceTypes: Array.isArray(this.formData.deviceTypes)
-              ? this.formData.deviceTypes.join(',')
-              : this.formData.deviceTypes
+            srcFaultTypeIds: this.formData.srcFaultTypeIds
+              .map(path => (Array.isArray(path) ? path[path.length - 1] : path))
+              .join(','),
+            deviceTypes: this.formData.deviceTypes.join(',')
           }
 
           if (this.formData.warnClearId) {
-            // 编辑
             await apiUpdate('warnClear', submitData)
             this.$message.success('修改成功')
           } else {
-            // 新增
             await apiAdd('warnClear', submitData)
             this.$message.success('新增成功')
           }
@@ -460,7 +427,6 @@ export default {
       })
     },
 
-    // 删除
     handleDelete(row) {
       this.$confirm(`确定要删除规则 [${row.ruleName}] 吗？`, '提示', {
         confirmButtonText: '确定',
@@ -480,13 +446,6 @@ export default {
         .catch(() => {})
     },
 
-    // 格式化时间范围
-    formatTimeRange(begin, end) {
-      if (!begin || !end) return '--'
-      return `${begin} - ${end}`
-    },
-
-    // 格式化日期时间
     formatDateTime(dateTime) {
       if (!dateTime) return '--'
       const date = new Date(dateTime)
@@ -499,9 +458,6 @@ export default {
 </script>
 
 <style scoped>
-/* ===================================================================
-   🛰️ 战术控制中心 - 告警清除规则管理样式
-   =================================================================== */
 .warn-clear-container {
   width: 100%;
   height: 100%;
@@ -527,7 +483,6 @@ export default {
   justify-content: flex-end;
 }
 
-/* --- 自定义自动清除标识样式 --- */
 .custom-auto-badge {
   display: inline-block;
   padding: 2px 10px;
@@ -542,15 +497,14 @@ export default {
   background-color: rgba(16, 185, 129, 0.12);
   color: var(--color-success);
   border-color: rgba(16, 185, 129, 0.6);
-} /* 是 - 战术绿 */
+}
 
 .auto-no {
   background-color: rgba(51, 65, 85, 0.2);
   color: #64748b;
   border-color: rgba(51, 65, 85, 0.4);
-} /* 否 - 深灰蓝 */
+}
 
-/* --- 按钮样式微调 --- */
 .custom-edit-btn {
   padding: 5px 12px;
   font-size: 11px;

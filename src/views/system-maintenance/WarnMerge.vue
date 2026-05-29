@@ -63,12 +63,11 @@
           show-overflow-tooltip
         />
 
-        <el-table-column
-          prop="timeWindow"
-          label="时间窗口(秒)"
-          width="120"
-          align="center"
-        />
+        <el-table-column label="时间窗口(秒)" width="120" align="center">
+          <template slot-scope="scope">
+            {{ scope.row.timeWindow }}
+          </template>
+        </el-table-column>
 
         <el-table-column
           prop="ruleMemo"
@@ -124,7 +123,7 @@
     <el-dialog
       :title="dialogTitle"
       :visible.sync="dialogVisible"
-      width="600px"
+      width="700px"
       :close-on-click-modal="false"
     >
       <el-form
@@ -149,7 +148,7 @@
               checkStrictly: true,
               multiple: true
             }"
-            placeholder="请选择源故障类型"
+            placeholder="请选择故障类型"
             clearable
             filterable
             style="width: 100%"
@@ -173,12 +172,12 @@
           />
         </el-form-item>
 
-        <el-form-item label="时间窗口" prop="timeWindow">
+        <el-form-item label="时间窗口(秒)" prop="timeWindow">
           <el-input-number
             v-model="formData.timeWindow"
             :min="1"
             :max="3600"
-            placeholder="请输入时间窗口（秒）"
+            placeholder="请输入时间窗口"
             style="width: 100%"
           />
         </el-form-item>
@@ -207,7 +206,6 @@ import {mainPage, mainDelete, apiAdd, apiUpdate} from '@/api/common'
 export default {
   name: 'WarnMerge',
   props: {
-    // 故障类型选项列表（由父组件传递）
     faultTypeOptions: {
       type: Array,
       default: () => []
@@ -255,7 +253,6 @@ export default {
     this.loadData()
   },
   methods: {
-    // 加载分页数据
     async loadData() {
       this.loading = true
       try {
@@ -275,13 +272,11 @@ export default {
       }
     },
 
-    // 搜索
     handleSearch() {
       this.page.pageNum = 1
       this.loadData()
     },
 
-    // 重置查询
     resetQuery() {
       this.queryForm = {
         ruleName: ''
@@ -289,35 +284,25 @@ export default {
       this.handleSearch()
     },
 
-    // 分页大小变化
     handleSizeChange(val) {
       this.page.pageSize = val
       this.loadData()
     },
 
-    // 页码变化
     handleCurrentChange(val) {
       this.page.pageNum = val
       this.loadData()
     },
 
-    // 打开对话框
     openDialog(type, row = null) {
       this.dialogTitle = type === 'add' ? '新增规则' : '编辑规则'
       if (type === 'edit' && row) {
-        // 编辑模式：填充表单数据
-        
-        // 处理源故障类型ID，将逗号分隔字符串转换为级联选择器需要的路径数组格式
         let srcFaultTypeIds = []
         if (row.srcFaultTypeIds) {
-          const ids = Array.isArray(row.srcFaultTypeIds)
-            ? row.srcFaultTypeIds
-            : row.srcFaultTypeIds.split(',').map(Number)
-          
+          const ids = row.srcFaultTypeIds.split(',').map(Number)
           srcFaultTypeIds = ids.map(id => [id])
         }
 
-        // 处理目标故障类型ID，转换为级联选择器路径数组
         let dstFaultTypeId = null
         if (row.dstFaultTypeId) {
           dstFaultTypeId = [row.dstFaultTypeId]
@@ -332,7 +317,6 @@ export default {
           ruleMemo: row.ruleMemo || ''
         }
       } else {
-        // 新增模式：重置表单
         this.formData = {
           warnMergeId: null,
           ruleName: '',
@@ -348,35 +332,25 @@ export default {
       })
     },
 
-    // 提交表单
     handleSubmit() {
       this.$refs.form.validate(async valid => {
         if (!valid) return
 
         try {
-          // 准备提交数据，将数组转换回逗号分隔的字符串
           const submitData = {
             ...this.formData,
-            // 源故障类型 ID：级联选择器返回的是路径数组 [[id1], [id2]]，需要提取最后一个元素并转字符串
-            srcFaultTypeIds: Array.isArray(this.formData.srcFaultTypeIds)
-              ? this.formData.srcFaultTypeIds
-                  .map(path =>
-                    Array.isArray(path) ? path[path.length - 1] : path
-                  )
-                  .join(',')
-              : this.formData.srcFaultTypeIds,
-            // 目标故障类型 ID：从路径数组中提取最后一个元素
+            srcFaultTypeIds: this.formData.srcFaultTypeIds
+              .map(path => (Array.isArray(path) ? path[path.length - 1] : path))
+              .join(','),
             dstFaultTypeId: Array.isArray(this.formData.dstFaultTypeId)
               ? this.formData.dstFaultTypeId[this.formData.dstFaultTypeId.length - 1]
               : this.formData.dstFaultTypeId
           }
 
           if (this.formData.warnMergeId) {
-            // 编辑
             await apiUpdate('warnMerge', submitData)
             this.$message.success('修改成功')
           } else {
-            // 新增
             await apiAdd('warnMerge', submitData)
             this.$message.success('新增成功')
           }
@@ -390,7 +364,6 @@ export default {
       })
     },
 
-    // 删除
     handleDelete(row) {
       this.$confirm(`确定要删除规则 [${row.ruleName}] 吗？`, '提示', {
         confirmButtonText: '确定',
@@ -410,7 +383,6 @@ export default {
         .catch(() => {})
     },
 
-    // 格式化日期时间
     formatDateTime(dateTime) {
       if (!dateTime) return '--'
       const date = new Date(dateTime)
@@ -423,9 +395,6 @@ export default {
 </script>
 
 <style scoped>
-/* ===================================================================
-   🛰️ 战术控制中心 - 告警归并规则管理样式
-   =================================================================== */
 .warn-merge-container {
   width: 100%;
   height: 100%;
@@ -451,7 +420,6 @@ export default {
   justify-content: flex-end;
 }
 
-/* --- 按钮样式微调 --- */
 .custom-edit-btn {
   padding: 5px 12px;
   font-size: 11px;

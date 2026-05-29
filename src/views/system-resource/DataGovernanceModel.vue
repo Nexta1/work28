@@ -62,7 +62,7 @@
           <div class="tab-layout">
             <div class="side-panel" v-loading="loadingDataModel">
               <div class="panel-header-summary">
-                <span class="title">数据分类导航树</span>
+                <span class="title">🗂️ 数据分类导航树</span>
                 <el-button
                   type="primary"
                   size="mini"
@@ -498,7 +498,7 @@
 
       <div v-else class="drilldown-body label-workbench-dialog">
         <el-tabs v-model="labelSubTab" class="dark-tabs">
-          <el-tab-pane label="已标注数据" name="hasLabeled">
+          <el-tab-pane label="📋 已标注历史明细" name="hasLabeled">
             <div class="drilldown-filter-bar">
               <el-form :inline="true" size="mini" class="dark-form-inline">
                 <el-form-item label="过滤字段">
@@ -542,7 +542,7 @@
               size="mini"
               stripe
               border
-              height="300"
+              height="400"
               class="dark-table"
             >
               <el-table-column
@@ -564,7 +564,7 @@
             />
           </el-tab-pane>
 
-          <el-tab-pane label="手工标注" name="manualLabel">
+          <el-tab-pane label="✍️ 增量手工标注" name="manualLabel">
             <div class="manual-layout" style="display: flex; gap: 15px">
               <div
                 class="manual-selector-sidebar"
@@ -615,9 +615,9 @@
                     type="success"
                     size="mini"
                     icon="el-icon-check"
+                    :disabled="manualSelection.length === 0"
                     style="width: 100%"
                     @click="submitManualData"
-                    :disabled="manualSelection.length === 0"
                   >
                     提交选中的 {{ manualSelection.length }} 条标注
                   </el-button>
@@ -632,20 +632,9 @@
                   border
                   height="380"
                   class="dark-table"
+                  @selection-change="handleManualSelectionChange"
                 >
-                  <el-table-column label="是否勾选" width="90" align="center">
-                    <template slot-scope="scope">
-                      <el-tag
-                        :type="isRowSelected(scope.row) ? 'success' : 'info'"
-                        size="mini"
-                        disable-transitions
-                        style="cursor: pointer"
-                        @click="toggleRowSelection(scope.row)"
-                      >
-                        {{ isRowSelected(scope.row) ? '已勾选' : '未勾选' }}
-                      </el-tag>
-                    </template>
-                  </el-table-column>
+                  <el-table-column type="selection" width="45" />
                   <el-table-column
                     v-for="col in manualColumns"
                     :key="col"
@@ -659,21 +648,6 @@
                     >
                   </template>
                 </el-table>
-                <div
-                  class="pagination-container"
-                  style="margin-top: 10px; text-align: right"
-                >
-                  <el-pagination
-                    background
-                    layout="total, sizes, prev, pager, next, jumper"
-                    :total="manualTablePage.total"
-                    :page-size="manualTablePage.pageSize"
-                    :current-page="manualTablePage.pageNum"
-                    :page-sizes="[10, 20, 50, 100]"
-                    @size-change="handleManualPageSizeChange"
-                    @current-change="handleManualPageNumChange"
-                  />
-                </div>
               </div>
             </div>
           </el-tab-pane>
@@ -939,13 +913,7 @@
 
 <script>
 import request from '@/utils/request'
-import {
-  apiAdd,
-  apiDelete,
-  apiPage,
-  apiUpdate,
-  apiGetDetail
-} from '@/api/common.js'
+import {apiAdd, apiDelete, apiPage, apiUpdate} from '@/api/common.js'
 // 动态引入您的物理元数据穿透服务
 import {tableDataPaged, page, manual, auto} from '@/api/dataInfo.js'
 
@@ -1026,13 +994,9 @@ export default {
       manualSelectedModelId: null, // 手工标注选中的目录节点
       manualSelectedTable: '', // 手工标注选中的表名
       manualTableOptions: [], // 物理表下拉候选集
-      manualTableData: [], // 待标注的物理表原始数据（全部数据）
+      manualTableData: [], // 待标注的物理表原始数据
       manualColumns: [], // 待标注数据表头
       manualSelection: [], // 用户选中的行数组
-      // 手工标注表格分页配置
-      manualTablePage: {pageNum: 1, pageSize: 10, total: 0},
-      // 已标注的原始数据（用于实时维护和提交）
-      manualLabeledData: [], // 维护多个模型多个表的标注数据
       dataModelRules: {
         modelName: [
           {required: true, message: '请输入模型名称', trigger: 'blur'}
@@ -1081,75 +1045,12 @@ export default {
     },
     labelClassFilter(val) {
       if (this.$refs.labelClassTree) this.$refs.labelClassTree.filter(val)
-    },
-    // 监听标签页切换，当切换到手动标注时加载已标注数据
-    labelSubTab(newVal) {
-      if (newVal === 'manualLabel' && this.currentLabelModelId) {
-        this.fetchManualLabeledData()
-      }
     }
   },
   mounted() {
     this.initPage()
   },
   methods: {
-    // 核心：深度清理并规范化对象
-    normalizeObject(obj) {
-      if (obj === null || typeof obj !== 'object') {
-        return obj
-      }
-
-      // 获取所有的 Key 并排序，确保消除字段顺序不一致的影响
-      const sortedKeys = Object.keys(obj).sort()
-      const result = {}
-
-      for (const key of sortedKeys) {
-        const value = obj[key]
-
-        // 过滤掉所有可能导致不匹配的空值定义：null, undefined, 空字符串
-        if (value !== null && value !== undefined && value !== '') {
-          // 如果属性值依然是对象，递归处理
-          result[key] =
-            typeof value === 'object' ? this.normalizeObject(value) : value
-        }
-      }
-      return result
-    },
-
-    // 判断两行数据在排除空值后是否真正相等
-    isRowEqual(row1, row2) {
-      const cleanRow1 = this.normalizeObject(row1)
-      const cleanRow2 = this.normalizeObject(row2)
-      return JSON.stringify(cleanRow1) === JSON.stringify(cleanRow2)
-    },
-    isRowSelected(row) {
-      if (!this.manualSelection || this.manualSelection.length === 0)
-        return false
-
-      // 使用自定义的绝对相等判定
-      return this.manualSelection.some(selectedItem =>
-        this.isRowEqual(selectedItem, row)
-      )
-    },
-    toggleRowSelection(row) {
-      // 通过 isRowEqual 找到在已选数组中的索引
-      const index = this.manualSelection.findIndex(selectedItem =>
-        this.isRowEqual(selectedItem, row)
-      )
-
-      let newSelection = [...this.manualSelection]
-
-      if (index > -1) {
-        // 已存在则移除
-        newSelection.splice(index, 1)
-      } else {
-        // 不存在则添加
-        newSelection.push(row)
-      }
-
-      // 触发更新
-      this.handleManualSelectionChange(newSelection)
-    },
     initPage() {
       this.fetchDataSources()
       this.fetchDataModelTree()
@@ -1364,7 +1265,6 @@ export default {
       this.manualTableData = []
       this.manualColumns = []
       this.manualSelection = []
-      this.manualLabeledData = []
 
       this.drillQueryForm.itemKey = ''
       this.drillQueryForm.itemValue = ''
@@ -1494,6 +1394,26 @@ export default {
         this.drillDownColumns = Array.from(columnSet)
       }
       // 找到 handleDrillResponse 方法，在结尾处追加智能兜底提取逻辑：
+      if (this.drillDrillType === 'label' && rawList.length > 0) {
+        const firstItem = rawList[0]
+        // 根据需求描述，尝试从第一条记录提取特征属性进行联动兜底
+        if (firstItem.dataModelId || firstItem.tableName) {
+          this.manualSelectedModelId = firstItem.dataModelId || 5
+          this.manualSelectedTable = firstItem.tableName || 'DATAMODEL'
+
+          // 反向解析该节点拥有的物理表候选集
+          const flatNode = this.flatDataModels.find(
+            m => m.dataModelId === this.manualSelectedModelId
+          )
+          if (flatNode && flatNode.tableNames) {
+            this.manualTableOptions = flatNode.tableNames.split(',')
+          } else {
+            this.manualTableOptions = [this.manualSelectedTable]
+          }
+          // 异步自动拉取此表的候选数据供用户手工标注
+          this.fetchManualSourceData()
+        }
+      }
     },
     // 当手工选择数据目录树节点时，联动拉取其映射的表
     handleManualModelChange(modelId) {
@@ -1515,21 +1435,10 @@ export default {
     fetchManualSourceData() {
       if (!this.manualSelectedTable) return
       this.loadingDrillDownData = true
-      const find = this.manualLabeledData.find(item => {
-        return (
-          item.tableName == this.manualSelectedTable &&
-          item.dataModelId == this.manualSelectedModelId
-        )
-      })
-      if (find) {
-        this.manualSelection = find.submitRowDatas
-      } else {
-        this.manualSelection = []
-      }
 
       const payload = {
-        pageNum: this.manualTablePage.pageNum,
-        pageSize: this.manualTablePage.pageSize, // 宽幅拉取，便于多选
+        pageNum: 1,
+        pageSize: 50, // 宽幅拉取，便于多选
         params: {
           tableName: this.manualSelectedTable,
           dataModelId: this.manualSelectedModelId
@@ -1558,8 +1467,6 @@ export default {
             return parsed
           })
           this.manualColumns = Array.from(columnSet)
-          // 更新分页总数
-          this.manualTablePage.total = res.data.total
         })
         .catch(() => {
           this.$message.error('拉取物理表测试源数据失败')
@@ -1572,111 +1479,29 @@ export default {
     // 捕获多选事件
     handleManualSelectionChange(val) {
       this.manualSelection = val
-
-      // 实时更新 manualLabeledData：根据当前选择的模型和表进行比对
-      this.updateManualLabeledDataWithSelection()
-    },
-
-    // 根据当前选择更新 manualLabeledData
-    updateManualLabeledDataWithSelection() {
-      if (!this.manualSelectedModelId || !this.manualSelectedTable) {
-        return
-      }
-
-      // 查找是否存在当前模型和表的对象
-      const existingIndex = this.manualLabeledData.findIndex(
-        item =>
-          item.dataModelId === this.manualSelectedModelId &&
-          item.tableName === this.manualSelectedTable
-      )
-
-      let updatedManualLabels
-
-      if (this.manualSelection.length === 0) {
-        // 如果没有选中任何行，删除该对象（如果存在）
-        if (existingIndex !== -1) {
-          updatedManualLabels = this.manualLabeledData.filter(
-            (_, index) => index !== existingIndex
-          )
-        } else {
-          updatedManualLabels = [...this.manualLabeledData]
-        }
-      } else {
-        // 有选中的行
-        const newLabelItem = {
-          dataModelId: this.manualSelectedModelId,
-          tableName: this.manualSelectedTable,
-          submitRowDatas: [...this.manualSelection]
-        }
-
-        if (existingIndex !== -1) {
-          // 存在相同模型和表，更新其数据
-          updatedManualLabels = this.manualLabeledData.map((item, index) => {
-            if (index === existingIndex) {
-              return newLabelItem
-            }
-            return item
-          })
-        } else {
-          // 不存在，创建新对象
-          updatedManualLabels = [...this.manualLabeledData, newLabelItem]
-        }
-      }
-
-      // 更新本地缓存
-      this.manualLabeledData = updatedManualLabels
-    },
-
-    // 获取已标注的数据（用于回显）
-    fetchManualLabeledData() {
-      if (!this.currentLabelModelId) return
-
-      apiGetDetail('labelModel', this.currentLabelModelId)
-        .then(res => {
-          if (res && res.data && res.data.manualRows) {
-            this.manualLabeledData = res.data.manualRows
-            console.log('已标注数据:', this.manualLabeledData)
-          } else {
-            this.manualLabeledData = []
-          }
-        })
-        .catch(err => {
-          console.error('获取已标注数据失败:', err)
-          this.manualLabeledData = []
-        })
-    },
-
-    // 手工标注表格分页 - 每页条数变化
-    handleManualPageSizeChange(val) {
-      this.manualTablePage.pageSize = val
-      this.manualTablePage.pageNum = 1
-    },
-
-    // 手工标注表格分页 - 页码变化
-    handleManualPageNumChange(val) {
-      this.manualTablePage.pageNum = val
     },
 
     // 执行手工标注提交
     submitManualData() {
-      // if (this.manualSelection.length === 0) return
+      if (this.manualSelection.length === 0) return
 
-      // 直接提交已经维护好的 manualLabeledData
+      // 严格封装符合标准格式的 JSON 提交体
       const payload = {
         labelModelId: this.currentLabelModelId,
-        manualLabels: this.manualLabeledData
+        dataModelId: this.manualSelectedModelId,
+        tableName: this.manualSelectedTable,
+        submitRowDatas: this.manualSelection // 直接把选中的行对象数组打包提交
       }
 
       manual(payload)
         .then(res => {
           this.$message.success(
-            `成功手工向此模型打入 [${this.manualSelection.length}] 条标注数据`
+            `成功手工向此模型打入 [${this.manualSelection.length}] 条标注血缘数据`
           )
-          // 清空选择
           this.manualSelection = []
-          // 重新获取已标注数据以更新回显状态（确保与后端同步）
-          this.fetchManualLabeledData()
-          this.executeDrillQuery()
+          // 自动切回历史列表并刷新
+          this.labelSubTab = 'hasLabeled'
+          this.executeDrillQuery(false)
         })
         .catch(err => {
           this.$message.error('手工标注写入异常，请检查接口')
@@ -2395,7 +2220,7 @@ export default {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  height: 60vh;
+  min-height: 420px;
 }
 ::v-deep .dark-drilldown-dialog .el-dialog__body {
   background-color: #040810;
@@ -2519,47 +2344,5 @@ export default {
   background: #0c121c !important;
   border-color: #122035 !important;
   color: #475569 !important;
-}
-
-/* 手工标注表格分页组件暗黑主题样式 */
-.pagination-container ::v-deep .el-pagination {
-  color: #cbd5e1;
-}
-.pagination-container ::v-deep .el-pagination button {
-  background: #0d1522;
-  color: #cbd5e1;
-  border: 1px solid #1e3557;
-}
-.pagination-container ::v-deep .el-pagination button:hover:not(:disabled) {
-  color: #38bdf8;
-  border-color: #38bdf8;
-}
-.pagination-container ::v-deep .el-pagination button:disabled {
-  background: #0a1018;
-  color: #475569;
-  border-color: #152030;
-}
-.pagination-container ::v-deep .el-pager li {
-  background: #0d1522;
-  color: #cbd5e1;
-  border: 1px solid #1e3557;
-}
-.pagination-container ::v-deep .el-pager li:hover {
-  color: #38bdf8;
-  border-color: #38bdf8;
-}
-.pagination-container ::v-deep .el-pager li.active {
-  background: #0f2238;
-  color: #38bdf8;
-  border-color: #38bdf8;
-}
-.pagination-container ::v-deep .el-pagination__total,
-.pagination-container ::v-deep .el-pagination__jump {
-  color: #94a3b8;
-}
-.pagination-container ::v-deep .el-pagination__sizes .el-input__inner {
-  background: #0d1522;
-  border-color: #1e3557;
-  color: #cbd5e1;
 }
 </style>
