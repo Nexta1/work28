@@ -2,7 +2,7 @@
   <div class="screen-container">
     <div class="top-search-header">
       <div class="search-flex">
-        <span class="hub-title">🛡️ 分级运控策略谱系与执行矩阵舱</span>
+        <span class="hub-title">分级运控策略</span>
 
         <div class="search-item">
           <label>策略大类</label>
@@ -56,7 +56,7 @@
     <div class="main-body-layout" v-loading="pageLoading">
       <div class="left-tree-panel">
         <div class="panel-header-summary">
-          <span class="title">🌲 运控策略属性谱系树</span>
+          <span class="title">运控策略属性谱系树</span>
           <span class="badge font-num text-cyan"
             >{{ allAttributes.length }} 项属性</span
           >
@@ -73,12 +73,30 @@
             @node-click="handleTreeNodeClick"
           >
             <span class="custom-tree-node" slot-scope="{data}">
+              <!-- 左侧：图标与文本区 -->
               <span class="node-txt ellipsis-text" :title="data.name">
-                <span v-if="data.isCategory" class="text-orange">📁</span>
-                <span v-else class="text-cyan">⚙️</span>
+                <!-- 1. 策略目录/分类图标：使用文件夹分支图标，绑定警告橙 -->
+                <Icon
+                  v-if="data.isCategory"
+                  icon="lucide:folder-git-2"
+                  :size="13"
+                  color="var(--color-warning, #f59e0b)"
+                  style="vertical-align: middle; margin-right: 4px"
+                />
+                <!-- 2. 具体策略节点图标：使用控制滑块/齿轮衍生图标，绑定科技青 -->
+                <Icon
+                  v-else
+                  icon="lucide:sliders"
+                  :size="13"
+                  color="var(--color-cyan, #06b6d4)"
+                  style="vertical-align: middle; margin-right: 4px"
+                />
                 {{ data.name }}
               </span>
+
+              <!-- 右侧：悬浮操作按钮区 -->
               <span class="tree-node-actions" v-if="!data.isCategory">
+                <!-- 3. 修改属性：使用细线画笔图标，绑定就绪绿 -->
                 <i
                   class="el-icon-edit text-green"
                   title="修改属性"
@@ -98,7 +116,14 @@
       <div class="right-combined-panel">
         <div class="right-top-detail-zone">
           <div class="panel-header-summary">
-            <span class="title">🔍 当前选中运控属性要素指标</span>
+            <span class="title"
+              ><Icon
+                icon="lucide:square-terminal"
+                :size="14"
+                color="var(--color-primary, #38bdf8)"
+                style="vertical-align: middle; margin-right: 5px"
+              />当前选中运控属性详情</span
+            >
             <span class="badge font-num text-orange" v-if="selectedAttr"
               >ID: {{ selectedAttr.ocStrategyAttrId }}</span
             >
@@ -124,13 +149,13 @@
               }}</span>
             </div>
             <div class="detail-cell">
-              <span class="lbl">参数数据类型 (attrType)</span
+              <span class="lbl">参数数据类型</span
               ><span class="val text-green font-num">{{
                 selectedAttr.attrType
               }}</span>
             </div>
             <div class="detail-cell">
-              <span class="lbl">缺省系统配置值 (defaultValue)</span
+              <span class="lbl">缺省系统配置值</span
               ><span class="val font-num text-gray">{{
                 selectedAttr.defaultValue || '未设置默认值'
               }}</span>
@@ -142,27 +167,31 @@
               }}</span>
             </div>
             <div class="detail-cell span-2">
-              <span class="lbl">最后遥测流水同步时间</span
+              <span class="lbl">最后同步时间</span
               ><span class="val font-num text-gray">{{
                 selectedAttr.opTime || '-'
               }}</span>
             </div>
           </div>
           <div v-else class="sub-empty-info">
-            💡 请在左侧运控树中点击选择任意具体“属性节点”，以激活全要素状态监测
+            请在左侧运控树中点击选择任意具体“属性节点”
           </div>
         </div>
 
         <div class="right-bottom-strategy-zone">
           <div class="panel-header-summary">
             <span class="title"
-              >⚡ 关联的战术响应操控算子 (Candidate Operators)</span
+              ><Icon
+                icon="lucide:binary"
+                :size="14"
+                color="var(--color-cyan, #06b6d4)"
+                style="vertical-align: middle; margin-right: 5px"
+              />关联的操控配置项</span
             >
             <el-button
               type="primary"
               size="mini"
               icon="el-icon-plus"
-              class="inner-add-btn"
               @click="handleCreateOperator"
             >
               新增运控算子
@@ -217,7 +246,13 @@
                   style="max-width: 240px"
                   :title="op.operatorMemo"
                 >
-                  📝 动作机理:
+                  <Icon
+                    icon="lucide:workflow"
+                    :size="14"
+                    color="var(--color-cyan, #06b6d4)"
+                    style="vertical-align: middle; margin-right: 5px"
+                  />
+                  动作机理:
                   <span class="text-gray">{{
                     op.operatorMemo || '暂无说明'
                   }}</span>
@@ -339,7 +374,7 @@
             />
           </div>
           <div class="detail-row span-2">
-            <span class="lbl">操控动作执行机理说明 (operatorMemo)</span>
+            <span class="lbl">操控动作执行机理说明</span>
             <textarea
               v-model="opForm.operatorMemo"
               rows="3"
@@ -769,21 +804,6 @@ export default {
   overflow-y: auto;
 }
 
-/* 深度定制化 Element 树结构 */
-::v-deep .dark-custom-tree {
-  background: transparent !important;
-  color: #cbd5e1 !important;
-}
-::v-deep .dark-custom-tree .el-tree-node__content {
-  height: 28px;
-}
-::v-deep .dark-custom-tree .el-tree-node__content:hover {
-  background: #121e30 !important;
-}
-::v-deep .dark-custom-tree .el-tree-node:focus > .el-tree-node__content {
-  background: #15253d !important;
-}
-
 .custom-tree-node {
   font-size: 11px;
   display: flex;
@@ -860,13 +880,7 @@ export default {
   flex: 5;
   min-height: 0;
 }
-.inner-add-btn {
-  height: 22px;
-  padding: 0 8px;
-  font-size: 10px;
-  background: #0284c7;
-  border: none;
-}
+
 .strategy-scroll-box {
   flex: 1;
   overflow-y: auto;
@@ -960,19 +974,6 @@ export default {
   flex: 1;
 }
 
-/* 科技深色维护表单弹窗 */
-::v-deep .dark-custom-dialog {
-  background: #0c1424 !important;
-  border: 1px solid #1a293d !important;
-}
-::v-deep .dark-custom-dialog .el-dialog__title {
-  color: #38bdf8 !important;
-  font-size: 12px;
-  font-weight: bold;
-}
-::v-deep .dark-custom-dialog .el-dialog__body {
-  padding: 12px 20px;
-}
 .dialog-detail-matrix {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -1003,31 +1004,7 @@ export default {
   width: 100%;
   box-sizing: border-box;
 }
-.dark-btn {
-  background: #172438;
-  border: 1px solid #1e3557;
-  color: #cbd5e1;
-}
 
-/* 穿透微调多选框（暗黑主题） */
-::v-deep .dark-checkbox-group .el-checkbox {
-  margin-right: 15px;
-  margin-bottom: 4px;
-}
-::v-deep .dark-checkbox-group .el-checkbox__label {
-  color: #94a3b8 !important;
-  font-size: 11px;
-}
-::v-deep
-  .dark-checkbox-group
-  .el-checkbox__input.is-checked
-  + .el-checkbox__label {
-  color: #38bdf8 !important;
-}
-
-/* 配色通用类工具 */
-.font-num {
-}
 .text-blue {
   color: #38bdf8 !important;
 }
