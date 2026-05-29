@@ -230,7 +230,11 @@
 
       <!-- 告警信息处理 Tab 组 -->
       <el-tab-pane label="告警信息处理" name="warnProcess">
-        <el-tabs v-model="processActiveTab" class="nested-tabs">
+        <el-tabs
+          v-model="processActiveTab"
+          class="sidebar-tabs"
+          tab-position="left"
+        >
           <el-tab-pane label="告警清除规则" name="warnClear">
             <div class="tab-content-wrapper">
               <warn-clear
@@ -253,8 +257,12 @@
       </el-tab-pane>
 
       <!-- 业务质量标准 Tab 组 -->
-      <el-tab-pane label="业务质量标准" name="operationQuality">
-        <el-tabs v-model="qualityActiveTab" class="nested-tabs">
+      <el-tab-pane label="业务质量标准化" name="operationQuality">
+        <el-tabs
+          v-model="qualityActiveTab"
+          class="sidebar-tabs"
+          tab-position="left"
+        >
           <el-tab-pane label="业务质量指标" name="operationMetric">
             <div class="tab-content-wrapper">
               <operation-metric />
@@ -272,8 +280,12 @@
       </el-tab-pane>
 
       <!-- 性能监控 Tab 组 -->
-      <el-tab-pane label="性能监控" name="performanceMonitor">
-        <el-tabs v-model="performanceActiveTab" class="nested-tabs">
+      <el-tab-pane label="性能质量标准化" name="performanceMonitor">
+        <el-tabs
+          v-model="performanceActiveTab"
+          class="sidebar-tabs"
+          tab-position="left"
+        >
           <el-tab-pane label="性能指标" name="performanceMetric">
             <div class="tab-content-wrapper">
               <performance-metric />
@@ -389,7 +401,7 @@ export default {
     // 2. 获取设备列表
     async loadDevices() {
       try {
-        const res = await apiGetAll('sbxx', {}, 'sbxxs')
+        const res = await apiGetAll('sbxhInfo', {}, 'sbxhInfos')
         this.deviceOptions = res.data || []
       } catch (e) {
         console.error('设备数据拉取失败:', e)
@@ -400,7 +412,7 @@ export default {
     async loadMetrics() {
       try {
         const res = await apiGetAll('operationMetric', {}, 'operationMetrics')
-        this.metricOptions = res.data || []
+        this.metricOptions = res || []
       } catch (e) {
         console.error('业务质量指标数据拉取失败:', e)
       }
@@ -409,8 +421,12 @@ export default {
     // 4. 获取性能指标列表
     async loadPerformanceMetrics() {
       try {
-        const res = await apiGetAll('performanceMetric', {}, 'performanceMetrics')
-        this.performanceMetricOptions = res.data || []
+        const res = await apiGetAll(
+          'performanceMetric',
+          {},
+          'performanceMetrics'
+        )
+        this.performanceMetricOptions = res || []
       } catch (e) {
         console.error('性能指标数据拉取失败:', e)
       }
@@ -529,7 +545,7 @@ export default {
   height: 100%;
   display: flex;
   flex-direction: column;
-  padding: 16px;
+  padding: 10px;
   box-sizing: border-box;
   background-color: transparent; /* 继承全局背景 */
 }

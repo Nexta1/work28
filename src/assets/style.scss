@@ -1121,13 +1121,13 @@
 .el-cascader {
   .el-input__inner {
     font-family: monospace, 'Microsoft YaHei' !important;
-    height: 28px !important; /* 统一大屏紧凑高度 */
+    // height: 28px !important; /* 统一大屏紧凑高度 */
     line-height: 28px !important;
   }
 
   .el-cascader__search-input {
     font-family: monospace, 'Microsoft YaHei' !important;
-    height: 24px !important;
+    // height: 24px !important;
     line-height: 24px !important;
     margin: 0 0 0 10px !important; /* 精准控制左边距，不与外层重叠 */
     background: transparent !important;
@@ -1249,4 +1249,61 @@
     // padding: 12px 16px !important;
     box-sizing: border-box;
   }
+}
+/* ===================================================================
+   ⚡ 增量修正补丁：全局硬核暗色大屏极细滚动条美化
+   =================================================================== */
+
+/* 1. Firefox 现代标准浏览器兼容（低调不刺眼的暗色滑块） */
+* {
+  scrollbar-width: thin; /* 强制将滚动条设为极细 */
+  scrollbar-color: rgba(56, 189, 248, 0.25) var(--bg-base); /* 滑块颜色(战术蓝透明) 与 基底背景色 */
+}
+
+/* 2. WebKit 内核浏览器（Chrome / Safari / Edge / Electron 大屏外壳） */
+
+/* 滚动条整体轨道（控制粗细与背景） */
+::-webkit-scrollbar {
+  width: 5px; /* 纵向滚动条宽度压缩至 5px，极度紧凑 */
+  height: 5px; /* 横向滚动条高度压缩至 5px */
+  background-color: var(--bg-base) !important; /* 轨道背景使用系统基底深色 */
+}
+
+/* 滚动条滑块（Track Thumb） */
+::-webkit-scrollbar-thumb {
+  background-color: rgba(
+    56,
+    189,
+    248,
+    0.2
+  ) !important; /* 默认呈现低饱和度的战术蓝透明度 */
+  border-radius: 3px !important; /* 边缘微微圆角，防止生硬 */
+  transition: background-color 0.15s ease-in-out !important;
+
+  /* 利用内边框实现类似镂空的悬浮小刻度感 */
+  border: 1px solid transparent;
+  background-clip: padding-box;
+}
+
+/* 鼠标悬浮滑块时（Hover） */
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--color-cyan) !important; /* 悬浮时亮起为高科技青色 */
+  box-shadow: 0 0 4px var(--color-cyan) !important; /* 带来微弱的电光荧光感 */
+}
+
+/* 鼠标按下拖动滑块时（Active） */
+::-webkit-scrollbar-thumb:active {
+  background-color: var(--color-primary) !important; /* 激活时锁定战术高亮蓝 */
+}
+
+/* 滚动条两端轨道边角（防止白块死角） */
+::-webkit-scrollbar-corner {
+  background-color: var(--bg-base) !important; /* 完美融入暗色基底 */
+}
+
+/* 3. 针对 Element UI 组件（如 el-table__body-wrapper 等内部滚动死角）强力校正 */
+.el-table__body-wrapper::-webkit-scrollbar,
+.el-scrollbar__wrap::-webkit-scrollbar {
+  width: 5px !important;
+  height: 5px !important;
 }

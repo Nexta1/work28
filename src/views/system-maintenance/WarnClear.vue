@@ -19,8 +19,8 @@
             clearable
             style="width: 120px"
           >
-            <el-option label="是" value="1" />
-            <el-option label="否" value="0" />
+            <el-option label="是" value="是" />
+            <el-option label="否" value="否" />
           </el-select>
         </el-form-item>
 
@@ -103,10 +103,10 @@
             <span
               :class="[
                 'custom-auto-badge',
-                scope.row.isAuto === '1' ? 'auto-yes' : 'auto-no'
+                scope.row.isAuto === '是' ? 'auto-yes' : 'auto-no'
               ]"
             >
-              {{ scope.row.isAuto === '1' ? '是' : '否' }}
+              {{ scope.row.isAuto === '是' ? '是' : '否' }}
             </span>
           </template>
         </el-table-column>
@@ -176,6 +176,8 @@
             v-model="formData.srcFaultTypeIds"
             :options="faultTypeOptions"
             :props="{
+              emitPath: false,
+              emitPath: false,
               value: 'faultTypeId',
               label: 'faultName',
               children: 'children',
@@ -224,9 +226,9 @@
           >
             <el-option
               v-for="item in deviceOptions"
-              :key="item.sbxxId"
-              :label="item.sbmc"
-              :value="item.sbxxId"
+              :key="item.SBLX"
+              :label="item.SBLX"
+              :value="item.SBLX"
             />
           </el-select>
         </el-form-item>
@@ -237,8 +239,8 @@
 
         <el-form-item label="是否自动" prop="isAuto">
           <el-radio-group v-model="formData.isAuto">
-            <el-radio label="1">是</el-radio>
-            <el-radio label="0">否</el-radio>
+            <el-radio label="是">是</el-radio>
+            <el-radio label="否">否</el-radio>
           </el-radio-group>
         </el-form-item>
       </el-form>
@@ -252,7 +254,7 @@
 </template>
 
 <script>
-import {mainPage, mainDelete, apiAdd, apiUpdate} from '@/api/common'
+import {mainPage, apiDelete, apiAdd, apiUpdate} from '@/api/common'
 
 export default {
   name: 'WarnClear',
@@ -366,7 +368,7 @@ export default {
 
         let deviceIds = []
         if (row.deviceTypes) {
-          deviceIds = row.deviceTypes.split(',').map(item => Number(item))
+          deviceIds = row.deviceTypes.split(',')
         }
 
         this.formData = {
@@ -400,7 +402,7 @@ export default {
     handleSubmit() {
       this.$refs.form.validate(async valid => {
         if (!valid) return
-
+        // return console.log(this.formData.srcFaultTypeIds)
         try {
           const submitData = {
             ...this.formData,
@@ -435,7 +437,7 @@ export default {
       })
         .then(async () => {
           try {
-            await mainDelete('warnClear', row.warnClearId)
+            await apiDelete('warnClear', row.warnClearId)
             this.$message.success('删除成功')
             this.loadData()
           } catch (e) {
@@ -463,7 +465,7 @@ export default {
   height: 100%;
   display: flex;
   flex-direction: column;
-  padding: 16px;
+  padding: 10px;
   box-sizing: border-box;
   background-color: transparent;
 }

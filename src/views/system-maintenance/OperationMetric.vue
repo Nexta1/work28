@@ -21,28 +21,84 @@
         </el-form-item>
 
         <el-form-item>
-          <el-button type="primary" icon="el-icon-search" @click="handleSearch">检索</el-button>
+          <el-button type="primary" icon="el-icon-search" @click="handleSearch"
+            >检索</el-button
+          >
           <el-button icon="el-icon-refresh" @click="resetQuery">重置</el-button>
-          <el-button type="success" icon="el-icon-plus" @click="openDialog('add')">新增指标</el-button>
+          <el-button
+            type="success"
+            icon="el-icon-plus"
+            @click="openDialog('add')"
+            >新增指标</el-button
+          >
         </el-form-item>
       </el-form>
     </div>
 
     <div class="table-content-wrapper" v-loading="loading">
       <el-table :data="tableData" style="width: 100%" height="100%">
-        <el-table-column prop="operationMetricId" label="指标ID" width="100" fixed align="center" show-overflow-tooltip />
-        <el-table-column prop="metricName" label="指标名称" width="180" align="center" show-overflow-tooltip />
-        <el-table-column prop="metricUnit" label="指标单位" width="100" align="center" />
-        <el-table-column prop="srcTableName" label="源数据表" width="150" align="center" show-overflow-tooltip />
-        <el-table-column prop="srcColumnName" label="源数据列" width="150" align="center" show-overflow-tooltip />
+        <el-table-column
+          prop="operationMetricId"
+          label="指标ID"
+          width="100"
+          fixed
+          align="center"
+          show-overflow-tooltip
+        />
+        <el-table-column
+          prop="metricName"
+          label="指标名称"
+          width="180"
+          align="center"
+          show-overflow-tooltip
+        />
+        <el-table-column
+          prop="metricUnit"
+          label="指标单位"
+          width="100"
+          align="center"
+        />
+        <el-table-column
+          prop="srcTableName"
+          label="源数据表"
+          width="150"
+          align="center"
+          show-overflow-tooltip
+        />
+        <el-table-column
+          prop="srcColumnName"
+          label="源数据列"
+          width="150"
+          align="center"
+          show-overflow-tooltip
+        />
         <el-table-column label="窗口配置" width="150" align="center">
           <template slot-scope="scope">
-            {{ formatWindowConfig(scope.row.windowType, scope.row.windowLength) }}
+            {{
+              formatWindowConfig(scope.row.windowType, scope.row.windowLength)
+            }}
           </template>
         </el-table-column>
-        <el-table-column prop="accumulateMethod" label="聚合方法" width="120" align="center" />
-        <el-table-column prop="groupColumnName" label="分组列名" width="120" align="center" show-overflow-tooltip />
-        <el-table-column prop="metricMemo" label="指标描述" min-width="200" align="center" show-overflow-tooltip />
+        <el-table-column
+          prop="accumulateMethod"
+          label="聚合方法"
+          width="120"
+          align="center"
+        />
+        <el-table-column
+          prop="groupColumnName"
+          label="分组列名"
+          width="120"
+          align="center"
+          show-overflow-tooltip
+        />
+        <el-table-column
+          prop="metricMemo"
+          label="指标描述"
+          min-width="200"
+          align="center"
+          show-overflow-tooltip
+        />
         <el-table-column label="操作时间" width="165" align="center">
           <template slot-scope="scope">
             {{ formatDateTime(scope.row.opTime) }}
@@ -50,8 +106,22 @@
         </el-table-column>
         <el-table-column label="操作" width="180" fixed="right" align="center">
           <template slot-scope="scope">
-            <el-button size="mini" type="primary" icon="el-icon-edit" class="custom-edit-btn" @click="openDialog('edit', scope.row)">编辑</el-button>
-            <el-button size="mini" type="danger" icon="el-icon-delete" class="custom-delete-btn" @click="handleDelete(scope.row)">删除</el-button>
+            <el-button
+              size="mini"
+              type="primary"
+              icon="el-icon-edit"
+              class="custom-edit-btn"
+              @click="openDialog('edit', scope.row)"
+              >编辑</el-button
+            >
+            <el-button
+              size="mini"
+              type="danger"
+              icon="el-icon-delete"
+              class="custom-delete-btn"
+              @click="handleDelete(scope.row)"
+              >删除</el-button
+            >
           </template>
         </el-table-column>
       </el-table>
@@ -69,12 +139,26 @@
       />
     </div>
 
-    <el-dialog :title="dialogTitle" :visible.sync="dialogVisible" width="700px" :close-on-click-modal="false">
-      <el-form ref="form" :model="formData" :rules="formRules" label-width="120px" size="small">
+    <el-dialog
+      :title="dialogTitle"
+      :visible.sync="dialogVisible"
+      width="700px"
+      :close-on-click-modal="false"
+    >
+      <el-form
+        ref="form"
+        :model="formData"
+        :rules="formRules"
+        label-width="120px"
+        size="small"
+      >
         <el-row :gutter="20">
           <el-col :span="12">
             <el-form-item label="指标名称" prop="metricName">
-              <el-input v-model="formData.metricName" placeholder="请输入指标名称" />
+              <el-input
+                v-model="formData.metricName"
+                placeholder="请输入指标名称"
+              />
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -87,12 +171,18 @@
         <el-row :gutter="20">
           <el-col :span="12">
             <el-form-item label="源数据表" prop="srcTableName">
-              <el-input v-model="formData.srcTableName" placeholder="请输入表名" />
+              <el-input
+                v-model="formData.srcTableName"
+                placeholder="请输入表名"
+              />
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="源数据列" prop="srcColumnName">
-              <el-input v-model="formData.srcColumnName" placeholder="请输入列名" />
+              <el-input
+                v-model="formData.srcColumnName"
+                placeholder="请输入列名"
+              />
             </el-form-item>
           </el-col>
         </el-row>
@@ -100,14 +190,29 @@
         <el-row :gutter="20">
           <el-col :span="12">
             <el-form-item label="窗口类型" prop="windowType">
-              <el-select v-model="formData.windowType" placeholder="请选择窗口类型" style="width: 100%">
-                <el-option v-for="item in windowTypeOptions" :key="item.value" :label="item.label" :value="item.value" />
+              <el-select
+                v-model="formData.windowType"
+                placeholder="请选择窗口类型"
+                style="width: 100%"
+              >
+                <el-option
+                  v-for="item in windowTypeOptions"
+                  :key="item"
+                  :label="item"
+                  :value="item"
+                />
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="窗口长度" prop="windowLength">
-              <el-input-number v-model="formData.windowLength" :min="1" :max="1000" placeholder="请输入窗口长度" style="width: 100%" />
+              <el-input-number
+                v-model="formData.windowLength"
+                :min="1"
+                :max="1000"
+                placeholder="请输入窗口长度"
+                style="width: 100%"
+              />
             </el-form-item>
           </el-col>
         </el-row>
@@ -115,8 +220,17 @@
         <el-row :gutter="20">
           <el-col :span="12">
             <el-form-item label="聚合方法" prop="accumulateMethod">
-              <el-select v-model="formData.accumulateMethod" placeholder="请选择聚合方法" style="width: 100%">
-                <el-option v-for="item in accumulateMethodOptions" :key="item.value" :label="item.label" :value="item.value" />
+              <el-select
+                v-model="formData.accumulateMethod"
+                placeholder="请选择聚合方法"
+                style="width: 100%"
+              >
+                <el-option
+                  v-for="item in accumulateMethodOptions"
+                  :key="item"
+                  :label="item"
+                  :value="item"
+                />
               </el-select>
             </el-form-item>
           </el-col>
@@ -128,7 +242,12 @@
         </el-row>
 
         <el-form-item label="指标描述" prop="metricMemo">
-          <el-input v-model="formData.metricMemo" type="textarea" :rows="3" placeholder="请输入指标描述" />
+          <el-input
+            v-model="formData.metricMemo"
+            type="textarea"
+            :rows="3"
+            placeholder="请输入指标描述"
+          />
         </el-form-item>
       </el-form>
 
@@ -141,7 +260,7 @@
 </template>
 
 <script>
-import {mainPage, mainDelete, apiAdd, apiUpdate} from '@/api/common'
+import {mainPage, apiDelete, apiAdd, apiUpdate} from '@/api/common'
 import {windowTypes, accumulateMethods} from '@/api/maintenanceMap'
 
 export default {
@@ -174,12 +293,24 @@ export default {
         metricMemo: ''
       },
       formRules: {
-        metricName: [{required: true, message: '请输入指标名称', trigger: 'blur'}],
-        srcTableName: [{required: true, message: '请输入源数据表名', trigger: 'blur'}],
-        srcColumnName: [{required: true, message: '请输入源数据列名', trigger: 'blur'}],
-        windowType: [{required: true, message: '请选择窗口类型', trigger: 'change'}],
-        windowLength: [{required: true, message: '请输入窗口长度', trigger: 'blur'}],
-        accumulateMethod: [{required: true, message: '请选择聚合方法', trigger: 'change'}]
+        metricName: [
+          {required: true, message: '请输入指标名称', trigger: 'blur'}
+        ],
+        srcTableName: [
+          {required: true, message: '请输入源数据表名', trigger: 'blur'}
+        ],
+        srcColumnName: [
+          {required: true, message: '请输入源数据列名', trigger: 'blur'}
+        ],
+        windowType: [
+          {required: true, message: '请选择窗口类型', trigger: 'change'}
+        ],
+        windowLength: [
+          {required: true, message: '请输入窗口长度', trigger: 'blur'}
+        ],
+        accumulateMethod: [
+          {required: true, message: '请选择聚合方法', trigger: 'change'}
+        ]
       },
       windowTypeOptions: [],
       accumulateMethodOptions: []
@@ -196,8 +327,8 @@ export default {
           windowTypes(),
           accumulateMethods()
         ])
-        this.windowTypeOptions = windowRes.data || []
-        this.accumulateMethodOptions = accumulateRes.data || []
+        this.windowTypeOptions = windowRes || []
+        this.accumulateMethodOptions = accumulateRes || []
       } catch (e) {
         console.error('加载选项失败:', e)
       }
@@ -285,7 +416,7 @@ export default {
         if (!valid) return
 
         try {
-          const submitData = { ...this.formData }
+          const submitData = {...this.formData}
 
           if (this.formData.operationMetricId) {
             await apiUpdate('operationMetric', submitData)
@@ -312,7 +443,7 @@ export default {
       })
         .then(async () => {
           try {
-            await mainDelete('operationMetric', row.operationMetricId)
+            await apiDelete('operationMetric', row.operationMetricId)
             this.$message.success('删除成功')
             this.loadData()
           } catch (e) {
@@ -345,7 +476,7 @@ export default {
   height: 100%;
   display: flex;
   flex-direction: column;
-  padding: 16px;
+  padding: 10px;
   box-sizing: border-box;
   background-color: transparent;
 }

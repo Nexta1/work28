@@ -3,51 +3,126 @@
     <div class="filter-control-bar">
       <el-form :inline="true" :model="queryForm" size="mini">
         <el-form-item label="标准名称">
-          <el-input v-model="queryForm.standardName" placeholder="请输入标准名称" clearable style="width: 180px" />
+          <el-input
+            v-model="queryForm.standardName"
+            placeholder="请输入标准名称"
+            clearable
+            style="width: 180px"
+          />
         </el-form-item>
 
         <el-form-item label="质量状态">
-          <el-select v-model="queryForm.qualityState" placeholder="请选择" clearable style="width: 120px">
-            <el-option v-for="item in qualityStateOptions" :key="item.value" :label="item.label" :value="item.value" />
+          <el-select
+            v-model="queryForm.qualityState"
+            placeholder="请选择"
+            clearable
+            style="width: 120px"
+          >
+            <el-option
+              v-for="item in qualityStateOptions"
+              :key="item"
+              :label="item"
+              :value="item"
+            />
           </el-select>
         </el-form-item>
 
         <el-form-item>
-          <el-button type="primary" icon="el-icon-search" @click="handleSearch">检索</el-button>
+          <el-button type="primary" icon="el-icon-search" @click="handleSearch"
+            >检索</el-button
+          >
           <el-button icon="el-icon-refresh" @click="resetQuery">重置</el-button>
-          <el-button type="success" icon="el-icon-plus" @click="openDialog('add')">新增标准</el-button>
+          <el-button
+            type="success"
+            icon="el-icon-plus"
+            @click="openDialog('add')"
+            >新增标准</el-button
+          >
         </el-form-item>
       </el-form>
     </div>
 
     <div class="table-content-wrapper" v-loading="loading">
       <el-table :data="tableData" style="width: 100%" height="100%">
-        <el-table-column prop="operationStandardId" label="标准ID" width="100" fixed align="center" show-overflow-tooltip />
-        <el-table-column prop="standardName" label="标准名称" width="180" align="center" show-overflow-tooltip />
-        <el-table-column prop="metricName" label="指标名称" width="150" align="center" show-overflow-tooltip />
-        <el-table-column prop="metricUnit" label="单位" width="80" align="center" />
+        <el-table-column
+          prop="operationStandardId"
+          label="标准ID"
+          width="100"
+          fixed
+          align="center"
+          show-overflow-tooltip
+        />
+        <el-table-column
+          prop="standardName"
+          label="标准名称"
+          width="180"
+          align="center"
+          show-overflow-tooltip
+        />
+        <el-table-column
+          prop="metricName"
+          label="指标名称"
+          width="150"
+          align="center"
+          show-overflow-tooltip
+        />
+        <el-table-column
+          prop="metricUnit"
+          label="单位"
+          width="80"
+          align="center"
+        />
         <el-table-column label="阈值范围" width="180" align="center">
           <template slot-scope="scope">
             {{ formatThreshold(scope.row.lowerLimit, scope.row.upperLimit) }}
           </template>
         </el-table-column>
-        <el-table-column prop="intervalType" label="区间类型" width="120" align="center" />
+        <el-table-column
+          prop="intervalType"
+          label="区间类型"
+          width="120"
+          align="center"
+        />
         <el-table-column label="质量状态" width="100" align="center">
           <template slot-scope="scope">
-            <span :class="['custom-state-badge', scope.row.qualityState === '1' ? 'state-normal' : 'state-abnormal']">
-              {{ scope.row.qualityState === '1' ? '正常' : '异常' }}
+            <span
+              :class="[
+                'custom-state-badge',
+                scope.row.qualityState === '绿色'
+                  ? 'state-normal'
+                  : 'state-abnormal'
+              ]"
+            >
+              {{ scope.row.qualityState === '绿色' ? '正常' : '异常' }}
             </span>
           </template>
         </el-table-column>
         <el-table-column label="是否告警" width="100" align="center">
           <template slot-scope="scope">
-            <span :class="['custom-warn-badge', scope.row.isWarn === '1' ? 'warn-yes' : 'warn-no']">
-              {{ scope.row.isWarn === '1' ? '是' : '否' }}
+            <span
+              :class="[
+                'custom-warn-badge',
+                scope.row.isWarn === '是' ? 'warn-yes' : 'warn-no'
+              ]"
+            >
+              {{ scope.row.isWarn === '是' ? '是' : '否' }}
             </span>
           </template>
         </el-table-column>
-        <el-table-column prop="faultName" label="故障类型" width="150" align="center" show-overflow-tooltip />
-        <el-table-column prop="standardMemo" label="标准描述" min-width="200" align="center" show-overflow-tooltip />
+        <el-table-column
+          prop="faultName"
+          label="故障类型"
+          width="150"
+          align="center"
+          show-overflow-tooltip
+        />
+        <el-table-column
+          prop="standardMemo"
+          label="标准描述"
+          min-width="200"
+          align="center"
+          show-overflow-tooltip
+        />
         <el-table-column label="操作时间" width="165" align="center">
           <template slot-scope="scope">
             {{ formatDateTime(scope.row.opTime) }}
@@ -55,8 +130,22 @@
         </el-table-column>
         <el-table-column label="操作" width="180" fixed="right" align="center">
           <template slot-scope="scope">
-            <el-button size="mini" type="primary" icon="el-icon-edit" class="custom-edit-btn" @click="openDialog('edit', scope.row)">编辑</el-button>
-            <el-button size="mini" type="danger" icon="el-icon-delete" class="custom-delete-btn" @click="handleDelete(scope.row)">删除</el-button>
+            <el-button
+              size="mini"
+              type="primary"
+              icon="el-icon-edit"
+              class="custom-edit-btn"
+              @click="openDialog('edit', scope.row)"
+              >编辑</el-button
+            >
+            <el-button
+              size="mini"
+              type="danger"
+              icon="el-icon-delete"
+              class="custom-delete-btn"
+              @click="handleDelete(scope.row)"
+              >删除</el-button
+            >
           </template>
         </el-table-column>
       </el-table>
@@ -74,18 +163,42 @@
       />
     </div>
 
-    <el-dialog :title="dialogTitle" :visible.sync="dialogVisible" width="700px" :close-on-click-modal="false">
-      <el-form ref="form" :model="formData" :rules="formRules" label-width="120px" size="small">
+    <el-dialog
+      :title="dialogTitle"
+      :visible.sync="dialogVisible"
+      width="700px"
+      :close-on-click-modal="false"
+    >
+      <el-form
+        ref="form"
+        :model="formData"
+        :rules="formRules"
+        label-width="120px"
+        size="small"
+      >
         <el-row :gutter="20">
           <el-col :span="12">
             <el-form-item label="标准名称" prop="standardName">
-              <el-input v-model="formData.standardName" placeholder="请输入标准名称" />
+              <el-input
+                v-model="formData.standardName"
+                placeholder="请输入标准名称"
+              />
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="关联指标" prop="operationMetricId">
-              <el-select v-model="formData.operationMetricId" placeholder="请选择指标" filterable style="width: 100%">
-                <el-option v-for="item in metricOptions" :key="item.operationMetricId" :label="item.metricName" :value="item.operationMetricId" />
+              <el-select
+                v-model="formData.operationMetricId"
+                placeholder="请选择指标"
+                filterable
+                style="width: 100%"
+              >
+                <el-option
+                  v-for="item in metricOptions"
+                  :key="item.operationMetricId"
+                  :label="item.metricName"
+                  :value="item.operationMetricId"
+                />
               </el-select>
             </el-form-item>
           </el-col>
@@ -94,12 +207,22 @@
         <el-row :gutter="20">
           <el-col :span="12">
             <el-form-item label="下限值" prop="lowerLimit">
-              <el-input-number v-model="formData.lowerLimit" :precision="2" placeholder="可选" style="width: 100%" />
+              <el-input-number
+                v-model="formData.lowerLimit"
+                :precision="2"
+                placeholder="可选"
+                style="width: 100%"
+              />
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="上限值" prop="upperLimit">
-              <el-input-number v-model="formData.upperLimit" :precision="2" placeholder="可选" style="width: 100%" />
+              <el-input-number
+                v-model="formData.upperLimit"
+                :precision="2"
+                placeholder="可选"
+                style="width: 100%"
+              />
             </el-form-item>
           </el-col>
         </el-row>
@@ -107,16 +230,29 @@
         <el-row :gutter="20">
           <el-col :span="12">
             <el-form-item label="区间类型" prop="intervalType">
-              <el-select v-model="formData.intervalType" placeholder="请选择区间类型" style="width: 100%">
-                <el-option v-for="item in intervalTypeOptions" :key="item.value" :label="item.label" :value="item.value" />
+              <el-select
+                v-model="formData.intervalType"
+                placeholder="请选择区间类型"
+                style="width: 100%"
+              >
+                <el-option
+                  v-for="item in intervalTypeOptions"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                />
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="质量状态" prop="qualityState">
               <el-radio-group v-model="formData.qualityState">
-                <el-radio label="1">正常</el-radio>
-                <el-radio label="0">异常</el-radio>
+                <el-radio
+                  :label="i"
+                  v-for="i in qualityStateOptions"
+                  :key="i"
+                  >{{ i }}</el-radio
+                >
               </el-radio-group>
             </el-form-item>
           </el-col>
@@ -126,14 +262,19 @@
           <el-col :span="12">
             <el-form-item label="是否告警" prop="isWarn">
               <el-radio-group v-model="formData.isWarn">
-                <el-radio label="1">是</el-radio>
-                <el-radio label="0">否</el-radio>
+                <el-radio label="是">是</el-radio>
+                <el-radio label="否">否</el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="告警级别" prop="warnLevel">
-              <el-select v-model="formData.warnLevel" placeholder="请选择告警级别" :disabled="formData.isWarn !== '1'" style="width: 100%">
+              <el-select
+                v-model="formData.warnLevel"
+                placeholder="请选择告警级别"
+                :disabled="formData.isWarn !== '1'"
+                style="width: 100%"
+              >
                 <el-option label="一般" :value="1" />
                 <el-option label="中度" :value="2" />
                 <el-option label="严重" :value="3" />
@@ -146,7 +287,13 @@
           <el-cascader
             v-model="formData.faultTypeId"
             :options="faultTypeOptions"
-            :props="{ value: 'faultTypeId', label: 'faultName', children: 'children', checkStrictly: true }"
+            :props="{
+              emitPath: false,
+              value: 'faultTypeId',
+              label: 'faultName',
+              children: 'children',
+              checkStrictly: true
+            }"
             placeholder="请选择故障类型"
             clearable
             filterable
@@ -155,7 +302,12 @@
         </el-form-item>
 
         <el-form-item label="标准描述" prop="standardMemo">
-          <el-input v-model="formData.standardMemo" type="textarea" :rows="3" placeholder="请输入标准描述" />
+          <el-input
+            v-model="formData.standardMemo"
+            type="textarea"
+            :rows="3"
+            placeholder="请输入标准描述"
+          />
         </el-form-item>
       </el-form>
 
@@ -168,21 +320,21 @@
 </template>
 
 <script>
-import {mainPage, mainDelete, apiAdd, apiUpdate} from '@/api/common'
+import {mainPage, apiDelete, apiAdd, apiUpdate} from '@/api/common'
 import {intervalTypes, qualityStates} from '@/api/maintenanceMap'
 
 export default {
   name: 'OperationStandard',
   props: {
-    faultTypeOptions: { type: Array, default: () => [] },
-    metricOptions: { type: Array, default: () => [] }
+    faultTypeOptions: {type: Array, default: () => []},
+    metricOptions: {type: Array, default: () => []}
   },
   data() {
     return {
       loading: false,
-      queryForm: { standardName: '', qualityState: '' },
+      queryForm: {standardName: '', qualityState: ''},
       tableData: [],
-      page: { pageNum: 1, pageSize: 20, total: 0 },
+      page: {pageNum: 1, pageSize: 20, total: 0},
       dialogVisible: false,
       dialogTitle: '新增标准',
       formData: {
@@ -199,9 +351,15 @@ export default {
         standardMemo: ''
       },
       formRules: {
-        standardName: [{required: true, message: '请输入标准名称', trigger: 'blur'}],
-        operationMetricId: [{required: true, message: '请选择关联指标', trigger: 'change'}],
-        intervalType: [{required: true, message: '请选择区间类型', trigger: 'change'}]
+        standardName: [
+          {required: true, message: '请输入标准名称', trigger: 'blur'}
+        ],
+        operationMetricId: [
+          {required: true, message: '请选择关联指标', trigger: 'change'}
+        ],
+        intervalType: [
+          {required: true, message: '请选择区间类型', trigger: 'change'}
+        ]
       },
       intervalTypeOptions: [],
       qualityStateOptions: []
@@ -214,9 +372,12 @@ export default {
   methods: {
     async loadOptions() {
       try {
-        const [intervalRes, qualityRes] = await Promise.all([intervalTypes(), qualityStates()])
-        this.intervalTypeOptions = intervalRes.data || []
-        this.qualityStateOptions = qualityRes.data || []
+        const [intervalRes, qualityRes] = await Promise.all([
+          intervalTypes(),
+          qualityStates()
+        ])
+        this.intervalTypeOptions = intervalRes || []
+        this.qualityStateOptions = qualityRes || []
       } catch (e) {
         console.error('加载选项失败:', e)
       }
@@ -225,7 +386,11 @@ export default {
     async loadData() {
       this.loading = true
       try {
-        const payload = { pageNum: this.page.pageNum, pageSize: this.page.pageSize, ...this.queryForm }
+        const payload = {
+          pageNum: this.page.pageNum,
+          pageSize: this.page.pageSize,
+          ...this.queryForm
+        }
         const res = await mainPage('operationStandard', payload)
         this.tableData = res.data || res.list || []
         this.page.total = res.recordsTotal || res.total || 0
@@ -237,10 +402,22 @@ export default {
       }
     },
 
-    handleSearch() { this.page.pageNum = 1; this.loadData() },
-    resetQuery() { this.queryForm = { standardName: '', qualityState: '' }; this.handleSearch() },
-    handleSizeChange(val) { this.page.pageSize = val; this.loadData() },
-    handleCurrentChange(val) { this.page.pageNum = val; this.loadData() },
+    handleSearch() {
+      this.page.pageNum = 1
+      this.loadData()
+    },
+    resetQuery() {
+      this.queryForm = {standardName: '', qualityState: ''}
+      this.handleSearch()
+    },
+    handleSizeChange(val) {
+      this.page.pageSize = val
+      this.loadData()
+    },
+    handleCurrentChange(val) {
+      this.page.pageNum = val
+      this.loadData()
+    },
 
     openDialog(type, row = null) {
       this.dialogTitle = type === 'add' ? '新增标准' : '编辑标准'
@@ -262,13 +439,23 @@ export default {
         }
       } else {
         this.formData = {
-          operationStandardId: null, operationMetricId: null, standardName: '',
-          upperLimit: null, lowerLimit: null, intervalType: '', qualityState: '1',
-          isWarn: '0', warnLevel: null, faultTypeId: null, standardMemo: ''
+          operationStandardId: null,
+          operationMetricId: null,
+          standardName: '',
+          upperLimit: null,
+          lowerLimit: null,
+          intervalType: '',
+          qualityState: '1',
+          isWarn: '0',
+          warnLevel: null,
+          faultTypeId: null,
+          standardMemo: ''
         }
       }
       this.dialogVisible = true
-      this.$nextTick(() => { this.$refs.form && this.$refs.form.clearValidate() })
+      this.$nextTick(() => {
+        this.$refs.form && this.$refs.form.clearValidate()
+      })
     },
 
     handleSubmit() {
@@ -277,7 +464,9 @@ export default {
         try {
           const submitData = {
             ...this.formData,
-            faultTypeId: Array.isArray(this.formData.faultTypeId) ? this.formData.faultTypeId[this.formData.faultTypeId.length - 1] : this.formData.faultTypeId
+            faultTypeId: Array.isArray(this.formData.faultTypeId)
+              ? this.formData.faultTypeId[this.formData.faultTypeId.length - 1]
+              : this.formData.faultTypeId
           }
           if (this.formData.operationStandardId) {
             await apiUpdate('operationStandard', submitData)
@@ -296,10 +485,14 @@ export default {
     },
 
     handleDelete(row) {
-      this.$confirm(`确定要删除标准 [${row.standardName}] 吗？`, '提示', { confirmButtonText: '确定', cancelButtonText: '取消', type: 'warning' })
+      this.$confirm(`确定要删除标准 [${row.standardName}] 吗？`, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
         .then(async () => {
           try {
-            await mainDelete('operationStandard', row.operationStandardId)
+            await apiDelete('operationStandard', row.operationStandardId)
             this.$message.success('删除成功')
             this.loadData()
           } catch (e) {
@@ -320,26 +513,83 @@ export default {
     formatDateTime(dateTime) {
       if (!dateTime) return '--'
       const date = new Date(dateTime)
-      return `${date.toLocaleDateString()} ${date.toLocaleTimeString('zh-CN', { hour12: false })}`
+      return `${date.toLocaleDateString()} ${date.toLocaleTimeString('zh-CN', {hour12: false})}`
     }
   }
 }
 </script>
 
 <style scoped>
-.operation-standard-container { width: 100%; height: 100%; display: flex; flex-direction: column; padding: 16px; box-sizing: border-box; background-color: transparent; }
-.filter-control-bar { margin-bottom: 12px; }
-.table-content-wrapper { flex: 1; min-height: 0; }
-.pagination-container { margin-top: 12px; display: flex; justify-content: flex-end; }
+.operation-standard-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  box-sizing: border-box;
+  background-color: transparent;
+}
+.filter-control-bar {
+  margin-bottom: 12px;
+}
+.table-content-wrapper {
+  flex: 1;
+  min-height: 0;
+}
+.pagination-container {
+  margin-top: 12px;
+  display: flex;
+  justify-content: flex-end;
+}
 
-.custom-state-badge { display: inline-block; padding: 2px 10px; border-radius: 2px; font-size: 11px; font-weight: 500; font-family: monospace, 'Microsoft YaHei'; border: 1px solid transparent; }
-.state-normal { background-color: rgba(16, 185, 129, 0.12); color: var(--color-success); border-color: rgba(16, 185, 129, 0.6); }
-.state-abnormal { background-color: rgba(244, 63, 94, 0.15); color: var(--color-danger); border-color: rgba(244, 63, 94, 0.5); }
+.custom-state-badge {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 2px;
+  font-size: 11px;
+  font-weight: 500;
+  font-family: monospace, 'Microsoft YaHei';
+  border: 1px solid transparent;
+}
+.state-normal {
+  background-color: rgba(16, 185, 129, 0.12);
+  color: var(--color-success);
+  border-color: rgba(16, 185, 129, 0.6);
+}
+.state-abnormal {
+  background-color: rgba(244, 63, 94, 0.15);
+  color: var(--color-danger);
+  border-color: rgba(244, 63, 94, 0.5);
+}
 
-.custom-warn-badge { display: inline-block; padding: 2px 10px; border-radius: 2px; font-size: 11px; font-weight: 500; font-family: monospace, 'Microsoft YaHei'; border: 1px solid transparent; }
-.warn-yes { background-color: rgba(245, 158, 11, 0.12); color: var(--color-warning); border-color: rgba(245, 158, 11, 0.6); }
-.warn-no { background-color: rgba(51, 65, 85, 0.2); color: #64748b; border-color: rgba(51, 65, 85, 0.4); }
+.custom-warn-badge {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 2px;
+  font-size: 11px;
+  font-weight: 500;
+  font-family: monospace, 'Microsoft YaHei';
+  border: 1px solid transparent;
+}
+.warn-yes {
+  background-color: rgba(245, 158, 11, 0.12);
+  color: var(--color-warning);
+  border-color: rgba(245, 158, 11, 0.6);
+}
+.warn-no {
+  background-color: rgba(51, 65, 85, 0.2);
+  color: #64748b;
+  border-color: rgba(51, 65, 85, 0.4);
+}
 
-.custom-edit-btn { padding: 5px 12px; font-size: 11px; border-radius: 3px; }
-.custom-delete-btn { padding: 5px 12px; font-size: 11px; border-radius: 3px; }
+.custom-edit-btn {
+  padding: 5px 12px;
+  font-size: 11px;
+  border-radius: 3px;
+}
+.custom-delete-btn {
+  padding: 5px 12px;
+  font-size: 11px;
+  border-radius: 3px;
+}
 </style>

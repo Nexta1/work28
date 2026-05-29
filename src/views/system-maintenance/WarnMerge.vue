@@ -142,6 +142,7 @@
             v-model="formData.srcFaultTypeIds"
             :options="faultTypeOptions"
             :props="{
+              emitPath: false,
               value: 'faultTypeId',
               label: 'faultName',
               children: 'children',
@@ -160,6 +161,7 @@
             v-model="formData.dstFaultTypeId"
             :options="faultTypeOptions"
             :props="{
+              emitPath: false,
               value: 'faultTypeId',
               label: 'faultName',
               children: 'children',
@@ -201,7 +203,7 @@
 </template>
 
 <script>
-import {mainPage, mainDelete, apiAdd, apiUpdate} from '@/api/common'
+import {mainPage, apiDelete, apiAdd, apiUpdate} from '@/api/common'
 
 export default {
   name: 'WarnMerge',
@@ -305,7 +307,7 @@ export default {
 
         let dstFaultTypeId = null
         if (row.dstFaultTypeId) {
-          dstFaultTypeId = [row.dstFaultTypeId]
+          dstFaultTypeId = row.dstFaultTypeId
         }
 
         this.formData = {
@@ -343,7 +345,9 @@ export default {
               .map(path => (Array.isArray(path) ? path[path.length - 1] : path))
               .join(','),
             dstFaultTypeId: Array.isArray(this.formData.dstFaultTypeId)
-              ? this.formData.dstFaultTypeId[this.formData.dstFaultTypeId.length - 1]
+              ? this.formData.dstFaultTypeId[
+                  this.formData.dstFaultTypeId.length - 1
+                ]
               : this.formData.dstFaultTypeId
           }
 
@@ -372,7 +376,7 @@ export default {
       })
         .then(async () => {
           try {
-            await mainDelete('warnMerge', row.warnMergeId)
+            await apiDelete('warnMerge', row.warnMergeId)
             this.$message.success('删除成功')
             this.loadData()
           } catch (e) {
@@ -400,7 +404,7 @@ export default {
   height: 100%;
   display: flex;
   flex-direction: column;
-  padding: 16px;
+  padding: 10px;
   box-sizing: border-box;
   background-color: transparent;
 }

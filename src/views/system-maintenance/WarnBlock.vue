@@ -19,8 +19,8 @@
             clearable
             style="width: 120px"
           >
-            <el-option label="启用" value="1" />
-            <el-option label="禁用" value="0" />
+            <el-option label="启用" value="启用" />
+            <el-option label="停用" value="停用" />
           </el-select>
         </el-form-item>
 
@@ -86,10 +86,12 @@
             <span
               :class="[
                 'custom-state-badge',
-                scope.row.ruleState === '1' ? 'state-enabled' : 'state-disabled'
+                scope.row.ruleState === '启用'
+                  ? 'state-enabled'
+                  : 'state-disabled'
               ]"
             >
-              {{ scope.row.ruleState === '1' ? '启用' : '禁用' }}
+              {{ scope.row.ruleState === '启用' ? '启用' : '停用' }}
             </span>
           </template>
         </el-table-column>
@@ -159,6 +161,7 @@
             v-model="formData.srcFaultTypeIds"
             :options="faultTypeOptions"
             :props="{
+              emitPath: false,
               value: 'faultTypeId',
               label: 'faultName',
               children: 'children',
@@ -184,8 +187,8 @@
 
         <el-form-item label="规则状态" prop="ruleState">
           <el-radio-group v-model="formData.ruleState">
-            <el-radio label="1">启用</el-radio>
-            <el-radio label="0">禁用</el-radio>
+            <el-radio label="启用">启用</el-radio>
+            <el-radio label="停用">停用</el-radio>
           </el-radio-group>
         </el-form-item>
 
@@ -208,7 +211,7 @@
 </template>
 
 <script>
-import {mainPage, mainDelete, apiAdd, apiUpdate} from '@/api/common'
+import {mainPage, apiDelete, apiAdd, apiUpdate} from '@/api/common'
 
 export default {
   name: 'WarnBlock',
@@ -370,7 +373,7 @@ export default {
       })
         .then(async () => {
           try {
-            await mainDelete('warnBlock', row.warnBlockId)
+            await apiDelete('warnBlock', row.warnBlockId)
             this.$message.success('删除成功')
             this.loadData()
           } catch (e) {
@@ -398,7 +401,7 @@ export default {
   height: 100%;
   display: flex;
   flex-direction: column;
-  padding: 16px;
+  padding: 10px;
   box-sizing: border-box;
   background-color: transparent;
 }

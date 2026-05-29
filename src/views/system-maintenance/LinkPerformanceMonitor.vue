@@ -152,11 +152,11 @@
 
           <div
             v-for="sb in filteredDevices"
-            :key="sb.SBXXID"
+            :key="sb.SBID"
             class="brief-glass-card"
             :class="[
               getDeviceStatusClass(sb.JKZT, sb.CPU),
-              {'is-active': activeDeviceId === sb.SBXXID}
+              {'is-active': activeDeviceId === sb.SBID}
             ]"
             @click="selectDevice(sb)"
           >
@@ -187,7 +187,7 @@
             </div>
 
             <div class="card-footer-info">
-              <span>🆔 ID: #{{ sb.SBXXID }}</span>
+              <span>🆔 ID: #{{ sb.SBID }}</span>
               <span :class="sb.TEMP > 75 ? 'text-red' : 'text-cyan'"
                 >🌡️ {{ sb.TEMP || 0 }}℃</span
               >
@@ -505,7 +505,7 @@ export default {
       return this.deviceList.filter(
         d =>
           (d.SBXHMC && d.SBXHMC.toLowerCase().includes(txt)) ||
-          (d.SBXXID && String(d.SBXXID).includes(txt))
+          (d.SBID && String(d.SBID).includes(txt))
       )
     },
     // 前端根据当前轮询数据集动态统计全局网络及硬件指标
@@ -612,7 +612,7 @@ export default {
       }
     },
     selectDevice(sb) {
-      this.activeDeviceId = sb.SBXXID
+      this.activeDeviceId = sb.SBID
       this.chartHistory = {timeline: [], cpu: [], ram: [], temp: []}
       this.pushChartDataPoint(sb.CPU, sb.RAM, sb.TEMP)
     },
@@ -623,9 +623,7 @@ export default {
         this.fetchWlztPage()
       ])
       if (this.activeDeviceId) {
-        const curSb = this.deviceList.find(
-          d => d.SBXXID === this.activeDeviceId
-        )
+        const curSb = this.deviceList.find(d => d.SBID === this.activeDeviceId)
         if (curSb) {
           this.pushChartDataPoint(curSb.CPU, curSb.RAM, curSb.TEMP)
         }
