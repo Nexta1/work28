@@ -5,6 +5,8 @@ import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 Vue.config.productionTip = false
 import '@/assets/style.scss'
+import '@/assets/icons.js'
+console.log(window.Iconify)
 import request from './utils/request'
 window.addEventListener('error', e => {
   if (

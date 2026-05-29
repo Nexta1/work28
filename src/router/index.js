@@ -2,7 +2,6 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 
 Vue.use(VueRouter)
-
 const routes = [
   {
     path: '/',
@@ -18,7 +17,7 @@ const routes = [
       title: '任务需求分解',
       subsystem: '体系运营管理',
       category: '任务需求分解',
-      icon: '📋',
+      icon: 'lucide:clipboard-list', // 任务列表
       isModule: true,
       requiresAuth: true
     }
@@ -31,24 +30,11 @@ const routes = [
       title: '作战筹划信息获取',
       subsystem: '体系运营管理',
       category: '任务需求分解',
-      icon: '📍',
+      icon: 'lucide:map-pin', // 地图定位点（作战筹划）
       parentModule: '任务需求分解',
       requiresAuth: true
     }
   },
-  // {
-  //   path: '/datalink-requirement-generation',
-  //   name: 'DatalinkRequirementGeneration',
-  //   component: () => import('@/views/system-operations/TaskDecomposition.vue'),
-  //   meta: {
-  //     title: '作战筹划信息获取',
-  //     subsystem: '体系运营管理',
-  //     category: '任务需求分解',
-  //     icon: '🔗',
-  //     parentModule: '任务需求分解',
-  //     requiresAuth: true
-  //   }
-  // },
 
   // 体系运营管理 - 运控策略制定
   {
@@ -59,7 +45,7 @@ const routes = [
       title: '运控策略制定',
       subsystem: '体系运营管理',
       category: '运控策略制定',
-      icon: '⚙️',
+      icon: 'lucide:sliders', // 控制、策略调节
       isModule: true,
       requiresAuth: true
     }
@@ -72,7 +58,7 @@ const routes = [
       title: '任务群组配置策略生成',
       subsystem: '体系运营管理',
       category: '运控策略制定',
-      icon: '👥',
+      icon: 'lucide:users-round', // 群组、用户群
       parentModule: '运控策略制定',
       requiresAuth: true
     }
@@ -85,7 +71,7 @@ const routes = [
       title: '分级体系运控策略生成',
       subsystem: '体系运营管理',
       category: '运控策略制定',
-      icon: '🏢',
+      icon: 'lucide:network', // 分级、拓扑层级
       parentModule: '运控策略制定',
       requiresAuth: true
     }
@@ -98,7 +84,7 @@ const routes = [
       title: '数据链保障方案构建',
       subsystem: '体系运营管理',
       category: '运控策略制定',
-      icon: '🔐',
+      icon: 'lucide:shield-check', // 保障、安全防御
       parentModule: '运控策略制定',
       requiresAuth: true
     }
@@ -111,7 +97,7 @@ const routes = [
       title: '平行系统推演',
       subsystem: '体系运营管理',
       category: '运控策略制定',
-      icon: '🔄',
+      icon: 'lucide:refresh-cw', // 平行、推演、循环
       parentModule: '运控策略制定',
       requiresAuth: true
     }
@@ -124,24 +110,11 @@ const routes = [
       title: '数据链故障诊断和处理策略',
       subsystem: '体系运营管理',
       category: '运控策略制定',
-      icon: '🔧',
+      icon: 'lucide:wrench', // 诊断、工具
       parentModule: '运控策略制定',
       requiresAuth: true
     }
   },
-  // {
-  //   path: '/control-strategy-library',
-  //   name: 'ControlStrategyLibrary',
-  //   component: () => import('@/views/system-operations/ControlStrategy.vue'),
-  //   meta: {
-  //     title: '运控策略库构建',
-  //     subsystem: '体系运营管理',
-  //     category: '运控策略制定',
-  //     icon: '📚',
-  //     parentModule: '运控策略制定',
-  //     requiresAuth: true
-  //   }
-  // },
 
   // 体系运营管理 - 综合调度管理
   {
@@ -153,7 +126,7 @@ const routes = [
       title: '综合调度管理',
       subsystem: '体系运营管理',
       category: '综合调度管理',
-      icon: '🎯',
+      icon: 'lucide:gantt-chart', // 调度、甘特图、规划时间轴
       isModule: true,
       requiresAuth: true
     }
@@ -168,7 +141,7 @@ const routes = [
       title: '业务开通运行',
       subsystem: '体系运营管理',
       category: '业务开通运行',
-      icon: '🚀',
+      icon: 'lucide:play-circle', // 开通、运行状态
       isModule: true,
       requiresAuth: true
     }
@@ -181,7 +154,7 @@ const routes = [
       title: '运控策略优选与生成',
       subsystem: '体系运营管理',
       category: '业务开通运行',
-      icon: '✨',
+      icon: 'lucide:sparkles', // 优选、智能化生成
       parentModule: '业务开通运行',
       requiresAuth: true
     }
@@ -195,7 +168,7 @@ const routes = [
       title: '服务模板和信息维护',
       subsystem: '体系运营管理',
       category: '业务开通运行',
-      icon: '📤',
+      icon: 'lucide:layout-template', // 服务模板
       parentModule: '业务开通运行',
       requiresAuth: true
     }
@@ -210,7 +183,7 @@ const routes = [
       title: '运控态势监视',
       subsystem: '体系运营管理',
       category: '运控态势监视',
-      icon: '👁️',
+      icon: 'lucide:eye', // 态势监视
       isModule: true,
       requiresAuth: true
     }
@@ -223,7 +196,7 @@ const routes = [
       title: '统计数据监视',
       subsystem: '体系运营管理',
       category: '运控态势监视',
-      icon: '📊',
+      icon: 'lucide:bar-chart-3', // 统计图表
       parentModule: '运控态势监视',
       requiresAuth: true
     }
@@ -236,7 +209,7 @@ const routes = [
       title: '杀伤链运行态势监视',
       subsystem: '体系运营管理',
       category: '运控态势监视',
-      icon: '⛓️',
+      icon: 'mdi:sword-cross', // 杀伤链、对抗（采用 MDI 军工感更足）
       parentModule: '运控态势监视',
       requiresAuth: true
     }
@@ -249,12 +222,11 @@ const routes = [
       title: '资源装备状态监视',
       subsystem: '体系运营管理',
       category: '运控态势监视',
-      icon: '🎖️',
+      icon: 'lucide:milestone', // 资源装备、节点
       parentModule: '运控态势监视',
       requiresAuth: true
     }
   },
-
   {
     path: '/network-status-monitoring',
     name: 'NetworkStatusMonitoring',
@@ -263,7 +235,7 @@ const routes = [
       title: '网络状态信息监视',
       subsystem: '体系运营管理',
       category: '运控态势监视',
-      icon: '🌐',
+      icon: 'lucide:globe', // 网络状态
       parentModule: '运控态势监视',
       requiresAuth: true
     }
@@ -278,7 +250,7 @@ const routes = [
       title: '告警监视处理',
       subsystem: '系统运维',
       category: '告警监视处理',
-      icon: '🚨',
+      icon: 'lucide:bell-ring', // 告警
       isModule: true,
       requiresAuth: true
     }
@@ -289,10 +261,10 @@ const routes = [
     component: () =>
       import('@/views/system-maintenance/LinkPerformanceMonitor.vue'),
     meta: {
-      title: '性能监控处理',
+      title: '性能监视处理',
       subsystem: '系统运维',
-      category: '性能监控处理',
-      icon: '⚡',
+      category: '性能监视处理',
+      icon: 'lucide:zap', // 性能、闪电
       isModule: true,
       requiresAuth: true
     }
@@ -303,10 +275,10 @@ const routes = [
     component: () =>
       import('@/views/system-maintenance/BusinessQualityMonitor.vue'),
     meta: {
-      title: '业务质量监控',
+      title: '业务质量监控处理',
       subsystem: '系统运维',
-      category: '业务质量监控',
-      icon: '📈',
+      category: '业务质量监控处理',
+      icon: 'lucide:activity', // 质量监控、业务波形
       isModule: true,
       requiresAuth: true
     }
@@ -320,7 +292,7 @@ const routes = [
       title: '装备维护测试',
       subsystem: '系统运维',
       category: '装备维护测试',
-      icon: '🔧',
+      icon: 'lucide:binary', // 维护测试、底层调测
       isModule: true,
       requiresAuth: true
     }
@@ -333,7 +305,7 @@ const routes = [
       title: '告警信息',
       subsystem: '系统运维',
       category: '告警监视处理',
-      icon: '💻',
+      icon: 'lucide:alert-triangle', // 告警详情危险符号
       parentModule: '告警监视处理',
       requiresAuth: true
     }
@@ -344,11 +316,11 @@ const routes = [
     component: () =>
       import('@/views/system-maintenance/LinkPerformanceMonitor.vue'),
     meta: {
-      title: '链路性能监控',
+      title: '性能监视',
       subsystem: '系统运维',
-      category: '性能监控处理',
-      icon: '📊',
-      parentModule: '性能监控处理',
+      category: '性能监视处理',
+      icon: 'lucide:trending-up', // 链路性能曲线
+      parentModule: '性能监视处理',
       requiresAuth: true
     }
   },
@@ -360,9 +332,9 @@ const routes = [
     meta: {
       title: '业务质量详情',
       subsystem: '系统运维',
-      category: '业务质量监控',
-      icon: '📑',
-      parentModule: '业务质量监控',
+      category: '业务质量监控处理',
+      icon: 'lucide:file-text', // 质量详情报告
+      parentModule: '业务质量监控处理',
       requiresAuth: true
     }
   },
@@ -375,7 +347,7 @@ const routes = [
       title: '测试报告',
       subsystem: '系统运维',
       category: '装备维护测试',
-      icon: '📋',
+      icon: 'lucide:file-check', // 测试通过报告
       parentModule: '装备维护测试',
       requiresAuth: true
     }
@@ -389,7 +361,7 @@ const routes = [
       title: '维护日志',
       subsystem: '系统运维',
       category: '装备维护测试',
-      icon: '📝',
+      icon: 'lucide:scroll', // 日志卷轴
       parentModule: '装备维护测试',
       requiresAuth: true
     }
@@ -401,7 +373,7 @@ const routes = [
       title: '数据采集',
       subsystem: '资源和数据管理',
       category: '数据采集',
-      icon: '💾',
+      icon: 'lucide:database-backup', // 数据采集流入
       isModule: true,
       requiresAuth: true
     }
@@ -415,7 +387,7 @@ const routes = [
       title: '资源管理',
       subsystem: '资源和数据管理',
       category: '资源管理',
-      icon: '📦',
+      icon: 'lucide:boxes', // 资源箱、包
       isModule: true,
       requiresAuth: true
     }
@@ -429,7 +401,7 @@ const routes = [
       title: '信息资源管理',
       subsystem: '资源和数据管理',
       category: '资源管理',
-      icon: '📄',
+      icon: 'lucide:folder-git', // 结构化信息资源
       parentModule: '资源管理',
       requiresAuth: true
     }
@@ -443,7 +415,7 @@ const routes = [
       title: '数据链装备全生命周期管理',
       subsystem: '资源和数据管理',
       category: '资源管理',
-      icon: '🛰️',
+      icon: 'mdi:satellite-variant', // 数据链卫星/实体装备（MDI图标很贴切）
       parentModule: '资源管理',
       requiresAuth: true
     }
@@ -457,7 +429,7 @@ const routes = [
       title: '数据链频谱资源管理',
       subsystem: '资源和数据管理',
       category: '资源管理',
-      icon: '📡',
+      icon: 'lucide:radio', // 频谱、无线电波
       parentModule: '资源管理',
       requiresAuth: true
     }
@@ -465,13 +437,12 @@ const routes = [
   {
     path: '/datalink-user-info',
     name: 'DatalinkUserInfo',
-    component: () =>
-      import('@/views/system-resource/DatalinkUserInfo.vue'),
+    component: () => import('@/views/system-resource/DatalinkUserInfo.vue'),
     meta: {
       title: '数据链用户信息',
       subsystem: '资源和数据管理',
       category: '资源管理',
-      icon: '🛰️',
+      icon: 'lucide:contact-2', // 用户信息
       parentModule: '资源管理',
       requiresAuth: true
     }
@@ -485,12 +456,11 @@ const routes = [
       title: '数据管理',
       subsystem: '资源和数据管理',
       category: '数据管理',
-      icon: '💾',
+      icon: 'lucide:database', // 核心数据库
       isModule: true,
       requiresAuth: true
     }
   },
-
   {
     path: '/permission-management',
     name: 'PermissionManagement',
@@ -499,7 +469,7 @@ const routes = [
       title: '权限管理',
       subsystem: '资源和数据管理',
       category: '数据管理',
-      icon: '🔐',
+      icon: 'lucide:key-round', // 权限、密钥
       parentModule: '数据管理',
       requiresAuth: true
     }
@@ -512,7 +482,7 @@ const routes = [
       title: '数据治理模型维护',
       subsystem: '资源和数据管理',
       category: '数据管理',
-      icon: '📋',
+      icon: 'lucide:git-fork', // 数据治理模型分叉模型
       parentModule: '数据管理',
       requiresAuth: true
     }
@@ -526,7 +496,7 @@ const routes = [
       title: '分类存储',
       subsystem: '资源和数据管理',
       category: '数据管理',
-      icon: '🗂️',
+      icon: 'lucide:folder-tree', // 分类存储树
       parentModule: '数据管理',
       requiresAuth: true
     }
@@ -540,7 +510,7 @@ const routes = [
       title: '订阅分发',
       subsystem: '资源和数据管理',
       category: '数据管理',
-      icon: '📤',
+      icon: 'lucide:share-2', // 分发、节点共享
       parentModule: '数据管理',
       requiresAuth: true
     }
@@ -554,12 +524,11 @@ const routes = [
       title: '数据采集项目',
       subsystem: '资源和数据管理',
       category: '数据采集',
-      icon: '🛰️',
+      icon: 'lucide:layers', // 采集项目图层
       parentModule: '数据采集',
       requiresAuth: true
     }
   },
-
   {
     path: '/login',
     name: 'Login',
