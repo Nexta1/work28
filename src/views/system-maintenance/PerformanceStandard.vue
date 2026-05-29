@@ -9,6 +9,22 @@
             clearable
             style="width: 180px"
         /></el-form-item>
+        <el-form-item label="关联指标">
+          <el-select
+            v-model="queryForm.performanceMetricId"
+            placeholder="请选择指标"
+            clearable
+            filterable
+            style="width: 180px"
+          >
+            <el-option
+              v-for="item in metricOptions"
+              :key="item.performanceMetricId"
+              :label="item.metricName"
+              :value="item.performanceMetricId"
+            />
+          </el-select>
+        </el-form-item>
         <el-form-item label="性能表现">
           <el-select
             v-model="queryForm.performanceEvaluation"
@@ -18,9 +34,9 @@
           >
             <el-option
               v-for="item in performanceEvaluationOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
+              :key="item"
+              :label="item"
+              :value="item"
             />
           </el-select>
         </el-form-item>
@@ -97,9 +113,9 @@
             ><span
               :class="[
                 'custom-warn-badge',
-                scope.row.isWarn === '1' ? 'warn-yes' : 'warn-no'
+                scope.row.isWarn === '是' ? 'warn-yes' : 'warn-no'
               ]"
-              >{{ scope.row.isWarn === '1' ? '是' : '否' }}</span
+              >{{ scope.row.isWarn === '是' ? '是' : '否' }}</span
             ></template
           ></el-table-column
         >
@@ -217,9 +233,9 @@
                 style="width: 100%"
                 ><el-option
                   v-for="item in intervalTypeOptions"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value" /></el-select></el-form-item
+                  :key="item"
+                  :label="item"
+                  :value="item" /></el-select></el-form-item
           ></el-col>
           <el-col :span="12"
             ><el-form-item label="性能表现" prop="performanceEvaluation"
@@ -229,17 +245,17 @@
                 style="width: 100%"
                 ><el-option
                   v-for="item in performanceEvaluationOptions"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value" /></el-select></el-form-item
+                  :key="item"
+                  :label="item"
+                  :value="item" /></el-select></el-form-item
           ></el-col>
         </el-row>
         <el-row :gutter="20">
           <el-col :span="12"
             ><el-form-item label="是否告警" prop="isWarn"
               ><el-radio-group v-model="formData.isWarn"
-                ><el-radio label="1">是</el-radio
-                ><el-radio label="0">否</el-radio></el-radio-group
+                ><el-radio label="是">是</el-radio
+                ><el-radio label="否">否</el-radio></el-radio-group
               ></el-form-item
             ></el-col
           >
@@ -248,7 +264,7 @@
               ><el-select
                 v-model="formData.warnLevel"
                 placeholder="请选择告警级别"
-                :disabled="formData.isWarn !== '1'"
+                :disabled="formData.isWarn !== '是'"
                 style="width: 100%"
                 ><el-option label="一般" :value="1" /><el-option
                   label="中度"
@@ -302,7 +318,11 @@ export default {
   data() {
     return {
       loading: false,
-      queryForm: {standardName: '', performanceEvaluation: ''},
+      queryForm: {
+        standardName: '',
+        performanceMetricId: null,
+        performanceEvaluation: ''
+      },
       tableData: [],
       page: {pageNum: 1, pageSize: 20, total: 0},
       dialogVisible: false,
@@ -349,8 +369,8 @@ export default {
           intervalTypes(),
           performanceEvaluations()
         ])
-        this.intervalTypeOptions = intervalRes.data || []
-        this.performanceEvaluationOptions = evaluationRes.data || []
+        this.intervalTypeOptions = intervalRes || []
+        this.performanceEvaluationOptions = evaluationRes || []
       } catch (e) {
         console.error('加载选项失败:', e)
       }
@@ -378,7 +398,11 @@ export default {
       this.loadData()
     },
     resetQuery() {
-      this.queryForm = {standardName: '', performanceEvaluation: ''}
+      this.queryForm = {
+        standardName: '',
+        performanceMetricId: null,
+        performanceEvaluation: ''
+      }
       this.handleSearch()
     },
     handleSizeChange(val) {
@@ -393,7 +417,7 @@ export default {
       this.dialogTitle = type === 'add' ? '新增标准' : '编辑标准'
       if (type === 'edit' && row) {
         let faultTypeId = null
-        if (row.faultTypeId) faultTypeId = [row.faultTypeId]
+        if (row.faultTypeId) faultTypeId = row.faultTypeId
         this.formData = {
           performanceStandardId: row.performanceStandardId,
           performanceMetricId: row.performanceMetricId,

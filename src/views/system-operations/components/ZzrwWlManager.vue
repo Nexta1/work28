@@ -250,7 +250,7 @@
                   selectedNetwork.WLH
                 }}</span>
               </div>
-              <div class="matrix-item" style="span 2">
+              <div class="matrix-item" style="grid-column: span 2">
                 <label>物理网络类型</label>
                 <span class="val text-orange">{{
                   wllxText(selectedNetwork.WLLX)
