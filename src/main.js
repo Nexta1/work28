@@ -19,7 +19,12 @@ window.addEventListener('error', e => {
 // 挂载到原型
 import store from './store' // 自动引入 store/index.js
 Vue.prototype.$http = request
-Vue.use(ElementUI)
+
+// 全局配置 Element UI 组件默认尺寸为 mini
+Vue.use(ElementUI, {
+  size: 'mini'
+})
+
 new Vue({
   router,
   render: h => h(App)

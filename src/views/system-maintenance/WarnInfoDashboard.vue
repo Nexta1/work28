@@ -1,223 +1,288 @@
 <template>
   <div class="warn-dashboard-container">
-    <div class="filter-control-bar">
-      <el-form :inline="true" :model="queryForm" size="mini">
-        <el-form-item label="故障类型">
-          <el-cascader
-            v-model="selectedFaultKeys"
-            :options="faultTreeOptions"
-            :props="cascadeProps"
-            placeholder="请选择故障层级"
-            clearable
-            filterable
-            @change="handleFaultChange"
-          />
-        </el-form-item>
+    <!-- Tab 切换 -->
+    <el-tabs v-model="activeTab" class="dark-tabs fill-tabs">
+      <!-- 告警信息 Tab -->
+      <el-tab-pane label="告警信息" name="warnInfo">
+        <div class="tab-content-wrapper">
+          <div class="filter-control-bar">
+            <el-form :inline="true" :model="queryForm" size="mini">
+              <el-form-item label="故障类型">
+                <el-cascader
+                  v-model="selectedFaultKeys"
+                  :options="faultTreeOptions"
+                  :props="cascadeProps"
+                  placeholder="请选择故障层级"
+                  clearable
+                  filterable
+                  @change="handleFaultChange"
+                />
+              </el-form-item>
 
-        <el-form-item label="告警来源">
-          <el-select
-            v-model="queryForm.sourceType"
-            placeholder="来源过滤"
-            clearable
-          >
-            <el-option label="外部系统" :value="0" />
-            <el-option label="性能告警" :value="1" />
-            <el-option label="业务告警" :value="2" />
-          </el-select>
-        </el-form-item>
+              <el-form-item label="告警来源">
+                <el-select
+                  v-model="queryForm.sourceType"
+                  placeholder="来源过滤"
+                  clearable
+                >
+                  <el-option label="外部系统" :value="0" />
+                  <el-option label="性能告警" :value="1" />
+                  <el-option label="业务告警" :value="2" />
+                </el-select>
+              </el-form-item>
 
-        <el-form-item label="严重级别">
-          <el-select
-            v-model="queryForm.warnLevel"
-            placeholder="等级过滤"
-            clearable
-          >
-            <el-option label="无" :value="0" />
-            <el-option label="一般" :value="1" />
-            <el-option label="中度" :value="2" />
-            <el-option label="严重" :value="3" />
-          </el-select>
-        </el-form-item>
+              <el-form-item label="严重级别">
+                <el-select
+                  v-model="queryForm.warnLevel"
+                  placeholder="等级过滤"
+                  clearable
+                >
+                  <el-option label="无" :value="0" />
+                  <el-option label="一般" :value="1" />
+                  <el-option label="中度" :value="2" />
+                  <el-option label="严重" :value="3" />
+                </el-select>
+              </el-form-item>
 
-        <el-form-item label="处理状态">
-          <el-select
-            v-model="queryForm.warnState"
-            placeholder="状态过滤"
-            clearable
-          >
-            <el-option label="被合并" value="STATE_MERGED" />
-            <el-option label="被屏蔽" value="STATE_BLOCKED" />
-            <el-option label="待手工清除" value="STATE_WAIT_CLEAD" />
-            <el-option label="自动清除" value="STATE_CLEARED_AUTO" />
-            <el-option label="手工清除" value="STATE_CLEARED_MANUAL" />
-          </el-select>
-        </el-form-item>
+              <el-form-item label="处理状态">
+                <el-select
+                  v-model="queryForm.warnState"
+                  placeholder="状态过滤"
+                  clearable
+                >
+                  <el-option label="被合并" value="被合并" />
+                  <el-option label="被屏蔽" value="被屏蔽" />
+                  <el-option label="待手工清除" value="待手工清除" />
+                  <el-option label="自动清除" value="自动清除" />
+                  <el-option label="手工清除" value="手工清除" />
+                </el-select>
+              </el-form-item>
 
-        <el-form-item>
-          <el-button type="primary" icon="el-icon-search" @click="handleSearch"
-            >检索</el-button
-          >
-          <el-button icon="el-icon-refresh" @click="resetQuery">重置</el-button>
-        </el-form-item>
-      </el-form>
-    </div>
+              <el-form-item>
+                <el-button
+                  type="primary"
+                  icon="el-icon-search"
+                  @click="handleSearch"
+                  >检索</el-button
+                >
+                <el-button icon="el-icon-refresh" @click="resetQuery"
+                  >重置</el-button
+                >
+              </el-form-item>
+            </el-form>
+          </div>
 
-    <div class="table-content-wrapper" v-loading="loading">
-      <el-table :data="tableData" style="width: 100%" height="100%">
-        <!-- 核心标识区 -->
-        <el-table-column
-          prop="warnId"
-          label="告警ID"
-          width="100"
-          fixed
-          align="center"
-          show-overflow-tooltip
-        />
+          <div class="table-content-wrapper" v-loading="loading">
+            <el-table :data="tableData" style="width: 100%" height="100%">
+              <!-- 核心标识区 -->
+              <el-table-column
+                prop="warnId"
+                label="告警ID"
+                width="100"
+                fixed
+                align="center"
+                show-overflow-tooltip
+              />
 
-        <el-table-column label="等级" width="90" align="center">
-          <template slot-scope="scope">
-            <span
-              :class="[
-                'custom-level-badge',
-                'level-type-' + scope.row.warnLevel
-              ]"
-            >
-              {{ getLevelLabel(scope.row.warnLevel) }}
-            </span>
-          </template>
-        </el-table-column>
+              <el-table-column label="等级" width="90" align="center">
+                <template slot-scope="scope">
+                  <span
+                    :class="[
+                      'custom-level-badge',
+                      'level-type-' + scope.row.warnLevel
+                    ]"
+                  >
+                    {{ getLevelLabel(scope.row.warnLevel) }}
+                  </span>
+                </template>
+              </el-table-column>
 
-        <el-table-column label="状态" width="110" align="center">
-          <template slot-scope="scope">
-            <span
-              :class="['custom-state-tag', 'state-tag-' + scope.row.warnState]"
-            >
-              {{ getStateLabel(scope.row.warnState) }}
-            </span>
-          </template>
-        </el-table-column>
+              <el-table-column label="状态" width="110" align="center">
+                <template slot-scope="scope">
+                  <span
+                    :class="[
+                      'custom-state-tag',
+                      'state-tag-' + scope.row.warnState
+                    ]"
+                  >
+                    {{ getStateLabel(scope.row.warnState) }}
+                  </span>
+                </template>
+              </el-table-column>
 
-        <!-- 时间信息区 -->
-        <el-table-column label="报警时标" width="165" align="center">
-          <template slot-scope="scope">
-            {{ formatTimestamp(scope.row.warnTimestamp) }}
-          </template>
-        </el-table-column>
+              <!-- 时间信息区 -->
+              <el-table-column label="报警时标" width="165" align="center">
+                <template slot-scope="scope">
+                  {{ formatTimestamp(scope.row.warnTimestamp) }}
+                </template>
+              </el-table-column>
 
-        <!-- 事件内容区 -->
-        <el-table-column
-          prop="faultName"
-          label="故障事件"
-          width="140"
-          align="center"
-          show-overflow-tooltip
-        />
+              <!-- 事件内容区 -->
+              <el-table-column
+                prop="faultName"
+                label="故障事件"
+                width="140"
+                align="center"
+                show-overflow-tooltip
+              />
 
-        <el-table-column
-          prop="warnContent"
-          label="实时告警情报内容"
-          min-width="280"
-          align="left"
-          show-overflow-tooltip
-        />
+              <el-table-column
+                prop="warnContent"
+                label="实时告警情报内容"
+                min-width="280"
+                align="left"
+                show-overflow-tooltip
+              />
 
-        <!-- 来源与设备区 -->
-        <el-table-column label="事件来源" width="110" align="center">
-          <template slot-scope="scope">
-            {{ getSourceLabel(scope.row.sourceType) }}
-          </template>
-        </el-table-column>
+              <!-- 来源与设备区 -->
+              <el-table-column label="事件来源" width="110" align="center">
+                <template slot-scope="scope">
+                  {{ getSourceLabel(scope.row.sourceType) }}
+                </template>
+              </el-table-column>
 
-        <el-table-column
-          prop="deviceName"
-          label="受累设备"
-          width="130"
-          align="center"
-          show-overflow-tooltip
-        />
+              <el-table-column
+                prop="deviceName"
+                label="受累设备"
+                width="130"
+                align="center"
+                show-overflow-tooltip
+              />
 
-        <el-table-column
-          prop="WLMC"
-          label="波道/网络名称"
-          width="140"
-          align="center"
-          show-overflow-tooltip
-        />
+              <el-table-column
+                prop="WLMC"
+                label="波道/网络名称"
+                width="140"
+                align="center"
+                show-overflow-tooltip
+              />
 
-        <!-- 平台关联区 -->
-        <el-table-column
-          prop="srcPlatformName"
-          label="源演兵平台"
-          width="130"
-          align="center"
-          show-overflow-tooltip
-        />
+              <!-- 平台关联区 -->
+              <el-table-column
+                prop="srcPlatformName"
+                label="源演兵平台"
+                width="130"
+                align="center"
+                show-overflow-tooltip
+              />
 
-        <el-table-column
-          prop="dstPlatformName"
-          label="目标演兵平台"
-          width="130"
-          align="center"
-          show-overflow-tooltip
-        />
+              <el-table-column
+                prop="dstPlatformName"
+                label="目标演兵平台"
+                width="130"
+                align="center"
+                show-overflow-tooltip
+              />
 
-        <!-- 归并关联区 -->
-        <el-table-column
-          prop="correlateWarnNames"
-          label="关联告警事件簇"
-          width="160"
-          align="center"
-          show-overflow-tooltip
-        />
+              <!-- 归并关联区 -->
+              <el-table-column
+                prop="correlateWarnNames"
+                label="关联告警事件簇"
+                width="160"
+                align="center"
+                show-overflow-tooltip
+              />
 
-        <el-table-column
-          prop="mergeWarnName"
-          label="归并至主告警"
-          width="140"
-          align="center"
-          show-overflow-tooltip
-        />
+              <el-table-column
+                prop="mergeWarnName"
+                label="归并至主告警"
+                width="140"
+                align="center"
+                show-overflow-tooltip
+              />
 
-        <!-- 操作区 -->
-        <el-table-column label="操作" width="100" fixed="right" align="center">
-          <template slot-scope="scope">
-            <el-button
-              v-if="scope.row.warnState === 'STATE_WAIT_CLEAD'"
-              size="mini"
-              type="danger"
-              icon="el-icon-delete"
-              class="custom-clear-btn"
-              @click="handleClearWarn(scope.row)"
-              >清除</el-button
-            >
-            <span v-else class="action-disabled-text">-</span>
-          </template>
-        </el-table-column>
-      </el-table>
-    </div>
+              <!-- 操作区 -->
+              <el-table-column
+                label="操作"
+                width="100"
+                fixed="right"
+                align="center"
+              >
+                <template slot-scope="scope">
+                  <el-button
+                    v-if="scope.row.warnState === '待手工清除'"
+                    size="mini"
+                    type="danger"
+                    icon="el-icon-delete"
+                    class="custom-clear-btn"
+                    @click="handleClearWarn(scope.row)"
+                    >清除</el-button
+                  >
+                  <span v-else class="action-disabled-text">-</span>
+                </template>
+              </el-table-column>
+            </el-table>
+          </div>
 
-    <div class="pagination-container">
-      <el-pagination
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-        :current-page="page.pageNum"
-        :page-sizes="[10, 20, 50, 100]"
-        :page-size="page.pageSize"
-        layout="total, sizes, prev, pager, next, jumper"
-        :total="page.total"
-      />
-    </div>
+          <div class="pagination-container">
+            <el-pagination
+              @size-change="handleSizeChange"
+              @current-change="handleCurrentChange"
+              :current-page="page.pageNum"
+              :page-sizes="[10, 20, 50, 100]"
+              :page-size="page.pageSize"
+              layout="total, sizes, prev, pager, next, jumper"
+              :total="page.total"
+            />
+          </div>
+        </div>
+      </el-tab-pane>
+
+      <!-- 告警信息处理 Tab 组 -->
+      <el-tab-pane label="告警信息处理" name="warnProcess">
+        <el-tabs
+          v-model="processActiveTab"
+          tab-position="left"
+          style="height: 250px"
+          class="sidebar-tabs"
+        >
+          <!-- 告警清除规则 -->
+          <el-tab-pane label="告警清除规则" name="warnClear">
+            <div class="tab-content-wrapper">
+              <warn-clear
+                :fault-type-options="faultTreeOptions"
+                :device-options="deviceOptions"
+              />
+            </div>
+          </el-tab-pane>
+
+          <!-- 告警屏蔽规则 -->
+          <el-tab-pane label="告警屏蔽规则" name="warnBlock">
+            <div class="tab-content-wrapper">
+              <warn-block :fault-type-options="faultTreeOptions" />
+            </div>
+          </el-tab-pane>
+
+          <!-- 告警归并规则 -->
+          <el-tab-pane label="告警归并规则" name="warnMerge">
+            <div class="tab-content-wrapper">
+              <warn-merge :fault-type-options="faultTreeOptions" />
+            </div>
+          </el-tab-pane>
+        </el-tabs>
+      </el-tab-pane>
+    </el-tabs>
   </div>
 </template>
 
 <script>
 // 🛰️ 变更：引入 mainPage, mainDelete, apiGetAll
 import {mainPage, mainDelete, apiGetAll} from '@/api/common'
+import WarnClear from './WarnClear.vue'
+import WarnBlock from './WarnBlock.vue'
+import WarnMerge from './WarnMerge.vue'
 
 export default {
   name: 'WarnInfoDashboard',
+  components: {
+    WarnClear,
+    WarnBlock,
+    WarnMerge
+  },
   data() {
     return {
+      activeTab: 'warnInfo', // 默认激活告警信息Tab
+      processActiveTab: 'warnClear', // 告警信息处理子Tab默认值
       loading: false,
       queryForm: {
         faultTypeId: null,
@@ -227,6 +292,7 @@ export default {
       },
       selectedFaultKeys: [], // 级联选择器数组
       faultTreeOptions: [], // 故障类型树
+      deviceOptions: [], // 设备选项列表
       cascadeProps: {
         value: 'faultTypeId',
         label: 'faultName',
@@ -243,6 +309,7 @@ export default {
   },
   mounted() {
     this.loadFaultTree()
+    this.loadDevices()
     this.loadWarnInfos()
   },
   methods: {
@@ -275,6 +342,16 @@ export default {
         this.faultTreeOptions = this.buildTree(res.data) || []
       } catch (e) {
         console.error('故障树数据拉取失败:', e)
+      }
+    },
+
+    // 2. 获取设备列表
+    async loadDevices() {
+      try {
+        const res = await apiGetAll('sbxx', {}, 'sbxxs')
+        this.deviceOptions = res.data || []
+      } catch (e) {
+        console.error('设备数据拉取失败:', e)
       }
     },
 
@@ -318,7 +395,7 @@ export default {
       )
         .then(async () => {
           try {
-            await mainDelete('warnInfo', row.warnId)
+            await mainDelete('warnInfo/manualClear', row.warnId)
             this.$message.success('清除成功')
             this.loadWarnInfos()
           } catch (e) {
@@ -394,6 +471,13 @@ export default {
   padding: 16px;
   box-sizing: border-box;
   background-color: transparent; /* 继承全局背景 */
+}
+
+/* Tab 内容包装器 */
+.tab-content-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 .filter-control-bar {

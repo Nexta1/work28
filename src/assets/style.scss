@@ -1048,3 +1048,205 @@
   background-color: #16243b !important; /* 选用比普通 hover 稍深的战术蓝底 */
   color: #ffffff !important;
 }
+/* ===================================================================
+   ⚡ 增量修正补丁：表单内容区（el-form-item__content）及中间文本字体对齐
+   =================================================================== */
+
+/* 1. 修正表单内容区域的容器字体与高度，对齐 mini 紧凑大屏规范 */
+.el-form-item__content {
+  font-family:
+    monospace, 'Microsoft YaHei' !important; /* 强制统一为硬核电子/等宽字体 */
+  font-size: 11px !important; /* 从 14px 缩减至大屏专用的 11px */
+  line-height: 28px !important; /* 将 40px 的巨型行高压低，完美对齐 28px 的 mini 输入框 */
+  color: #94a3b8 !important; /* 将内容区默认文本（如“至”）改为战术低饱和度灰蓝，不刺眼 */
+}
+
+/* 2. 针对两个时间选择器中间的 “至” 文本进行精准微调 */
+.el-form-item__content > span {
+  font-family: monospace, 'Microsoft YaHei' !important;
+  font-size: 11px !important;
+  color: #64748b !important; /* 稍微再调暗一点，使其作为辅助分隔符存在 */
+  vertical-align: middle; /* 防止文字与两侧输入框错位 */
+  display: inline-block;
+}
+
+/* 3. 规避时间选择器图标（前缀 clock 图标）导致的字体/对齐衍生问题 */
+.el-input__prefix,
+.el-input__suffix {
+  line-height: 28px !important; /* 确保内部时钟图标也居中对齐，不被默认的 40px 拉扯变形 */
+}
+/* ===================================================================
+   ⚡ 增量修正补丁：解决级联选择器搜索输入框（__search-input）发白问题
+   =================================================================== */
+
+/* 1. 强力锁定多选搜索输入框的背景色为完全透明，使其融入下层暗色容器 */
+.el-cascader .el-cascader__search-input {
+  background: transparent !important; /* 彻底消除原生白色背景 */
+  background-color: transparent !important;
+  color: #ffffff !important; /* 键入的搜索文本改为纯白 */
+  // font-family: monospace, 'Microsoft YaHei' !important;
+  font-size: 11px !important;
+  margin-left: 10px !important; /* 留出微调边距 */
+}
+
+/* 2. 消除搜索输入框聚焦（Focus）或点击时可能弹出的原生高亮或阴影 */
+.el-cascader .el-cascader__search-input:focus,
+.el-cascader .el-cascader__search-input:active {
+  background: transparent !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+/* 3. 专门修正该搜索框内部提示文字（Placeholder）的战术暗色 */
+.el-cascader .el-cascader__search-input::placeholder {
+  color: #475569 !important; /* 锁定为低饱和度暗灰，不刺眼 */
+}
+/* ===================================================================
+   ⚡ 增量修正补丁：完美消除 Cascader 多选搜索导致的双重 Placeholder 重影
+   =================================================================== */
+
+/* 1. 当级联选择器还没有选中任何标签(Tags)时，强行把内部搜索框的 placeholder 变透明，防止重叠双影 */
+.el-cascader .el-cascader__search-input::placeholder {
+  color: transparent !important;
+  opacity: 0 !important;
+}
+
+/* 2. 当用户开始点击、或者已经选中了至少一个标签时，内部搜索框的 placeholder 恢复常态（如果有的话） */
+.el-cascader__tags ~ .el-input .el-input__inner::placeholder {
+  /* 如果原生标签容器存在，让外层 placeholder 正常遵循组件逻辑 */
+}
+
+/* 3. 确保两个输入框的定位和字体完全等高重合，防止即使显示也对不齐 */
+.el-cascader {
+  .el-input__inner {
+    font-family: monospace, 'Microsoft YaHei' !important;
+    height: 28px !important; /* 统一大屏紧凑高度 */
+    line-height: 28px !important;
+  }
+
+  .el-cascader__search-input {
+    font-family: monospace, 'Microsoft YaHei' !important;
+    height: 24px !important;
+    line-height: 24px !important;
+    margin: 0 0 0 10px !important; /* 精准控制左边距，不与外层重叠 */
+    background: transparent !important;
+  }
+}
+/* ===================================================================
+   ⚡ 增量修正补丁：缩小单选框（el-radio）文本字号以适配大屏紧凑规范
+   =================================================================== */
+
+/* 1. 强力缩减单选框标签文字的字号与间距 */
+.el-radio .el-radio__label {
+  font-size: 11px !important; /* 从 14px 彻底缩减至战术大屏标准的 11px */
+  font-family: monospace, 'Microsoft YaHei' !important; /* 统一为等宽电子字体 */
+  color: #94a3b8 !important; /* 保持常态下的低饱和度灰蓝 [source: 1] */
+  padding-left: 6px !important; /* 缩短小圆圈与文字之间的间距，更紧凑 */
+}
+
+/* 2. 确保鼠标悬浮（Hover）和选中（Checked）时的状态联动 */
+.el-radio:hover .el-radio__label {
+  color: #38bdf8 !important; /* 悬浮时字变亮蓝 [source: 1] */
+}
+
+.el-radio__input.is-checked + .el-radio__label {
+  color: #38bdf8 !important; /* 选中时文字高亮 [source: 1] */
+  font-weight: bold; /* 适当加粗增强辨识度 */
+}
+
+/* 3. 微调单选框外层容器的对齐线，防止字号变小后与前面的“规则状态”标签错位 */
+.el-radio-group {
+  line-height: 28px !important; /* 完美对齐 28px 的 mini 行高线 */
+  display: inline-flex;
+  align-items: center;
+}
+
+.el-radio {
+  margin-right: 15px !important; /* 紧凑按钮之间的横向间距 */
+  display: inline-flex;
+  align-items: center;
+}
+/* ===================================================================
+   ⚡ 增量修正补丁：打造硬核暗色大屏专用侧边 Tabs（el-tabs）
+   =================================================================== */
+/* ===================================================================
+   ⚡ 增量修正补丁：打造硬核暗色大屏专用侧边 Tabs（无背景色透明方案）
+   =================================================================== */
+
+/* 1. 自定义方案：侧边紧凑大屏 Tabs 容器约束 */
+.el-tabs.sidebar-tabs {
+  display: flex;
+  flex-direction: row; /* 强制左右分栏布局 */
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  background: transparent !important;
+
+  /* 2. 精准限制侧边导航标签栏（Header）的宽度，防止其占满屏幕 */
+  > .el-tabs__header.is-left,
+  > .el-tabs__header.is-right {
+    width: 110px; /* 🦾 核心约束：固定侧边栏的宽度 */
+    min-width: 110px;
+    max-width: 150px;
+    margin-right: 0;
+    margin-left: 0;
+    border-bottom: none !important;
+    background: transparent !important; /* 彻底去掉背景色，保持全透明通透感 */
+    border-right: 1px solid var(--border-dark) !important; /* 右侧仅留一条暗色网格分界线 */
+  }
+
+  /* 3. 内部选项（Item）扁平透明化及文字对齐 */
+  > .el-tabs__header .el-tabs__item.is-left,
+  > .el-tabs__header .el-tabs__item.is-right {
+    text-align: left; /* 改为左对齐，更有极简科技感 */
+    font-family: monospace, 'Microsoft YaHei';
+    font-size: 11px; /* 对齐你之前的 11px 紧凑规范 */
+    height: 38px;
+    line-height: 38px;
+    color: var(--color-text-muted) !important; /* 常态低饱和度灰蓝 */
+    background: transparent !important; /* 坚决不用背景色 */
+    border-bottom: none !important; /* 去掉单项分割线，靠间距呼吸 */
+    transition: color 0.15s ease-in-out;
+    padding: 0 0 0 14px !important; /* 留出左边距 */
+    position: relative;
+
+    &:hover {
+      color: var(--color-primary) !important; /* 悬浮时文字变亮蓝 */
+    }
+
+    /* 4. 核心高亮逻辑：用左侧的一条高亮电光蓝边框线代替背景色 */
+    &.is-active {
+      color: var(--color-primary) !important; /* 选中时文字变亮蓝 */
+      font-weight: bold;
+      background: transparent !important;
+
+      &::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 12px;
+        bottom: 12px;
+        width: 3px; /* 战术左侧高亮条 */
+        background-color: var(--color-primary); /* 电光高亮蓝 */
+        box-shadow: 0 0 8px var(--color-primary); /* 给线条加一点微弱的荧光呼吸感 */
+        border-radius: 1px;
+      }
+    }
+  }
+
+  /* 5. 隐藏 Element UI 原生的绝对定位滑块（我们用伪元素 ::before 替代了，更可控） */
+  > .el-tabs__header .el-tabs__active-bar {
+    display: none !important;
+  }
+
+  /* 6. 右侧内容面板（Content Panel）自适应伸缩 */
+  > .el-tabs__content {
+    flex: 1; /* 吞噬剩余所有空间 */
+    min-width: 0;
+    height: 100%;
+    background-color: transparent !important;
+    // padding: 12px 16px !important;
+    box-sizing: border-box;
+  }
+}

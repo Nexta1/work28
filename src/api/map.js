@@ -79,3 +79,4 @@ export function getYXJMap() {
     3: '高'
   }
 }
+
