@@ -64,6 +64,7 @@
 
     <div class="table-content-wrapper" v-loading="loading">
       <el-table :data="tableData" style="width: 100%" height="100%">
+        <!-- 核心标识区 -->
         <el-table-column
           prop="warnId"
           label="告警ID"
@@ -73,7 +74,7 @@
           show-overflow-tooltip
         />
 
-        <el-table-column label="等级" width="100" align="center">
+        <el-table-column label="等级" width="90" align="center">
           <template slot-scope="scope">
             <span
               :class="[
@@ -86,7 +87,7 @@
           </template>
         </el-table-column>
 
-        <el-table-column label="状态" width="120" align="center">
+        <el-table-column label="状态" width="110" align="center">
           <template slot-scope="scope">
             <span
               :class="['custom-state-tag', 'state-tag-' + scope.row.warnState]"
@@ -96,6 +97,14 @@
           </template>
         </el-table-column>
 
+        <!-- 时间信息区 -->
+        <el-table-column label="报警时标" width="165" align="center">
+          <template slot-scope="scope">
+            {{ formatTimestamp(scope.row.warnTimestamp) }}
+          </template>
+        </el-table-column>
+
+        <!-- 事件内容区 -->
         <el-table-column
           prop="faultName"
           label="故障事件"
@@ -103,21 +112,17 @@
           align="center"
           show-overflow-tooltip
         />
+
         <el-table-column
           prop="warnContent"
           label="实时告警情报内容"
-          min-width="240"
-          align="center"
+          min-width="280"
+          align="left"
           show-overflow-tooltip
         />
 
-        <el-table-column label="报警时标" width="160" align="center">
-          <template slot-scope="scope">
-            {{ formatTimestamp(scope.row.warnTimestamp) }}
-          </template>
-        </el-table-column>
-
-        <el-table-column label="事件来源" width="120" align="center">
+        <!-- 来源与设备区 -->
+        <el-table-column label="事件来源" width="110" align="center">
           <template slot-scope="scope">
             {{ getSourceLabel(scope.row.sourceType) }}
           </template>
@@ -126,17 +131,20 @@
         <el-table-column
           prop="deviceName"
           label="受累设备"
-          width="120"
-          align="center"
-          show-overflow-tooltip
-        />
-        <el-table-column
-          prop="WLMC"
-          label="波道/网络名称"
           width="130"
           align="center"
           show-overflow-tooltip
         />
+
+        <el-table-column
+          prop="WLMC"
+          label="波道/网络名称"
+          width="140"
+          align="center"
+          show-overflow-tooltip
+        />
+
+        <!-- 平台关联区 -->
         <el-table-column
           prop="srcPlatformName"
           label="源演兵平台"
@@ -144,6 +152,7 @@
           align="center"
           show-overflow-tooltip
         />
+
         <el-table-column
           prop="dstPlatformName"
           label="目标演兵平台"
@@ -151,22 +160,26 @@
           align="center"
           show-overflow-tooltip
         />
+
+        <!-- 归并关联区 -->
         <el-table-column
           prop="correlateWarnNames"
           label="关联告警事件簇"
-          width="150"
-          align="center"
-          show-overflow-tooltip
-        />
-        <el-table-column
-          prop="mergeWarnName"
-          label="归并至主告警"
-          width="130"
+          width="160"
           align="center"
           show-overflow-tooltip
         />
 
-        <el-table-column label="操作" width="120" fixed="right" align="center">
+        <el-table-column
+          prop="mergeWarnName"
+          label="归并至主告警"
+          width="140"
+          align="center"
+          show-overflow-tooltip
+        />
+
+        <!-- 操作区 -->
+        <el-table-column label="操作" width="100" fixed="right" align="center">
           <template slot-scope="scope">
             <el-button
               v-if="scope.row.warnState === 'STATE_WAIT_CLEAD'"
@@ -233,11 +246,33 @@ export default {
     this.loadWarnInfos()
   },
   methods: {
+    buildTree(list, parentId = 0) {
+      const map = {}
+      const tree = []
+
+      list.forEach(item => {
+        item.children = []
+        map[item.faultTypeId] = item
+      })
+
+      list.forEach(item => {
+        const parent = map[item.parentTypeId]
+        if (item.parentTypeId && parent) {
+          item.parentFaultName = parent.faultName
+          parent.children.push(item)
+        } else {
+          item.parentFaultName = '顶级根源'
+          tree.push(item)
+        }
+      })
+      return tree
+    },
+
     // 1. 获取全量故障树：按要求将 apiFindAllTrees 更换为标准的 apiGetAll
     async loadFaultTree() {
       try {
         const res = await apiGetAll('faultType', {}, 'faultTypes')
-        this.faultTreeOptions = res.data || res || []
+        this.faultTreeOptions = this.buildTree(res.data) || []
       } catch (e) {
         console.error('故障树数据拉取失败:', e)
       }
@@ -349,7 +384,7 @@ export default {
 
 <style scoped>
 /* ===================================================================
-   🎨 局部布局及自定义精细化样式类（完全脱离对 Element 样式的强行覆盖）
+   🛰️ 战术控制中心 - 告警仪表盘深色科技风样式
    =================================================================== */
 .warn-dashboard-container {
   width: 100%;
@@ -358,6 +393,7 @@ export default {
   flex-direction: column;
   padding: 16px;
   box-sizing: border-box;
+  background-color: transparent; /* 继承全局背景 */
 }
 
 .filter-control-bar {
@@ -375,71 +411,93 @@ export default {
   justify-content: flex-end;
 }
 
-/* --- 自定义告警级别样式标签 --- */
+/* --- 自定义告警级别样式标签 (适配深色科技主题) --- */
 .custom-level-badge {
   display: inline-block;
   padding: 2px 10px;
-  border-radius: 12px;
-  font-size: 12px;
+  border-radius: 2px; /* 扁平化圆角 */
+  font-size: 11px;
   font-weight: 500;
+  font-family: monospace, 'Microsoft YaHei';
+  border: 1px solid transparent;
 }
-.level-type-0 {
-  background-color: #f4f4f5;
-  color: #909399;
-} /* 无 */
-.level-type-1 {
-  background-color: #fdf6ec;
-  color: #e6a23c;
-  border: 1px solid #f5dab1;
-} /* 一般 */
-.level-type-2 {
-  background-color: #fef0f0;
-  color: #f56c6c;
-  border: 1px solid #fbc4c4;
-} /* 中度 */
-.level-type-3 {
-  background-color: #ffe8e8;
-  color: #d9001b;
-  border: 1px solid #ffb3b3;
-  font-weight: bold;
-} /* 严重 */
 
-/* --- 自定义状态5种样式标签 --- */
+.level-type-0 {
+  background-color: rgba(71, 85, 105, 0.15);
+  color: #94a3b8;
+  border-color: rgba(71, 85, 105, 0.3);
+} /* 无 */
+
+.level-type-1 {
+  background-color: rgba(245, 158, 11, 0.12);
+  color: var(--color-warning);
+  border-color: rgba(245, 158, 11, 0.6);
+} /* 一般 - 琥珀橙 */
+
+.level-type-2 {
+  background-color: rgba(239, 68, 68, 0.15);
+  color: #fca5a5;
+  border-color: rgba(239, 68, 68, 0.6);
+} /* 中度 - 警示红 */
+
+.level-type-3 {
+  background-color: rgba(244, 63, 94, 0.22);
+  color: var(--color-danger);
+  border-color: var(--color-danger);
+  font-weight: bold;
+  text-shadow: 0 0 4px rgba(244, 63, 94, 0.3);
+} /* 严重 - 危机红 */
+
+/* --- 自定义状态5种样式标签 (适配深色科技主题) --- */
 .custom-state-tag {
   display: inline-block;
   padding: 3px 8px;
-  border-radius: 4px;
-  font-size: 12px;
+  border-radius: 2px;
+  font-size: 11px;
+  font-family: monospace, 'Microsoft YaHei';
+  border: 1px solid transparent;
 }
-.state-tag-STATE_MERGED {
-  background-color: #fff7e6;
-  color: #fa8c16;
+
+.state-tag-被合并 {
+  background-color: rgba(245, 158, 11, 0.1);
+  color: var(--color-warning);
+  border-color: rgba(245, 158, 11, 0.4);
 } /* 被合并 */
-.state-tag-STATE_BLOCKED {
-  background-color: #fafafa;
-  color: #bfbfbf;
+
+.state-tag-被屏蔽 {
+  background-color: rgba(51, 65, 85, 0.2);
+  color: #64748b;
+  border-color: rgba(51, 65, 85, 0.4);
 } /* 被屏蔽 */
-.state-tag-STATE_WAIT_CLEAD {
-  background-color: #fff1f0;
-  color: #f5222d;
+
+.state-tag-待手工清除 {
+  background-color: rgba(244, 63, 94, 0.15);
+  color: var(--color-danger);
+  border-color: rgba(244, 63, 94, 0.5);
   font-weight: bold;
 } /* 待手工清除 */
-.state-tag-STATE_CLEARED_AUTO {
-  background-color: #f6ffed;
-  color: #52c41a;
+
+.state-tag-自动清除 {
+  background-color: rgba(16, 185, 129, 0.12);
+  color: var(--color-success);
+  border-color: rgba(16, 185, 129, 0.6);
 } /* 自动清除 */
-.state-tag-STATE_CLEARED_MANUAL {
-  background-color: #e6f7ff;
-  color: #1890ff;
+
+.state-tag-手工清除 {
+  background-color: rgba(56, 189, 248, 0.12);
+  color: var(--color-primary);
+  border-color: rgba(56, 189, 248, 0.6);
 } /* 手工清除 */
 
 /* --- 动作舱元素控制 --- */
 .custom-clear-btn {
   padding: 5px 12px;
   font-size: 11px;
+  border-radius: 3px;
 }
+
 .action-disabled-text {
-  color: #c0c4cc;
-  font-size: 13px;
+  color: #334155;
+  font-size: 12px;
 }
 </style>
