@@ -32,9 +32,22 @@
     </div>
 
     <div class="main-body-layout">
+      <!-- LEFT 侧边栏 -->
       <div class="left-platform-sidebar">
         <div class="sidebar-header-summary">
-          <span class="title">👥 任务群组集群</span>
+          <span class="title">
+            <Icon
+              icon="lucide:users"
+              :size="14"
+              style="
+                vertical-align: middle;
+                margin-right: 5px;
+                color: #38bdf8;
+                filter: drop-shadow(0 0 4px rgba(56, 189, 248, 0.4));
+              "
+            />
+            任务群组集群
+          </span>
           <span class="count-badge">共 {{ groupList.length }} 个群组</span>
         </div>
 
@@ -49,38 +62,64 @@
             ]"
             @click="selectGroup(qz)"
           >
-            <div class="absolute-action-corner">
-              <el-button
-                type="text"
-                icon="el-icon-edit"
-                class="corner-btn btn-edit"
-                title="编辑"
-                @click.stop="handleEditGroup(qz)"
-              ></el-button>
-              <el-button
-                type="text"
-                icon="el-icon-delete"
-                class="corner-btn btn-delete"
-                title="删除"
-                @click.stop="handleDeleteGroup(qz)"
-              ></el-button>
-            </div>
-
-            <div class="card-text-content">
-              <div class="card-title-row">
-                <span class="pt-name" :title="qz.QZMC">📂 {{ qz.QZMC }}</span>
+            <!-- 🌟【完美重构】双列 Flex 容器，彻底隔离文字区与操作状态区 -->
+            <div class="card-flex-wrapper">
+              <!-- 左列：核心业务信息图层 -->
+              <div class="card-text-content">
+                <div class="card-title-row">
+                  <span class="pt-name" :title="qz.QZMC">
+                    <Icon
+                      icon="lucide:folder-git-2"
+                      :size="12"
+                      style="
+                        vertical-align: middle;
+                        margin-right: 4px;
+                        color: #a855f7;
+                      "
+                    />
+                    {{ qz.QZMC }}
+                  </span>
+                </div>
+                <div class="card-sub-info">
+                  <span class="bsh-txt">ID: {{ qz.ZZRWQZID }}</span>
+                </div>
+                <div class="card-count-row">
+                  <span class="pt-type-tag">
+                    <Icon
+                      icon="lucide:layers"
+                      :size="10"
+                      style="
+                        vertical-align: middle;
+                        margin-right: 3px;
+                        color: #64748b;
+                      "
+                    />
+                    关联平台数: {{ parsePlatformCount(qz.ZZRWPTIDS) }}
+                  </span>
+                </div>
               </div>
 
-              <div class="card-sub-info">
-                <span class="bsh-txt">ID: {{ qz.ZZRWQZID }}</span>
+              <!-- 右列：战术操作与状态垂直舱门（绝对对齐，永不重叠） -->
+              <div class="card-right-status-zone">
                 <span class="state-txt-tag">{{
                   getStatusText(qz.QZSTATE)
                 }}</span>
-              </div>
-              <div class="card-count-row">
-                <span class="pt-type-tag"
-                  >关联平台数: {{ parsePlatformCount(qz.ZZRWPTIDS) }}</span
-                >
+                <div class="card-action-btns">
+                  <el-button
+                    type="text"
+                    icon="el-icon-edit"
+                    class="corner-btn btn-edit"
+                    title="编辑"
+                    @click.stop="handleEditGroup(qz)"
+                  ></el-button>
+                  <el-button
+                    type="text"
+                    icon="el-icon-delete"
+                    class="corner-btn btn-delete"
+                    title="删除"
+                    @click.stop="handleDeleteGroup(qz)"
+                  ></el-button>
+                </div>
               </div>
             </div>
           </div>
@@ -90,6 +129,7 @@
         </div>
       </div>
 
+      <!-- RIGHT 看板区 -->
       <div class="right-cascade-panel" v-loading="detailLoading">
         <div v-if="!activeGroupId" class="empty-fallback">
           <div class="radar-scan-loader"></div>
@@ -98,57 +138,68 @@
 
         <div v-else class="cascade-content-wrapper">
           <div class="detail-param-dashboard border-cyan">
-            <h3 class="panel-section-title">📊 群组精细化元数据要素</h3>
+            <h3 class="panel-section-title">
+              <Icon
+                icon="lucide:bar-chart-3"
+                :size="13"
+                style="
+                  vertical-align: middle;
+                  margin-right: 5px;
+                  color: #38bdf8;
+                "
+              />
+              群组精细化元数据要素
+            </h3>
             <div class="attribute-data-matrix">
               <div class="matrix-item">
-                <span class="m-label">群组标识 (ID):</span
-                ><span class="m-value text-blue font-num">{{
+                <span class="m-label">群组标识 (ID):</span>
+                <span class="m-value text-blue font-num">{{
                   currentGroup.ZZRWQZID
                 }}</span>
               </div>
               <div class="matrix-item">
-                <span class="m-label">群组名称:</span
-                ><span class="m-value text-white">{{ currentGroup.QZMC }}</span>
+                <span class="m-label">群组名称:</span>
+                <span class="m-value text-white">{{ currentGroup.QZMC }}</span>
               </div>
               <div class="matrix-item">
-                <span class="m-label">所属任务ID:</span
-                ><span class="m-value font-num">{{
+                <span class="m-label">所属任务ID:</span>
+                <span class="m-value font-num">{{
                   currentGroup.ZZRWXXID
                 }}</span>
               </div>
               <div class="matrix-item">
-                <span class="m-label">起始平台编识号:</span
-                ><span class="m-value font-num text-orange">{{
+                <span class="m-label">起始平台编识号:</span>
+                <span class="m-value font-num text-orange">{{
                   currentGroup.QSPTBSH || '--'
                 }}</span>
               </div>
               <div class="matrix-item">
-                <span class="m-label">终止平台编识号:</span
-                ><span class="m-value font-num text-orange">{{
+                <span class="m-label">终止平台编识号:</span>
+                <span class="m-value font-num text-orange">{{
                   currentGroup.ZZPTBSH || '--'
                 }}</span>
               </div>
               <div class="matrix-item">
-                <span class="m-label">起始目标编识号:</span
-                ><span class="m-value font-num">{{
+                <span class="m-label">起始目标编识号:</span>
+                <span class="m-value font-num">{{
                   currentGroup.QSMBBSH || '--'
                 }}</span>
               </div>
               <div class="matrix-item">
-                <span class="m-label">终止目标标识号:</span
-                ><span class="m-value font-num">{{
+                <span class="m-label">终止目标标识号:</span>
+                <span class="m-value font-num">{{
                   currentGroup.ZZMBBSH || '--'
                 }}</span>
               </div>
               <div class="matrix-item">
-                <span class="m-label">任务开始时间:</span
-                ><span class="m-value font-num text-green">{{
+                <span class="m-label">任务开始时间:</span>
+                <span class="m-value font-num text-green">{{
                   currentGroup.RWKSSJ || '--'
                 }}</span>
               </div>
               <div class="matrix-item">
-                <span class="m-label">任务终止时间:</span
-                ><span class="m-value font-num text-green">{{
+                <span class="m-label">任务终止时间:</span>
+                <span class="m-value font-num text-green">{{
                   currentGroup.RWZZSJ || '--'
                 }}</span>
               </div>
@@ -173,7 +224,16 @@
           <div class="detail-param-dashboard border-emerald">
             <div class="panel-inner-title-flex">
               <h3 class="panel-section-title" style="margin: 0">
-                🔌 绑定的群组网络配置
+                <Icon
+                  icon="lucide:plug-zap"
+                  :size="13"
+                  style="
+                    vertical-align: middle;
+                    margin-right: 5px;
+                    color: #10b981;
+                  "
+                />
+                绑定的群组网络配置
               </h3>
               <el-button
                 type="success"
@@ -192,9 +252,14 @@
                 class="net-link-sub-card"
               >
                 <div class="sub-card-header">
-                  <span class="net-id-badge"
-                    >🌐 网元关联 ID: {{ net.ZZRWQZWLID }}</span
-                  >
+                  <span class="net-id-badge">
+                    <Icon
+                      icon="lucide:globe"
+                      :size="11"
+                      style="vertical-align: middle; margin-right: 3px"
+                    />
+                    网元关联 ID: {{ net.ZZRWQZWLID }}
+                  </span>
                   <div class="sub-card-actions">
                     <el-button
                       type="text"
@@ -247,7 +312,18 @@
                 </div>
 
                 <div class="sub-card-footer-business">
-                  <span class="biz-title">📡 通联业务要求:</span>
+                  <span class="biz-title">
+                    <Icon
+                      icon="lucide:radio-receiver"
+                      :size="12"
+                      style="
+                        vertical-align: middle;
+                        margin-right: 4px;
+                        color: #52637a;
+                      "
+                    />
+                    通联业务要求:
+                  </span>
                   <div class="biz-tag-container">
                     <span
                       v-for="biz in parseServiceTypes(net.serviceTypes)"
@@ -264,22 +340,40 @@
               </div>
             </div>
             <div class="model-empty-text-large" v-else>
-              ⚠️ 该任务群组下当前暂无编配绑定的群组网络指标参数。
+              该任务群组下当前暂无编配绑定的群组网络指标参数。
             </div>
           </div>
         </div>
       </div>
     </div>
 
+    <!-- 弹窗：群组录入/修改 -->
     <el-dialog
-      :title="
-        isEditGroup ? '🛠️ 调整作战任务群组要素' : '🚀 创建新编作战任务群组'
-      "
       :visible.sync="groupDialogVisible"
       width="600px"
       append-to-body
       custom-class="dark-dialog-clean"
     >
+      <div slot="title" class="dialog-custom-title">
+        <Icon
+          v-if="isEditGroup"
+          icon="lucide:wrench"
+          :size="14"
+          color="#38bdf8"
+          style="vertical-align: middle; margin-right: 5px"
+        />
+        <Icon
+          v-else
+          icon="lucide:rocket"
+          :size="14"
+          color="#10b981"
+          style="vertical-align: middle; margin-right: 5px"
+        />
+        <span>{{
+          isEditGroup ? '调整作战任务群组要素' : '创建新编作战任务群组'
+        }}</span>
+      </div>
+
       <el-form
         :model="groupForm"
         ref="groupForm"
@@ -413,13 +507,33 @@
       </span>
     </el-dialog>
 
+    <!-- 弹窗：映射配置 -->
     <el-dialog
-      :title="isEditLink ? '🛠️ 修正群组网络参数' : '🚀 挂载群组保障网络需求'"
       :visible.sync="linkDialogVisible"
       width="540px"
       append-to-body
       custom-class="dark-dialog-clean"
     >
+      <div slot="title" class="dialog-custom-title">
+        <Icon
+          v-if="isEditLink"
+          icon="lucide:wrench"
+          :size="14"
+          color="#38bdf8"
+          style="vertical-align: middle; margin-right: 5px"
+        />
+        <Icon
+          v-else
+          icon="lucide:link-2"
+          :size="14"
+          color="#10b981"
+          style="vertical-align: middle; margin-right: 5px"
+        />
+        <span>{{
+          isEditLink ? '修正群组网络参数' : '挂载群组保障网络需求'
+        }}</span>
+      </div>
+
       <el-form
         :model="linkForm"
         ref="linkForm"
@@ -525,35 +639,20 @@ import request from '@/utils/request'
 export default {
   name: 'TaskGroupScheme',
   props: {
-    platformTreeNodes: {
-      type: Array,
-      default: () => []
-    },
-    platformList: {
-      type: Array,
-      default: () => []
-    },
-    selectedTask: {
-      type: Object,
-      default: () => {}
-    }
+    platformTreeNodes: {type: Array, default: () => []},
+    platformList: {type: Array, default: () => []},
+    selectedTask: {type: Object, default: () => {}}
   },
   data() {
     return {
       groupLoading: false,
       detailLoading: false,
-
-      searchQuery: {
-        QZMC: ''
-      },
-
+      searchQuery: {QZMC: ''},
       groupList: [],
       activeGroupId: null,
       currentGroup: null,
-
       networkLinks: [],
       networkTreeOptions: [],
-
       businessOptions:
         typeof tlywList === 'function'
           ? tlywList()
@@ -587,7 +686,6 @@ export default {
       }
     }
   },
-
   watch: {
     selectedTask: {
       deep: true,
@@ -604,7 +702,7 @@ export default {
         ZZRWXXID: null,
         QZMC: '',
         ZZRWPTIDS: '',
-        cascaderPlatformValues: [], // 用于绑定的组件状态
+        cascaderPlatformValues: [],
         QSPTBSH: 0,
         ZZPTBSH: 0,
         QSMBBSH: 0,
@@ -618,23 +716,19 @@ export default {
       return {
         ZZRWQZWLID: null,
         ZZRWQZID: null,
-        ZZRWWLID: undefined, // 直接充当 Cascader 绑定的终点
+        ZZRWWLID: undefined,
         LYJDID: undefined,
         SJJZJDID: undefined,
         SYYQ: 50,
         DKYQ: 10,
         serviceTypes: '',
-        selectServiceTypes: [] // 用于绑定多选下拉列表的状态
+        selectServiceTypes: []
       }
     },
-
     loadNetworkTreeStructure() {
       const taskId = this.selectedTask?.ZZRWID
       if (!taskId) return
-      request({
-        url: `/rest/zzrwwl/findTree/${taskId}`,
-        method: 'get'
-      })
+      request({url: `/rest/zzrwwl/findTree/${taskId}`, method: 'get'})
         .then(res => {
           this.networkTreeOptions = res.data || res.list || []
         })
@@ -642,7 +736,6 @@ export default {
           this.networkTreeOptions = []
         })
     },
-
     fetchGroupList() {
       this.groupLoading = true
       const payload = {
@@ -656,7 +749,6 @@ export default {
             : undefined
         }
       }
-
       apiPage('zzrwqz', payload)
         .then(res => {
           this.groupList = res.data?.list || res.data || []
@@ -682,14 +774,12 @@ export default {
       this.currentGroup = null
       this.networkLinks = []
     },
-
     selectGroup(qz) {
       if (!qz) return
       this.currentGroup = qz
       this.activeGroupId = qz.ZZRWQZID
       this.fetchGroupNetworkLinks()
     },
-
     fetchGroupNetworkLinks() {
       if (!this.activeGroupId) return
       this.detailLoading = true
@@ -702,7 +792,6 @@ export default {
           QZMC: this.currentGroup.QZMC || undefined
         }
       }
-
       apiPage('zzrwqzwl', payload)
         .then(res => {
           this.networkLinks = res.data?.list || res.data || []
@@ -714,7 +803,6 @@ export default {
           this.detailLoading = false
         })
     },
-
     openCreateGroup() {
       this.isEditGroup = false
       this.groupForm = this.getInitGroupForm()
@@ -723,14 +811,10 @@ export default {
           this.selectedTask.ZZRWID || this.selectedTask.zzrwid
       }
       this.groupDialogVisible = true
-      this.$nextTick(() => {
-        if (this.$refs.groupForm) this.$refs.groupForm.clearValidate()
-      })
     },
     handleEditGroup(qz) {
       this.isEditGroup = true
       const form = {...qz}
-      // 核心修复：反解回显级联组件数据
       if (qz.ZZRWPTIDS) {
         form.cascaderPlatformValues = qz.ZZRWPTIDS.split(',').map(item =>
           String(item)
@@ -757,8 +841,6 @@ export default {
     submitGroupForm() {
       this.$refs.groupForm.validate(valid => {
         if (!valid) return
-
-        // 核心修复：提交前确保把 Cascader 里的数组组装转化为后端支持的 "1,2,3" 字符串
         if (
           this.groupForm.cascaderPlatformValues &&
           this.groupForm.cascaderPlatformValues.length > 0
@@ -768,7 +850,6 @@ export default {
         } else {
           this.groupForm.ZZRWPTIDS = ''
         }
-
         const action = this.isEditGroup
           ? apiUpdate('zzrwqz', this.groupForm)
           : apiAdd('zzrwqz', this.groupForm)
@@ -779,20 +860,15 @@ export default {
         })
       })
     },
-
     openCreateNetworkLink() {
       this.isEditLink = false
       this.linkForm = this.getInitLinkForm()
       this.linkForm.ZZRWQZID = this.activeGroupId
       this.linkDialogVisible = true
-      this.$nextTick(() => {
-        if (this.$refs.linkForm) this.$refs.linkForm.clearValidate()
-      })
     },
     handleEditLink(net) {
       this.isEditLink = true
       const form = {...net}
-      // 核心修复：回显网络级联和多选业务
       form.ZZRWWLID = net.ZZRWWLID
       if (net.serviceTypes) {
         form.selectServiceTypes = String(net.serviceTypes)
@@ -820,8 +896,6 @@ export default {
     submitLinkForm() {
       this.$refs.linkForm.validate(valid => {
         if (!valid) return
-
-        // 核心修复：提交前确保把下拉多选标签数组转化并合并为以逗号分隔的 serviceTypes 字符串
         if (
           this.linkForm.selectServiceTypes &&
           this.linkForm.selectServiceTypes.length > 0
@@ -831,7 +905,6 @@ export default {
         } else {
           this.linkForm.serviceTypes = ''
         }
-
         const action = this.isEditLink
           ? apiUpdate('zzrwqzwl', this.linkForm)
           : apiAdd('zzrwqzwl', this.linkForm)
@@ -842,7 +915,6 @@ export default {
         })
       })
     },
-
     findPlatformNameById(id) {
       const match = this.platformList.find(
         item => String(item.PTID) === String(id)
@@ -979,7 +1051,7 @@ export default {
   gap: 8px;
 }
 
-/* 🌟【完美修复】重新设计的卡片结构：编辑删除放置于绝对右上角，与原有文字互不冲突 */
+/* 🌟【完美修复】采用左右 Flex 双列结构隔离文字层与状态按钮层，杜绝位置冲突 */
 .platform-brief-card {
   background: #0d1522;
   border: 1px solid #172438;
@@ -987,7 +1059,6 @@ export default {
   border-radius: 3px;
   padding: 10px;
   cursor: pointer;
-  position: relative;
   transition: all 0.2s ease;
 }
 .platform-brief-card:hover {
@@ -1008,17 +1079,83 @@ export default {
   border-left-color: #38bdf8;
 }
 
-/* 右上角独立定位的操作按钮区 */
-.absolute-action-corner {
-  position: absolute;
-  top: 6px;
-  right: 8px;
+.card-flex-wrapper {
   display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+  width: 100%;
+  gap: 8px;
+}
+
+/* 左列：业务文本空间自适应 */
+.card-text-content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
   gap: 6px;
-  z-index: 10;
+}
+.card-title-row {
+  width: 100%;
+}
+.pt-name {
+  font-size: 11px;
+  font-weight: bold;
+  color: #ffffff;
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.card-sub-info {
+  font-size: 10px;
+}
+.bsh-txt {
+  color: #475569;
+}
+.card-count-row {
+  font-size: 10px;
+  color: #64748b;
+}
+
+/* 右列：统一操作及状态对齐舱门 */
+.card-right-status-zone {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-end;
+  flex-shrink: 0;
+  width: 55px; /* 固定右侧专属安全宽度 */
+}
+.state-txt-tag {
+  font-size: 9px;
+  padding: 1px 5px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.05);
+  color: #94a3b8;
+  text-align: center;
+  display: inline-block;
+}
+.status-running .state-txt-tag {
+  color: #10b981;
+  background: rgba(16, 185, 129, 0.1);
+}
+.status-offline .state-txt-tag {
+  color: #f43f5e;
+  background: rgba(244, 63, 94, 0.1);
+}
+.status-new .state-txt-tag {
+  color: #38bdf8;
+  background: rgba(56, 189, 248, 0.1);
+}
+
+.card-action-btns {
+  display: flex;
+  gap: 8px;
+  align-items: center;
 }
 .corner-btn {
-  padding: 0px;
+  padding: 0px !important;
   font-size: 13px;
   margin: 0 !important;
 }
@@ -1033,56 +1170,6 @@ export default {
 }
 .btn-delete:hover {
   color: #fda4af;
-}
-
-/* 文字图层：右边距留出 45px 的安全空隙，确保绝不发生重合 */
-.card-text-content {
-  padding-right: 45px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-.card-title-row {
-  width: 100%;
-  display: flex;
-}
-.pt-name {
-  font-size: 11px;
-  font-weight: bold;
-  color: #ffffff;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.card-sub-info {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font-size: 10px;
-}
-.bsh-txt {
-  color: #475569;
-}
-.state-txt-tag {
-  font-size: 9px;
-  padding: 1px 4px;
-  border-radius: 2px;
-  background: rgba(255, 255, 255, 0.05);
-  color: #94a3b8;
-}
-.status-running .state-txt-tag {
-  color: #10b981;
-  background: rgba(16, 185, 129, 0.1);
-}
-.status-offline .state-txt-tag {
-  color: #f43f5e;
-  background: rgba(244, 63, 94, 0.1);
-}
-
-.card-count-row {
-  font-size: 10px;
-  color: #64748b;
 }
 
 /* RIGHT 看板区 */
@@ -1114,6 +1201,7 @@ export default {
 .border-emerald {
   border-left: 3px solid #10b981;
 }
+
 .panel-section-title {
   font-size: 12px;
   font-weight: bold;
@@ -1127,7 +1215,6 @@ export default {
   align-items: center;
   margin-bottom: 12px;
 }
-
 .attribute-data-matrix {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -1172,7 +1259,6 @@ export default {
   font-size: 10px;
 }
 
-/* 网络联动网格 */
 .network-links-grid {
   display: flex;
   flex-direction: column;
@@ -1187,6 +1273,7 @@ export default {
 .net-link-sub-card:hover {
   border-color: #10b981;
 }
+
 .sub-card-header {
   display: flex;
   justify-content: space-between;
@@ -1249,7 +1336,6 @@ export default {
   color: #475569;
 }
 
-/* 通联业务标签 */
 .sub-card-footer-business {
   background: #09101a;
   border-radius: 2px;
@@ -1278,7 +1364,6 @@ export default {
   font-size: 10px;
 }
 
-/* 空态基础样式 */
 .empty-fallback {
   position: absolute;
   inset: 0;
@@ -1303,6 +1388,7 @@ export default {
     transform: rotate(360deg);
   }
 }
+
 .sub-empty {
   text-align: center;
   font-size: 11px;
@@ -1337,6 +1423,14 @@ export default {
   color: #334155;
 }
 .font-num {
+}
+
+.dialog-custom-title {
+  display: flex;
+  align-items: center;
+  font-size: 12px;
+  font-weight: bold;
+  color: #fff;
 }
 
 /* 深色表单弹窗及组件级联样式穿透 */

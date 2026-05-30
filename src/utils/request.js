@@ -63,7 +63,7 @@ service.interceptors.response.use(
      * 后端返回 HTML
      */
     if (contentType.includes('text/html')) {
-      showMessage('服务器返回了 HTML 页面')
+      showMessage('服务器内部异常')
 
       return Promise.reject(new Error('服务器返回了非预期 HTML'))
     }

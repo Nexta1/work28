@@ -279,6 +279,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
   background: #050508;
   color: #e0e0e0;
+  font-size: 13px;
 }
 
 .app-layout {

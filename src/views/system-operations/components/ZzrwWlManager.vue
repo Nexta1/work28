@@ -55,9 +55,14 @@
             <Icon
               icon="lucide:shield-alert"
               :size="14"
-              style="vertical-align: middle; margin-right: 4px"
+              style="
+                vertical-align: middle;
+                margin-right: 4px;
+                color: #f59e0b;
+                filter: drop-shadow(0 0 4px rgba(245, 158, 11, 0.4));
+              "
             />
-            战术网络需求
+            网络需求
           </span>
           <el-radio-group
             v-model="layoutMode"
@@ -89,7 +94,7 @@
                 <Icon
                   icon="lucide:git-commit"
                   :size="12"
-                  style="color: var(--color-primary); margin-right: 4px"
+                  style="color: #06b6d4; margin-right: 4px"
                 />
                 {{ net.WLMC }}
               </span>
@@ -103,7 +108,11 @@
                 <Icon
                   icon="lucide:activity"
                   :size="11"
-                  style="vertical-align: middle; margin-right: 2px"
+                  style="
+                    vertical-align: middle;
+                    margin-right: 2px;
+                    color: #10b981;
+                  "
                 />
                 {{ net.bandwidthRequirement || 0 }} Mbps
               </span>
@@ -111,7 +120,11 @@
                 <Icon
                   icon="lucide:timer"
                   :size="11"
-                  style="vertical-align: middle; margin-right: 2px"
+                  style="
+                    vertical-align: middle;
+                    margin-right: 2px;
+                    color: #f97316;
+                  "
                 />
                 {{ net.latencyRequirement || 0 }} ms
               </span>
@@ -126,7 +139,6 @@
           </div>
         </div>
 
-        <!-- 💡 树形插槽内图标色彩与状态动态关联 -->
         <div v-else class="platform-tree-box" v-loading="loading">
           <el-tree
             :data="networkTree"
@@ -145,7 +157,6 @@
                   data.networkingState === 1 ? 'bg-running' : 'bg-offline'
                 ]"
               ></span>
-              <!-- 精准色彩控制线：根据部署就绪状态注入不同的色彩和发光滤镜 -->
               <span
                 class="tree-icon-wrapper"
                 style="
@@ -162,7 +173,14 @@
                   "
                   :size="13"
                   :style="{
-                    color: 'var(--color-cyan)'
+                    color:
+                      data.children && data.children.length > 0
+                        ? '#38bdf8'
+                        : '#a855f7',
+                    filter:
+                      data.children && data.children.length > 0
+                        ? 'drop-shadow(0 0 3px rgba(56, 189, 248, 0.5))'
+                        : 'drop-shadow(0 0 3px rgba(168, 85, 247, 0.5))'
                   }"
                 />
               </span>
@@ -456,9 +474,9 @@
           <el-form-item label="网络名称" prop="WLMC">
             <el-input v-model="form.WLMC" placeholder="请键入保障网络描述" />
           </el-form-item>
-          <el-form-item label="网络代号" prop="WLH">
+          <!-- <el-form-item label="网络代号" prop="WLH">
             <el-input-number v-model="form.WLH" :min="1" style="width: 100%" />
-          </el-form-item>
+          </el-form-item> -->
           <el-form-item label="网络分类" prop="WLLX">
             <el-select
               v-model="form.WLLX"

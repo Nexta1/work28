@@ -2,10 +2,10 @@
   <div class="screen-container">
     <div class="top-search-header">
       <div class="search-flex">
-        <span class="hub-title">🗺️ 作战筹划信息获取和数据链保障需求生成</span>
+        <span class="hub-title">数据链保障方案生成</span>
 
         <div class="search-item">
-          <label>作战任务名称 (RWMC)</label>
+          <label>作战任务名称</label>
           <input
             type="text"
             v-model="queryParam.RWMC"
@@ -33,7 +33,14 @@
     <div class="main-body-layout">
       <div class="left-tree-panel">
         <div class="panel-header-summary">
-          <span class="title">⚔️ 作战任务源总线 </span>
+          <span class="title">
+            <Icon
+              icon="lucide:swords"
+              :size="16"
+              style="vertical-align: middle; margin-right: 4px"
+            />
+            作战任务源
+          </span>
           <span class="badge font-num text-cyan">{{ rwxxList.length }} 项</span>
         </div>
 
@@ -46,9 +53,14 @@
             @click="handleSelectRw(rw)"
           >
             <div class="task-card-header">
-              <span class="rw-title ellipsis-text" :title="rw.RWMC || rw.rwmc"
-                >🔹 {{ rw.RWMC || rw.rwmc }}</span
-              >
+              <span class="rw-title ellipsis-text" :title="rw.RWMC || rw.rwmc">
+                <Icon
+                  icon="lucide:layers"
+                  :size="12"
+                  style="color: var(--color-primary); margin-right: 4px"
+                />
+                {{ rw.RWMC || rw.rwmc }}
+              </span>
               <span
                 class="status-tag"
                 :class="rw.STATE === 1 ? 'tag-active' : 'tag-pending'"
@@ -79,6 +91,16 @@
                   优先级:
                   <span class="text-orange">{{
                     yxjMap[rw.RWYXJ] || rw.RWYXJ || '常态'
+                  }}</span>
+                </div>
+                <div>
+                  开始时间:
+                  <span>{{ formatStartTime(rw.STARTTIME) }}</span>
+                </div>
+                <div>
+                  任务时长:
+                  <span class="text-cyan font-num">{{
+                    formatTaskDuration(rw.RWSJ)
                   }}</span>
                 </div>
               </div>
@@ -163,6 +185,64 @@ export default {
       this.platformTreeNodes = []
 
       this.loadPlatformTreeData()
+    },
+    formatStartTime(timestamp) {
+      if (!timestamp) return '--'
+      const date = new Date(Number(timestamp))
+      const year = date.getFullYear()
+      const month = String(date.getMonth() + 1).padStart(2, '0')
+      const day = String(date.getDate()).padStart(2, '0')
+      const hours = String(date.getHours()).padStart(2, '0')
+      const minutes = String(date.getMinutes()).padStart(2, '0')
+      return `${year}-${month}-${day} ${hours}:${minutes}`
+    },
+    /**
+     * 格式化任务时长（秒转为合适的单位显示）
+     * 优化策略：
+     * - 小于1分钟：显示秒
+     * - 1分钟~1小时：显示分钟
+     * - 1小时~24小时：显示小时（+分钟）
+     * - 1天~30天：显示天（+小时）
+     * - 超过30天：显示天
+     */
+    formatTaskDuration(seconds) {
+      if (!seconds && seconds !== 0) return '--'
+      const totalSeconds = Number(seconds / 1000)
+
+      // 小于1分钟，显示秒
+      if (totalSeconds < 60) {
+        return `${totalSeconds} 秒`
+      }
+
+      const minutes = Math.floor(totalSeconds / 60)
+
+      // 小于1小时，显示分钟
+      if (minutes < 60) {
+        return `${minutes} 分钟`
+      }
+
+      const hours = Math.floor(totalSeconds / 3600)
+
+      // 小于24小时，显示小时和剩余分钟
+      if (hours < 24) {
+        const remainingMinutes = minutes % 60
+        return remainingMinutes > 0
+          ? `${hours} 小时 ${remainingMinutes} 分钟`
+          : `${hours} 小时`
+      }
+
+      const days = Math.floor(hours / 24)
+
+      // 小于30天，显示天和剩余小时
+      if (days < 30) {
+        const remainingHours = hours % 24
+        return remainingHours > 0
+          ? `${days} 天 ${remainingHours} 小时`
+          : `${days} 天`
+      }
+
+      // 超过30天，只显示天数
+      return `${days} 天`
     },
     loadPlatformTreeData() {
       if (!this.selectedRw) return

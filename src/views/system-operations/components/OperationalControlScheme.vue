@@ -26,7 +26,19 @@
     <div class="main-body-layout">
       <div class="left-platform-sidebar">
         <div class="sidebar-header-summary">
-          <span class="title">🛡️ 战术网络需求</span>
+          <span class="title">
+            <Icon
+              icon="lucide:shield-alert"
+              :size="14"
+              style="
+                vertical-align: middle;
+                margin-right: 4px;
+                color: #f59e0b;
+                filter: drop-shadow(0 0 4px rgba(245, 158, 11, 0.4));
+              "
+            />
+            网络需求
+          </span>
           <el-radio-group
             v-model="layoutMode"
             size="mini"
@@ -53,11 +65,44 @@
             @click="selectNetwork(net)"
           >
             <div class="card-top">
-              <span class="pt-name" :title="net.WLMC">{{ net.WLMC }}</span>
+              <span class="pt-name" :title="net.WLMC">
+                <Icon
+                  icon="lucide:git-commit"
+                  :size="12"
+                  style="color: #06b6d4; margin-right: 4px"
+                />
+                {{ net.WLMC }}
+              </span>
             </div>
             <div class="card-sub-info">
               <span class="bsh-txt">编号: {{ net.ZZRWWLID }}</span>
               <span class="pt-type-tag">代号: {{ net.WLH }}</span>
+            </div>
+            <div class="brief-dynamics">
+              <span>
+                <Icon
+                  icon="lucide:activity"
+                  :size="11"
+                  style="
+                    vertical-align: middle;
+                    margin-right: 2px;
+                    color: #10b981;
+                  "
+                />
+                {{ net.bandwidthRequirement || 0 }} Mbps
+              </span>
+              <span>
+                <Icon
+                  icon="lucide:timer"
+                  :size="11"
+                  style="
+                    vertical-align: middle;
+                    margin-right: 2px;
+                    color: #f97316;
+                  "
+                />
+                {{ net.latencyRequirement || 0 }} ms
+              </span>
             </div>
             <div
               class="card-status-dot"
@@ -76,6 +121,7 @@
             :props="{label: 'WLMC', children: 'children'}"
             default-expand-all
             highlight-current
+            :expand-on-click-node="false"
             class="dark-custom-tree"
             @node-click="selectNetwork"
           >
@@ -87,6 +133,33 @@
                 ]"
               ></span>
               <span
+                class="tree-icon-wrapper"
+                style="
+                  margin-right: 6px;
+                  display: inline-flex;
+                  align-items: center;
+                "
+              >
+                <Icon
+                  :icon="
+                    data.children && data.children.length > 0
+                      ? 'lucide:network'
+                      : 'lucide:git-fork'
+                  "
+                  :size="13"
+                  :style="{
+                    color:
+                      data.children && data.children.length > 0
+                        ? '#38bdf8'
+                        : '#a855f7',
+                    filter:
+                      data.children && data.children.length > 0
+                        ? 'drop-shadow(0 0 3px rgba(56, 189, 248, 0.5))'
+                        : 'drop-shadow(0 0 3px rgba(168, 85, 247, 0.5))'
+                  }"
+                />
+              </span>
+              <span
                 class="tree-label-txt"
                 :class="{'text-active': activeNetId === data.ZZRWWLID}"
                 >{{ node.label }}</span
@@ -96,6 +169,17 @@
           <div class="sub-empty" v-if="networkTree.length === 0">
             未形成拓扑级联树
           </div>
+        </div>
+
+        <div class="pagination-row-mini" v-if="layoutMode === 'card'">
+          <el-pagination
+            layout="prev, next"
+            :current-page.sync="pagination.pageNum"
+            :page-size="pagination.pageSize"
+            :total="totalCount"
+            @current-change="fetchList"
+            small
+          />
         </div>
       </div>
 
@@ -162,7 +246,19 @@
               </div>
 
               <div class="strategy-card-body">
-                <div class="model-json-title">⚙️ 运控元数据配置模型</div>
+                <div class="model-json-title">
+                  <Icon
+                    icon="lucide:square-gantt-chart"
+                    :size="13"
+                    style="
+                      vertical-align: middle;
+                      margin-right: 4px;
+                      color: #38bdf8;
+                      filter: drop-shadow(0 0 4px rgba(56, 189, 248, 0.4));
+                    "
+                  />
+                  运控元数据配置模型
+                </div>
                 <div
                   class="model-kv-grid"
                   v-if="parseStrategyModel(item.strategyModel).length > 0"
@@ -222,7 +318,7 @@
         </el-form-item>
 
         <div class="dynamic-attr-divider" v-if="dynamicAttributes.length > 0">
-          <span class="divider-text">🛡️ 模型动态属性填充</span>
+          <span class="divider-text">模型动态属性填充</span>
         </div>
 
         <div class="dynamic-fields-wrapper" v-loading="attrLoading">
@@ -299,6 +395,7 @@ export default {
   },
   data() {
     return {
+      totalCount: 0,
       loading: false,
       strategyLoading: false,
       attrLoading: false,
@@ -429,6 +526,7 @@ export default {
       apiPage('zzrwwl', payload)
         .then(res => {
           this.tableData = res.data?.list || res.data || []
+          this.totalCount = res.data?.total || this.tableData.length
           this.networkTree = buildTree(
             this.tableData,
             'ZZRWWLID',
@@ -993,6 +1091,14 @@ export default {
 .header-right-actions {
   display: flex;
   gap: 10px;
+}
+.brief-dynamics {
+  display: flex;
+  gap: 12px;
+  margin-top: 4px;
+  font-size: 10px;
+  color: #8a99ad;
+  font-family: monospace;
 }
 .action-btn {
   font-size: 11px;
