@@ -380,7 +380,7 @@ export default {
     async runSyncWorkflow() {
       try {
         const resXX = await getSslxxPage({RWMC: this.currentTaskName})
-        this.xxList = resXX.data.data.list || []
+        this.xxList = resXX.data?.list || resXX.data?.records || []
         if (this.xxList.length === 0) {
           this.graphMembers = []
           this.activeKillChainObject = null
@@ -400,7 +400,7 @@ export default {
         const resQZ = await getSslqzPage({
           KILLCHAIN_ID: this.currentKillChainId
         })
-        const groups = resQZ.data.data.list || []
+        const groups = resQZ.data?.list || resQZ.data?.records || []
 
         if (groups.length > 0) {
           const firstGroup = groups[groups.length - 1]
@@ -431,13 +431,13 @@ export default {
     },
     async loadMembersData(groupName) {
       const resCY = await getSslqzcyPage(this.currentKillChainId, groupName)
-      const rawMembers = resCY.data.data.list || []
+      const rawMembers = resCY.data?.list || resCY.data?.records || []
 
       this.graphMembers = await Promise.all(
         rawMembers.map(async m => {
           try {
             const resPT = await getptxPage(m.Killchain_Group_Member_PltID)
-            return {...m, ptDetail: resPT.data.data || {}}
+            return {...m, ptDetail: resPT.data || resPT || {}}
           } catch (e) {
             return m
           }
@@ -477,7 +477,7 @@ export default {
       if (!this.currentSelectedPt || !this.currentSelectedPt.PTID) return
       try {
         const res = await getptWarnInfos(this.currentSelectedPt.PTID)
-        this.warnList = res.data.data || []
+        this.warnList = res.data || res || []
       } catch (e) {
         console.error('遥测告警加载失败:', e)
       }

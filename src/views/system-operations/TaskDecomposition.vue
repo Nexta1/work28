@@ -1125,7 +1125,7 @@ export default {
       }
       sslrw(payload)
         .then(res => {
-          this.sslrwList = res.data?.data.list || res.data || []
+          this.sslrwList = res.data?.list || res.data?.records || []
         })
         .catch(() => {
           this.sslrwList = []

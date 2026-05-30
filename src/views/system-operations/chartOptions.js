@@ -166,7 +166,7 @@ export const getFaultBarOption = data => ({
     borderColor: '#172438',
     textStyle: { color: '#cbd5e1', fontSize: 11 }
   },
-  grid: { top: '10%', bottom: '15%', left: '12%', right: '10%' },
+  grid: { top: '10%', bottom: '20%', left: '12%', right: '10%', containLabel: true },
   xAxis: {
     type: 'category',
     data: data.labels,
