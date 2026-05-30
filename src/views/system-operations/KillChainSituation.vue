@@ -42,11 +42,21 @@
             <span class="legend-label">{{ cfg.label }}</span>
           </div>
         </div>
+        <el-button
+          size="mini"
+          icon="el-icon-rank"
+          class="fit-screen-btn"
+          @click="handleFitScreen"
+          title="适配屏幕大小"
+        >
+          适配屏幕
+        </el-button>
       </div>
     </div>
 
     <div class="main-content-canvas-area">
       <kill-chain-canvas
+        ref="killChainCanvasRef"
         :members="graphMembers"
         :active-kill-chain="activeKillChainObject"
         @click-pt="setCurrentSelectedPt"
@@ -286,7 +296,7 @@ export default {
   },
   data() {
     return {
-      leftControlVisible: true, // 控制左侧控制舱的折叠
+      leftControlVisible: false, // 控制左侧控制舱的折叠
       isPolling: false,
       timer: null,
       warnTimer: null,
@@ -458,6 +468,11 @@ export default {
       this.currentThemeColor = btnData.themeColor
       this.listDialogVisible = true
     },
+    handleFitScreen() {
+      if (this.$refs.killChainCanvasRef) {
+        this.$refs.killChainCanvasRef.handleGraphResize()
+      }
+    },
     async fetchWarnInfos() {
       if (!this.currentSelectedPt || !this.currentSelectedPt.PTID) return
       try {
@@ -581,6 +596,21 @@ export default {
 .legend-label {
   font-size: 11px;
   color: #cbd5e1;
+}
+
+/* 适配屏幕按钮样式 */
+.fit-screen-btn {
+  margin-left: 8px;
+}
+.fit-screen-btn ::v-deep {
+  background-color: #1f2937 !important;
+  border-color: #374151 !important;
+  color: #14b8a6 !important;
+}
+.fit-screen-btn:hover ::v-deep {
+  background-color: #374151 !important;
+  border-color: #14b8a6 !important;
+  color: #fff !important;
 }
 
 /* ==========================================================================

@@ -343,6 +343,8 @@ const routes = [
   {
     path: '/data-collection',
     name: 'DataCollection',
+    component: () =>
+      import('@/views/system-resource/DataCollectionProject.vue'),
     meta: {
       title: '数据采集',
       subsystem: '资源和数据管理',
@@ -486,19 +488,6 @@ const routes = [
       category: '数据管理',
       icon: 'lucide:share-2', // 分发、节点共享
       parentModule: '数据管理',
-      requiresAuth: true
-    }
-  },
-  {
-    path: '/data-collection-project',
-    name: 'DataCollectionProject',
-    component: () =>
-      import('@/views/system-resource/DataCollectionProject.vue'),
-    meta: {
-      title: '数据采集项目',
-      subsystem: '资源和数据管理',
-      category: '数据采集',
-      icon: 'lucide:database',
       requiresAuth: true
     }
   }

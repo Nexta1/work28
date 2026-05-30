@@ -5,10 +5,11 @@
         type="primary"
         size="mini"
         circle
-        icon="el-icon-rank"
         title="适应画布"
         @click="resetLayout"
-      />
+      >
+        <Icon icon="mdi:fit-to-screen" size="14px" />
+      </el-button>
     </div>
 
     <div id="container" ref="container"></div>
@@ -17,7 +18,7 @@
       <div v-if="detailVisible" class="detail-panel">
         <div class="panel-header">
           <span>
-            <i class="el-icon-cpu"></i>
+            <Icon icon="mdi:cpu" size="14px" style="color: #38bdf8" />
             {{ selectedNode.isNetwork ? '网络状态监控' : '节点属性' }}
           </span>
           <i class="el-icon-close close-btn" @click="detailVisible = false"></i>
@@ -126,7 +127,6 @@ import {wlzt} from '@/api/network'
 export default {
   name: 'TopologyCanvas',
   props: {
-    // 允许父组件直接传入清洗好的拓扑树数据
     topologyData: {
       type: Array,
       default: () => []
@@ -139,25 +139,24 @@ export default {
       selectedNode: {},
       loading: false,
       theme: {
-        background: '#0a192f',
+        background: '#070c14',
         network: '#00d8ff',
         subnet: '#52c41a',
         group: 'rgba(250, 173, 20, 0.05)',
         groupBorder: '#faad14',
         edge: '#00e5ff',
         edgeGradient: '#0055ff',
-        text: '#a6a6a6',
+        text: '#cbd5e1',
         flowDot: {
           color: '#00f2fe',
           shadow: '#03a9f4',
-          r: 4,
+          r: 3,
           duration: 2500
         }
       }
     }
   },
   watch: {
-    // 监听拓扑数据变化，触发重新渲染
     topologyData: {
       deep: true,
       handler(newVal) {
@@ -184,13 +183,14 @@ export default {
         container: this.$refs.container,
         autoResize: true,
         background: {
-          color: '#141a23'
+          color: '#070c14'
         },
         grid: {
           visible: true,
+          type: 'mesh',
           args: [
-            {color: 'rgba(0, 162, 255, 0.05)', thickness: 1},
-            {color: 'rgba(0, 162, 255, 0.02)', thickness: 1, factor: 4}
+            {color: 'rgba(0, 162, 255, 0.06)', thickness: 1},
+            {color: 'rgba(0, 162, 255, 0.03)', thickness: 1, factor: 4}
           ]
         },
         panning: true,
@@ -381,6 +381,8 @@ export default {
           })
         })
       })
+      // 居中显示并缩放适配
+      this.graph.zoomToFit({padding: 60, maxScale: 1})
       this.graph.centerContent()
     },
 
@@ -434,10 +436,7 @@ export default {
           'dot-marker': {
             r: this.theme.flowDot.r,
             fill: this.theme.flowDot.color,
-            atConnectionRatio: 0,
-            style: {
-              filter: `drop-shadow(0 0 5px ${this.theme.flowDot.shadow}) drop-shadow(0 0 10px ${this.theme.flowDot.shadow})`
-            }
+            atConnectionRatio: 0
           }
         },
         animation: [
@@ -455,7 +454,7 @@ export default {
 
     resetLayout() {
       if (this.graph) {
-        this.graph.zoomToFit({padding: 80, maxScale: 1})
+        this.graph.zoomToFit({padding: 60, maxScale: 1})
         this.graph.centerContent()
       }
     },
@@ -489,7 +488,6 @@ export default {
   z-index: 90;
 }
 
-/* 右侧详情面板 */
 .detail-panel {
   position: fixed;
   top: 80px;
@@ -575,7 +573,6 @@ export default {
   color: #fff;
 }
 
-/* 面板动画 */
 .panel-slide-enter-active,
 .panel-slide-leave-active {
   transition: all 0.3s ease;
@@ -586,31 +583,10 @@ export default {
   opacity: 0;
 }
 
-/* X6 SVG 特效适配 */
-/deep/ g.x6-cell.x6-edge:hover path.x6-edge-line {
+::v-deep g.x6-cell.x6-edge:hover path.x6-edge-line {
   stroke: #00f2fe;
   stroke-width: 3;
   filter: drop-shadow(0 0 5px #00f2fe);
   transition: all 0.3s ease;
-}
-
-/deep/ [selector='dot-marker'] {
-  animation: pulse 2s infinite ease-in-out;
-  transform-origin: center;
-}
-
-@keyframes pulse {
-  0% {
-    opacity: 0.8;
-    r: 3.5;
-  }
-  50% {
-    opacity: 1;
-    r: 4.5;
-  }
-  100% {
-    opacity: 0.8;
-    r: 3.5;
-  }
 }
 </style>

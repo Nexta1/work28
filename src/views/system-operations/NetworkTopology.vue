@@ -6,7 +6,9 @@
   >
     <div class="top-search-header-refined">
       <div class="search-flex-zone">
-        <span class="hub-title-refined">🛰️ 战术拓扑网络资源调度</span>
+        <span class="hub-title-refined">
+          <Icon icon="mdi:satellite" size="14px" /> 战术拓扑网络资源调度
+        </span>
 
         <div class="search-item-refined">
           <label>作战任务</label>
@@ -98,9 +100,10 @@
               class="refined-tactical-row border-ok"
             >
               <div class="row-top-meta font-mono">
-                <span class="time-node"
-                  >🕒 时间: {{ formatTime(item.SJ) }}</span
-                >
+                <span class="time-node">
+                  <Icon icon="mdi:clock-outline" size="10px" /> 时间:
+                  {{ formatTime(item.SJ) }}
+                </span>
                 <span class="wlh-tag">网号: {{ item.WLH }}</span>
               </div>
 
@@ -155,9 +158,14 @@
               :class="Number(link.LLJKZT) === 1 ? 'border-err' : 'border-ok'"
             >
               <div class="row-title-flex">
-                <span class="net-title"
-                  >🌐 {{ link.WLMC || '未命名网络' }}</span
-                >
+                <span class="net-title">
+                  <Icon
+                    icon="mdi:globe-model"
+                    size="12px"
+                    style="color: #38bdf8"
+                  />
+                  {{ link.WLMC || '未命名网络' }}
+                </span>
                 <span
                   class="health-indicator-tag"
                   :class="Number(link.LLJKZT) === 1 ? 'alarm' : 'healthy'"
@@ -210,7 +218,10 @@
               :class="Number(detail.XXCSQK) === 1 ? 'border-err' : 'border-ok'"
             >
               <div class="result-header-flex font-mono">
-                <span class="time-node">⏳ 时标: {{ detail.TIME || '-' }}</span>
+                <span class="time-node">
+                  <Icon icon="mdi:clock-outline" size="10px" /> 时标:
+                  {{ detail.TIME || '-' }}
+                </span>
                 <span
                   class="status-indicator-tag"
                   :class="Number(detail.XXCSQK) === 1 ? 'err' : 'ok'"
@@ -436,9 +447,6 @@ export default {
 </script>
 
 <style scoped>
-/* ==========================================================================
-   一、底座容器（100% 撑满，不使用 vw/vh 单位）
-   ========================================================================== */
 .topology-container {
   position: relative;
   width: 100%;
@@ -447,8 +455,6 @@ export default {
   color: #cbd5e1;
   overflow: hidden;
 }
-
-/* ⚡️ 拓扑图主区域：固定左间距 12px，永不随着左面板的隐藏或展开而变形挤压 */
 .main-canvas-area {
   position: absolute;
   top: 76px;
@@ -458,13 +464,9 @@ export default {
   background: #040810;
   border: 1px solid #111b2b;
   border-radius: 4px;
-  z-index: 1; /* 处于面板下一层 */
+  z-index: 1;
   overflow: hidden;
 }
-
-/* ==========================================================================
-   二、顶部控制检索栏
-   ========================================================================== */
 .top-search-header-refined {
   position: absolute;
   top: 12px;
@@ -478,7 +480,7 @@ export default {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  z-index: 1001; /* 确保不被遮挡 */
+  z-index: 1001;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
 .search-flex-zone {
@@ -541,33 +543,24 @@ export default {
   font-size: 11px;
   font-weight: bold;
 }
-
-/* ==========================================================================
-   三、⚡️ 左侧独立绝对定位悬浮舱（浮于主画布正上方，完全不抢占空间）
-   ========================================================================== */
 .left-bus-drawer {
   position: absolute;
   top: 76px;
   left: 12px;
   bottom: 12px;
   width: 360px;
-  /* 采用带微弱透明的科幻深灰色底色，隐约可见下方边缘画布线 */
   background: rgba(8, 14, 24, 0.9);
-  backdrop-filter: blur(4px); /* 支持高阶浏览器的毛玻璃透视 */
+  backdrop-filter: blur(4px);
   border: 1px solid #111b2b;
   box-shadow: 5px 0 25px rgba(0, 0, 0, 0.8);
   border-radius: 4px;
-  z-index: 1000; /* 悬浮于画布层之上 */
+  z-index: 1000;
   transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
   display: flex;
 }
-
-/* 隐藏时只将浮动层推出视野区 */
 .left-bus-drawer.is-hidden {
   transform: translateX(-372px);
 }
-
-/* 侧边隐藏/唤醒手柄挂件 */
 .drawer-left-trigger {
   position: absolute;
   right: -24px;
@@ -596,7 +589,6 @@ export default {
   letter-spacing: 1px;
   font-weight: bold;
 }
-
 .drawer-left-body {
   flex: 1;
   display: flex;
@@ -624,7 +616,6 @@ export default {
   font-size: 11px;
   color: #415169;
 }
-
 .animate-pulse-dot {
   width: 6px;
   height: 6px;
@@ -643,10 +634,6 @@ export default {
     box-shadow: 0 0 0 0 rgba(56, 189, 248, 0);
   }
 }
-
-/* ==========================================================================
-   四、物理按钮风格切换页签
-   ========================================================================== */
 .tactical-btn-tabs {
   display: flex;
   background: #040810;
@@ -679,15 +666,12 @@ export default {
   box-shadow: inset 0 0 5px rgba(56, 189, 248, 0.25);
   border: 1px solid rgba(56, 189, 248, 0.35);
 }
-
 .tab-content-container {
   flex: 1;
   overflow: hidden;
   display: flex;
   flex-direction: column;
 }
-
-/* 纵向可滚动内容视图区域 */
 .tab-scroll-pane {
   flex: 1;
   overflow-y: auto;
@@ -703,8 +687,6 @@ export default {
   background: #172438;
   border-radius: 2px;
 }
-
-/* 基础卡片行行 */
 .refined-tactical-row {
   background: #0d1522;
   border: 1px solid #172438;
@@ -718,10 +700,6 @@ export default {
   background: #121f35;
   border-color: #38bdf8;
 }
-
-/* ==========================================================================
-   五、多文本多细节：发送结果（xxfsjg）大信息垂直卡片
-   ========================================================================== */
 .rich-result-vertical-card {
   background: #0d1522;
   border: 1px solid #172438;
@@ -736,7 +714,6 @@ export default {
   background: #121f35;
   border-color: #38bdf8;
 }
-
 .result-header-flex {
   display: flex;
   justify-content: space-between;
@@ -751,8 +728,6 @@ export default {
   color: #ef4444;
   font-weight: bold;
 }
-
-/* 网格双列扩展行明细 */
 .rich-result-vertical-card .row-footer-details {
   border-top: 1px dashed #162235;
   padding-top: 6px;
@@ -761,14 +736,13 @@ export default {
   gap: 3px 6px;
   font-size: 11px;
 }
-.rich-result-vertical-card .detail-line {
+.detail-line {
   display: flex;
   justify-content: space-between;
   align-items: center;
   overflow: hidden;
+  font-size: 11px;
 }
-
-/* 发送接收双向时间戳模块 */
 .rich-result-vertical-card .time-stamp-matrix {
   border-top: 1px dashed #162235;
   padding-top: 5px;
@@ -792,10 +766,6 @@ export default {
   font-size: 10px;
   font-weight: bold;
 }
-
-/* ==========================================================================
-   六、基础辅助样式原子类
-   ========================================================================== */
 .border-ok {
   border-left: 3px solid #10b981;
 }
@@ -843,7 +813,6 @@ export default {
   border-radius: 2px;
   font-size: 9px;
 }
-
 .vector-route-pipeline {
   display: flex;
   align-items: center;
@@ -910,7 +879,6 @@ export default {
   right: 46%;
   top: -5px;
 }
-
 .data-matrix {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -930,7 +898,6 @@ export default {
   font-size: 11px;
   color: #cbd5e1;
 }
-
 .data-matrix-counter {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -956,7 +923,6 @@ export default {
   font-weight: bold;
   color: #fff;
 }
-
 .neighbor-sub-box {
   border-top: 1px dashed #1e293b;
   padding-top: 4px;
@@ -979,7 +945,6 @@ export default {
 .node-st-val.st-4 {
   color: #ef4444;
 }
-
 .empty-hint-dark {
   text-align: center;
   color: #415169;
@@ -987,8 +952,6 @@ export default {
   padding: 60px 10px;
   border: 1px dashed #111b2b;
   border-radius: 4px;
-}
-.font-mono {
 }
 .text-cyan {
   color: #38bdf8 !important;
@@ -1007,7 +970,6 @@ export default {
   overflow: hidden;
   text-overflow: ellipsis;
 }
-
 .el-select-dropdown.monitor-select-dropdown {
   background-color: #080e18 !important;
   border: 1px solid #111b2b !important;

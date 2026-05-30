@@ -114,13 +114,12 @@ export default {
     handleGraphResize() {
       if (this.graph && this.$refs.container) {
         const container = this.$refs.container
-        // 动态抓取当前外壳最真实的 Client 宽高（已被 min-width/min-height 赋予收缩权）
         const width = container.clientWidth
         const height = container.clientHeight
 
-        // 抹平、重置并强制重新居中对齐内容
         this.graph.resize(width, height)
-        this.graph.centerContent()
+        // 使用 zoomToFit 自动缩放内容以适应容器，保留 40px 边距
+        this.graph.zoomToFit({padding: 40, maxZoom: 1})
       }
     },
     handleResize() {
@@ -264,8 +263,8 @@ export default {
         })
       })
 
-      // 动态数据装载完毕后，顺便居中对齐所有阶段泳道
-      //   this.graph.centerContent()
+      // 动态数据装载完毕后，自适应缩放至容器最佳适配大小
+      this.graph.zoomToFit({padding: 40, maxZoom: 1})
     }
   }
 }

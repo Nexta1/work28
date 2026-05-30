@@ -45,7 +45,9 @@
     <div class="main-body-layout">
       <div class="left-platform-sidebar">
         <div class="sidebar-header-summary">
-          <span class="title">🛡️ 受控平台</span>
+          <span class="title">
+            <Icon icon="mdi:shield" size="14px" /> 受控平台
+          </span>
           <span class="total-badge">总数: {{ totalPlatforms }} 条</span>
         </div>
 
@@ -76,15 +78,22 @@
               }}</span>
             </div>
             <div class="brief-dynamics">
-              <span>🧭 {{ pt.PTHX || 0 }}°</span>
-              <span>⚡ {{ pt.PTSD || 0 }}k/h</span>
+              <span>
+                <Icon icon="mdi:navigation" size="10px" />
+                {{ pt.PTHX || 0 }}°
+              </span>
+              <span>
+                <Icon icon="mdi:lightning-bolt" size="10px" />
+                {{ pt.PTSD || 0 }}k/h
+              </span>
             </div>
             <div v-if="pt.JKZT === 2" class="alarm-flash-dot"></div>
           </div>
 
-          <div class="scroll-loading-tip" v-if="pageConfig.pageNum >= 15">
-            ⚠️ 已锁死最大加载上限 (15页)
-          </div>
+            <div class="scroll-loading-tip" v-if="pageConfig.pageNum >= 15">
+              <Icon icon="mdi:alert-outline" size="10px" style="color: #f59e0b" />
+              已锁死最大加载上限 (15页)
+            </div>
           <div
             class="scroll-loading-tip"
             v-else-if="
@@ -94,7 +103,8 @@
             已加载全部平台
           </div>
           <div class="scroll-loading-tip" v-else-if="loadingMore">
-            ⏳ 正在同步下一页态势...
+            <Icon icon="mdi:clock-outline" size="10px" style="color: #38bdf8" />
+            正在同步下一页态势...
           </div>
         </div>
       </div>
@@ -108,7 +118,8 @@
         <div v-show="activePtId" class="cascade-content-wrapper">
           <div class="detail-param-dashboard" v-if="selectedPlatform">
             <div class="panel-inner-title">
-              🛰️ 当前靶向：{{ selectedPlatform.PTMC }} ({{
+              <Icon icon="mdi:satellite" size="14px" style="color: #38bdf8" />
+              当前靶向：{{ selectedPlatform.PTMC }} ({{
                 selectedPlatform.PTXXID
               }})
             </div>
@@ -153,7 +164,10 @@
             </div>
 
             <div class="platform-status-summary-bar">
-              <div class="summary-label">📊 挂载资产态势统计：</div>
+              <div class="summary-label">
+                <Icon icon="mdi:chart-bar" size="12px" style="color: #38bdf8" />
+                挂载资产态势统计：
+              </div>
               <div class="summary-indicators">
                 <div class="indicator-item text-green">
                   <span class="status-dot dot-running"></span>
@@ -174,7 +188,8 @@
                   }}</span>
                 </div>
                 <div class="indicator-item text-blue">
-                  📦 资产总计：<span class="count-num">{{
+                  <Icon icon="mdi:package-variant-closed" size="12px" />
+                  资产总计：<span class="count-num">{{
                     statusStatistics.total
                   }}</span>
                 </div>
@@ -185,7 +200,8 @@
           <div class="sub-fluid-layout">
             <div class="matrix-column">
               <div class="column-title">
-                ⚔️ 挂载武器矩阵 (全量 {{ weaponList.length }})
+                <Icon icon="mdi:crosshairs" size="12px" style="color: #ef4444" />
+                挂载武器矩阵 (全量 {{ weaponList.length }})
               </div>
               <div class="matrix-scroll-box">
                 <div v-if="weaponList.length === 0" class="sub-empty">
@@ -237,7 +253,8 @@
 
             <div class="matrix-column">
               <div class="column-title">
-                📡 边缘传感器网络 (全量 {{ sensorList.length }})
+                <Icon icon="mdi:radar" size="12px" style="color: #06b6d4" />
+                边缘传感器网络 (全量 {{ sensorList.length }})
               </div>
               <div class="matrix-scroll-box">
                 <div v-if="sensorList.length === 0" class="sub-empty">
@@ -284,7 +301,8 @@
 
             <div class="matrix-column">
               <div class="column-title">
-                ⚙️ 机载核心物理外设 (全量 {{ deviceList.length }})
+                <Icon icon="mdi:cog" size="12px" style="color: #94a3b8" />
+                机载核心物理外设 (全量 {{ deviceList.length }})
               </div>
               <div class="matrix-scroll-box">
                 <div v-if="deviceList.length === 0" class="sub-empty">
@@ -350,7 +368,10 @@
             </div>
 
             <div class="matrix-column charts-exclusive-column">
-              <div class="column-title">📊 数字化效能深度剖析</div>
+              <div class="column-title">
+                <Icon icon="mdi:chart-bar" size="12px" style="color: #38bdf8" />
+                数字化效能深度剖析
+              </div>
               <div class="chart-vertical-box">
                 <div class="chart-item-wrapper">
                   <div ref="weaponRadarChart" class="echart-div"></div>
@@ -632,7 +653,7 @@ export default {
         {
           backgroundColor: 'transparent',
           title: {
-            text: '⚔️ 核心武器打击概率',
+            text: '核心武器打击概率',
             textStyle: {fontSize: 11, color: '#38bdf8'},
             left: 'center',
             top: 5
@@ -660,7 +681,7 @@ export default {
         {
           backgroundColor: 'transparent',
           title: {
-            text: '📡 传感器边界覆盖(km)',
+            text: '传感器边界覆盖(km)',
             textStyle: {fontSize: 11, color: '#38bdf8'},
             left: 'center',
             top: 5
