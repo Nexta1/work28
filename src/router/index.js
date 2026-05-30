@@ -22,19 +22,6 @@ const routes = [
       requiresAuth: true
     }
   },
-  {
-    path: '/battlefield-planning-info',
-    name: 'BattlefieldPlanningInfo',
-    component: () => import('@/views/system-operations/TaskDecomposition.vue'),
-    meta: {
-      title: '作战筹划信息获取',
-      subsystem: '体系运营管理',
-      category: '任务需求分解',
-      icon: 'lucide:map-pin', // 地图定位点（作战筹划）
-      parentModule: '任务需求分解',
-      requiresAuth: true
-    }
-  },
 
   // 体系运营管理 - 运控策略制定
   {
@@ -92,7 +79,8 @@ const routes = [
   {
     path: '/parallel-system-simulation',
     name: 'ParallelSystemSimulation',
-    component: () => import('@/views/system-operations/ControlStrategy.vue'),
+    component: () =>
+      import('@/views/system-operations/ParallelSystemSimulation.vue'),
     meta: {
       title: '平行系统推演',
       subsystem: '体系运营管理',
@@ -128,6 +116,60 @@ const routes = [
       category: '综合调度管理',
       icon: 'lucide:gantt-chart', // 调度、甘特图、规划时间轴
       isModule: true,
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/task-monitoring',
+    name: 'TaskMonitoring',
+    component: () => import('@/views/system-operations/TaskMonitoring.vue'),
+    meta: {
+      title: '作战任务监视',
+      subsystem: '体系运营管理',
+      category: '综合调度管理',
+      icon: 'lucide:activity', // 活动、监视
+      parentModule: '综合调度管理',
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/task-group-management',
+    name: 'TaskGroupManagement',
+    component: () =>
+      import('@/views/system-operations/TaskGroupManagement.vue'),
+    meta: {
+      title: '任务群组管理',
+      subsystem: '体系运营管理',
+      category: '综合调度管理',
+      icon: 'lucide:users', // 群组、用户
+      parentModule: '综合调度管理',
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/resource-conflict-resolution',
+    name: 'ResourceConflictResolution',
+    component: () =>
+      import('@/views/system-operations/ResourceConflictResolution.vue'),
+    meta: {
+      title: '数据链资源冲突消解',
+      subsystem: '体系运营管理',
+      category: '综合调度管理',
+      icon: 'lucide:git-merge', // 冲突、合并、消解
+      parentModule: '综合调度管理',
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/fault-handling',
+    name: 'FaultHandling',
+    component: () => import('@/views/system-operations/FaultHandling.vue'),
+    meta: {
+      title: '数据链故障处理',
+      subsystem: '体系运营管理',
+      category: '综合调度管理',
+      icon: 'lucide:wrench', // 工具、维修、处理
+      parentModule: '综合调度管理',
       requiresAuth: true
     }
   },
@@ -245,7 +287,7 @@ const routes = [
   {
     path: '/alarm-monitoring',
     name: 'AlarmMonitoring',
-    component: () => import('@/views/system-operations/DeviceMonitor.vue'),
+    component: () => import('@/views/system-maintenance/WarnInfoDashboard.vue'),
     meta: {
       title: '告警监视处理',
       subsystem: '系统运维',
@@ -284,88 +326,20 @@ const routes = [
     }
   },
   {
-    path: '/equipment-maintenance-test',
-    name: 'EquipmentMaintenanceTest',
+    path: '/equipment-maintenance',
+    name: 'EquipmentMaintenance',
     component: () =>
       import('@/views/system-maintenance/EquipmentMaintenance.vue'),
     meta: {
       title: '装备维护测试',
-      subsystem: '系统运维',
       category: '装备维护测试',
-      icon: 'lucide:binary', // 维护测试、底层调测
+      subsystem: '系统运维',
+      icon: 'lucide:wrench', // 工具、维护
       isModule: true,
       requiresAuth: true
     }
   },
-  {
-    path: '/warnInfoDashboard',
-    name: 'WarnInfoDashboard',
-    component: () => import('@/views/system-maintenance/WarnInfoDashboard.vue'),
-    meta: {
-      title: '告警信息',
-      subsystem: '系统运维',
-      category: '告警监视处理',
-      icon: 'lucide:alert-triangle', // 告警详情危险符号
-      parentModule: '告警监视处理',
-      requiresAuth: true
-    }
-  },
-  {
-    path: '/link-performance',
-    name: 'LinkPerformanceMonitor',
-    component: () =>
-      import('@/views/system-maintenance/LinkPerformanceMonitor.vue'),
-    meta: {
-      title: '性能监视',
-      subsystem: '系统运维',
-      category: '性能监视处理',
-      icon: 'lucide:trending-up', // 链路性能曲线
-      parentModule: '性能监视处理',
-      requiresAuth: true
-    }
-  },
-  {
-    path: '/business-quality-detail',
-    name: 'BusinessQualityMonitor',
-    component: () =>
-      import('@/views/system-maintenance/BusinessQualityMonitor.vue'),
-    meta: {
-      title: '业务质量详情',
-      subsystem: '系统运维',
-      category: '业务质量监控处理',
-      icon: 'lucide:file-text', // 质量详情报告
-      parentModule: '业务质量监控处理',
-      requiresAuth: true
-    }
-  },
-  {
-    path: '/equipment-test-report',
-    name: 'EquipmentTestReport',
-    component: () =>
-      import('@/views/system-maintenance/EquipmentMaintenance.vue'),
-    meta: {
-      title: '测试报告',
-      subsystem: '系统运维',
-      category: '装备维护测试',
-      icon: 'lucide:file-check', // 测试通过报告
-      parentModule: '装备维护测试',
-      requiresAuth: true
-    }
-  },
-  {
-    path: '/equipment-maintenance-log',
-    name: 'EquipmentMaintenanceLog',
-    component: () =>
-      import('@/views/system-maintenance/EquipmentMaintenance.vue'),
-    meta: {
-      title: '维护日志',
-      subsystem: '系统运维',
-      category: '装备维护测试',
-      icon: 'lucide:scroll', // 日志卷轴
-      parentModule: '装备维护测试',
-      requiresAuth: true
-    }
-  },
+
   {
     path: '/data-collection',
     name: 'DataCollection',
@@ -524,23 +498,9 @@ const routes = [
       title: '数据采集项目',
       subsystem: '资源和数据管理',
       category: '数据采集',
-      icon: 'lucide:layers', // 采集项目图层
-      parentModule: '数据采集',
+      icon: 'lucide:database',
       requiresAuth: true
     }
-  },
-  {
-    path: '/login',
-    name: 'Login',
-    component: () => import('@/views/auth/Login.vue'),
-    meta: {
-      title: '系统登录',
-      requiresAuth: false
-    }
-  },
-  {
-    path: '*',
-    redirect: '/'
   }
 ]
 
@@ -561,8 +521,8 @@ const router = new VueRouter({
 router.beforeEach((to, from, next) => {
   // 设置页面标题
   document.title = to.meta.title
-    ? `${to.meta.title} - 杀伤链路系统`
-    : '杀伤链路系统'
+    ? `${to.meta.title} - 体系运控分系统`
+    : '体系运控分系统'
 
   // 简单的权限检查（实际项目中替换为真实的认证逻辑）
   const isAuthenticated = localStorage.getItem('token') || !to.meta.requiresAuth

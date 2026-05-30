@@ -43,7 +43,7 @@
             ref="templateTableRef"
             :data="templateTable"
             size="mini"
-            class="dark-dashboard-table hand-pointer-table highlight-row-selected"
+            class="hand-pointer-table highlight-row-selected"
             height="100%"
             v-loading="loadingLeft"
             highlight-current-row

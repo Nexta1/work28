@@ -462,7 +462,7 @@
 .el-table--border td,
 .el-table--border th,
 .el-table__cell {
-  border-right: 1px solid var(--border-dark) !important;
+  border-right: none !important;
 }
 .el-table--border::after,
 .el-table--group::after,
@@ -1186,47 +1186,54 @@
   width: 100%;
   height: 100%;
   box-sizing: border-box;
-  background: var(--bg-base, #080e18) !important; /* 🎛️ 底部铺上核心系统基底深色 */
+  background: var(
+    --bg-base,
+    #080e18
+  ) !important; /* 🎛️ 底部铺上核心系统基底深色 */
 
   /* 2. 精准限制侧边导航标签栏（Header）的宽度 */
   > .el-tabs__header.is-left,
   > .el-tabs__header.is-right {
-    width: 110px; 
+    width: 110px;
     min-width: 110px;
     max-width: 150px;
     margin-right: 0;
     margin-left: 0;
     border-bottom: none !important;
     /* 🚀 优化：左侧导航栏做微弱的下沉加深，与右侧拉开层级 */
-    background: var(--bg-input, #050b14) !important; 
-    border-right: 1px solid var(--border-dark, #111b2b) !important; 
+    background: var(--bg-input, #050b14) !important;
+    border-right: 1px solid var(--border-dark, #111b2b) !important;
   }
 
   /* 3. 内部选项（Item）扁平透明化及文字对齐 */
   > .el-tabs__header .el-tabs__item.is-left,
   > .el-tabs__header .el-tabs__item.is-right {
-    text-align: left; 
-    font-size: 11px; 
+    text-align: left;
+    font-size: 11px;
     height: 42px; /* 稍微撑开一点高度，更舒展 */
     line-height: 42px;
     color: #64748b !important; /* 常态低饱和度灰蓝 */
-    background: transparent !important; 
-    border-bottom: none !important; 
+    background: transparent !important;
+    border-bottom: none !important;
     transition: all 0.2s ease-in-out;
-    padding: 0 0 0 16px !important; 
+    padding: 0 0 0 16px !important;
     position: relative;
 
     &:hover {
-      color: var(--color-primary, #38bdf8) !important; 
+      color: var(--color-primary, #38bdf8) !important;
       background: rgba(56, 189, 248, 0.03) !important; /* 悬浮时微弱透光 */
     }
 
     /* 4. 核心高亮逻辑 */
     &.is-active {
-      color: var(--color-primary, #38bdf8) !important; 
+      color: var(--color-primary, #38bdf8) !important;
       font-weight: bold;
       /* 🚀 优化：选中项脑后注入一层向右淡出的战术蓝微光，科技感立刻拉满 */
-      background: linear-gradient(90deg, rgba(56, 189, 248, 0.08) 0%, rgba(56, 189, 248, 0) 100%) !important;
+      background: linear-gradient(
+        90deg,
+        rgba(56, 189, 248, 0.08) 0%,
+        rgba(56, 189, 248, 0) 100%
+      ) !important;
 
       &::before {
         content: '';
@@ -1234,8 +1241,8 @@
         left: 0;
         top: 10px; /* 线条微调成等高比例 */
         bottom: 10px;
-        width: 3px; 
-        background-color: var(--color-primary, #38bdf8); 
+        width: 3px;
+        background-color: var(--color-primary, #38bdf8);
         box-shadow: 0 0 10px var(--color-primary, #38bdf8); /* 荧光呼吸感 */
         border-radius: 1px;
       }
@@ -1249,12 +1256,12 @@
 
   /* 6. 右侧内容面板（Content Panel） */
   > .el-tabs__content {
-    flex: 1; 
+    flex: 1;
     min-width: 0;
     height: 100%;
     /* 🚀 优化：内容区使用标配舱段面板色，四周带极细的暗色包围栏边界 */
     background-color: var(--bg-panel, #0c1424) !important;
-    border-left: 1px solid var(--border-tech, #16243b); 
+    border-left: 1px solid var(--border-tech, #16243b);
     box-sizing: border-box;
     position: relative;
   }

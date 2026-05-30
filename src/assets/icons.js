@@ -11,7 +11,6 @@ Vue.component('Icon', {
       type: [String, Number],
       default: '1em'
     },
-    // ✨ 核心：增加一个明确的 color 属性，用来强制触发 Vue 的响应式更新
     color: {
       type: String,
       default: ''
@@ -19,7 +18,10 @@ Vue.component('Icon', {
   },
   render(h) {
     const inlineStyle = this.$vnode.data.style || {}
-    const inlineClass = this.$vnode.data.class || ''
+
+    // 🛠️ 修复核心：安全获取完整的 class（包含静态和动态绑定的 class）
+    const externalClass =
+      this.$vnode.data.normalizedClass || this.$vnode.data.class || ''
 
     const baseStyle = {
       display: 'inline-block',
@@ -29,26 +31,29 @@ Vue.component('Icon', {
       fill: 'currentColor'
     }
 
-    // ✨ 核心：如果传了 color 属性，其优先级最高；如果没传，则降级看外界写没写行内 style.color
     if (this.color) {
       baseStyle.color = this.color
     }
 
     return h('span', {
       key: this.icon,
-      class: ['iconify', inlineClass].filter(Boolean).join(' '),
+      // 🛠️ 合并基础类名与外界传入的动态/静态类名
+      class: ['iconify', externalClass],
       attrs: {
         'data-icon': this.icon
       },
       style: Object.assign({}, baseStyle, inlineStyle)
     })
   },
-  // ✨ 核心：同时监听 icon 和 color 的变化，任何一个变了，都必须通知 Iconify 重新扫描替换 DOM
   watch: {
     icon() {
       this.reScan()
     },
     color() {
+      this.reScan()
+    },
+    // 🛠️ 监听外部绑定的动态类名变化，强行触发 Iconify 扫描，确保动画类名不丢失
+    '$vnode.data.normalizedClass'() {
       this.reScan()
     }
   },

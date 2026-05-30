@@ -50,78 +50,96 @@
                 :key="subsystem"
                 class="subsystem-block"
               >
-                <div class="subsystem-title">
-                  {{ subsystem }}
+                <div
+                  class="subsystem-title"
+                  @click="toggleSubsystem(subsystem)"
+                >
+                  <span class="subsystem-text">{{ subsystem }}</span>
+                  <Icon
+                    icon="lucide:chevron-down"
+                    :size="14"
+                    class="subsystem-arrow"
+                    :class="{collapsed: isSubsystemCollapsed(subsystem)}"
+                  />
                 </div>
 
-                <div class="modules-container">
+                <transition name="menu-expand">
                   <div
-                    v-for="category in getCategoriesBySubsystem(subsystem)"
-                    :key="category"
-                    class="module-group"
+                    class="modules-container"
+                    v-show="!isSubsystemCollapsed(subsystem)"
                   >
-                    <template
-                      v-if="getModuleRoutes(subsystem, category).length > 0"
+                    <div
+                      v-for="category in getCategoriesBySubsystem(subsystem)"
+                      :key="category"
+                      class="module-group"
                     >
-                      <div
-                        v-for="moduleRoute in getModuleRoutes(
-                          subsystem,
-                          category
-                        )"
-                        :key="moduleRoute.path"
-                        class="module-item"
-                        @click="toggleCategory(category)"
+                      <template
+                        v-if="getModuleRoutes(subsystem, category).length > 0"
                       >
-                        <Icon
-                          :icon="moduleRoute.meta.icon || 'lucide:box'"
-                          :size="18"
-                          class="nav-icon"
-                        />
-
-                        <span class="nav-text">
-                          {{ moduleRoute.meta.title }}
-                        </span>
-
-                        <Icon
-                          icon="lucide:chevron-right"
-                          :size="14"
-                          class="module-arrow"
-                          :class="{expanded: isCategoryExpanded(category)}"
-                        />
-                      </div>
-
-                      <transition name="menu-expand">
                         <div
-                          v-if="
-                            isCategoryExpanded(category) &&
-                            getSubRoutes(category).length > 0
-                          "
-                          class="sub-items-container"
+                          v-for="moduleRoute in getModuleRoutes(
+                            subsystem,
+                            category
+                          )"
+                          :key="moduleRoute.path"
+                          class="module-item"
+                          :class="{
+                            active:
+                              getSubRoutes(category).length === 0 &&
+                              $route.path === moduleRoute.path
+                          }"
+                          @click="handleModuleClick(moduleRoute, category)"
                         >
-                          <router-link
-                            v-for="subRoute in getSubRoutes(category)"
-                            :key="subRoute.path"
-                            :to="subRoute.path"
-                            class="nav-item"
-                            :class="{
-                              active: $route.path === subRoute.path
-                            }"
-                          >
-                            <Icon
-                              :icon="subRoute.meta.icon || 'lucide:file-text'"
-                              :size="16"
-                              class="nav-icon"
-                            />
+                          <Icon
+                            :icon="moduleRoute.meta.icon || 'lucide:box'"
+                            :size="18"
+                            class="nav-icon"
+                          />
 
-                            <span class="nav-text">
-                              {{ subRoute.meta.title }}
-                            </span>
-                          </router-link>
+                          <span class="nav-text">
+                            {{ moduleRoute.meta.title }}
+                          </span>
+
+                          <Icon
+                            v-if="getSubRoutes(category).length > 0"
+                            icon="lucide:chevron-right"
+                            :size="14"
+                            class="module-arrow"
+                            :class="{expanded: isCategoryExpanded(category)}"
+                          />
                         </div>
-                      </transition>
-                    </template>
+
+                        <transition name="menu-expand">
+                          <div
+                            v-if="
+                              isCategoryExpanded(category) &&
+                              getSubRoutes(category).length > 0
+                            "
+                            class="sub-items-container"
+                          >
+                            <router-link
+                              v-for="subRoute in getSubRoutes(category)"
+                              :key="subRoute.path"
+                              :to="subRoute.path"
+                              class="nav-item"
+                              :class="{active: $route.path === subRoute.path}"
+                            >
+                              <Icon
+                                :icon="subRoute.meta.icon || 'lucide:file-text'"
+                                :size="16"
+                                class="nav-icon"
+                              />
+
+                              <span class="nav-text">
+                                {{ subRoute.meta.title }}
+                              </span>
+                            </router-link>
+                          </div>
+                        </transition>
+                      </template>
+                    </div>
                   </div>
-                </div>
+                </transition>
               </div>
             </div>
           </aside>
@@ -136,7 +154,6 @@
 </template>
 
 <script>
-// 🟢 移除了所有关于 Vue.component('Icon') 的代码，保持干净！
 export default {
   name: 'App',
 
@@ -146,7 +163,8 @@ export default {
       userInfo: null,
       timer: null,
       navVisible: true,
-      expandedCategories: {}
+      collapsedCategories: {},
+      collapsedSubsystems: {}
     }
   },
 
@@ -166,11 +184,9 @@ export default {
 
   mounted() {
     this.updateTime()
-
     this.timer = setInterval(() => {
       this.updateTime()
     }, 1000)
-
     this.loadUserInfo()
   },
 
@@ -183,16 +199,40 @@ export default {
       this.navVisible = !this.navVisible
     },
 
+    handleModuleClick(moduleRoute, category) {
+      const hasSubRoutes = this.getSubRoutes(category).length > 0
+
+      if (hasSubRoutes) {
+        this.toggleCategory(category)
+      } else {
+        if (this.$route.path !== moduleRoute.path) {
+          this.$router.push(moduleRoute.path)
+        }
+      }
+    },
+
     toggleCategory(category) {
       this.$set(
-        this.expandedCategories,
+        this.collapsedCategories,
         category,
-        !this.expandedCategories[category]
+        !this.collapsedCategories[category]
       )
     },
 
     isCategoryExpanded(category) {
-      return this.expandedCategories[category] !== false
+      return !this.collapsedCategories[category]
+    },
+
+    toggleSubsystem(subsystem) {
+      this.$set(
+        this.collapsedSubsystems,
+        subsystem,
+        !this.collapsedSubsystems[subsystem]
+      )
+    },
+
+    isSubsystemCollapsed(subsystem) {
+      return !!this.collapsedSubsystems[subsystem]
     },
 
     getCategoriesBySubsystem(subsystem) {
@@ -257,7 +297,6 @@ export default {
 </script>
 
 <style>
-/* 保持刚才调好的所有样式不变 */
 * {
   margin: 0;
   padding: 0;
@@ -438,11 +477,33 @@ body {
 }
 
 .subsystem-title {
-  padding: 16px 22px 10px;
+  padding: 14px 22px 10px;
   color: #7cecff;
   font-size: 14px;
   font-weight: 700;
   letter-spacing: 1px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.2s ease;
+}
+
+.subsystem-title:hover {
+  background: rgba(124, 236, 255, 0.03);
+}
+
+.subsystem-arrow {
+  color: #475569;
+  transition:
+    transform 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+    color 0.15s ease;
+}
+
+.subsystem-arrow.collapsed {
+  transform: rotate(180deg);
+  color: #64748b;
 }
 
 .module-item {
@@ -454,7 +515,7 @@ body {
   padding: 11px 14px;
   border-radius: 12px;
   color: #aebed1;
-  font-size: 14px; /* 固定菜单字号 */
+  font-size: 14px;
   border: 1px solid transparent;
   cursor: pointer;
   user-select: none;
@@ -467,16 +528,30 @@ body {
   border-color: rgba(124, 236, 255, 0.12);
 }
 
+/* 🛠️ 核心补丁：让无子集的一级菜单在激活时拥有高亮视觉表现 */
+.module-item.active {
+  background: rgba(0, 243, 255, 0.12);
+  color: #7cecff;
+  border-color: rgba(124, 236, 255, 0.16);
+  box-shadow: 0 0 8px rgba(0, 243, 255, 0.06);
+}
+
+/* 一级激活时内部图标的电光高亮感知 */
+.module-item.active .nav-icon {
+  color: #38bdf8 !important;
+  filter: drop-shadow(0 0 8px rgba(56, 189, 248, 0.7)) !important;
+}
+
 .module-arrow {
   margin-left: auto;
   flex-shrink: 0;
-  transition: transform 0.2s ease;
-  color: #8a98ad;
+  transition:
+    transform 0.2s ease,
+    color 0.15s ease !important;
 }
 
 .module-arrow.expanded {
-  transform: rotate(90deg);
-  color: #7cecff;
+  transform: rotate(90deg) !important;
 }
 
 .sub-items-container {
@@ -495,7 +570,7 @@ body {
   color: #8a98ad;
   text-decoration: none;
   border: 1px solid transparent;
-  font-size: 13px; /* 固定子菜单字号 */
+  font-size: 13px;
   transition: all 0.2s ease;
 }
 
@@ -533,9 +608,9 @@ body {
 .menu-expand-enter-active,
 .menu-expand-leave-active {
   transition:
-    opacity 0.2s ease,
-    transform 0.2s ease,
-    max-height 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    opacity 0.22s ease,
+    transform 0.22s ease,
+    max-height 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   overflow: hidden;
   transform-origin: top;
 }
@@ -543,82 +618,70 @@ body {
 .menu-expand-enter,
 .menu-expand-leave-to {
   opacity: 0;
-  transform: translateY(-4px);
-  max-height: 0;
+  transform: translateY(-6px);
+  max-height: 0 !important;
 }
 
 .menu-expand-enter-to,
 .menu-expand-leave {
   opacity: 1;
   transform: translateY(0);
-  max-height: 600px;
+  max-height: 1200px;
 }
-/* ===================================================================
-   ⚡ 增量修正补丁：左侧菜单栏及顶部图标科技色彩注入
-   =================================================================== */
 
-/* 1. 顶部面包屑/折叠按钮图标默认颜色 */
+/* ===================================================================
+   ⚡ 图标高亮控制
+   =================================================================== */
 .top-nav-btn.left-expand-btn .nav-icon,
 .top-nav-btn.left-expand-btn svg {
-  color: #38bdf8 !important; /* 锁定战术高亮蓝 */
+  color: #38bdf8 !important;
   filter: drop-shadow(0 0 4px rgba(56, 189, 248, 0.4));
 }
 
-/* 2. 一级模块项 (Module Item) 图标常态与悬浮 */
 .module-item .nav-icon {
-  color: #94a3b8 !important; /* 默认使用中性标签灰蓝 */
+  color: #94a3b8 !important;
   transition:
     color 0.15s ease-in-out,
     filter 0.15s ease-in-out;
 }
 
 .module-item:hover .nav-icon {
-  color: #06b6d4 !important; /* 悬浮时变为科技青色 */
-  filter: drop-shadow(0 0 6px rgba(6, 182, 212, 0.6)); /* 赋予电光微弱荧光感 */
+  color: #06b6d4 !important;
+  filter: drop-shadow(0 0 6px rgba(6, 182, 212, 0.6));
 }
 
-/* 一级右侧折叠小箭头状态 */
 .module-arrow {
-  color: #475569 !important; /* 默认暗灰不抢眼 */
-  transition:
-    transform 0.2s ease,
-    color 0.15s ease-in-out !important;
+  color: #475569 !important;
 }
 
 .module-arrow.expanded {
-  color: #38bdf8 !important; /* 展开后激活战术蓝 */
+  color: #38bdf8 !important;
   filter: drop-shadow(0 0 4px rgba(56, 189, 248, 0.4));
 }
 
-/* 3. 二级子路由项 (Nav Item) 图标常态、悬浮与高亮激活 */
 .nav-item .nav-icon {
-  color: #64748b !important; /* 次级图标默认更暗一点，保证层级 */
+  color: #64748b !important;
   transition: all 0.15s ease-in-out;
 }
 
-/* 子项悬浮时 */
 .nav-item:hover .nav-icon {
-  color: #cbd5e1 !important; /* 悬浮时跟随字色变亮灰白 */
+  color: #cbd5e1 !important;
 }
 
-/* 子项被选中激活时 (Active) */
 .nav-item.active .nav-icon {
-  color: #38bdf8 !important; /* 核心激活：战术高亮蓝 */
-  filter: drop-shadow(
-    0 0 8px rgba(56, 189, 248, 0.7)
-  ) !important; /* 强力高光感知 */
+  color: #38bdf8 !important;
+  filter: drop-shadow(0 0 8px rgba(56, 189, 248, 0.7)) !important;
 }
 
-/* 4. 菜单折叠控制按钮内部图标 */
 .collapse-btn {
   background: rgba(6, 182, 212, 0.08) !important;
   border: 1px solid rgba(6, 182, 212, 0.2) !important;
-  color: #06b6d4 !important; /* 科技青 */
+  color: #06b6d4 !important;
 }
 
 .collapse-btn:hover {
   background: #06b6d4 !important;
-  color: #03060c !important; /* 反黑高亮感知，对齐全局按钮逻辑 */
+  color: #03060c !important;
   box-shadow: 0 0 10px rgba(6, 182, 212, 0.4) !important;
 }
 </style>
