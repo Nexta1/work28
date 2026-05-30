@@ -79,3 +79,10 @@ export function getYXJMap() {
     '03': '核心'
   }
 }
+export function getStateMap() {
+  return {
+    0: '待命',
+    1: '启动',
+    2: '结束'
+  }
+}

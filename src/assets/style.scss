@@ -1360,3 +1360,212 @@
     border-bottom-color: var(--bg-panel, #0c1424) !important;
   }
 }
+/* ===================================================================
+   ⚡ 增量修正补丁：彻底解决范围选择器内部图标、文字、输入框不对齐问题
+   =================================================================== */
+
+.el-range-editor.el-input__inner,
+.el-range-editor.el-range-editor--mini {
+  display: inline-flex !important;
+  align-items: center !important; /* 核心：强行让内部所有子元素垂直居中 */
+  padding: 0 10px !important;
+  height: 28px !important; /* 锁定大屏紧凑高度 */
+  box-sizing: border-box;
+
+  /* 1. 修正左侧日历/时间图标对齐 */
+  .el-range__icon {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    height: 100% !important;
+    line-height: 1 !important; /* 抹除原生行高干扰 */
+    font-size: 12px !important;
+    margin-right: 6px !important;
+    margin-left: 0 !important;
+  }
+
+  /* 2. 修正两个输入框的垂直对齐 */
+  .el-range-input {
+    flex: 1 !important;
+    height: 100% !important;
+    line-height: 1 !important; /* 靠 flex 居中，而非靠行高撑开 */
+    margin: 0 !important;
+    padding: 0 !important;
+    text-align: center !important;
+  }
+
+  /* 3. 修正中间分隔文字（“至” 或 “-”）的完美对齐 */
+  .el-range-separator {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    height: 100% !important;
+    padding: 0 6px !important;
+    line-height: 1 !important; /* 抹除原生硬编码行高 */
+    width: auto !important; /* 自动适应文字宽度 */
+    font-size: 11px !important;
+    white-space: nowrap !important;
+  }
+
+  /* 4. 修正右侧的清除图标（悬浮出现时）对齐 */
+  .el-range__close-icon {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    height: 100% !important;
+    line-height: 1 !important;
+    font-size: 12px !important;
+    margin-left: 4px !important;
+    width: 14px !important;
+  }
+}
+/* ===================================================================
+   ⚡ 增量修正补丁：强力攻克 el-date-picker 范围选择器内部发白/残留白色
+   =================================================================== */
+
+/* 1. 修复 el-date-picker 整体及范围选择（daterange/datetimerange）框体底色 */
+.el-date-editor.el-input__inner,
+.el-date-editor.el-range-editor {
+  background-color: var(--bg-input) !important; /* 锁定输入框内部底层暗色 */
+  border: 1px solid var(--border-light) !important;
+}
+
+/* 2. 强力抹除范围输入框内部左右两个原生 input 的白色背景与黑字 */
+.el-range-editor {
+  .el-range-input {
+    background: transparent !important; /* 彻底剔除原生白色背景 */
+    background-color: transparent !important;
+    color: var(--color-text-main) !important; /* 改为高对比文字灰白 */
+    font-size: 11px !important;
+    font-family: monospace, 'Microsoft YaHei' !important;
+
+    &::placeholder {
+      color: #475569 !important; /* 统一暗色提示文字 */
+    }
+  }
+
+  /* 3. 修正中间分隔符（比如 "至" 或者 "-"）的文本发白或错位 */
+  .el-range-separator {
+    color: #64748b !important; /* 战术低饱和度灰蓝 */
+    font-size: 11px !important;
+    line-height: 26px !important; /* 对应 mini 紧凑大屏高度 */
+  }
+
+  /* 4. 修正两侧的前缀图标（日历）和清除图标 */
+  .el-range__icon,
+  .el-range__close-icon {
+    line-height: 26px !important;
+    color: var(--color-text-muted) !important;
+  }
+}
+
+/* 5. 规避组件在 Hover 和 Focus 时的原生边框高亮或残留白边 */
+.el-range-editor.is-active,
+.el-range-editor.is-active:hover {
+  border-color: var(--color-cyan) !important; /* 激活时保持科技青色 */
+  background-color: #091322 !important;
+  box-shadow: none !important;
+}
+
+.el-range-editor:hover {
+  border-color: #475569 !important;
+}
+
+/* 6. 禁用状态同步适配 */
+.el-range-editor.is-disabled {
+  background-color: #070c14 !important;
+  border-color: var(--border-dark) !important;
+
+  .el-range-input {
+    color: var(--color-disabled) !important;
+  }
+  .el-range-separator {
+    color: var(--color-disabled) !important;
+  }
+}
+/* ===================================================================
+   ⚡ 增量修正补丁：全面围剿时间/日期选择器弹出面板（Picker Panel）残留白边
+   =================================================================== */
+
+/* 1. 强力剥离弹出层外框的所有原生浅色阴影与白边 */
+.el-picker-panel,
+.el-date-range-picker,
+.el-time-panel,
+.el-date-picker {
+  background-color: var(
+    --bg-panel,
+    #0c1424
+  ) !important; /* 统一使用舱段面板深色 */
+  border: 1px solid var(--border-light, #1e293b) !important; /* 暗色线包围 */
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.8) !important; /* 纯深色硬核大屏阴影，剔除白色泛光 */
+}
+
+/* 2. 彻底消灭时间范围选择（daterange）中间的分割暗线发白问题 */
+.el-date-range-picker__content {
+  border-right: 1px solid var(--border-dark, #111b2b) !important;
+
+  &.is-right {
+    border-left: 1px solid var(--border-dark, #111b2b) !important;
+    border-right: none !important;
+  }
+}
+
+/* 3. 【核心攻坚】强力抹除小三角箭头的白色边框与浅色底色 */
+.el-popper[x-placement^='bottom'] {
+  .popper__arrow {
+    border-bottom-color: var(
+      --border-light,
+      #1e293b
+    ) !important; /* 箭头外廓线调暗 */
+    &::after {
+      border-bottom-color: var(
+        --bg-panel,
+        #0c1424
+      ) !important; /* 箭头内部填充色与面板一致 */
+    }
+  }
+}
+
+.el-popper[x-placement^='top'] {
+  .popper__arrow {
+    border-top-color: var(--border-light, #1e293b) !important;
+    &::after {
+      border-top-color: var(--bg-panel, #0c1424) !important;
+    }
+  }
+}
+
+.el-popper[x-placement^='left'] {
+  .popper__arrow {
+    border-left-color: var(--border-light, #1e293b) !important;
+    &::after {
+      border-left-color: var(--bg-panel, #0c1424) !important;
+    }
+  }
+}
+
+.el-popper[x-placement^='right'] {
+  .popper__arrow {
+    border-right-color: var(--border-light, #1e293b) !important;
+    &::after {
+      border-right-color: var(--bg-panel, #0c1424) !important;
+    }
+  }
+}
+
+/* 4. 捎带修正弹出层底部按钮栏（确定、清空）的上方边框线 */
+.el-picker-panel__footer {
+  background-color: var(--bg-input, #050b14) !important;
+  border-top: 1px solid var(--border-dark, #111b2b) !important;
+
+  /* 捎带把脚部里面的文本按钮改成科技色，防止其原生反白 */
+  .el-button--text {
+    color: var(--color-text-muted, #94a3b8) !important;
+    &:hover {
+      color: var(--color-primary, #38bdf8) !important;
+    }
+  }
+}
+.el-date-range-picker__time-header {
+  border-bottom: 1px solid var(--border-light, #1e293b) !important;
+}
