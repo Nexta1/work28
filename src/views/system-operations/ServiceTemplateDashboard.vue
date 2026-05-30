@@ -1,119 +1,16 @@
 <template>
   <div class="screen-container">
     <div class="main-body-layout">
-      <div class="panel-wing-left" v-loading="loadingLeft">
-        <div v-if="!activeTemplateId" class="empty-fallback">
-          <div class="radar-scan-loader"></div>
-          <p>
-            请在右侧控制轴点击选择受控模板，以调阅和维护绑定的具体服务实体...
-          </p>
-        </div>
-
-        <div v-show="activeTemplateId" class="cascade-content-wrapper">
-          <div class="panel-header-summary">
-            <span class="title text-cyan"
-              >🛰️ 服务信息（所属模板：{{ activeTemplateName }}）</span
-            >
-            <el-button
-              type="primary"
-              size="mini"
-              icon="el-icon-plus"
-              @click="openInfoDialog(false)"
-              >部署服务实例</el-button
-            >
-          </div>
-
-          <div class="card-scroll-container">
-            <div v-if="infoCardList.length === 0" class="sub-empty">
-              该模板下尚未部署任何具体服务实体
-            </div>
-
-            <div
-              v-for="card in infoCardList"
-              :key="card.serviceId"
-              class="tactical-card"
-            >
-              <div class="card-row-top">
-                <span class="card-title text-white font-bold">{{
-                  card.serviceName
-                }}</span>
-                <el-tag size="mini" type="info" effect="dark">{{
-                  translateMethod(card.requestMethod)
-                }}</el-tag>
-              </div>
-
-              <div class="card-meta-grid">
-                <div class="meta-item">
-                  <span class="label">服务序列号:</span
-                  ><span class="val font-num">{{ card.serviceId }}</span>
-                </div>
-                <div class="meta-item">
-                  <span class="label">受控平台(PTMC):</span
-                  ><span class="val text-cyan font-bold">{{
-                    card.PTMC || '未指派平台'
-                  }}</span>
-                </div>
-                <div class="meta-item">
-                  <span class="label">网络端点(地址/端口):</span
-                  ><span class="val text-orange font-num"
-                    >{{ card.serviceIp }}:{{ card.servicePort }}</span
-                  >
-                </div>
-                <div class="meta-item">
-                  <span class="label">传输层协议:</span
-                  ><span class="val font-bold">{{ card.requestProtocol }}</span>
-                </div>
-                <div class="meta-item col-span-2">
-                  <span class="label">服务资源定位符(URL):</span
-                  ><span
-                    class="val font-num show-overflow-tooltip"
-                    :title="card.serviceURL"
-                    >{{ card.serviceURL }}</span
-                  >
-                </div>
-                <div class="meta-item col-span-2">
-                  <span class="label">战术时间戳:</span
-                  ><span class="val font-num">{{
-                    formatDate(card.opTime)
-                  }}</span>
-                </div>
-              </div>
-
-              <div class="card-action-overlay">
-                <el-button
-                  type="text"
-                  size="mini"
-                  class="text-blue"
-                  @click.stop="openInfoDialog(true, card)"
-                  >修正参数</el-button
-                >
-                <el-button
-                  type="text"
-                  size="mini"
-                  class="text-red"
-                  @click.stop="handleDeleteInfo(card)"
-                  >安全下线</el-button
-                >
-              </div>
-            </div>
-          </div>
-
-          <div class="pagination-row">
-            <el-pagination
-              layout="total, prev, next"
-              :current-page.sync="pageInfo.pageNum"
-              :page-size="pageInfo.pageSize"
-              :total="totalInfo"
-              @current-change="fetchInfoList"
-              small
-            />
-          </div>
-        </div>
-      </div>
-
-      <div class="panel-wing-right">
+      <div class="panel-wing-left-main">
         <div class="panel-header-summary">
-          <span class="title">📋 核心服务模板保障轴</span>
+          <span class="title">
+            <Icon
+              icon="lucide:layers"
+              :size="13"
+              color="#38bdf8"
+              style="vertical-align: middle; margin-right: 4px"
+            />核心服务模板保障轴
+          </span>
           <el-button
             type="success"
             size="mini"
@@ -143,11 +40,12 @@
 
         <div class="table-container-flex">
           <el-table
+            ref="templateTableRef"
             :data="templateTable"
             size="mini"
             class="dark-dashboard-table hand-pointer-table highlight-row-selected"
             height="100%"
-            v-loading="loadingRight"
+            v-loading="loadingLeft"
             highlight-current-row
             @current-change="handleTemplateSelect"
           >
@@ -246,19 +144,149 @@
           />
         </div>
       </div>
+
+      <div class="panel-wing-right-sub" v-loading="loadingRight">
+        <div v-if="!activeTemplateId" class="empty-fallback">
+          <div class="radar-scan-loader"></div>
+          <p>
+            请在左侧主控制轴选择具体受控模板，以调阅和维护绑定的具体服务实体...
+          </p>
+        </div>
+
+        <div v-show="activeTemplateId" class="cascade-content-wrapper">
+          <div class="panel-header-summary">
+            <span class="title text-cyan">
+              <Icon
+                icon="lucide:component"
+                :size="13"
+                color="#06b6d4"
+                style="vertical-align: middle; margin-right: 4px"
+              />服务信息（所属模板：{{ activeTemplateName }}）
+            </span>
+            <el-button
+              type="primary"
+              size="mini"
+              icon="el-icon-plus"
+              @click="openInfoDialog(false)"
+              >部署服务实例</el-button
+            >
+          </div>
+
+          <div class="card-scroll-container">
+            <div v-if="infoCardList.length === 0" class="sub-empty">
+              该模板下尚未部署任何具体服务实体
+            </div>
+
+            <div
+              v-for="card in infoCardList"
+              :key="card.serviceId"
+              class="tactical-card"
+            >
+              <div class="card-row-top">
+                <span class="card-title text-white font-bold">{{
+                  card.serviceName
+                }}</span>
+                <el-tag size="mini" type="info" effect="dark">{{
+                  translateMethod(card.requestMethod)
+                }}</el-tag>
+              </div>
+
+              <div class="card-meta-grid">
+                <div class="meta-item">
+                  <span class="label">服务序列号:</span>
+                  <span class="val font-num">{{ card.serviceId }}</span>
+                </div>
+                <div class="meta-item">
+                  <span class="label">受控平台(PTMC):</span>
+                  <span class="val text-cyan font-bold">{{
+                    card.PTMC || '未指派平台'
+                  }}</span>
+                </div>
+                <div class="meta-item">
+                  <span class="label">网络端点(地址/端口):</span>
+                  <span class="val text-orange font-num"
+                    >{{ card.serviceIp }}:{{ card.servicePort }}</span
+                  >
+                </div>
+                <div class="meta-item">
+                  <span class="label">传输层协议:</span>
+                  <span class="val font-bold">{{ card.requestProtocol }}</span>
+                </div>
+                <div class="meta-item col-span-2">
+                  <span class="label">服务资源定位符(URL):</span>
+                  <span
+                    class="val font-num show-overflow-tooltip"
+                    :title="card.serviceURL"
+                    >{{ card.serviceURL }}</span
+                  >
+                </div>
+                <div class="meta-item col-span-2">
+                  <span class="label">战术时间戳:</span>
+                  <span class="val font-num">{{
+                    formatDate(card.opTime)
+                  }}</span>
+                </div>
+              </div>
+
+              <div class="card-action-overlay">
+                <el-button
+                  type="text"
+                  size="mini"
+                  class="text-blue"
+                  @click.stop="openInfoDialog(true, card)"
+                  >修正参数</el-button
+                >
+                <el-button
+                  type="text"
+                  size="mini"
+                  class="text-red"
+                  @click.stop="handleDeleteInfo(card)"
+                  >安全下线</el-button
+                >
+              </div>
+            </div>
+          </div>
+
+          <div class="pagination-row">
+            <el-pagination
+              layout="total, prev, next"
+              :current-page.sync="pageInfo.pageNum"
+              :page-size="pageInfo.pageSize"
+              :total="totalInfo"
+              @current-change="fetchInfoList"
+              small
+            />
+          </div>
+        </div>
+      </div>
     </div>
 
     <el-dialog
-      :title="
-        isEditTemplate
-          ? '🛠️ 调整业务服务保障模板特征'
-          : '🚀 录入全新数字化服务模板'
-      "
       :visible.sync="dialogTemplateVisible"
       width="620px"
       append-to-body
       custom-class="dark-dialog-clean"
     >
+      <div slot="title" class="dialog-custom-title">
+        <Icon
+          v-if="isEditTemplate"
+          icon="lucide:sliders"
+          :size="14"
+          color="#38bdf8"
+          style="vertical-align: middle; margin-right: 5px"
+        />
+        <Icon
+          v-else
+          icon="lucide:send"
+          :size="14"
+          color="#10b981"
+          style="vertical-align: middle; margin-right: 5px"
+        />
+        <span>{{
+          isEditTemplate ? '调整业务服务保障模板特征' : '录入全新数字化服务模板'
+        }}</span>
+      </div>
+
       <el-form
         :model="formTemplate"
         ref="templateForm"
@@ -343,14 +371,31 @@
     </el-dialog>
 
     <el-dialog
-      :title="
-        isEditInfo ? '🛠️ 修正现役服务端点实例属性' : '🛰️ 注册部署新服务端点实体'
-      "
       :visible.sync="dialogInfoVisible"
       width="640px"
       append-to-body
       custom-class="dark-dialog-clean"
     >
+      <div slot="title" class="dialog-custom-title">
+        <Icon
+          v-if="isEditInfo"
+          icon="lucide:wrench"
+          :size="14"
+          color="#38bdf8"
+          style="vertical-align: middle; margin-right: 5px"
+        />
+        <Icon
+          v-else
+          icon="lucide:shield-alert"
+          :size="14"
+          color="#06b6d4"
+          style="vertical-align: middle; margin-right: 5px"
+        />
+        <span>{{
+          isEditInfo ? '修正现役服务端点实例属性' : '注册部署新服务端点实体'
+        }}</span>
+      </div>
+
       <el-form
         :model="formInfo"
         ref="infoForm"
@@ -457,7 +502,6 @@
 </template>
 
 <script>
-// 导入公共 CRUD 控制引擎，以及新增树形平台驱动接口 apiFindAllTrees
 import {
   apiPage,
   apiAdd,
@@ -476,25 +520,23 @@ export default {
       loadingLeft: false,
       loadingRight: false,
 
-      // 右侧主控制轴：模板表格
+      // 左侧主控制轴：模板表格驱动
       templateTable: [],
       allTemplatesPool: [],
       totalTemplate: 0,
-      queryTemplate: {templateName: ''}, // 参数名已校准为 templateName
+      queryTemplate: {templateName: ''},
       pageTemplate: {pageNum: 1, pageSize: 15},
       activeTemplateId: null,
       activeTemplateName: '',
 
-      // 左侧联动副轴：服务信息卡片流
+      // 右侧联动副轴：服务信息卡片流
       infoCardList: [],
       totalInfo: 0,
       queryInfo: {serviceName: ''},
       pageInfo: {pageNum: 1, pageSize: 20},
 
-      // 受控平台树结构存储器
       platformTreeOptions: [],
 
-      // 纯中文体系安全密级字典校准
       dictAffiliated: [
         '体系运控',
         '平行系统',
@@ -506,7 +548,6 @@ export default {
       ],
       dictSecretLevel: {0: '公开', 1: '秘密', 2: '机密', 3: '绝密'},
 
-      // 表单状态机
       dialogTemplateVisible: false,
       isEditTemplate: false,
       formTemplate: {},
@@ -557,7 +598,6 @@ export default {
     this.loadPlatformTrees()
   },
   methods: {
-    // 纯中文转换机制
     translateMethod(method) {
       const dic = {
         POST: '提交数据(POST)',
@@ -580,7 +620,6 @@ export default {
       ).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`
     },
 
-    // 拉取全量服务模板提供给下拉框
     syncAllTemplatesPool() {
       apiPage(this.baseTemplateUrl, {pageNum: 1, pageSize: 1000, params: {}})
         .then(res => {
@@ -591,11 +630,9 @@ export default {
         })
     },
 
-    // 核心联动：拉取受控平台树形框架数据 (zzrwpt/findAllTrees)
     loadPlatformTrees() {
       apiFindAllTrees('zzrwpt')
         .then(res => {
-          // 后端直接返回标准的树结构，含 PTID 与 PTMC
           this.platformTreeOptions = res.data || res || []
         })
         .catch(() => {
@@ -603,7 +640,6 @@ export default {
         })
     },
 
-    // 树选择发生突变时，递归或直接提取选中的 PTMC 名称挂载到表单数据，保证展示一致性
     handlePlatformTreeChange(val) {
       if (!val) {
         this.formInfo.PTMC = ''
@@ -626,15 +662,14 @@ export default {
     },
 
     // ===================================================================
-    // 右翼：核心主控轴 - 服务模板表格驱动模块
+    // 左翼：核心主控轴 - 服务模板表格驱动模块
     // ===================================================================
     fetchTemplateList() {
-      this.loadingRight = true
+      this.loadingLeft = true
       const payload = {
         pageNum: this.pageTemplate.pageNum,
         pageSize: this.pageTemplate.pageSize,
         params: {
-          // 参数字段精准指定为 templateName
           templateName: this.queryTemplate.templateName || undefined
         }
       }
@@ -642,17 +677,30 @@ export default {
         .then(res => {
           this.templateTable = res.data?.list || res.data || []
           this.totalTemplate = res.data?.total || this.templateTable.length
-          // 状态复位
+
+          // 状态初始化复位
           this.activeTemplateId = null
           this.activeTemplateName = ''
           this.infoCardList = []
+
+          // 【新增】：核心链路优化 - 默认选中第一行数据并触发查询
+          if (this.templateTable.length > 0) {
+            this.$nextTick(() => {
+              if (this.$refs.templateTableRef) {
+                // 设置高亮状态行
+                this.$refs.templateTableRef.setCurrentRow(this.templateTable[0])
+                // 同步调用事件，加载右侧卡片流
+                this.handleTemplateSelect(this.templateTable[0])
+              }
+            })
+          }
         })
         .catch(() => {
           this.templateTable = []
           this.totalTemplate = 0
         })
         .finally(() => {
-          this.loadingRight = false
+          this.loadingLeft = false
         })
     },
     handleTemplateSelect(currentRow) {
@@ -719,11 +767,11 @@ export default {
     },
 
     // ===================================================================
-    // 左翼：联动级联副翼 - 服务信息卡片驱动模块（无来源字段）
+    // 右翼：联动级联副翼 - 服务信息卡片驱动模块
     // ===================================================================
     fetchInfoList() {
       if (!this.activeTemplateId) return
-      this.loadingLeft = true
+      this.loadingRight = true
       const payload = {
         pageNum: this.pageInfo.pageNum,
         pageSize: this.pageInfo.pageSize,
@@ -742,7 +790,7 @@ export default {
           this.totalInfo = 0
         })
         .finally(() => {
-          this.loadingLeft = false
+          this.loadingRight = false
         })
     },
     openInfoDialog(isEdit, row = null) {
@@ -762,7 +810,6 @@ export default {
           servicePassword: '',
           requestProtocol: 'HTTP',
           requestMethod: 'POST'
-          // serviceSource 已经完全剔除
         }
       }
       this.dialogInfoVisible = true
@@ -801,9 +848,6 @@ export default {
 </script>
 
 <style scoped>
-/* ===================================================================
-   主视窗大屏全扁平、无阴影底层物理底盘隔离样式
-   =================================================================== */
 .screen-container {
   width: 100%;
   height: 100%;
@@ -824,10 +868,20 @@ export default {
   min-height: 0;
 }
 
-/* ===================================================================
-   左翼栏：服务信息实体【卡片舱段】
-   =================================================================== */
-.panel-wing-left {
+/* 左翼栏置换为核心主控表格轴 */
+.panel-wing-left-main {
+  width: 60%;
+  background: #080e18;
+  border: 1px solid #111b2b;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  padding: 12px;
+  box-sizing: border-box;
+}
+
+/* 右翼栏置换为服务副卡片流舱 */
+.panel-wing-right-sub {
   width: 40%;
   background: #080e18;
   border: 1px solid #111b2b;
@@ -835,6 +889,7 @@ export default {
   position: relative;
   box-sizing: border-box;
 }
+
 .cascade-content-wrapper {
   height: 100%;
   display: flex;
@@ -853,7 +908,6 @@ export default {
   margin-top: 4px;
 }
 
-/* 纯中文硬化数字态势感卡片 (全扁平、无阴影) */
 .tactical-card {
   background: #0c1424;
   border: 1px solid #1e293b;
@@ -908,26 +962,10 @@ export default {
   padding-top: 6px;
 }
 
-/* ===================================================================
-   右翼栏：服务模板核心主控制轴【高亮/小手表格舱】
-   =================================================================== */
-.panel-wing-right {
-  width: 60%;
-  background: #080e18;
-  border: 1px solid #111b2b;
-  border-radius: 4px;
-  display: flex;
-  flex-direction: column;
-  padding: 12px;
-  box-sizing: border-box;
-}
-
-/* 特效：行选指针对准转为高亮小手形状 */
 .hand-pointer-table /deep/ .el-table__row {
   cursor: pointer !important;
 }
 
-/* 核心强化：Element UI 表格当前行选中扁平激光蓝高亮，拒绝任何原生高光过渡阴影 */
 .highlight-row-selected /deep/ .el-table__row.current-row > td {
   background-color: #162c4c !important;
   border-top: 1px solid #38bdf8 !important;
@@ -935,9 +973,6 @@ export default {
   color: #ffffff !important;
 }
 
-/* ===================================================================
-   全局大屏统一布局基础样式
-   =================================================================== */
 .panel-header-summary {
   display: flex;
   justify-content: space-between;
@@ -951,6 +986,8 @@ export default {
   font-size: 12px;
   font-weight: bold;
   color: #38bdf8;
+  display: flex;
+  align-items: center;
 }
 
 .filter-action-row {
@@ -1007,7 +1044,6 @@ export default {
   border-radius: 2px;
   font-weight: bold;
 }
-/* 战术密级不同色块细边高亮 */
 .badge-high {
   background-color: rgba(239, 68, 68, 0.15);
   border: 1px solid #ef4444;
@@ -1070,5 +1106,13 @@ export default {
 .card-scroll-container::-webkit-scrollbar-thumb {
   background: #1e293b;
   border-radius: 2px;
+}
+
+.dialog-custom-title {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  font-weight: bold;
+  color: #cbd5e1;
 }
 </style>

@@ -3,7 +3,14 @@
     <div class="main-body-layout">
       <div class="panel-wing-left" v-loading="loadingLeft">
         <div class="panel-header-summary">
-          <span class="title">🛰️ 运控策略树总线</span>
+          <span class="title">
+            <Icon
+              icon="lucide:satellite"
+              :size="13"
+              color="#06b6d4"
+              style="vertical-align: middle; margin-right: 4px"
+            />运控策略树
+          </span>
           <el-button type="primary" size="mini" @click="openTreeDialog(false)"
             >新建流程</el-button
           >
@@ -32,10 +39,23 @@
           >
             <span class="custom-tree-node" slot-scope="{data}">
               <span>
-                <span class="tree-icon">{{
-                  data.businessType === 0 ? '🗂️' : '📊'
-                }}</span>
-                <span>{{ data.businessName }}</span>
+                <span class="tree-icon">
+                  <Icon
+                    v-if="data.businessType === 0"
+                    icon="lucide:folder"
+                    :size="12"
+                    color="#facc15"
+                    style="vertical-align: middle"
+                  />
+                  <Icon
+                    v-else
+                    icon="lucide:git-fork"
+                    :size="12"
+                    color="#38bdf8"
+                    style="vertical-align: middle"
+                  />
+                </span>
+                <span style="margin-left: 5px">{{ data.businessName }}</span>
               </span>
               <span class="node-action-span">
                 <i
@@ -63,6 +83,12 @@
         <div v-show="activeBusinessId" class="canvas-layout-wrapper">
           <div class="canvas-top-bar">
             <div class="active-tip">
+              <Icon
+                icon="lucide:activity"
+                :size="13"
+                color="#10b981"
+                style="vertical-align: middle; margin-right: 2px"
+              />
               当前指挥流:
               <span class="active-flow-name">{{ activeBusinessName }}</span>
               <span v-if="activeBusinessState !== null" class="flow-state-tag">
@@ -84,21 +110,42 @@
 
           <div class="workspace-body">
             <div class="dnd-sidebar">
-              <div class="sidebar-title">⚔️ 流程节点算子</div>
+              <div>
+                <div class="sidebar-title">
+                  <Icon
+                    icon="lucide:swords"
+                    :size="12"
+                    color="#64748b"
+                    style="vertical-align: middle; margin-right: 4px"
+                  />流程节点算子
+                </div>
 
-              <div class="dnd-pool">
-                <div
-                  v-for="(typeLabel, idx) in dynamicNodeTypes"
-                  :key="idx"
-                  class="dnd-item"
-                  @mousedown="startDrag($event, typeLabel)"
-                >
-                  ⚙️ {{ typeLabel }}
+                <div class="dnd-pool">
+                  <div
+                    v-for="(typeLabel, idx) in dynamicNodeTypes"
+                    :key="idx"
+                    class="dnd-item"
+                    @mousedown="startDrag($event, typeLabel)"
+                  >
+                    <Icon
+                      icon="lucide:cpu"
+                      :size="11"
+                      color="#38bdf8"
+                      style="vertical-align: middle; margin-right: 4px"
+                    />{{ typeLabel }}
+                  </div>
                 </div>
               </div>
 
               <div class="dnd-tip-box">
-                <p class="tip-title">💡 快捷操纵指南：</p>
+                <p class="tip-title">
+                  <Icon
+                    icon="lucide:lightbulb"
+                    :size="12"
+                    color="#fbbf24"
+                    style="vertical-align: middle; margin-right: 3px"
+                  />快捷操纵指南：
+                </p>
                 <p>
                   1. <b>鼠标左键拖拽</b>算子节点入画布释放，配置后即时同步云端。
                 </p>
@@ -124,14 +171,31 @@
     </div>
 
     <el-dialog
-      :title="
-        formNode.businessNodeId ? '🛠️ 修改流程节点参数' : '🚀 新增流程图元节点'
-      "
       :visible.sync="dialogNodeVisible"
       width="480px"
       append-to-body
       :before-close="handleNodeDialogCancel"
     >
+      <div slot="title" class="dialog-custom-title">
+        <Icon
+          v-if="formNode.businessNodeId"
+          icon="lucide:wrench"
+          :size="14"
+          color="#38bdf8"
+          style="vertical-align: middle; margin-right: 5px"
+        />
+        <Icon
+          v-else
+          icon="lucide:rocket"
+          :size="14"
+          color="#10b981"
+          style="vertical-align: middle; margin-right: 5px"
+        />
+        <span>{{
+          formNode.businessNodeId ? '修改流程节点参数' : '新增流程图元节点'
+        }}</span>
+      </div>
+
       <el-form
         :model="formNode"
         ref="nodeForm"
@@ -200,12 +264,21 @@
     </el-dialog>
 
     <el-dialog
-      title="🔗 配置线缆路由参数"
       :visible.sync="dialogLinkVisible"
       width="460px"
       append-to-body
       :before-close="handleLinkDialogCancel"
     >
+      <div slot="title" class="dialog-custom-title">
+        <Icon
+          icon="lucide:link-2"
+          :size="14"
+          color="#fb923c"
+          style="vertical-align: middle; margin-right: 5px"
+        />
+        <span>配置线缆路由参数</span>
+      </div>
+
       <el-form :model="formLink" size="mini" label-width="110px">
         <el-form-item label="条件表达式(elExp)">
           <el-input
@@ -240,12 +313,25 @@
       </span>
     </el-dialog>
 
-    <el-dialog
-      :title="isEditTree ? '🛠️ 修改目录/流程' : '🚀 新增目录/流程'"
-      :visible.sync="dialogTreeVisible"
-      width="480px"
-      append-to-body
-    >
+    <el-dialog :visible.sync="dialogTreeVisible" width="480px" append-to-body>
+      <div slot="title" class="dialog-custom-title">
+        <Icon
+          v-if="isEditTree"
+          icon="lucide:folder-cog"
+          :size="14"
+          color="#38bdf8"
+          style="vertical-align: middle; margin-right: 5px"
+        />
+        <Icon
+          v-else
+          icon="lucide:folder-plus"
+          :size="14"
+          color="#10b981"
+          style="vertical-align: middle; margin-right: 5px"
+        />
+        <span>{{ isEditTree ? '修改目录/流程' : '新增目录/流程' }}</span>
+      </div>
+
       <el-form :model="formTree" size="mini" label-width="110px">
         <el-form-item label="上级节点">
           <el-cascader
@@ -336,8 +422,7 @@ export default {
 
       graph: null,
       dnd: null,
-      resizeTimer: null, // 新增：防抖定时器句柄
-      // 控制锁
+      resizeTimer: null,
       isGraphLoading: false
     }
   },
@@ -415,9 +500,6 @@ export default {
       })
     },
 
-    // ===================================================================
-    // 初始化画布网格
-    // ===================================================================
     initX6Graph() {
       if (this.graph) return
 
@@ -460,7 +542,6 @@ export default {
 
       this.dnd = new Dnd({target: this.graph, scaled: false})
 
-      // 拖拽放入
       this.graph.on('node:added', ({node}) => {
         if (this.isGraphLoading) return
         if (this.isNewNodeAction) {
@@ -469,7 +550,6 @@ export default {
         }
       })
 
-      // 连线成功
       this.graph.on('edge:connected', ({edge}) => {
         if (this.isGraphLoading) return
         setTimeout(() => {
@@ -477,7 +557,6 @@ export default {
         }, 100)
       })
 
-      // 单击事件绑定
       this.graph.on('node:click', ({node}) => {
         if (this.isGraphLoading) return
         this.evokeNodeEditor(node, false)
@@ -486,8 +565,6 @@ export default {
         if (this.isGraphLoading) return
         this.evokeEdgeEditor(edge, false)
       })
-
-      // 已彻底擦除原 cell:dblclick 双击删除钩子
     },
 
     startDrag(e, typeLabel) {
@@ -533,9 +610,6 @@ export default {
       this.dnd.start(node, e)
     },
 
-    // ===================================================================
-    // 节点表单与删除核心段
-    // ===================================================================
     evokeNodeEditor(node, isNew = false) {
       this.currentNodeCell = node
       this.isNewNodeAction = isNew
@@ -582,7 +656,6 @@ export default {
         this.graph.removeNode(this.currentNodeCell)
       }
     },
-    // 新增：点击编辑弹窗左下角删除节点动作
     deleteCurrentNode() {
       if (!this.formNode.businessNodeId) return
       this.$confirm(
@@ -600,9 +673,6 @@ export default {
       })
     },
 
-    // ===================================================================
-    // 连线表单与删除核心段
-    // ===================================================================
     evokeEdgeEditor(edge, isNew = false) {
       this.currentEdgeCell = edge
       this.isNewLinkAction = isNew
@@ -669,7 +739,6 @@ export default {
         this.graph.removeEdge(this.currentEdgeCell)
       }
     },
-    // 新增：点击连线弹窗左下角删除线缆动作
     deleteCurrentLink() {
       if (!this.formLink.businessLinkId) return
       this.$confirm(
@@ -687,18 +756,11 @@ export default {
       })
     },
 
-    // ===================================================================
-    // 拓扑视图初次载入呈现与重绘排布（彻底修复不清除旧画布 bug）
-    // ===================================================================
     loadTopologyData() {
       this.loadingRight = true
-
-      // 核心修正：必须先执行无锁状态下的真实物理清空，保障上一个流程数据灰飞烟灭
       if (this.graph) {
         this.graph.clearCells()
       }
-
-      // 随后再上锁，防止后续动态填装 append Cells 时产生虚假、意外的触发弹窗
       this.isGraphLoading = true
 
       const payload = {
@@ -717,7 +779,6 @@ export default {
 
           const x6NodesMap = {}
 
-          // 装载节点
           backendNodes.forEach(item => {
             const vNode = this.graph.addNode({
               id: 'node-' + item.businessNodeId,
@@ -757,7 +818,6 @@ export default {
             x6NodesMap[item.businessNodeId] = vNode
           })
 
-          // 装载线缆
           backendLinks.forEach(link => {
             const sNode = x6NodesMap[link.srcNodeId]
             const dNode = x6NodesMap[link.dstNodeId]
@@ -799,7 +859,6 @@ export default {
         })
         .finally(() => {
           this.loadingRight = false
-          // 延时释放控制锁
           setTimeout(() => {
             this.isGraphLoading = false
           }, 150)
@@ -837,7 +896,6 @@ export default {
     handleWindowResize() {
       if (!this.graph) return
 
-      // 清除旧的定时器，开启防抖阻断机制
       if (this.resizeTimer) {
         clearTimeout(this.resizeTimer)
       }
@@ -845,15 +903,12 @@ export default {
       this.resizeTimer = setTimeout(() => {
         const container = document.getElementById('container-x6-canvas')
         if (container && this.graph) {
-          // 动态无感知微调，将多余宽高抹平
           const width = container.clientWidth
           const height = container.clientHeight
-
-          // 执行重绘缩放
           this.graph.resize(width, height)
           this.graph.centerContent()
         }
-      }, 100) // 延迟 100ms 执行，完美错开浏览器同帧渲染周期
+      }, 100)
     },
     clearCanvas() {
       if (this.graph) {
@@ -862,9 +917,6 @@ export default {
       }
     },
 
-    // ===================================================================
-    // 树控制层级控制
-    // ===================================================================
     openTreeDialog(isEdit, data = null) {
       this.isEditTree = isEdit
       if (isEdit && data) {
@@ -908,9 +960,6 @@ export default {
 </script>
 
 <style scoped>
-/* ===================================================================
-   主布局体系样式（重点看 .dnd-sidebar 内部子元素的空间分配）
-   =================================================================== */
 .screen-container {
   width: 100%;
   height: 100%;
@@ -953,7 +1002,8 @@ export default {
   padding-right: 6px;
 }
 .tree-icon {
-  margin-right: 6px;
+  display: inline-flex;
+  align-items: center;
 }
 .node-action-span {
   display: none;
@@ -993,7 +1043,7 @@ export default {
   font-size: 12px;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
 }
 .active-flow-name {
   color: #10b981;
@@ -1014,7 +1064,6 @@ export default {
   min-height: 0;
 }
 
-/* 核心优化：利用 flex 方向将提示框死死按在最底部 */
 .dnd-sidebar {
   width: 180px;
   background: #0a101a;
@@ -1023,7 +1072,7 @@ export default {
   padding: 10px;
   display: flex;
   flex-direction: column;
-  justify-content: space-between; /* 确保上下两块靠两头分流 */
+  justify-content: space-between;
 }
 .dnd-sidebar .sidebar-title {
   font-size: 11px;
@@ -1037,7 +1086,7 @@ export default {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  margin-bottom: 20px; /* 撑开和底部操作指南的间距 */
+  margin-bottom: 20px;
 }
 .dnd-item {
   padding: 8px;
@@ -1049,13 +1098,16 @@ export default {
   cursor: grab;
   user-select: none;
   color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
 }
 .dnd-item:hover {
   border-color: #38bdf8;
   color: #38bdf8;
 }
 
-/* 完美置底的操作指南 */
 .dnd-tip-box {
   background: #070c14;
   border: 1px dashed #1e293b;
@@ -1064,7 +1116,7 @@ export default {
   font-size: 11px;
   color: #516580;
   line-height: 1.5;
-  margin-top: auto; /* 核心：让其自动沉到父级 Flex 的最下方 */
+  margin-top: auto;
 }
 .dnd-tip-box .tip-title {
   color: #38bdf8;
@@ -1091,9 +1143,15 @@ export default {
   width: 100% !important;
 }
 
-/* ===================================================================
-   新增：弹窗底部两端对齐分流样式（实现左下角放红字删除按钮）
-   =================================================================== */
+/* 弹窗自定义头部样式 */
+.dialog-custom-title {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  font-weight: bold;
+  color: #cbd5e1;
+}
+
 .dialog-footer-layout {
   display: flex;
   justify-content: space-between;
@@ -1114,6 +1172,8 @@ export default {
   font-size: 12px;
   font-weight: bold;
   color: #06b6d4;
+  display: flex;
+  align-items: center;
 }
 .filter-action-row {
   display: flex;
@@ -1145,5 +1205,12 @@ export default {
   100% {
     transform: rotate(360deg);
   }
+}
+
+.text-green {
+  color: #10b981;
+}
+.text-red {
+  color: #ef4444;
 }
 </style>

@@ -73,9 +73,7 @@
             @node-click="handleTreeNodeClick"
           >
             <span class="custom-tree-node" slot-scope="{data}">
-              <!-- 左侧：图标与文本区 -->
               <span class="node-txt ellipsis-text" :title="data.name">
-                <!-- 1. 策略目录/分类图标：使用文件夹分支图标，绑定警告橙 -->
                 <Icon
                   v-if="data.isCategory"
                   icon="lucide:folder-git-2"
@@ -83,7 +81,6 @@
                   color="var(--color-warning, #f59e0b)"
                   style="vertical-align: middle; margin-right: 4px"
                 />
-                <!-- 2. 具体策略节点图标：使用控制滑块/齿轮衍生图标，绑定科技青 -->
                 <Icon
                   v-else
                   icon="lucide:sliders"
@@ -94,9 +91,7 @@
                 {{ data.name }}
               </span>
 
-              <!-- 右侧：悬浮操作按钮区 -->
               <span class="tree-node-actions" v-if="!data.isCategory">
-                <!-- 3. 修改属性：使用细线画笔图标，绑定就绪绿 -->
                 <i
                   class="el-icon-edit text-green"
                   title="修改属性"
@@ -179,93 +174,167 @@
         </div>
 
         <div class="right-bottom-strategy-zone">
-          <div class="panel-header-summary">
-            <span class="title"
-              ><Icon
-                icon="lucide:binary"
-                :size="14"
-                color="var(--color-cyan, #06b6d4)"
-                style="vertical-align: middle; margin-right: 5px"
-              />关联的操控配置项</span
-            >
-            <el-button
-              type="primary"
-              size="mini"
-              icon="el-icon-plus"
-              @click="handleCreateOperator"
-            >
-              新增运控算子
-            </el-button>
-          </div>
+          <el-button
+            v-show="activeTab === 'all'"
+            type="primary"
+            size="mini"
+            icon="el-icon-plus"
+            class="tabs-inline-btn"
+            @click="handleCreateOperator"
+          >
+            新增运控算子
+          </el-button>
 
-          <div class="strategy-scroll-box">
-            <div v-if="currentOperators.length === 0" class="sub-empty">
-              该属性项下暂未联动任何运控操作动作
-            </div>
+          <el-tabs v-model="activeTab" class="dark-custom-tabs">
+            <el-tab-pane name="linked">
+              <span slot="label">
+                <Icon
+                  icon="lucide:workflow"
+                  :size="13"
+                  style="vertical-align: middle; margin-right: 4px"
+                />
+                关联操作配置项
+                <el-badge
+                  v-if="selectedAttr"
+                  :value="currentOperators.length"
+                  class="tab-badge"
+                  type="primary"
+                />
+              </span>
 
-            <div
-              v-for="op in currentOperators"
-              :key="op.ocStrategyOperatorId"
-              class="link-status-card compact-card"
-            >
-              <div
-                class="alarm-strip"
-                :class="
-                  isOpLinked(op.ocStrategyOperatorId)
-                    ? 'strip-level-safe'
-                    : 'strip-level-crit'
-                "
-              ></div>
-
-              <div class="card-line">
-                <span
-                  class="wl-name ellipsis-text"
-                  style="max-width: 220px"
-                  :title="op.operatorName"
+              <div class="strategy-scroll-box">
+                <div v-if="!selectedAttr" class="sub-empty">
+                  请先在左侧选择具体的“属性节点”查看其关联操作
+                </div>
+                <div
+                  v-else-if="currentOperators.length === 0"
+                  class="sub-empty"
                 >
-                  <small class="text-cyan"
-                    >#{{ op.ocStrategyOperatorId }}</small
-                  >
-                  {{ op.operatorName }}
-                </span>
-                <span class="card-actions">
-                  <i
-                    class="el-icon-edit text-green"
-                    @click="handleUpdateOperator(op)"
-                  ></i>
-                  <i
-                    class="el-icon-delete text-red"
-                    @click="handleDeleteOperator(op)"
-                  ></i>
-                </span>
+                  该属性项下暂未联动任何运控操作动作
+                </div>
+
+                <div
+                  v-for="op in currentOperators"
+                  :key="'linked_' + op.ocStrategyOperatorId"
+                  class="link-status-card compact-card"
+                >
+                  <div class="alarm-strip strip-level-safe"></div>
+                  <div class="card-line">
+                    <span
+                      class="wl-name ellipsis-text"
+                      style="max-width: 220px"
+                      :title="op.operatorName"
+                    >
+                      <small class="text-cyan"
+                        >#{{ op.ocStrategyOperatorId }}</small
+                      >
+                      {{ op.operatorName }}
+                    </span>
+                    <span class="card-actions">
+                      <i
+                        class="el-icon-edit text-green"
+                        @click="handleUpdateOperator(op)"
+                      ></i>
+                      <i
+                        class="el-icon-delete text-red"
+                        @click="handleDeleteOperator(op)"
+                      ></i>
+                    </span>
+                  </div>
+                  <div class="card-line metric-line">
+                    <span
+                      class="metric-item ellipsis-text"
+                      style="max-width: 240px"
+                      :title="op.operatorMemo"
+                    >
+                      动作机理:
+                      <span class="text-gray">{{
+                        op.operatorMemo || '暂无说明'
+                      }}</span>
+                    </span>
+                    <span class="metric-item text-green">[已联动激活]</span>
+                  </div>
+                </div>
               </div>
+            </el-tab-pane>
 
-              <div class="card-line metric-line">
-                <span
-                  class="metric-item ellipsis-text"
-                  style="max-width: 240px"
-                  :title="op.operatorMemo"
+            <el-tab-pane name="all">
+              <span slot="label">
+                <Icon
+                  icon="lucide:binary"
+                  :size="13"
+                  style="vertical-align: middle; margin-right: 4px"
+                />
+                全部操作配置项
+                <el-badge
+                  :value="allOperators.length"
+                  class="tab-badge"
+                  type="info"
+                />
+              </span>
+
+              <div class="strategy-scroll-box">
+                <div v-if="allOperators.length === 0" class="sub-empty">
+                  系统内暂无任何底层配置项
+                </div>
+
+                <div
+                  v-for="op in allOperators"
+                  :key="'all_' + op.ocStrategyOperatorId"
+                  class="link-status-card compact-card"
                 >
-                  <Icon
-                    icon="lucide:workflow"
-                    :size="14"
-                    color="var(--color-cyan, #06b6d4)"
-                    style="vertical-align: middle; margin-right: 5px"
-                  />
-                  动作机理:
-                  <span class="text-gray">{{
-                    op.operatorMemo || '暂无说明'
-                  }}</span>
-                </span>
-                <span
-                  class="metric-item text-green"
-                  v-if="isOpLinked(op.ocStrategyOperatorId)"
-                >
-                  [已联动激活]
-                </span>
+                  <div
+                    class="alarm-strip"
+                    :class="
+                      isOpLinked(op.ocStrategyOperatorId)
+                        ? 'strip-level-safe'
+                        : 'strip-level-crit'
+                    "
+                  ></div>
+                  <div class="card-line">
+                    <span
+                      class="wl-name ellipsis-text"
+                      style="max-width: 220px"
+                      :title="op.operatorName"
+                    >
+                      <small class="text-cyan"
+                        >#{{ op.ocStrategyOperatorId }}</small
+                      >
+                      {{ op.operatorName }}
+                    </span>
+                    <span class="card-actions">
+                      <i
+                        class="el-icon-edit text-green"
+                        @click="handleUpdateOperator(op)"
+                      ></i>
+                      <i
+                        class="el-icon-delete text-red"
+                        @click="handleDeleteOperator(op)"
+                      ></i>
+                    </span>
+                  </div>
+                  <div class="card-line metric-line">
+                    <span
+                      class="metric-item ellipsis-text"
+                      style="max-width: 240px"
+                      :title="op.operatorMemo"
+                    >
+                      动作机理:
+                      <span class="text-gray">{{
+                        op.operatorMemo || '暂无说明'
+                      }}</span>
+                    </span>
+                    <span
+                      class="metric-item text-green"
+                      v-if="isOpLinked(op.ocStrategyOperatorId)"
+                    >
+                      [已联动激活]
+                    </span>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
+            </el-tab-pane>
+          </el-tabs>
         </div>
       </div>
     </div>
@@ -365,7 +434,7 @@
       <el-form :model="opForm" label-width="100px" size="mini">
         <div class="dialog-detail-matrix">
           <div class="detail-row span-2">
-            <span class="lbl">运控操控算子名称</span>
+            <span class="lbl">运控配置项名称</span>
             <input
               type="text"
               v-model="opForm.operatorName"
@@ -403,26 +472,25 @@
 
 <script>
 import {apiPage, apiAdd, apiUpdate, apiDelete, apiGetAll} from '@/api/common'
-// 🌟 严格引入您指定的 map 配置字典
 import {getStrategyTypes, getAttributeMap, getAttrTypes} from '@/api/map'
 
 export default {
   name: 'OcStrategyComprehensiveDashboard',
   data() {
     return {
-      attrModuleUrl: 'ocStrategyAttr', // 策略属性模块路由
-      operatorModuleUrl: 'ocStrategyOperator', // 操作算子模块路由
+      attrModuleUrl: 'ocStrategyAttr',
+      operatorModuleUrl: 'ocStrategyOperator',
 
       pageLoading: false,
       submitLoading: false,
 
-      strategyTreeData: [], // 动态组装后的策略分类树
-      allAttributes: [], // 后端加载的原始全量属性池
-      allOperators: [], // 后端加载的原始全量操作算子池
-      currentOperators: [], // 当前选中属性项可见/关联的操作列表
-      selectedAttr: null, // 当前被激活的树节点原始对象
+      strategyTreeData: [],
+      allAttributes: [],
+      allOperators: [],
+      currentOperators: [],
+      selectedAttr: null,
+      activeTab: 'linked', // 'linked' 为关联, 'all' 为全部
 
-      // 导入的外部基础数据映射字典
       strategyTypes: getStrategyTypes(),
       attributeMap: getAttributeMap(),
       attrTypes: getAttrTypes(),
@@ -430,10 +498,9 @@ export default {
       defaultTreeProps: {children: 'children', label: 'name'},
       listQuery: {strategyType: '', attrName: ''},
 
-      // 属性表单
       attrDialogVisible: false,
       attrDialogTitle: '',
-      selectedOpIdsArray: [], // 表单多选框中转数组
+      selectedOpIdsArray: [],
       attrForm: {
         ocStrategyAttrId: null,
         strategyType: '',
@@ -443,7 +510,6 @@ export default {
         optionOperatorIds: ''
       },
 
-      // 操作算子表单
       opDialogVisible: false,
       opDialogTitle: '',
       opForm: {ocStrategyOperatorId: null, operatorName: '', operatorMemo: ''}
@@ -453,38 +519,28 @@ export default {
     this.initGlobalStrategyData()
   },
   methods: {
-    /**
-     * 核心初始化：全量并行获取数据，并在前端组装树结构
-     */
     async initGlobalStrategyData() {
       this.pageLoading = true
       try {
-        // 1. 获取全量属性项
         const attrRes = await apiPage(this.attrModuleUrl, {
           pageNum: 1,
           pageSize: 200
         })
         this.allAttributes = attrRes.data.list || attrRes.data || []
 
-        // 2. 获取全量执行操作算子
         const opRes = await apiPage(this.operatorModuleUrl, {
           pageNum: 1,
           pageSize: 200
         })
         this.allOperators = opRes.data.list || opRes.data || []
 
-        // 3. 将扁平数据根据大类组装成两层谱系树
         this.renderStrategyTree()
 
-        // 保持激活树联动
         if (this.selectedAttr) {
           const fresh = this.allAttributes.find(
             a => a.ocStrategyAttrId === this.selectedAttr.ocStrategyAttrId
           )
           if (fresh) this.handleTreeNodeClick({isCategory: false, raw: fresh})
-        } else {
-          // 默认加载全量算子在底部平铺展现
-          this.currentOperators = this.allOperators
         }
       } catch (e) {
         console.error('分级运控初始化级联故障:', e)
@@ -493,14 +549,9 @@ export default {
       }
     },
 
-    /**
-     * 🛠️ 前端自组策略树算法：将大类与细分的属性融合成树形拓扑结构
-     */
     renderStrategyTree() {
-      // 获取四大标准大类
       const categories = this.strategyTypes
       const tree = categories.map((catName, index) => {
-        // 过滤属于该大类的属性项
         const childrenAttrs = this.allAttributes
           .filter(attr => attr.strategyType === catName)
           .map(attr => ({
@@ -520,26 +571,22 @@ export default {
       this.strategyTreeData = tree
     },
 
-    /**
-     * 树节点激活点击事件
-     */
     handleTreeNodeClick(nodeData) {
       if (nodeData.isCategory) {
-        // 点击大类分类项：右侧过滤展示属于该类的算子或全集
         this.selectedAttr = null
-        this.currentOperators = this.allOperators
+        this.currentOperators = []
+        this.activeTab = 'all'
         return
       }
-      // 点击具体属性叶子节点
+
       const rawAttr = nodeData.raw
       this.selectedAttr = rawAttr
+      this.activeTab = 'linked'
 
-      // 分层过滤算子：优先展示当前属性绑定的候选操作项，若没绑定则平铺全部供查看
       if (rawAttr.optionOperatorIds) {
         const idArr = String(rawAttr.optionOperatorIds)
           .split(',')
           .map(id => Number(id.trim()))
-        // 排序把绑定的放在前面，或者只显示绑定的
         this.currentOperators = this.allOperators.filter(op =>
           idArr.includes(op.ocStrategyOperatorId)
         )
@@ -548,9 +595,6 @@ export default {
       }
     },
 
-    /**
-     * 判断当前算子是否已被选中绑定
-     */
     isOpLinked(opId) {
       if (!this.selectedAttr || !this.selectedAttr.optionOperatorIds)
         return false
@@ -560,15 +604,11 @@ export default {
         .includes(opId)
     },
 
-    /**
-     * 反查 attributeMap 的英文标准对照 Key
-     */
     getAttrMapKey(name) {
       return this.attributeMap[name] || 'customDefine'
     },
 
     handleTypeSearch() {
-      // 级联控制左侧树的大类节点展开或过滤
       this.filterStrategyTree()
     },
 
@@ -593,7 +633,7 @@ export default {
       return matchType && matchName
     },
 
-    /* =================== ⚙️ 运控策略属性 (ocStrategyAttr) 维护 =================== */
+    /* =================== ⚙️ 策略属性维护 =================== */
     handleCreateAttr() {
       this.resetAttrForm()
       this.attrDialogTitle = '⚡ 下发部署全新运控策略控制属性'
@@ -602,7 +642,6 @@ export default {
     handleUpdateAttr(row) {
       this.resetAttrForm()
       this.attrForm = Object.assign({}, row)
-      // 解析后端逗号分隔的字符 ID 序列到前端多选数组中
       if (this.attrForm.optionOperatorIds) {
         this.selectedOpIdsArray = String(this.attrForm.optionOperatorIds)
           .split(',')
@@ -616,7 +655,6 @@ export default {
         this.$message.warning('属性名称与归属大类为核心必填强约束项')
         return
       }
-      // 反向将多选数组拼装成逗号分隔字串回传后端
       this.attrForm.optionOperatorIds = this.selectedOpIdsArray.join(',')
       this.submitLoading = true
 
@@ -636,10 +674,7 @@ export default {
       this.$confirm(
         `确定注销并剥离分级运控属性 [#${row.attrName}]?`,
         '策略解绑风控警报',
-        {
-          confirmButtonText: '强制熔断',
-          cancelButtonText: '保留观测'
-        }
+        {confirmButtonText: '强制熔断', cancelButtonText: '保留观测'}
       ).then(() => {
         apiDelete(this.attrModuleUrl, row.ocStrategyAttrId).then(() => {
           this.$message.success('当前运控配置参数已剔除离线')
@@ -662,21 +697,21 @@ export default {
       }
     },
 
-    /* =================== ⚡ 操控动作算子 (ocStrategyOperator) 维护 =================== */
+    /* =================== ⚡ 操控动作算子维护 =================== */
     handleCreateOperator() {
       this.resetOpForm()
-      this.opDialogTitle = '⚡ 注入发布全新底层执行操控算子'
+      this.opDialogTitle = '发布配置项'
       this.opDialogVisible = true
     },
     handleUpdateOperator(row) {
       this.resetOpForm()
       this.opForm = Object.assign({}, row)
-      this.opDialogTitle = '⚙️ 升级细化现有操控单元特征'
+      this.opDialogTitle = '升级'
       this.opDialogVisible = true
     },
     submitOpForm() {
       if (!this.opForm.operatorName) {
-        this.$message.warning('操控算子执行动作名称不能为空')
+        this.$message.warning('配置项执行动作名称不能为空')
         return
       }
       this.submitLoading = true
@@ -694,12 +729,9 @@ export default {
     },
     handleDeleteOperator(row) {
       this.$confirm(
-        `是否从底层彻底废弃移除该项控制算子行为 [#${row.operatorName}]?`,
+        `是否彻底废弃移除该项配置项行为 [#${row.operatorName}]?`,
         '行为熔断警告',
-        {
-          confirmButtonText: '确定熔断',
-          cancelButtonText: '取消'
-        }
+        {confirmButtonText: '确定熔断', cancelButtonText: '取消'}
       ).then(() => {
         apiDelete(this.operatorModuleUrl, row.ocStrategyOperatorId).then(() => {
           this.$message.success('该控制指令已被系统永久注销')
@@ -719,7 +751,6 @@ export default {
 </script>
 
 <style scoped>
-/* 🌟 全局 100% 弹性流大屏，不写死绝对定位和破坏性高度 */
 .screen-container {
   width: 100%;
   height: 100%;
@@ -731,7 +762,6 @@ export default {
   box-sizing: border-box;
 }
 
-/* 顶层检索控制横条 */
 .top-search-header {
   height: 46px;
   background: #080e18;
@@ -779,7 +809,6 @@ export default {
   font-size: 11px;
 }
 
-/* 主体分舱 */
 .main-body-layout {
   flex: 1;
   min-height: 0;
@@ -788,7 +817,6 @@ export default {
   gap: 12px;
 }
 
-/* 左侧策略分类树舱 */
 .left-tree-panel {
   flex: 3;
   background: #080e18;
@@ -821,7 +849,6 @@ export default {
   display: flex;
 }
 
-/* 右侧核心综合调度（上下二分） */
 .right-combined-panel {
   flex: 7;
   display: flex;
@@ -830,7 +857,6 @@ export default {
   min-width: 0;
 }
 
-/* 右上：全要素详情 */
 .right-top-detail-zone {
   background: #080e18;
   border: 1px solid #111b2b;
@@ -869,18 +895,81 @@ export default {
   color: #f8fafc;
 }
 
-/* 右下：响应操作池（放底部） */
+/* 右下配置区容器 */
 .right-bottom-strategy-zone {
   background: #080e18;
   border: 1px solid #111b2b;
   border-radius: 4px;
-  padding: 12px;
+  padding: 0 12px 12px 12px;
   display: flex;
   flex-direction: column;
   flex: 5;
   min-height: 0;
+  position: relative; /* 🌟 设为相对定位，允许子按钮绝对定位到右上角 */
 }
 
+/* 🌟 精准控位：将“新增按钮”完美定位到 Tabs 栏的右侧同行 */
+.tabs-inline-btn {
+  position: absolute;
+  right: 12px;
+  top: 6px;
+  z-index: 10; /* 确保悬浮在 el-tabs 头部之上不被遮挡 */
+}
+
+/* Element UI Tabs 穿透定制 */
+::v-loading-dark .el-loading-mask {
+  background-color: rgba(3, 6, 12, 0.8);
+}
+.dark-custom-tabs {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+.dark-custom-tabs /deep/ .el-tabs__header {
+  margin: 0 0 10px 0;
+  border-bottom: 1px solid #111b2b;
+  padding-right: 110px; /* 🌟 预留右侧空间，防止 Tab 头标签过多时与新增按钮重叠 */
+}
+.dark-custom-tabs /deep/ .el-tabs__nav-wrap::after {
+  background-color: transparent;
+}
+.dark-custom-tabs /deep/ .el-tabs__item {
+  color: #64748b;
+  font-size: 12px;
+  font-weight: bold;
+  height: 40px;
+  line-height: 40px;
+}
+.dark-custom-tabs /deep/ .el-tabs__item.is-active {
+  color: #38bdf8;
+}
+.dark-custom-tabs /deep/ .el-tabs__active-bar {
+  background-color: #38bdf8;
+}
+.dark-custom-tabs /deep/ .el-tabs__content {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+}
+.dark-custom-tabs /deep/ .el-tab-pane {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.tab-badge {
+  margin-left: 4px;
+}
+.tab-badge /deep/ .el-badge__content {
+  border: none;
+  height: 14px;
+  line-height: 14px;
+  padding: 0 4px;
+  font-size: 9px;
+  transform: scale(0.9);
+}
+
+/* 滚动盒样式净化 */
 .strategy-scroll-box {
   flex: 1;
   overflow-y: auto;
@@ -890,7 +979,6 @@ export default {
   gap: 8px;
 }
 
-/* 🌟 标准两行严格限高微操控卡片 */
 .link-status-card.compact-card {
   background: #0d1522;
   border: 1px solid #172438;
@@ -912,10 +1000,10 @@ export default {
 }
 .strip-level-safe {
   background: #10b981;
-} /* 当前属性已选关联此算子 */
+}
 .strip-level-crit {
   background: #1e293b;
-} /* 备用不联动算子 */
+}
 .card-line {
   display: flex;
   justify-content: space-between;
@@ -938,7 +1026,6 @@ export default {
   font-size: 10px;
 }
 
-/* 公用表头小标题及徽章 */
 .panel-header-summary {
   display: flex;
   justify-content: space-between;
@@ -962,7 +1049,7 @@ export default {
 .sub-empty {
   text-align: center;
   font-size: 11px;
-  color: #334155;
+  color: #475569;
   padding-top: 30px;
   grid-column: span 2;
 }

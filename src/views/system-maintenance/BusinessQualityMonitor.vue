@@ -1,30 +1,65 @@
 <template>
   <div class="business-screen-container">
     <div class="business-top-header">
-      <div class="brand-title">⚙️ 战术网络与业务质量数字化监控舱</div>
+      <div class="brand-title">
+        <Icon
+          icon="lucide:layout-dashboard"
+          :size="14"
+          color="#38bdf8"
+          style="vertical-align: middle; margin-right: 4px"
+        />战术网络与业务质量数字化监控舱
+      </div>
       <div class="global-legend">
         <div class="legend-node"><span class="dot bg-safe"></span>稳健运行</div>
         <div class="legend-node"><span class="dot bg-warn"></span>轻度越限</div>
         <div class="legend-node"><span class="dot bg-crit"></span>严重告警</div>
-        <div class="sync-countdown-badge font-num">🔄 15S 轮询步进</div>
+        <div class="sync-countdown-badge font-num">
+          <Icon
+            icon="lucide:refresh-cw"
+            :size="11"
+            color="#a7f3d0"
+            style="vertical-align: middle; margin-right: 3px"
+          />15S 轮询步进
+        </div>
       </div>
     </div>
 
     <div class="global-statistics-bar">
       <div class="stat-card">
-        <div class="stat-lbl">🌐 全网链路成功率 (均值)</div>
+        <div class="stat-lbl">
+          <Icon
+            icon="lucide:globe"
+            :size="12"
+            color="#34d399"
+            style="vertical-align: middle; margin-right: 4px"
+          />全网链路成功率 (均值)
+        </div>
         <div class="stat-val text-green font-num">
           {{ globalStats.avgSuccessRate }}<small>%</small>
         </div>
       </div>
       <div class="stat-card">
-        <div class="stat-lbl">⚔️ 在网作战任务群组</div>
+        <div class="stat-lbl">
+          <Icon
+            icon="lucide:swords"
+            :size="12"
+            color="#60a5fa"
+            style="vertical-align: middle; margin-right: 4px"
+          />在网作战任务群组
+        </div>
         <div class="stat-val text-blue font-num">
           {{ globalStats.activeGroups }}<small>组</small>
         </div>
       </div>
       <div class="stat-card">
-        <div class="stat-lbl">📦 活动应用服务网格</div>
+        <div class="stat-lbl">
+          <Icon
+            icon="lucide:boxes"
+            :size="12"
+            color="#22d3ee"
+            style="vertical-align: middle; margin-right: 4px"
+          />活动应用服务网格
+        </div>
         <div class="stat-val text-cyan font-num">
           {{ globalStats.totalServices }}<small>个</small>
         </div>
@@ -33,7 +68,14 @@
         class="stat-card"
         :class="globalStats.alertCount > 0 ? 'alert-flash-border' : ''"
       >
-        <div class="stat-lbl">🚨 实时阻断性告警源</div>
+        <div class="stat-lbl">
+          <Icon
+            icon="lucide:alert-triangle"
+            :size="12"
+            color="#f87171"
+            style="vertical-align: middle; margin-right: 4px"
+          />实时阻断性告警源
+        </div>
         <div
           class="stat-val font-num"
           :class="globalStats.alertCount > 0 ? 'text-red' : 'text-gray'"
@@ -47,31 +89,38 @@
       <div class="business-column width-30">
         <div class="sub-panel flex-100">
           <div class="panel-title-bar">
-            <span class="title">📡 链路传输质量监测 (`wlllDetect`)</span>
+            <span class="title">
+              <Icon
+                icon="lucide:activity"
+                :size="12"
+                color="#38bdf8"
+                style="vertical-align: middle; margin-right: 4px"
+              />链路传输质量监测
+            </span>
           </div>
 
-          <div class="inner-filter-bar grid-2">
-            <input
-              type="text"
+          <div class="inner-filter-bar grid-2 custom-el-form">
+            <el-input
               v-model="linkQueryParams.WLMC"
               @input="fetchLinkDetectPage"
               placeholder="过滤网络名称..."
-              class="mini-dark-input"
+              size="mini"
+              clearable
             />
-            <select
+            <el-select
               v-model="linkQueryParams.LLLX"
               @change="fetchLinkDetectPage"
-              class="mini-dark-select"
+              placeholder="全链路体制类型"
+              size="mini"
+              clearable
             >
-              <option value="">全链路体制类型</option>
-              <option
+              <el-option
                 v-for="(val, key) in linkTypeMap"
                 :key="key"
+                :label="val"
                 :value="Number(key)"
-              >
-                {{ val }}
-              </option>
-            </select>
+              />
+            </el-select>
           </div>
 
           <div class="scroll-wrapper" v-loading="loadingLink">
@@ -90,12 +139,15 @@
               @click="selectLink(item)"
             >
               <div class="card-row-top">
-                <span class="main-code"
-                  >🌐 {{ item.WLMC || '模拟未命名网络' }}
-                  <small class="text-gray"
-                    >({{ item.WLH || '-' }}号网)</small
-                  ></span
-                >
+                <span class="main-code">
+                  <Icon
+                    icon="lucide:network"
+                    :size="12"
+                    color="#818cf8"
+                    style="vertical-align: middle; margin-right: 3px"
+                  />{{ item.WLMC || '模拟未命名网络' }}
+                  <small class="text-gray">({{ item.WLH || '-' }}号网)</small>
+                </span>
                 <span class="status-badge" :class="'badge-' + item.warnLevel"
                   >级别: {{ item.warnLevel }}</span
                 >
@@ -126,8 +178,22 @@
               </div>
 
               <div class="card-row-nodes font-num">
-                <span>🛫 源端: #{{ item.PT1BSH || '-' }}</span>
-                <span>🛬 目的: #{{ item.PT2BSH || '-' }}</span>
+                <span>
+                  <Icon
+                    icon="lucide:log-out"
+                    :size="12"
+                    color="#fbbf24"
+                    style="vertical-align: middle; margin-right: 3px"
+                  />源端: #{{ item.PT1BSH || '-' }}
+                </span>
+                <span>
+                  <Icon
+                    icon="lucide:log-in"
+                    :size="12"
+                    color="#34d399"
+                    style="vertical-align: middle; margin-right: 3px"
+                  />目的: #{{ item.PT2BSH || '-' }}
+                </span>
               </div>
             </div>
           </div>
@@ -137,9 +203,14 @@
       <div class="business-column width-40">
         <div class="sub-panel flex-50 bg-chart-radar">
           <div class="panel-title-bar">
-            <span class="title"
-              >📊 核心侧重：激活链路效能历史演进趋势 (时序遥测)</span
-            >
+            <span class="title">
+              <Icon
+                icon="lucide:trending-up"
+                :size="12"
+                color="#a78bfa"
+                style="vertical-align: middle; margin-right: 4px"
+              />核心侧重：激活链路效能历史演进趋势 (时序遥测)
+            </span>
             <span class="active-node-desc text-cyan" v-if="activeLinkName"
               >当前激活: {{ activeLinkName }}</span
             >
@@ -151,16 +222,23 @@
 
         <div class="sub-panel flex-50">
           <div class="panel-title-bar">
-            <span class="title">⚔️ 作战任务群组在网态势监视 (`zzrwqz`)</span>
+            <span class="title">
+              <Icon
+                icon="lucide:shield-alert"
+                :size="12"
+                color="#f43f5e"
+                style="vertical-align: middle; margin-right: 4px"
+              />作战任务群组在网态势监视
+            </span>
           </div>
 
-          <div class="inner-filter-bar">
-            <input
-              type="text"
+          <div class="inner-filter-bar custom-el-form">
+            <el-input
               v-model="taskQueryParams.QZMC"
               @input="fetchTaskGroupPage"
               placeholder="输入作战群组名称检索..."
-              class="mini-dark-input full-width"
+              size="mini"
+              clearable
             />
           </div>
 
@@ -175,7 +253,14 @@
               class="task-group-dashboard"
             >
               <div class="task-top-meta">
-                <span class="qz-title">🛡️ {{ task.QZMC }}</span>
+                <span class="qz-title">
+                  <Icon
+                    icon="lucide:shield"
+                    :size="12"
+                    color="#60a5fa"
+                    style="vertical-align: middle; margin-right: 4px"
+                  />{{ task.QZMC }}
+                </span>
                 <span class="state-tag" :class="'state-' + task.QZSTATE">{{
                   getTaskStateText(task.QZSTATE)
                 }}</span>
@@ -194,17 +279,41 @@
               </div>
 
               <div class="target-track-panel font-num">
-                <span
-                  >🎯 起始目标: <b class="text-red">{{ task.QSMBBSH }}</b></span
-                >
-                <span
-                  >🎯 终止目标: <b class="text-red">{{ task.ZZMBBSH }}</b></span
-                >
+                <span>
+                  <Icon
+                    icon="lucide:crosshair"
+                    :size="12"
+                    color="#f87171"
+                    style="vertical-align: middle; margin-right: 3px"
+                  />起始目标: <b class="text-red">{{ task.QSMBBSH }}</b>
+                </span>
+                <span>
+                  <Icon
+                    icon="lucide:target"
+                    :size="12"
+                    color="#f87171"
+                    style="vertical-align: middle; margin-right: 3px"
+                  />终止目标: <b class="text-red">{{ task.ZZMBBSH }}</b>
+                </span>
               </div>
 
               <div class="time-period-box font-num text-gray">
-                <div>🛫 开始时间: {{ task.RWKSSJ }}</div>
-                <div>🛬 终止时间: {{ task.RWZZSJ }}</div>
+                <div>
+                  <Icon
+                    icon="lucide:play"
+                    :size="11"
+                    color="#94a3b8"
+                    style="vertical-align: middle; margin-right: 3px"
+                  />开始时间: {{ task.RWKSSJ }}
+                </div>
+                <div>
+                  <Icon
+                    icon="lucide:square"
+                    :size="11"
+                    color="#94a3b8"
+                    style="vertical-align: middle; margin-right: 3px"
+                  />终止时间: {{ task.RWZZSJ }}
+                </div>
               </div>
             </div>
           </div>
@@ -214,7 +323,14 @@
       <div class="business-column width-30">
         <div class="sub-panel flex-35">
           <div class="panel-title-bar">
-            <span class="title">🧭 时空同源步进监测 (`ptxx`)</span>
+            <span class="title">
+              <Icon
+                icon="lucide:compass"
+                :size="12"
+                color="#22d3ee"
+                style="vertical-align: middle; margin-right: 4px"
+              />时空同源步进监测
+            </span>
           </div>
           <div class="scroll-wrapper" v-loading="loadingTimeSync">
             <div
@@ -224,7 +340,12 @@
             >
               <div class="sync-meta">
                 <div class="node-name">
-                  🛰️ {{ pt.PTMC }}
+                  <Icon
+                    icon="lucide:satellite"
+                    :size="12"
+                    color="#38bdf8"
+                    style="vertical-align: middle; margin-right: 4px"
+                  />{{ pt.PTMC }}
                   <small class="font-num text-cyan">#{{ pt.PTBSH }}</small>
                 </div>
                 <div class="time-lbl font-num">
@@ -245,26 +366,35 @@
 
         <div class="sub-panel flex-65">
           <div class="panel-title-bar">
-            <span class="title">📦 业务微服务集群网格 (`serviceInfo`)</span>
+            <span class="title">
+              <Icon
+                icon="lucide:layers"
+                :size="12"
+                color="#facc15"
+                style="vertical-align: middle; margin-right: 4px"
+              />业务微服务集群网格
+            </span>
           </div>
 
-          <div class="inner-filter-bar grid-2">
-            <input
-              type="text"
+          <div class="inner-filter-bar grid-2 custom-el-form">
+            <el-input
               v-model="serviceQueryParams.serviceName"
               @input="fetchServicePage"
               placeholder="搜索微服务..."
-              class="mini-dark-input"
+              size="mini"
+              clearable
             />
-            <select
+            <el-select
               v-model="serviceQueryParams.serviceStatus"
               @change="fetchServicePage"
-              class="mini-dark-select"
+              placeholder="全部状态"
+              size="mini"
+              clearable
             >
-              <option value="">全部状态</option>
-              <option value="0">🟢 正常就绪</option>
-              <option value="1">🔴 宕机挂起</option>
-            </select>
+              <el-option label="全部状态" value="" />
+              <el-option label="正常就绪" value="0" />
+              <el-option label="宕机挂起" value="1" />
+            </el-select>
           </div>
 
           <div class="scroll-wrapper" v-loading="loadingService">
@@ -282,7 +412,14 @@
             >
               <div class="service-title-row">
                 <div class="srv-main">
-                  <span class="srv-name">📦 {{ srv.serviceName }}</span>
+                  <span class="srv-name">
+                    <Icon
+                      icon="lucide:box"
+                      :size="12"
+                      color="#fb7185"
+                      style="vertical-align: middle; margin-right: 4px"
+                    />{{ srv.serviceName }}
+                  </span>
                   <span class="srv-template text-gray">{{
                     srv.templateName
                   }}</span>
@@ -342,13 +479,13 @@
 
 <script>
 import * as echarts from 'echarts'
-// 导入对应的后端真实服务层接口（分页标准一致）
 import {
   getPlatformPage,
   getServiceInfoPage,
   getZzrwqzPage
 } from '@/api/platform'
 import {wlllDetect} from '@/api/network'
+
 export default {
   name: 'BusinessQualityMonitor',
   data() {
@@ -359,13 +496,11 @@ export default {
       loadingService: false,
       globalPollingTimer: null,
 
-      // 解耦实体数据池
       linkDetectList: [],
       timeSyncList: [],
       taskGroupList: [],
       serviceList: [],
 
-      // 统计看板对象
       globalStats: {
         avgSuccessRate: '99.2',
         activeGroups: 0,
@@ -373,14 +508,12 @@ export default {
         alertCount: 0
       },
 
-      // 查询参数过滤
       linkQueryParams: {WLMC: '', LLLX: ''},
       taskQueryParams: {QZMC: ''},
       serviceQueryParams: {serviceName: '', serviceStatus: ''},
 
       pageConfig: {pageNum: 1, pageSize: 10},
 
-      // 核心图表控制资产
       chartIns: null,
       activeLinkId: null,
       activeLinkName: '',
@@ -398,7 +531,6 @@ export default {
   },
   created() {
     this.initialMasterWorkflow()
-    // 【核心要求】：每 15 秒触发一次全量模块无交叉并发静默同步轮询
     this.globalPollingTimer = setInterval(() => {
       this.executeSilentSyncWorkflow()
     }, 15000)
@@ -413,9 +545,6 @@ export default {
     if (this.chartIns) this.chartIns.dispose()
   },
   methods: {
-    /**
-     * 首次并发并行载入四大独立面板（无交叉干预）
-     */
     async initialMasterWorkflow() {
       this.loadingLink = true
       this.loadingTimeSync = true
@@ -434,15 +563,11 @@ export default {
       this.loadingTask = false
       this.loadingService = false
 
-      // 默认激活第一条链路渲染趋势
       if (this.linkDetectList.length > 0) {
         this.selectLink(this.linkDetectList[0])
       }
     },
 
-    /**
-     * 1. 链路传输质量页抓取 (`wlllDetect`) + 模拟兜底
-     */
     async fetchLinkDetectPage() {
       try {
         const payload = {
@@ -459,7 +584,6 @@ export default {
         const res = await wlllDetect(payload)
         this.linkDetectList = res?.rows || res?.data?.list || []
 
-        // 【若无接口数据：自动注入高仿真模拟数据集进行大屏保障】
         if (!this.linkDetectList || this.linkDetectList.length === 0) {
           this.linkDetectList = [
             {
@@ -509,9 +633,6 @@ export default {
       }
     },
 
-    /**
-     * 2. 时空同源同步页抓取 (`ptxx`) + 仿真模拟
-     */
     async fetchTimeSyncPage() {
       try {
         const payload = {pageNum: 1, pageSize: 10, params: {}}
@@ -548,9 +669,6 @@ export default {
       }
     },
 
-    /**
-     * 3. 在网作战任务群组抓取 (`zzrwqz`) + 仿真模拟
-     */
     async fetchTaskGroupPage() {
       try {
         const payload = {
@@ -593,9 +711,6 @@ export default {
       }
     },
 
-    /**
-     * 4. 业务微服务质量监测抓取 (`serviceInfo`) + 仿真模拟
-     */
     async fetchServicePage() {
       try {
         const payload = {
@@ -655,16 +770,11 @@ export default {
       }
     },
 
-    /**
-     * 独立交互：选择当前高亮链路，重新推入时序图表数据点
-     */
     selectLink(item) {
       this.activeLinkId = item.wlllDetectId
       this.activeLinkName = item.WLMC
-      // 清空原有图表历史，为选定链路重构时序演进模拟
       this.chartHistory = {timeline: [], successRate: [], delay: [], jitter: []}
 
-      // 快速生成几条历史初始点防止空白
       for (let i = 5; i > 0; i--) {
         const d = new Date(Date.now() - i * 15000)
         const timeStr = d.toLocaleTimeString('zh-CN', {hour12: false})
@@ -682,11 +792,7 @@ export default {
       this.renderTrendChart()
     },
 
-    /**
-     * 15秒静默高并发同步时钟管理管道
-     */
     async executeSilentSyncWorkflow() {
-      console.log('--- [15秒质量监控大周期] 执行并发遥测刷新与图表时序滚动 ---')
       await Promise.all([
         this.fetchLinkDetectPage(),
         this.fetchTimeSyncPage(),
@@ -694,7 +800,6 @@ export default {
         this.fetchServicePage()
       ])
 
-      // 增量向图表中追加新提取的时间点，产生向右滚动的时序演进动画效果
       if (this.activeLinkId) {
         const curLink = this.linkDetectList.find(
           l => l.wlllDetectId === this.activeLinkId
@@ -719,9 +824,6 @@ export default {
       }
     },
 
-    /**
-     * 大屏重点：全网核心数据指标自动化深度提取汇总统计
-     */
     calculateGlobalStats() {
       if (this.linkDetectList.length > 0) {
         const sum = this.linkDetectList.reduce(
@@ -738,7 +840,6 @@ export default {
       ).length
       this.globalStats.totalServices = this.serviceList.length
 
-      // 复合告警源头汇总统计：包含网络报警级别和服务掉线项
       const critLinks = this.linkDetectList.filter(
         l => l.warnLevel === 'CRIT' || l.warnLevel === '3'
       ).length
@@ -748,9 +849,6 @@ export default {
       this.globalStats.alertCount = critLinks + deadServices
     },
 
-    /**
-     * ECharts 指标图谱资产初始化
-     */
     initTrendChart() {
       this.chartIns = echarts.init(this.$refs.linkTrendChart, 'dark')
       this.renderTrendChart()
@@ -831,16 +929,13 @@ export default {
       return 'lvl-safe'
     },
     getTaskStateText(s) {
-      return {0: '📁 新建', 1: '⚡ 启动运行', 2: '🛑 任务终止'}[s] || '未知'
+      return {0: '新建描述', 1: '启动运行', 2: '任务终止'}[s] || '未知'
     }
   }
 }
 </script>
 
 <style scoped>
-/* ==========================================================================
-   业务质量综合大屏样式配置
-   ========================================================================== */
 .business-screen-container {
   width: 100%;
   height: 100%;
@@ -905,7 +1000,7 @@ export default {
   border-radius: 12px;
 }
 
-/* 2. 数据大屏核心统计带（突出数据统计） */
+/* 2. 数据大屏核心统计带 */
 .global-statistics-bar {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -940,7 +1035,7 @@ export default {
   color: #475569;
 }
 
-/* 大屏网格布局分布 */
+/* 大屏布局 */
 .business-main-layout {
   display: flex;
   flex: 1;
@@ -1003,7 +1098,7 @@ export default {
   font-weight: bold;
 }
 
-/* 过滤框骨架 */
+/* 过滤框 Element UI 深色主题覆盖配置 */
 .inner-filter-bar {
   margin-bottom: 8px;
   flex-shrink: 0;
@@ -1013,22 +1108,20 @@ export default {
   grid-template-columns: 1.2fr 1fr;
   gap: 6px;
 }
-.mini-dark-input,
-.mini-dark-select {
-  background: #070c14;
-  border: 1px solid #172438;
-  color: #fff;
-  padding: 5px 8px;
-  border-radius: 3px;
-  font-size: 10px;
-  outline: none;
-  width: 100%;
-  box-sizing: border-box;
+.custom-el-form ::v-nav,
+.custom-el-form ::v-deep .el-input__inner {
+  background-color: #070c14 !important;
+  border: 1px solid #172438 !important;
+  color: #fff !important;
+  font-size: 11px !important;
+  height: 28px !important;
+  line-height: 28px !important;
 }
-.mini-dark-select {
-  color: #8a99ad;
+.custom-el-form ::v-deep .el-input__icon {
+  line-height: 28px !important;
 }
-.full-width {
+/* 覆盖 El 单选下拉菜单底衬 */
+.custom-el-form ::v-deep .el-select {
   width: 100%;
 }
 
@@ -1048,7 +1141,7 @@ export default {
   border-radius: 2px;
 }
 
-/* ==================== 链路质量玻璃卡片 ==================== */
+/* 链路质量卡片 */
 .quality-glass-card {
   background: #0d1522;
   border: 1px solid #172438;
@@ -1110,7 +1203,7 @@ export default {
   color: #415169;
 }
 
-/* ==================== 侧重图表显示层 (中央图表) ==================== */
+/* 中央图表 */
 .bg-chart-radar {
   background-image: radial-gradient(
     circle at 50% 10%,
@@ -1130,7 +1223,7 @@ export default {
   width: 100%;
 }
 
-/* ==================== 作战群组面板 (中下) ==================== */
+/* 作战群组面板 */
 .task-group-dashboard {
   background: #0d1522;
   border: 1px solid #16263d;
@@ -1209,7 +1302,7 @@ export default {
   gap: 1px;
 }
 
-/* ==================== 时空步进紧凑型组件 ==================== */
+/* 时空步进组件 */
 .sync-compact-row {
   background: #0c1424;
   border: 1px solid #16233a;
@@ -1249,7 +1342,7 @@ export default {
   border-color: #ef4444;
 }
 
-/* ==================== 应用微服务质量矩阵 ==================== */
+/* 应用微服务 */
 .service-mesh-card {
   background: #0d1522;
   border: 1px solid #172438;
@@ -1335,7 +1428,7 @@ export default {
   text-overflow: ellipsis;
 }
 
-/* 警报边界色 */
+/* 警报状态定义 */
 .lvl-crit {
   border-left-color: #ef4444 !important;
 }
@@ -1375,8 +1468,6 @@ export default {
   color: #223147;
   padding: 20px;
   border: 1px dashed #111b2b;
-}
-.font-num {
 }
 .text-green {
   color: #10b981 !important;

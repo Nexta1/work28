@@ -956,8 +956,6 @@ export default {
   font-size: 11px;
   margin-top: 1px;
 }
-.metric-item {
-}
 
 .sub-empty {
   text-align: center;

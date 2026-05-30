@@ -2,7 +2,17 @@
   <div class="screen-container">
     <div class="top-search-header">
       <div class="search-flex">
-        <span class="hub-title">🛡️ 数据链故障谱系拓扑与处置策略联动大屏</span>
+        <span class="hub-title">
+          <Icon
+            icon="lucide:shield-alert"
+            :size="16"
+            style="
+              vertical-align: middle;
+              margin-right: 6px;
+              color: var(--color-primary, #38bdf8);
+            "
+          />数据链故障与处置策略
+        </span>
 
         <div class="search-item">
           <label>全局故障搜索</label>
@@ -33,7 +43,7 @@
           class="action-btn"
           @click="initGlobalCoreData"
         >
-          重置整屏遥测
+          重置搜索
         </el-button>
       </div>
     </div>
@@ -41,7 +51,17 @@
     <div class="main-body-layout" v-loading="listLoading">
       <div class="left-tree-panel">
         <div class="panel-header-summary">
-          <span class="title">🌲 故障拓扑谱系树</span>
+          <span class="title">
+            <Icon
+              icon="lucide:network"
+              :size="14"
+              style="
+                vertical-align: middle;
+                margin-right: 6px;
+                color: var(--color-cyan, #06b6d4);
+              "
+            />故障拓扑谱系树
+          </span>
           <span class="badge font-num text-cyan"
             >{{ flatFaultTypes.length }} 类</span
           >
@@ -59,12 +79,26 @@
           >
             <span class="custom-tree-node" slot-scope="{data}">
               <span class="node-txt ellipsis-text" :title="data.faultName">
-                <span
+                <Icon
                   v-if="data.children && data.children.length > 0"
-                  class="text-orange"
-                  >📂</span
-                >
-                <span v-else class="text-red">🚨</span>
+                  icon="lucide:folder-git-2"
+                  :size="13"
+                  style="
+                    vertical-align: middle;
+                    margin-right: 4px;
+                    color: var(--color-warning, #f59e0b);
+                  "
+                />
+                <Icon
+                  v-else
+                  icon="lucide:alert-octagon"
+                  :size="13"
+                  style="
+                    vertical-align: middle;
+                    margin-right: 4px;
+                    color: var(--color-danger, #ef4444);
+                  "
+                />
                 {{ data.faultName }}
               </span>
               <span class="tree-node-actions">
@@ -92,7 +126,17 @@
       <div class="right-combined-panel">
         <div class="right-top-detail-zone">
           <div class="panel-header-summary">
-            <span class="title">🔍 当前选中故障诊断详情</span>
+            <span class="title">
+              <Icon
+                icon="lucide:binary"
+                :size="14"
+                style="
+                  vertical-align: middle;
+                  margin-right: 6px;
+                  color: var(--color-primary, #38bdf8);
+                "
+              />当前选中故障诊断详情
+            </span>
             <span class="badge font-num text-orange" v-if="currentSelectedNode"
               >#{{ currentSelectedNode.faultTypeId }}</span
             >
@@ -106,7 +150,7 @@
               }}</span>
             </div>
             <div class="detail-cell">
-              <span class="lbl">识别号 (TypeId)</span
+              <span class="lbl">识别号</span
               ><span class="val font-num text-cyan">{{
                 currentSelectedNode.faultTypeId
               }}</span>
@@ -130,7 +174,7 @@
               }}</span>
             </div>
             <div class="detail-cell span-2">
-              <span class="lbl">故障机理特征描述文本 (faultMemo)</span>
+              <span class="lbl">故障机理特征描述文本</span>
               <span class="val font-platform-list">{{
                 currentSelectedNode.faultMemo ||
                 '临界系统暂无该故障的谱系特征描述信息。'
@@ -138,28 +182,37 @@
             </div>
           </div>
           <div v-else class="sub-empty-info">
-            💡 请在左侧拓扑谱系树中选择任意故障节点，以同步下发右侧全要素数据
+            请在左侧拓扑谱系树中选择任意故障节点，以同步下发右侧全要素数据
           </div>
         </div>
 
         <div class="right-bottom-strategy-zone">
           <div class="panel-header-summary">
-            <span class="title">📋 绑定的战术应急处置策略 (Strategies)</span>
+            <span class="title">
+              <Icon
+                icon="lucide:scroll-text"
+                :size="14"
+                style="
+                  vertical-align: middle;
+                  margin-right: 6px;
+                  color: var(--color-green, #10b981);
+                "
+              />绑定的故障处置策略
+            </span>
             <el-button
               v-if="currentSelectedNode"
               type="primary"
               size="mini"
               icon="el-icon-plus"
-              class="inner-add-btn"
               @click="handleCreateStrategy"
             >
-              绑定新策略
+              绑定新故障处置策略
             </el-button>
           </div>
 
           <div class="strategy-scroll-box">
             <div v-if="currentStrategies.length === 0" class="sub-empty">
-              当前故障未绑定任何战术预案策略
+              当前故障未绑定任何故障处置策略
             </div>
 
             <div
@@ -200,7 +253,15 @@
                   class="metric-item ellipsis-text"
                   style="max-width: 180px"
                 >
-                  ⚙️ 流程:
+                  <Icon
+                    icon="lucide:git-fork"
+                    :size="12"
+                    style="
+                      vertical-align: middle;
+                      margin-right: 3px;
+                      color: var(--color-blue, #38bdf8);
+                    "
+                  />流程:
                   <span class="text-blue">{{
                     findBusinessName(item.businessId) ||
                     item.businessName ||
@@ -212,7 +273,15 @@
                   style="max-width: 200px"
                   :title="item.faultDiagnosis"
                 >
-                  🔬 诊断:
+                  <Icon
+                    icon="lucide:activity"
+                    :size="12"
+                    style="
+                      vertical-align: middle;
+                      margin-right: 3px;
+                      color: var(--color-green, #10b981);
+                    "
+                  />诊断:
                   <span class="text-green">{{
                     item.faultDiagnosis || '未指定描述'
                   }}</span>
@@ -228,7 +297,6 @@
       :title="typeDialogTitle"
       :visible.sync="typeDialogVisible"
       width="500px"
-      custom-class="dark-custom-dialog"
       append-to-body
       @close="resetTypeForm"
     >
@@ -244,7 +312,7 @@
             />
           </div>
           <div class="detail-row span-2">
-            <span class="lbl">父级故障特征标识 (parentTypeId)</span>
+            <span class="lbl">父级故障特征标识</span>
             <input
               type="number"
               v-model.number="typeForm.parentTypeId"
@@ -284,7 +352,6 @@
       :title="strategyDialogTitle"
       :visible.sync="strategyDialogVisible"
       width="540px"
-      custom-class="dark-custom-dialog"
       append-to-body
       @close="resetStrategyForm"
     >
@@ -296,7 +363,7 @@
               type="text"
               v-model="strategyForm.strategyName"
               class="inner-input"
-              placeholder="输入应急处理策略命名..."
+              placeholder="输入处理策略命名..."
             />
           </div>
           <div class="detail-row">
@@ -323,7 +390,7 @@
           </div>
 
           <div class="detail-row span-2">
-            <span class="lbl">故障深度诊断机理 (faultDiagnosis)</span>
+            <span class="lbl">故障深度诊断机理</span>
             <textarea
               v-model="strategyForm.faultDiagnosis"
               rows="2"
@@ -332,7 +399,7 @@
             ></textarea>
           </div>
           <div class="detail-row span-2">
-            <span class="lbl">自动化应急处置预案手段 (dealMethod)</span>
+            <span class="lbl">自动化应急处置预案手段</span>
             <textarea
               v-model="strategyForm.dealMethod"
               rows="2"
@@ -375,27 +442,25 @@ export default {
       submitLoading: false,
       filterText: '',
 
-      faultTreeData: [], // 转换后的故障树结构
-      flatFaultTypes: [], // 原始扁平故障数组
-      allStrategyPool: [], // 策略全量数据缓存池
-      currentStrategies: [], // 当前激活故障类型绑定的策略列表
-      businessOptions: [], // 业务流程树状集合
-      flatBusinessMap: {}, // 用于反查业务流程名称的平面字典
+      faultTreeData: [],
+      flatFaultTypes: [],
+      allStrategyPool: [],
+      currentStrategies: [],
+      businessOptions: [],
+      flatBusinessMap: {},
 
-      currentSelectedNode: null, // 当前选中的树节点对象
+      currentSelectedNode: null,
 
       defaultTreeProps: {children: 'children', label: 'faultName'},
 
-      // 🌟 Cascader 组件核心配置：严格对齐后端字段
       cascaderProps: {
-        checkStrictly: true, // 允许选择树的任意一级节点
-        emitPath: false, // 绑定值只获取最后选中的单个 ID，不返回数组路径
-        value: 'businessId', // 匹配您树上的标识属性
-        label: 'businessName', // 匹配树上的文本属性
+        checkStrictly: true,
+        emitPath: false,
+        value: 'businessId',
+        label: 'businessName',
         children: 'children'
       },
 
-      // 故障类型表单
       typeDialogVisible: false,
       typeDialogTitle: '',
       typeForm: {
@@ -405,7 +470,6 @@ export default {
         faultMemo: ''
       },
 
-      // 处置策略表单
       strategyDialogVisible: false,
       strategyDialogTitle: '',
       strategyForm: {
@@ -422,13 +486,9 @@ export default {
     this.initGlobalCoreData()
   },
   methods: {
-    /**
-     * 初始化核心
-     */
     async initGlobalCoreData() {
       this.listLoading = true
       try {
-        // 1. 获取 faultTypes 扁平数据并转树
         const typeRes = await apiGetAll(this.typeModuleUrl, {}, 'faultTypes')
         this.flatFaultTypes = typeRes.data || typeRes || []
         this.faultTreeData = this.buildTree(
@@ -436,18 +496,14 @@ export default {
           0
         )
 
-        // 2. 加载流程【树状】字典映射 (rest/businessInfo/tops)
         const bizRes = await apiGetAll('businessInfo', {}, 'tops')
         this.businessOptions = bizRes.data || bizRes || []
 
-        // 扁平化业务流程树，方便大屏直接高拟合渲染名称
         this.flatBusinessMap = {}
         this.flattenBusinessTree(this.businessOptions)
 
-        // 3. 加载处置策略
         await this.loadStrategyPool()
 
-        // 保持历史选中节点高亮联动
         if (this.currentSelectedNode) {
           const stillExist = this.flatFaultTypes.find(
             t => t.faultTypeId === this.currentSelectedNode.faultTypeId
@@ -461,9 +517,6 @@ export default {
       }
     },
 
-    /**
-     * 前端非树状结构转树形拓扑算法
-     */
     buildTree(list, parentId = 0) {
       const map = {}
       const tree = []
@@ -486,9 +539,6 @@ export default {
       return tree
     },
 
-    /**
-     * 递归平铺业务树用于卡片反查
-     */
     flattenBusinessTree(nodes) {
       nodes.forEach(node => {
         const bId = node.businessId || node.id
@@ -514,9 +564,6 @@ export default {
       )
     },
 
-    /**
-     * 树节点点击联动
-     */
     handleTreeNodeClick(data) {
       this.currentSelectedNode = data
       this.currentStrategies = this.allStrategyPool.filter(
@@ -537,20 +584,20 @@ export default {
       )
     },
 
-    /* =================== 📂 故障类型(Tree) 增删改查 =================== */
+    /* =================== 故障类型维护 =================== */
     handleCreateType(pId) {
       this.resetTypeForm()
       this.typeForm.parentTypeId = pId
       this.typeDialogTitle =
         pId === 0
-          ? '⚡ 下发全新顶级故障根源谱系'
-          : `⚡ 派生子级故障类型 (隶属于 #${pId})`
+          ? '下发全新顶级故障根源谱系'
+          : `派生子级故障类型 (隶属于 #${pId})`
       this.typeDialogVisible = true
     },
     handleUpdateType(row) {
       this.resetTypeForm()
       this.typeForm = Object.assign({}, row)
-      this.typeDialogTitle = '⚙️ 修改当前故障谱系节点属性'
+      this.typeDialogTitle = '修改当前故障谱系节点属性'
       this.typeDialogVisible = true
     },
     submitTypeForm() {
@@ -579,10 +626,7 @@ export default {
       this.$confirm(
         `确定彻底抹除故障类型谱系 [#${row.faultName}]? 关联的下属策略将一并失去锚定。`,
         '谱系熔断警告',
-        {
-          confirmButtonText: '确定熔断',
-          cancelButtonText: '取消'
-        }
+        {confirmButtonText: '确定熔断', cancelButtonText: '取消'}
       ).then(() => {
         apiDelete(this.typeModuleUrl, row.faultTypeId).then(() => {
           this.$message.success('该故障节点已从系统拓扑剔除')
@@ -603,18 +647,18 @@ export default {
       }
     },
 
-    /* =================== 📋 处置策略(Strategy) 增删改查 =================== */
+    /* =================== 处置策略维护 =================== */
     handleCreateStrategy() {
       if (!this.currentSelectedNode) return
       this.resetStrategyForm()
       this.strategyForm.faultTypeId = this.currentSelectedNode.faultTypeId
-      this.strategyDialogTitle = `⚡ 为故障 [${this.currentSelectedNode.faultName}] 绑定自动化策略`
+      this.strategyDialogTitle = `为故障 [${this.currentSelectedNode.faultName}] 绑定自动化策略`
       this.strategyDialogVisible = true
     },
     handleUpdateStrategy(row) {
       this.resetStrategyForm()
       this.strategyForm = Object.assign({}, row)
-      this.strategyDialogTitle = '⚙️ 修改当前战术应急处置手段'
+      this.strategyDialogTitle = '修改当前战术应急处置手段'
       this.strategyDialogVisible = true
     },
     submitStrategyForm() {
@@ -643,10 +687,7 @@ export default {
       this.$confirm(
         `是否注销该项应急处置策略 [#${row.strategyName}]?`,
         '策略离线警告',
-        {
-          confirmButtonText: '强制注销',
-          cancelButtonText: '保留观测'
-        }
+        {confirmButtonText: '强制注销', cancelButtonText: '保留观测'}
       ).then(() => {
         apiDelete(this.strategyModuleUrl, row.faultStrategyId).then(() => {
           this.$message.success('当前预案策略已完成注销销毁')
@@ -673,7 +714,6 @@ export default {
 </script>
 
 <style scoped>
-/* 🌟 全局弹性标准流，无绝对定位 */
 .screen-container {
   width: 100%;
   height: 100%;
@@ -685,7 +725,6 @@ export default {
   box-sizing: border-box;
 }
 
-/* 顶层检索控制 */
 .top-search-header {
   height: 46px;
   background: #080e18;
@@ -733,7 +772,6 @@ export default {
   font-size: 11px;
 }
 
-/* 主体布局 */
 .main-body-layout {
   flex: 1;
   min-height: 0;
@@ -742,7 +780,6 @@ export default {
   gap: 12px;
 }
 
-/* 左侧拓扑树舱 */
 .left-tree-panel {
   flex: 3;
   background: #080e18;
@@ -758,19 +795,9 @@ export default {
   overflow-y: auto;
 }
 
-/* 深色微调 Tree */
-::v-deep .dark-custom-tree {
-  background: transparent !important;
-  color: #cbd5e1 !important;
-}
-::v-deep .dark-custom-tree .el-tree-node__content {
-  height: 28px;
-}
-::v-deep .dark-custom-tree .el-tree-node__content:hover {
-  background: #121e30 !important;
-}
-::v-deep .dark-custom-tree .el-tree-node:focus > .el-tree-node__content {
-  background: #15253d !important;
+.dark-custom-tree {
+  background: transparent;
+  color: #cbd5e1;
 }
 
 .custom-tree-node {
@@ -790,7 +817,6 @@ export default {
   display: flex;
 }
 
-/* 右侧多维舱 */
 .right-combined-panel {
   flex: 7;
   display: flex;
@@ -799,7 +825,6 @@ export default {
   min-width: 0;
 }
 
-/* 右上：深度详情 */
 .right-top-detail-zone {
   background: #080e18;
   border: 1px solid #111b2b;
@@ -839,12 +864,11 @@ export default {
 }
 .font-platform-list {
   line-height: 16px;
-  color: #94a3b8 !important;
+  color: #94a3b8;
   text-align: justify;
-  font-size: 11px !important;
+  font-size: 11px;
 }
 
-/* 右下：策略区域（放底部） */
 .right-bottom-strategy-zone {
   background: #080e18;
   border: 1px solid #111b2b;
@@ -871,7 +895,6 @@ export default {
   gap: 8px;
 }
 
-/* 两行极简策略卡片 */
 .link-status-card.compact-card {
   background: #0d1522;
   border: 1px solid #172438;
@@ -919,7 +942,6 @@ export default {
   font-size: 10px;
 }
 
-/* 辅色面板 */
 .panel-header-summary {
   display: flex;
   justify-content: space-between;
@@ -955,19 +977,6 @@ export default {
   flex: 1;
 }
 
-/* 深色科技感弹窗与级联选择器自定义样式 */
-::v-deep .dark-custom-dialog {
-  background: #0c1424 !important;
-  border: 1px solid #1a293d !important;
-}
-::v-deep .dark-custom-dialog .el-dialog__title {
-  color: #38bdf8 !important;
-  font-size: 12px;
-  font-weight: bold;
-}
-::v-deep .dark-custom-dialog .el-dialog__body {
-  padding: 12px 20px;
-}
 .dialog-detail-matrix {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -987,20 +996,8 @@ export default {
   margin-bottom: 2px;
 }
 
-/* 🌟 穿透微调 Element 级联选择器完美适配大屏暗黑风 */
-.dark-cascader-container {
-  justify-content: flex-start;
-}
-::v-deep .inner-cascader {
-  width: 100% !important;
-}
-::v-deep .inner-cascader .el-input__inner {
-  background: #0d1522 !important;
-  border: 1px solid #1a293d !important;
-  color: #fff !important;
-  font-size: 11px !important;
-  height: 26px !important;
-  line-height: 26px !important;
+.inner-cascader {
+  width: 100%;
 }
 
 .inner-input,
@@ -1021,26 +1018,23 @@ export default {
   color: #cbd5e1;
 }
 
-/* 文本工具色 */
-.font-num {
-}
 .text-blue {
-  color: #38bdf8 !important;
+  color: #38bdf8;
 }
 .text-green {
-  color: #10b981 !important;
+  color: #10b981;
 }
 .text-orange {
-  color: #f59e0b !important;
+  color: #f59e0b;
 }
 .text-cyan {
-  color: #06b6d4 !important;
+  color: #06b6d4;
 }
 .text-red {
-  color: #ef4444 !important;
+  color: #ef4444;
 }
 .text-gray {
-  color: #52637a !important;
+  color: #52637a;
 }
 .ellipsis-text {
   white-space: nowrap;
