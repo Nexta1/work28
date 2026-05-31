@@ -133,7 +133,7 @@
       <div class="monitor-column-panel width-28">
         <div class="panel-header-summary">
           <span class="title"
-            ><Icon icon="lucide:settings" /> 物理外设硬件集群监视</span
+            ><Icon icon="lucide:settings" /> 设备端机集群监视</span
           >
           <span class="badge">数量: {{ deviceList.length }}</span>
         </div>
@@ -148,7 +148,7 @@
 
         <div class="scroll-container-box" v-loading="loadingDevice">
           <div v-if="filteredDevices.length === 0" class="sub-empty">
-            当前未加载到物理外设硬件
+            当前未加载到设备端机
           </div>
 
           <div
@@ -200,7 +200,7 @@
       <div class="monitor-column-panel width-34">
         <div class="panel-header-summary">
           <span class="title"
-            ><Icon icon="lucide:bar-chart-3" /> 激活设备特征性能谱系</span
+            ><Icon icon="lucide:bar-chart-3" /> 激活设备性能</span
           >
           <span class="badge font-num text-cyan" v-if="activeDeviceId"
             >ID: #{{ activeDeviceId }}</span
@@ -213,9 +213,7 @@
 
       <div class="monitor-column-panel width-38">
         <div class="panel-header-summary">
-          <span class="title"
-            ><Icon icon="lucide:satellite" /> 链网状态高级遥测网络监控</span
-          >
+          <span class="title"><Icon icon="lucide:satellite" /> 网络监控</span>
           <span class="badge font-num text-blue"
             >总计: {{ totalLinks }} 条</span
           >

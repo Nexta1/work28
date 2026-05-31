@@ -860,7 +860,7 @@ export default {
   position: relative;
 }
 .vector-arrow .link-lbl {
-  font-size: 8px;
+  font-size: 9px;
   color: #52637a;
   transform: scale(0.85);
   white-space: nowrap;

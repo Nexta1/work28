@@ -7,7 +7,7 @@
           :size="14"
           color="#38bdf8"
           style="vertical-align: middle; margin-right: 4px"
-        />战术网络与业务质量数字化监控舱
+        />业务质量监控
       </div>
       <div class="global-legend">
         <div class="legend-node"><span class="dot bg-safe"></span>稳健运行</div>
@@ -32,7 +32,7 @@
             :size="12"
             color="#34d399"
             style="vertical-align: middle; margin-right: 4px"
-          />全网链路成功率 (均值)
+          />链路成功率 (均值)
         </div>
         <div class="stat-val text-green font-num">
           {{ globalStats.avgSuccessRate }}<small>%</small>
@@ -58,7 +58,7 @@
             :size="12"
             color="#22d3ee"
             style="vertical-align: middle; margin-right: 4px"
-          />活动应用服务网格
+          />应用服务
         </div>
         <div class="stat-val text-cyan font-num">
           {{ globalStats.totalServices }}<small>个</small>
@@ -74,7 +74,7 @@
             :size="12"
             color="#f87171"
             style="vertical-align: middle; margin-right: 4px"
-          />实时阻断性告警源
+          />实时告警
         </div>
         <div
           class="stat-val font-num"
@@ -146,11 +146,11 @@
                     color="#818cf8"
                     style="vertical-align: middle; margin-right: 3px"
                   />{{ item.WLMC || '模拟未命名网络' }}
-                  <small class="text-gray">({{ item.WLH || '-' }}号网)</small>
+                  <small class="text-gray">({{ item.WLH || '-' }})</small>
                 </span>
-                <span class="status-badge" :class="'badge-' + item.warnLevel"
-                  >级别: {{ item.warnLevel }}</span
-                >
+                <span class="status-badge">{{
+                  linkTypeMap[item.LLLX] || item.LLLX
+                }}</span>
               </div>
 
               <div class="metrics-triple-grid">
@@ -184,7 +184,7 @@
                     :size="12"
                     color="#fbbf24"
                     style="vertical-align: middle; margin-right: 3px"
-                  />源端: #{{ item.PT1BSH || '-' }}
+                  />源端: #{{ item.PT1MC || '-' }}
                 </span>
                 <span>
                   <Icon
@@ -192,7 +192,7 @@
                     :size="12"
                     color="#34d399"
                     style="vertical-align: middle; margin-right: 3px"
-                  />目的: #{{ item.PT2BSH || '-' }}
+                  />目的: #{{ item.PT2MC || '-' }}
                 </span>
               </div>
             </div>
@@ -209,7 +209,7 @@
                 :size="12"
                 color="#a78bfa"
                 style="vertical-align: middle; margin-right: 4px"
-              />核心侧重：激活链路效能历史演进趋势 (时序遥测)
+              />当前链路效能历史演进趋势
             </span>
             <span class="active-node-desc text-cyan" v-if="activeLinkName"
               >当前激活: {{ activeLinkName }}</span
@@ -232,11 +232,18 @@
             </span>
           </div>
 
-          <div class="inner-filter-bar custom-el-form">
+          <div class="inner-filter-bar grid-2 custom-el-form">
             <el-input
               v-model="taskQueryParams.QZMC"
               @input="fetchTaskGroupPage"
-              placeholder="输入作战群组名称检索..."
+              placeholder="输入群组名称检索..."
+              size="mini"
+              clearable
+            />
+            <el-input
+              v-model="taskQueryParams.RWMC"
+              @input="fetchTaskGroupPage"
+              placeholder="输入任务名称检索..."
               size="mini"
               clearable
             />
@@ -266,54 +273,99 @@
                 }}</span>
               </div>
 
-              <div class="topo-route-line font-num">
-                <div class="route-node">
-                  <div class="dot-icon bg-blue"></div>
-                  <div class="node-lbl">起点: #{{ task.QSPTBSH }}</div>
+              <div class="task-rwmc-row">
+                <Icon
+                  icon="lucide:flag"
+                  :size="11"
+                  color="#facc15"
+                  style="vertical-align: middle; margin-right: 4px"
+                />
+                <span class="rwmc-text">{{ task.RWMC }}</span>
+              </div>
+
+              <div class="platform-section">
+                <div class="pl-header">
+                  <span class="pl-header-lbl">
+                    <Icon
+                      icon="lucide:radio"
+                      :size="11"
+                      color="#22d3ee"
+                      style="vertical-align: middle; margin-right: 4px"
+                    />编组平台
+                  </span>
+                  <span class="online-badge"
+                    >{{ getOnlineCount(task) }}/{{
+                      getTotalCount(task)
+                    }}在线</span
+                  >
                 </div>
-                <div class="route-arrow">➔ ➔</div>
-                <div class="route-node text-right">
-                  <div class="dot-icon bg-orange"></div>
-                  <div class="node-lbl">终点: #{{ task.ZZPTBSH }}</div>
+                <div class="pl-tags-wrap">
+                  <div class="pl-tags-inner" ref="plTags">
+                    <span
+                      v-for="(pt, pi) in getPlatformItems(task)"
+                      :key="pi"
+                      class="pl-tag"
+                      :class="pt.online ? 'tag-online' : 'tag-offline'"
+                    >
+                      <span
+                        class="pl-dot"
+                        :class="pt.online ? 'dot-online' : 'dot-offline'"
+                      ></span>
+                      <span class="pl-name">{{ pt.name }}</span>
+                    </span>
+                  </div>
+                  <el-popover
+                    v-if="getPlatformItems(task).length > platformVisibleLimit"
+                    placement="right"
+                    trigger="hover"
+                    popper-class="dark-pl-popover"
+                  >
+                    <span slot="reference" class="pl-more-btn"
+                      >+{{
+                        getPlatformItems(task).length - platformVisibleLimit
+                      }}</span
+                    >
+                    <div class="popover-pl-list">
+                      <div
+                        v-for="(pt, pi) in getPlatformItems(task)"
+                        :key="pi"
+                        class="popover-pl-item"
+                      >
+                        <span
+                          class="pl-dot"
+                          :class="pt.online ? 'dot-online' : 'dot-offline'"
+                        ></span>
+                        <span
+                          class="pl-name"
+                          :class="pt.online ? 'text-green' : 'text-gray'"
+                          >{{ pt.name }}</span
+                        >
+                      </div>
+                    </div>
+                  </el-popover>
                 </div>
               </div>
 
-              <div class="target-track-panel font-num">
-                <span>
-                  <Icon
-                    icon="lucide:crosshair"
-                    :size="12"
-                    color="#f87171"
-                    style="vertical-align: middle; margin-right: 3px"
-                  />起始目标: <b class="text-red">{{ task.QSMBBSH }}</b>
-                </span>
-                <span>
-                  <Icon
-                    icon="lucide:target"
-                    :size="12"
-                    color="#f87171"
-                    style="vertical-align: middle; margin-right: 3px"
-                  />终止目标: <b class="text-red">{{ task.ZZMBBSH }}</b>
-                </span>
-              </div>
-
-              <div class="time-period-box font-num text-gray">
-                <div>
+              <div class="time-period-row font-num">
+                <span class="tp-item">
                   <Icon
                     icon="lucide:play"
                     :size="11"
-                    color="#94a3b8"
+                    color="#34d399"
                     style="vertical-align: middle; margin-right: 3px"
-                  />开始时间: {{ task.RWKSSJ }}
-                </div>
-                <div>
+                  />开始:
+                  <span class="tp-val text-green">{{ task.RWKSSJ }}</span>
+                </span>
+                <span class="tp-sep"></span>
+                <span class="tp-item">
                   <Icon
                     icon="lucide:square"
                     :size="11"
-                    color="#94a3b8"
+                    color="#f87171"
                     style="vertical-align: middle; margin-right: 3px"
-                  />终止时间: {{ task.RWZZSJ }}
-                </div>
+                  />终止:
+                  <span class="tp-val text-red">{{ task.RWZZSJ }}</span>
+                </span>
               </div>
             </div>
           </div>
@@ -432,7 +484,7 @@
                       : 'light-green'
                   "
                 >
-                  {{ Number(srv.serviceStatus) === 1 ? 'OFFLINE' : 'ONLINE' }}
+                  {{ Number(srv.serviceStatus) === 1 ? '离线' : '在线' }}
                 </div>
               </div>
 
@@ -510,17 +562,18 @@ export default {
       },
 
       linkQueryParams: {WLMC: '', LLLX: ''},
-      taskQueryParams: {QZMC: ''},
+      taskQueryParams: {QZMC: '', RWMC: ''},
       serviceQueryParams: {serviceName: '', serviceStatus: ''},
 
-      pageConfig: {pageNum: 1, pageSize: 10},
+      pageConfig: {pageNum: 1, pageSize: 50},
 
       chartIns: null,
       activeLinkId: null,
       activeLinkName: '',
       chartHistory: {timeline: [], successRate: [], delay: [], jitter: []},
 
-      linkTypeMap: {}
+      linkTypeMap: {},
+      platformVisibleLimit: 6
     }
   },
   created() {
@@ -669,7 +722,10 @@ export default {
         const payload = {
           pageNum: this.pageConfig.pageNum,
           pageSize: this.pageConfig.pageSize,
-          params: {QZMC: this.taskQueryParams.QZMC || undefined}
+          params: {
+            QZMC: this.taskQueryParams.QZMC || undefined,
+            RWMC: this.taskQueryParams.RWMC || undefined
+          }
         }
         const res = await getZzrwqzPage(payload)
         this.taskGroupList = res?.rows || res?.data?.list || []
@@ -678,25 +734,38 @@ export default {
           this.taskGroupList = [
             {
               ZZRWQZID: 'QZ_881',
-              QZMC: '联合防空导弹截击任务群',
+              QZMC: '海面火力打击群',
+              RWMC: '近海低空警戒任务',
               QZSTATE: 1,
-              QSPTBSH: 'PT_101',
-              ZZPTBSH: 'PT_204',
-              QSMBBSH: 'TGT_E09',
-              ZZMBBSH: 'TGT_E12',
-              RWKSSJ: '12:00:00',
-              RWZZSJ: '16:30:00'
+              QSPTBSH: 1,
+              ZZPTBSH: 4,
+              QSMBBSH: 3,
+              ZZMBBSH: 7,
+              PTXXMCS: '辽宁舰,052D型导弹驱逐舰-1,歼-15-1',
+              onlineCount: 3,
+              onlinePTs: [
+                {PTMC: '辽宁舰'},
+                {PTMC: '052D型导弹驱逐舰-1'},
+                {PTMC: '歼-15-1'}
+              ],
+              RWKSSJ: '2026-02-08 00:00:00',
+              RWZZSJ: '2026-02-27 00:00:00'
             },
             {
               ZZRWQZID: 'QZ_882',
               QZMC: '多维协同深空侦察编群',
+              RWMC: '卫星侦察与数据回传任务',
               QZSTATE: 0,
-              QSPTBSH: 'PT_105',
-              ZZPTBSH: 'PT_301',
-              QSMBBSH: 'TGT_X01',
-              ZZMBBSH: 'TGT_X05',
-              RWKSSJ: '13:15:00',
-              RWZZSJ: '19:00:00'
+              QSPTBSH: 5,
+              ZZPTBSH: 9,
+              QSMBBSH: 2,
+              ZZMBBSH: 6,
+              PTXXMCS:
+                '高分侦察卫星-2,空警-500,地面接收站-3,无人机-7,预警雷达-1,通讯中继-2',
+              onlineCount: 1,
+              onlinePTs: [{PTMC: '高分侦察卫星-2'}],
+              RWKSSJ: '2026-02-10 06:30:00',
+              RWZZSJ: '2026-03-05 18:00:00'
             }
           ]
         }
@@ -882,7 +951,7 @@ export default {
             bottom: 0,
             textStyle: {color: '#64748b', fontSize: 10}
           },
-          grid: {top: 25, bottom: 45, left: 35, right: 35},
+          grid: {top: 45, bottom: 45, left: 35, right: 35},
           xAxis: {
             type: 'category',
             data: this.chartHistory.timeline,
@@ -943,7 +1012,21 @@ export default {
       return 'lvl-safe'
     },
     getTaskStateText(s) {
-      return {0: '新建描述', 1: '启动运行', 2: '任务终止'}[s] || '未知'
+      return {0: '新建', 1: '在线', 2: '离线'}[s] || '未知'
+    },
+    getPlatformItems(task) {
+      const names = (task.PTXXMCS || '').split(',').filter(Boolean)
+      const onlineNames = (task.onlinePTs || []).map(pt => pt.PTMC)
+      return names.map(name => ({
+        name,
+        online: onlineNames.includes(name)
+      }))
+    },
+    getOnlineCount(task) {
+      return task.onlineCount || (task.onlinePTs || []).length
+    },
+    getTotalCount(task) {
+      return (task.PTXXMCS || '').split(',').filter(Boolean).length
     }
   }
 }
@@ -1180,7 +1263,7 @@ export default {
   color: #fff;
 }
 .status-badge {
-  font-size: 8px;
+  font-size: 9px;
   padding: 1px 4px;
   border-radius: 2px;
   background: #070c14;
@@ -1201,7 +1284,7 @@ export default {
   align-items: center;
 }
 .triple-cell .lbl {
-  font-size: 8px;
+  font-size: 9px;
   color: #415169;
   transform: scale(0.9);
 }
@@ -1214,7 +1297,7 @@ export default {
   display: flex;
   justify-content: space-between;
   font-size: 9px;
-  color: #415169;
+  color: #4e6890;
 }
 
 /* 中央图表 */
@@ -1241,8 +1324,15 @@ export default {
 .task-group-dashboard {
   background: #0d1522;
   border: 1px solid #16263d;
+  border-left: 3px solid #3b82f6;
   border-radius: 3px;
-  padding: 11px;
+  padding: 10px 11px;
+  transition: all 0.15s ease;
+}
+.task-group-dashboard:hover {
+  background: #111b2f;
+  border-color: #2d4a7a;
+  border-left-color: #60a5fa;
 }
 .task-top-meta {
   display: flex;
@@ -1251,23 +1341,33 @@ export default {
   margin-bottom: 6px;
 }
 .task-top-meta .qz-title {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: bold;
-  color: #fff;
+  color: #e2e8f0;
+  letter-spacing: 0.5px;
 }
 .state-tag {
   font-size: 9px;
-  padding: 1px 4px;
-  border-radius: 2px;
-  background: #070c14;
+  padding: 2px 7px;
+  border-radius: 3px;
+  background: transparent;
+  font-weight: bold;
+  letter-spacing: 0.3px;
 }
 .state-0 {
   color: #38bdf8;
-  border: 1px solid #38bdf8;
+  border: 1px solid rgba(56, 189, 248, 0.5);
+  background: rgba(56, 189, 248, 0.06);
 }
 .state-1 {
   color: #10b981;
-  border: 1px solid #10b981;
+  border: 1px solid rgba(16, 185, 129, 0.5);
+  background: rgba(16, 185, 129, 0.06);
+}
+.state-2 {
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.5);
+  background: rgba(239, 68, 68, 0.06);
 }
 
 .topo-route-line {
@@ -1309,11 +1409,135 @@ export default {
   border-radius: 2px;
   margin-bottom: 4px;
 }
-.time-period-box {
-  font-size: 8px;
+/* 作战群组 — 任务名称行 */
+.task-rwmc-row {
+  font-size: 10px;
+  color: #facc15;
+  padding: 4px 6px;
+  background: rgba(250, 204, 21, 0.06);
+  border: 1px solid rgba(250, 204, 21, 0.12);
+  border-radius: 2px;
+  margin-bottom: 5px;
   display: flex;
-  flex-direction: column;
-  gap: 1px;
+  align-items: center;
+}
+.rwmc-text {
+  font-weight: bold;
+  letter-spacing: 0.3px;
+}
+
+/* 作战群组 — 编组平台区域 */
+.platform-section {
+  background: #070c14;
+  border-radius: 2px;
+  padding: 5px 6px;
+  margin-bottom: 4px;
+}
+.pl-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+.pl-header-lbl {
+  font-size: 9px;
+  color: #415169;
+}
+.online-badge {
+  font-size: 9px;
+  color: #10b981;
+  background: rgba(16, 185, 129, 0.1);
+  padding: 1px 7px;
+  border-radius: 3px;
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  font-weight: bold;
+}
+.pl-tags-wrap {
+  display: flex;
+  align-items: flex-start;
+  gap: 4px;
+}
+.pl-tags-inner {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+  flex: 1;
+  max-height: 36px;
+  overflow: hidden;
+}
+.pl-tag {
+  font-size: 9px;
+  padding: 2px 6px;
+  border-radius: 2px;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+.tag-online {
+  color: #a7f3d0;
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+}
+.tag-offline {
+  color: #64748b;
+  background: rgba(100, 116, 139, 0.1);
+  border: 1px solid rgba(100, 116, 139, 0.15);
+}
+.pl-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.dot-online {
+  background: #10b981;
+  box-shadow: 0 0 3px rgba(16, 185, 129, 0.5);
+}
+.dot-offline {
+  background: #475569;
+}
+.pl-name {
+  max-width: 80px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.pl-more-btn {
+  font-size: 9px;
+  color: #38bdf8;
+  background: rgba(56, 189, 248, 0.1);
+  border: 1px solid rgba(56, 189, 248, 0.25);
+  padding: 2px 6px;
+  border-radius: 2px;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.pl-more-btn:hover {
+  background: rgba(56, 189, 248, 0.2);
+}
+
+/* 作战群组 — 时间单行 */
+.time-period-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 9px;
+  padding: 3px 0;
+}
+.tp-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+.tp-sep {
+  width: 1px;
+  height: 10px;
+  background: #1e293b;
+  flex-shrink: 0;
+}
+.tp-val {
+  font-weight: bold;
 }
 
 /* 时空步进组件 */
@@ -1385,10 +1609,10 @@ export default {
   color: #fff;
 }
 .srv-template {
-  font-size: 8px;
+  font-size: 9px;
 }
 .status-light {
-  font-size: 8px;
+  font-size: 9px;
   padding: 1px 4px;
   border-radius: 2px;
 }
@@ -1429,7 +1653,7 @@ export default {
   gap: 1px;
 }
 .contract-node {
-  font-size: 8px;
+  font-size: 9px;
   display: flex;
 }
 .contract-node .c-lbl {
@@ -1500,5 +1724,36 @@ export default {
 }
 .text-gray {
   color: #415169 !important;
+}
+</style>
+
+<style>
+/* el-popover 深色主题 — 全局样式 */
+.dark-pl-popover {
+  background: #0d1522 !important;
+  border: 1px solid #1e2d4a !important;
+  border-radius: 4px !important;
+  padding: 8px 10px !important;
+  max-height: 200px;
+  overflow-y: auto;
+}
+.dark-pl-popover .popper__arrow {
+  display: none !important;
+}
+.dark-pl-popover .popover-pl-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.dark-pl-popover .popover-pl-item {
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 4px;
+  border-radius: 2px;
+}
+.dark-pl-popover .popover-pl-item:hover {
+  background: rgba(56, 189, 248, 0.06);
 }
 </style>
