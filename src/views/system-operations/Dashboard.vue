@@ -28,7 +28,7 @@
             placeholder="选择状态"
             clearable
             size="mini"
-            style="width: 110px"
+            style="width: 111px"
             @change="handleSearch"
           >
             <el-option label="全部" value=""></el-option>
@@ -47,7 +47,7 @@
             placeholder="选择优先级"
             clearable
             size="mini"
-            style="width: 110px"
+            style="width: 111px"
             @change="handleSearch"
           >
             <el-option label="全部" value=""></el-option>
@@ -172,7 +172,7 @@
       <!-- 中：杀伤链态势 -->
       <div class="col-module" style="flex: 1.5">
         <div class="module-header">
-          <div style="display: flex; align-items: center; gap: 10px; flex: 1">
+          <div style="display: flex; align-items: center; gap: 11px; flex: 1">
             <span class="module-title">
               <Icon
                 icon="lucide:target"
@@ -1143,17 +1143,17 @@ export default {
 .stats-cards-section {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 10px;
+  gap: 11px;
   flex-shrink: 0;
 }
 .stat-card {
   background: #080e18;
   border: 1px solid #111b2b;
   border-radius: 6px;
-  padding: 12px 10px;
+  padding: 12px 11px;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 11px;
   transition: all 0.3s ease;
 }
 .stat-card:hover {
@@ -1164,7 +1164,7 @@ export default {
 .stat-icon {
   width: 42px;
   height: 42px;
-  border-radius: 10px;
+  border-radius: 11px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1221,7 +1221,7 @@ export default {
   background: #080e18;
   border: 1px solid #111b2b;
   border-radius: 4px;
-  padding: 10px;
+  padding: 11px;
   display: flex;
   flex-direction: column;
   min-height: 0;
@@ -1313,7 +1313,7 @@ export default {
   flex-shrink: 0;
 }
 .kc-target-tag {
-  font-size: 10px;
+  font-size: 11px;
   color: #94a3b8;
   background: rgba(12, 20, 36, 0.4);
   border: 1px solid #16243b;
@@ -1347,7 +1347,7 @@ export default {
   text-align: center;
 }
 .net-stat-label {
-  font-size: 10px;
+  font-size: 11px;
   color: #64748b;
   display: block;
 }
@@ -1370,7 +1370,7 @@ export default {
   background: #080e18;
   border: 1px solid #111b2b;
   border-radius: 4px;
-  padding: 10px;
+  padding: 11px;
   display: flex;
   flex-direction: column;
 }

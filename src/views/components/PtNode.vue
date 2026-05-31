@@ -148,7 +148,7 @@ export default {
 }
 
 .node-header {
-  padding: 6px 10px;
+  padding: 6px 11px;
   font-weight: 600;
   display: flex;
   align-items: center;
@@ -158,9 +158,9 @@ export default {
 }
 
 .node-body {
-  padding: 8px 10px;
+  padding: 8px 11px;
   flex: 1; /* 自动填充剩余空间 */
-  padding: 8px 10px;
+  padding: 8px 11px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -179,7 +179,7 @@ export default {
 }
 
 .res-type-label {
-  font-size: 10px;
+  font-size: 11px;
   margin-right: 4px;
   transform: scale(0.9);
   white-space: nowrap;
@@ -199,7 +199,7 @@ export default {
 }
 
 .more-tag {
-  font-size: 10px;
+  font-size: 11px;
   color: #64748b;
   margin-top: 4px;
   padding-left: 2px;
@@ -221,7 +221,7 @@ export default {
   color: #94a3b8;
   padding: 1px 6px;
   border-radius: 2px;
-  font-size: 10px;
+  font-size: 11px;
   margin-left: 4px;
 }
 

@@ -126,7 +126,7 @@ export default {
 .nav-scroll-container {
   flex: 1;
   overflow-y: auto;
-  padding: 10px 0;
+  padding: 11px 0;
 }
 
 /* 标题样式 */
@@ -140,9 +140,9 @@ export default {
 }
 .category-title {
   color: #666;
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 600;
-  padding: 10px 20px 5px;
+  padding: 11px 20px 5px;
   text-transform: uppercase;
 }
 
@@ -150,8 +150,8 @@ export default {
 .nav-item {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 10px 20px;
+  gap: 11px;
+  padding: 11px 20px;
   color: #aaa;
   text-decoration: none;
   font-size: 13px;
@@ -173,7 +173,7 @@ export default {
 /* 图标在收起时居中显示 */
 .side-nav.is-collapsed .nav-item {
   justify-content: center;
-  padding: 10px 0;
+  padding: 11px 0;
 }
 .nav-icon {
   font-size: 16px;

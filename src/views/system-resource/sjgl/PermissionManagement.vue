@@ -916,7 +916,7 @@ export default {
 
 .stat-card {
   min-height: 72px;
-  padding: 10px 12px;
+  padding: 11px 12px;
 }
 
 .stat-card strong {
@@ -956,7 +956,7 @@ export default {
 }
 
 .domain-panel {
-  padding: 10px;
+  padding: 11px;
   display: flex;
   flex-direction: column;
   min-height: 0;
@@ -974,7 +974,7 @@ export default {
 .column-3-grid {
   display: grid !important;
   grid-template-columns: repeat(3, minmax(200px, 1fr)); /* 三列平分空间 */
-  gap: 10px;
+  gap: 11px;
   align-content: flex-start;
   padding-right: 4px;
 }
@@ -989,7 +989,7 @@ export default {
 }
 
 .tree-sub-card {
-  padding: 10px;
+  padding: 11px;
   display: flex;
   flex-direction: column;
   min-height: 0;
@@ -1003,7 +1003,7 @@ export default {
 }
 
 .panel-header-summary {
-  margin-bottom: 10px;
+  margin-bottom: 11px;
   border-bottom: 1px solid #111b2b;
   padding-bottom: 8px;
   flex-shrink: 0;
@@ -1016,7 +1016,7 @@ export default {
 }
 
 .panel-header-summary .badge {
-  font-size: 10px;
+  font-size: 11px;
   background: rgba(6, 182, 212, 0.1);
   padding: 1px 6px;
   border-radius: 4px;
@@ -1060,7 +1060,7 @@ export default {
   background: #0d1522;
   border: 1px solid #172438;
   border-radius: 4px;
-  padding: 10px 12px;
+  padding: 11px 12px;
   cursor: pointer;
   display: flex;
   flex-direction: column;
@@ -1240,8 +1240,8 @@ export default {
   background: #0c1424;
   border: 1px solid #16243a;
   border-radius: 4px;
-  padding: 10px 12px;
-  margin-bottom: 10px;
+  padding: 11px 12px;
+  margin-bottom: 11px;
   flex-shrink: 0;
 }
 
@@ -1260,7 +1260,7 @@ export default {
 
 .check-grid {
   display: flex;
-  gap: 10px;
+  gap: 11px;
   flex-wrap: wrap;
 }
 

@@ -2,7 +2,9 @@
   <div class="screen-container">
     <div class="top-search-header">
       <div class="search-flex">
-        <span class="hub-title">🛰️ 数据采集项目流程编排</span>
+        <span class="hub-title"
+          ><i class="el-icon-s-data"></i> 数据采集项目流程编排</span
+        >
         <div class="search-item">
           <label>项目名称</label>
           <el-input
@@ -86,7 +88,9 @@
     <div class="main-body-layout">
       <div class="left-tree-panel" v-loading="loadingProjects">
         <div class="panel-header-summary">
-          <span class="title">📦 数据采集项目</span>
+          <span class="title"
+            ><i class="el-icon-collection"></i> 数据采集项目</span
+          >
           <span class="badge font-num text-cyan">{{ projectTotal }} 项</span>
         </div>
 
@@ -104,7 +108,8 @@
           >
             <div class="task-card-header">
               <span class="rw-title ellipsis-text" :title="project.projectName"
-                >🔹 {{ project.projectName }}</span
+                ><i class="el-icon-document"></i>
+                {{ project.projectName }}</span
               >
               <span
                 class="status-tag"
@@ -271,7 +276,10 @@
               "
             >
               <span class="title"
-                >⚙️ 项目步骤参数明细 ({{ stepList.length }} 步)</span
+                ><i class="el-icon-setting"></i> 项目步骤参数明细 ({{
+                  stepList.length
+                }}
+                步)</span
               >
               <i
                 class="el-icon-close close-table-icon"
@@ -1499,7 +1507,7 @@ export default {
   background: #080e18;
   border: 1px solid #111b2b;
   border-radius: 4px;
-  padding: 10px 12px;
+  padding: 11px 12px;
   min-height: 68px;
 }
 .stat-card span,
@@ -1525,7 +1533,7 @@ export default {
   background: #080e18;
   border: 1px solid #111b2b;
   border-radius: 4px;
-  padding: 10px;
+  padding: 11px;
   display: flex;
   flex-direction: column;
 }
@@ -1546,10 +1554,10 @@ export default {
 .action-tip-banner {
   background: rgba(6, 182, 212, 0.06);
   border: 1px dashed #14465b;
-  padding: 6px 10px;
+  padding: 6px 11px;
   font-size: 11px;
   border-radius: 4px;
-  margin-bottom: 10px;
+  margin-bottom: 11px;
   color: #94a3b8;
   display: flex;
   align-items: center;
@@ -1571,7 +1579,7 @@ export default {
   color: #06b6d4;
 }
 .panel-header-summary .badge {
-  font-size: 10px;
+  font-size: 11px;
   background: rgba(6, 182, 212, 0.1);
   padding: 1px 6px;
   border-radius: 4px;
@@ -1639,7 +1647,7 @@ export default {
   background: #0c1424;
   padding: 8px 12px;
   border-radius: 3px;
-  margin-bottom: 10px;
+  margin-bottom: 11px;
   border: 1px solid #16243a;
   flex-shrink: 0;
 }
@@ -1684,7 +1692,7 @@ export default {
   background: rgba(7, 12, 20, 0.98);
   border-top: 2px solid #1e3557;
   box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.8);
-  padding: 10px;
+  padding: 11px;
   z-index: 10;
   display: flex;
   flex-direction: column;
@@ -1792,7 +1800,7 @@ export default {
 .table-output-box {
   background: #0d1522;
   border: 1px solid #1e3557;
-  padding: 10px;
+  padding: 11px;
   border-radius: 4px;
 }
 

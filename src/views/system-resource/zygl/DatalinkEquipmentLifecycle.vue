@@ -410,7 +410,7 @@
         ref="networkFormRef"
         :model="networkForm"
         :rules="networkRules"
-        label-width="110px"
+        label-width="111px"
         size="mini"
       >
         <el-form-item label="设备ID" prop="SBID">
@@ -782,7 +782,7 @@ export default {
 
 ::v-deep .tab-workbench > .el-tabs__header {
   flex-shrink: 0;
-  margin-bottom: 10px;
+  margin-bottom: 11px;
 }
 
 ::v-deep .tab-workbench > .el-tabs__content {

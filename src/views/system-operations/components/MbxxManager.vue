@@ -197,7 +197,7 @@
         :model="form"
         ref="targetForm"
         :rules="rules"
-        label-width="110px"
+        label-width="111px"
         size="mini"
         class="dark-form"
       >
@@ -525,7 +525,7 @@ export default {
 
 /* 威胁等阶扁平化状态标签 */
 .status-badge {
-  font-size: 10px;
+  font-size: 11px;
   padding: 1px 5px;
   border-radius: 2px;
   font-weight: bold;
@@ -553,6 +553,6 @@ export default {
 .form-grid-2col {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 0 10px;
+  gap: 0 11px;
 }
 </style>

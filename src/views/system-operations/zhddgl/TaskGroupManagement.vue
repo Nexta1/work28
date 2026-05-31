@@ -629,7 +629,7 @@ export default {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 12px;
+  padding: 11px 12px;
   border-bottom: 1px solid #17263d;
 }
 
@@ -640,7 +640,7 @@ export default {
 }
 
 .badge {
-  font-size: 10px;
+  font-size: 11px;
   background: rgba(6, 182, 212, 0.1);
   color: #06b6d4;
   padding: 1px 6px;

@@ -101,7 +101,7 @@
             >
               <div class="row-top-meta font-mono">
                 <span class="time-node">
-                  <Icon icon="mdi:clock-outline" size="10px" /> 时间:
+                  <Icon icon="mdi:clock-outline" size="11px" /> 时间:
                   {{ formatTime(item.SJ) }}
                 </span>
                 <span class="wlh-tag">网号: {{ item.WLH }}</span>
@@ -219,7 +219,7 @@
             >
               <div class="result-header-flex font-mono">
                 <span class="time-node">
-                  <Icon icon="mdi:clock-outline" size="10px" /> 时标:
+                  <Icon icon="mdi:clock-outline" size="11px" /> 时标:
                   {{ detail.TIME || '-' }}
                 </span>
                 <span
@@ -524,7 +524,7 @@ export default {
   align-items: center;
   gap: 6px;
   background: rgba(56, 189, 248, 0.05);
-  padding: 4px 10px;
+  padding: 4px 11px;
   border-radius: 12px;
   border: 1px solid rgba(56, 189, 248, 0.1);
   color: #52637a;
@@ -577,7 +577,7 @@ export default {
   align-items: center;
   gap: 4px;
   color: #38bdf8;
-  box-shadow: 4px 2px 10px rgba(0, 0, 0, 0.4);
+  box-shadow: 4px 2px 11px rgba(0, 0, 0, 0.4);
 }
 .drawer-left-trigger:hover {
   background: #121f35;
@@ -641,7 +641,7 @@ export default {
   padding: 2px;
   border-radius: 3px;
   gap: 2px;
-  margin-bottom: 10px;
+  margin-bottom: 11px;
 }
 .tab-btn {
   flex: 1;
@@ -691,7 +691,7 @@ export default {
   background: #0d1522;
   border: 1px solid #172438;
   border-radius: 3px;
-  padding: 10px;
+  padding: 11px;
   display: flex;
   flex-direction: column;
   gap: 5px;
@@ -704,7 +704,7 @@ export default {
   background: #0d1522;
   border: 1px solid #172438;
   border-radius: 3px;
-  padding: 10px 12px;
+  padding: 11px 12px;
   display: flex;
   flex-direction: column;
   gap: 6px;
@@ -763,7 +763,7 @@ export default {
   font-size: 9px;
 }
 .rich-result-vertical-card .time-cell .value-time {
-  font-size: 10px;
+  font-size: 11px;
   font-weight: bold;
 }
 .border-ok {
@@ -799,7 +799,7 @@ export default {
 .row-top-meta {
   display: flex;
   justify-content: space-between;
-  font-size: 10px;
+  font-size: 11px;
   align-items: center;
 }
 .time-node {
@@ -883,7 +883,7 @@ export default {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 4px;
-  font-size: 10px;
+  font-size: 11px;
   background: #070c14;
   padding: 5px;
   border-radius: 2px;
@@ -949,7 +949,7 @@ export default {
   text-align: center;
   color: #415169;
   font-size: 11px;
-  padding: 60px 10px;
+  padding: 60px 11px;
   border: 1px dashed #111b2b;
   border-radius: 4px;
 }

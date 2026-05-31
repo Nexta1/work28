@@ -383,7 +383,7 @@ body {
 .top-nav-btn {
   width: 38px;
   height: 38px;
-  border-radius: 10px;
+  border-radius: 11px;
   background: rgba(0, 243, 255, 0.08);
   color: #7cecff;
   border: 1px solid rgba(0, 243, 255, 0.16);
@@ -479,7 +479,7 @@ body {
 }
 
 .subsystem-title {
-  padding: 14px 22px 10px;
+  padding: 14px 22px 11px;
   color: #7cecff;
   font-size: 14px;
   font-weight: 700;
@@ -567,7 +567,7 @@ body {
   align-items: center;
   gap: 12px;
   margin: 4px 12px 4px 28px;
-  padding: 10px 12px;
+  padding: 11px 12px;
   border-radius: 8px;
   color: #8a98ad;
   text-decoration: none;
@@ -684,6 +684,6 @@ body {
 .collapse-btn:hover {
   background: #06b6d4 !important;
   color: #03060c !important;
-  box-shadow: 0 0 10px rgba(6, 182, 212, 0.4) !important;
+  box-shadow: 0 0 11px rgba(6, 182, 212, 0.4) !important;
 }
 </style>

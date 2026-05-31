@@ -353,7 +353,7 @@
       append-to-body
       @close="resetStrategyForm"
     >
-      <el-form :model="strategyForm" label-width="110px" size="mini">
+      <el-form :model="strategyForm" label-width="111px" size="mini">
         <div class="dialog-detail-matrix">
           <div class="detail-row span-2">
             <span class="lbl">处置策略控制名称</span>
@@ -773,7 +773,7 @@ export default {
   background: #080e18;
   border: 1px solid #111b2b;
   border-radius: 4px;
-  padding: 10px;
+  padding: 11px;
   display: flex;
   flex-direction: column;
   min-width: 0;
@@ -842,7 +842,7 @@ export default {
   grid-column: span 2;
 }
 .detail-cell .lbl {
-  font-size: 10px;
+  font-size: 11px;
   color: #52637a;
   margin-bottom: 4px;
 }
@@ -870,7 +870,7 @@ export default {
 .inner-add-btn {
   height: 22px;
   padding: 0 8px;
-  font-size: 10px;
+  font-size: 11px;
   background: #0284c7;
   border: none;
 }
@@ -887,7 +887,7 @@ export default {
   background: #0d1522;
   border: 1px solid #172438;
   border-radius: 3px;
-  padding: 6px 10px;
+  padding: 6px 11px;
   position: relative;
   display: flex;
   flex-direction: column;
@@ -927,7 +927,7 @@ export default {
   justify-content: flex-start;
   gap: 16px;
   color: #64748b;
-  font-size: 10px;
+  font-size: 11px;
 }
 
 .panel-header-summary {
@@ -945,7 +945,7 @@ export default {
   color: #fff;
 }
 .panel-header-summary .badge {
-  font-size: 10px;
+  font-size: 11px;
   background: rgba(6, 182, 212, 0.1);
   padding: 1px 6px;
   border-radius: 4px;
@@ -972,14 +972,14 @@ export default {
 }
 .detail-row {
   background: #070c14;
-  padding: 6px 10px;
+  padding: 6px 11px;
   border-radius: 3px;
   display: flex;
   flex-direction: column;
   justify-content: center;
 }
 .detail-row .lbl {
-  font-size: 10px;
+  font-size: 11px;
   color: #52637a;
   margin-bottom: 2px;
 }

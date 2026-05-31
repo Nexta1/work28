@@ -177,7 +177,7 @@ export default {
               fill: isLatest ? '#ffffff' : '#94A3B8',
               fontSize: 12,
               fontWeight: isLatest ? 'bold' : 'normal',
-              textShadow: isLatest ? `0 0 10px ${activeStateCfg.color}` : 'none'
+              textShadow: isLatest ? `0 0 11px ${activeStateCfg.color}` : 'none'
             }
           }
         })

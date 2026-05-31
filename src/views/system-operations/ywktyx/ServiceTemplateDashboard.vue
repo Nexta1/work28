@@ -291,7 +291,7 @@
         :model="formTemplate"
         ref="templateForm"
         :rules="rulesTemplate"
-        label-width="110px"
+        label-width="111px"
         size="mini"
         class="dark-form"
       >
@@ -904,7 +904,7 @@ export default {
   padding-right: 4px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 11px;
   margin-top: 4px;
 }
 
@@ -912,7 +912,7 @@ export default {
   background: #0c1424;
   border: 1px solid #1e293b;
   border-radius: 3px;
-  padding: 10px 12px;
+  padding: 11px 12px;
   position: relative;
   box-shadow: none !important;
 }
@@ -933,7 +933,7 @@ export default {
 .card-meta-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 5px 10px;
+  gap: 5px 11px;
   font-size: 11px;
 }
 .meta-item {
@@ -1039,7 +1039,7 @@ export default {
 }
 
 .status-badge {
-  font-size: 10px;
+  font-size: 11px;
   padding: 1px 4px;
   border-radius: 2px;
   font-weight: bold;
@@ -1058,7 +1058,7 @@ export default {
 .form-grid-2col {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 0 10px;
+  gap: 0 11px;
 }
 .col-span-2 {
   grid-column: span 2 !important;
@@ -1068,7 +1068,7 @@ export default {
   text-align: center;
   font-size: 11px;
   color: #2e3c51;
-  padding: 40px 10px;
+  padding: 40px 11px;
   user-select: none;
 }
 
@@ -1092,7 +1092,7 @@ export default {
   border: 2px dashed #172438;
   border-radius: 50%;
   animation: spin 4s linear infinite;
-  margin-bottom: 10px;
+  margin-bottom: 11px;
 }
 @keyframes spin {
   100% {

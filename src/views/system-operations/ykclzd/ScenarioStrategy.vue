@@ -848,7 +848,7 @@ export default {
   border-radius: 4px;
   display: flex;
   flex-direction: column;
-  padding: 10px;
+  padding: 11px;
   box-sizing: border-box;
   min-height: 0;
 }
@@ -941,7 +941,7 @@ export default {
 }
 .metric-line {
   /* justify-content: flex-start; */
-  gap: 10px;
+  gap: 11px;
   color: #64748b;
   font-size: 11px;
   margin-top: 1px;
@@ -963,7 +963,7 @@ export default {
 /* 🎛️ 核心修复：完美融合同步 el-form-item 彻底降噪防撑开 */
 .detail-row {
   background: #070c14;
-  padding: 5px 10px;
+  padding: 5px 11px;
   border-radius: 3px;
   display: flex;
   flex-direction: column;

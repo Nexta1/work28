@@ -229,7 +229,7 @@
   border: 1px solid var(--border-light) !important;
   color: var(--color-text-muted) !important;
   font-size: 11px !important;
-  padding: 5px 10px !important;
+  padding: 5px 11px !important;
   border-radius: 0 !important;
   transition: all 0.15s ease-in-out;
 }
@@ -418,7 +418,7 @@
 }
 .el-checkbox__label {
   display: inline-block;
-  padding-left: 10px;
+  padding-left: 11px;
   line-height: 19px;
   font-size: 12px;
 }
@@ -743,7 +743,7 @@
   background-color: var(--bg-panel) !important;
 }
 .el-message-box__header {
-  padding: 15px 20px 10px !important;
+  padding: 15px 20px 11px !important;
 }
 .el-dialog__title {
   color: var(--color-primary) !important;
@@ -791,7 +791,7 @@
 }
 .el-dialog__footer,
 .el-message-box__btns {
-  padding: 10px 16px !important;
+  padding: 11px 16px !important;
   border-top: 1px solid var(--border-dark) !important;
   background-color: var(--bg-panel) !important;
 }
@@ -1091,7 +1091,7 @@
   color: #ffffff !important; /* 键入的搜索文本改为纯白 */
   // font-family: monospace, 'Microsoft YaHei' !important;
   font-size: 11px !important;
-  margin-left: 10px !important; /* 留出微调边距 */
+  margin-left: 11px !important; /* 留出微调边距 */
 }
 
 /* 2. 消除搜索输入框聚焦（Focus）或点击时可能弹出的原生高亮或阴影 */
@@ -1134,7 +1134,7 @@
     font-family: monospace, 'Microsoft YaHei' !important;
     // height: 24px !important;
     line-height: 24px !important;
-    margin: 0 0 0 10px !important; /* 精准控制左边距，不与外层重叠 */
+    margin: 0 0 0 11px !important; /* 精准控制左边距，不与外层重叠 */
     background: transparent !important;
   }
 }
@@ -1194,8 +1194,8 @@
   /* 2. 精准限制侧边导航标签栏（Header）的宽度 */
   > .el-tabs__header.is-left,
   > .el-tabs__header.is-right {
-    width: 110px;
-    min-width: 110px;
+    width: 111px;
+    min-width: 111px;
     max-width: 150px;
     margin-right: 0;
     margin-left: 0;
@@ -1239,11 +1239,11 @@
         content: '';
         position: absolute;
         left: 0;
-        top: 10px; /* 线条微调成等高比例 */
-        bottom: 10px;
+        top: 11px; /* 线条微调成等高比例 */
+        bottom: 11px;
         width: 3px;
         background-color: var(--color-primary, #38bdf8);
-        box-shadow: 0 0 10px var(--color-primary, #38bdf8); /* 荧光呼吸感 */
+        box-shadow: 0 0 11px var(--color-primary, #38bdf8); /* 荧光呼吸感 */
         border-radius: 1px;
       }
     }
@@ -1368,7 +1368,7 @@
 .el-range-editor.el-range-editor--mini {
   display: inline-flex !important;
   align-items: center !important; /* 核心：强行让内部所有子元素垂直居中 */
-  padding: 0 10px !important;
+  padding: 0 11px !important;
   height: 28px !important; /* 锁定大屏紧凑高度 */
   box-sizing: border-box;
 

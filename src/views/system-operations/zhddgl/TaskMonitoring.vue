@@ -568,10 +568,10 @@ export default {
   background: #0d1522;
   border: 1px solid #172438;
   border-radius: 4px;
-  padding: 10px;
+  padding: 11px;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 11px;
 }
 
 .stat-icon {
@@ -608,7 +608,7 @@ export default {
 }
 
 .stat-label {
-  font-size: 10px;
+  font-size: 11px;
   color: #64748b;
   margin-bottom: 2px;
 }
@@ -630,7 +630,7 @@ export default {
 }
 
 .events-header {
-  padding: 8px 10px;
+  padding: 8px 11px;
   border-bottom: 1px solid #17263d;
 }
 
@@ -665,7 +665,7 @@ export default {
   display: flex;
   gap: 6px;
   align-items: center;
-  font-size: 10px;
+  font-size: 11px;
 }
 
 .event-type {
@@ -729,7 +729,7 @@ export default {
   font-size: 12px;
   font-weight: bold;
   color: #38bdf8;
-  margin: 0 0 10px 0;
+  margin: 0 0 11px 0;
   padding-bottom: 6px;
   border-bottom: 1px solid #17263d;
 }

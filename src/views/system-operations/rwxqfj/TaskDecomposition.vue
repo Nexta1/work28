@@ -611,7 +611,7 @@
                             <span class="k">系统时间戳:</span>
                             <span
                               class="v font-num text-gray"
-                              style="font-size: 10px"
+                              style="font-size: 11px"
                               >{{ chain.TIME || 'N/A' }}</span
                             >
                           </div>
@@ -619,7 +619,7 @@
                             <span class="k">同步时间:</span>
                             <span
                               class="v font-num text-orange"
-                              style="font-size: 10px"
+                              style="font-size: 11px"
                               >{{ chain.opTime || 'N/A' }}</span
                             >
                           </div>
@@ -1385,7 +1385,7 @@ export default {
   background: #080e18;
   border: 1px solid #111b2b;
   border-radius: 4px;
-  padding: 10px;
+  padding: 11px;
   display: flex;
   flex-direction: column;
 }
@@ -1469,7 +1469,7 @@ export default {
 
 .parse-box {
   background: #090e17;
-  padding: 6px 10px;
+  padding: 6px 11px;
   border-radius: 3px;
   border: 1px solid #142238;
   margin-top: 4px;
@@ -1485,7 +1485,7 @@ export default {
   color: #22d3ee;
   padding: 2px 6px;
   border-radius: 2px;
-  font-size: 10px;
+  font-size: 11px;
   display: inline-block;
 }
 .coord-tag.org-tag {
@@ -1518,7 +1518,7 @@ export default {
 .kc-node-block {
   background: #0a101a;
   border-left: 3px solid #fff;
-  padding: 6px 10px;
+  padding: 6px 11px;
   border-radius: 2px;
 }
 .kc-node-block.border-red {
@@ -1534,7 +1534,7 @@ export default {
   border-color: #10b981;
 }
 .kc-label {
-  font-size: 10px;
+  font-size: 11px;
   font-weight: bold;
   display: block;
   margin-bottom: 2px;
@@ -1568,7 +1568,7 @@ export default {
   background: #0d1522;
   border: 1px solid #172438;
   border-radius: 3px;
-  padding: 10px 12px;
+  padding: 11px 12px;
   position: relative;
 }
 .alarm-strip {
@@ -1705,7 +1705,7 @@ export default {
   color: #fff;
 }
 .panel-header-summary .badge {
-  font-size: 10px;
+  font-size: 11px;
   background: rgba(6, 182, 212, 0.1);
   padding: 1px 6px;
   border-radius: 4px;
@@ -1735,7 +1735,7 @@ export default {
 .grid-detail-container {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 11px;
   max-height: 520px;
   overflow-y: auto;
 }
@@ -1867,7 +1867,7 @@ export default {
   border: 1px solid rgba(16, 185, 129, 0.3);
   padding: 2px 8px;
   border-radius: 12px;
-  font-size: 10px;
+  font-size: 11px;
   color: #10b981;
   font-weight: bold;
   width: max-content;
@@ -1899,7 +1899,7 @@ export default {
 }
 
 .kc-task-title {
-  margin: 10px 0 4px 0;
+  margin: 11px 0 4px 0;
   font-size: 13px;
   color: #ffffff;
   font-weight: bold;
@@ -1939,7 +1939,7 @@ export default {
   border: 1px solid #14233a;
   border-left: 3px solid #fff;
   border-radius: 4px;
-  padding: 8px 10px;
+  padding: 8px 11px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -1994,7 +1994,7 @@ export default {
 .cell-top .ids {
   color: #4b5d78;
   margin-left: auto;
-  font-size: 10px;
+  font-size: 11px;
 }
 
 .cell-bottom {

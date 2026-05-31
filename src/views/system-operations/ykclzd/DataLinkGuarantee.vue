@@ -331,7 +331,7 @@ export default {
   background: #080e18;
   border: 1px solid #111b2b;
   border-radius: 4px;
-  padding: 10px;
+  padding: 11px;
   display: flex;
   flex-direction: column;
 }
@@ -471,7 +471,7 @@ export default {
   color: #fff;
 }
 .panel-header-summary .badge {
-  font-size: 10px;
+  font-size: 11px;
   background: rgba(6, 182, 212, 0.1);
   padding: 1px 6px;
   border-radius: 4px;

@@ -157,7 +157,7 @@
               <div class="status-bar">
                 <div
                   class="status-fill status-pending"
-                  :style="{ width: getStatusPercent('pending') + '%' }"
+                  :style="{width: getStatusPercent('pending') + '%'}"
                 ></div>
               </div>
               <div class="status-info">
@@ -169,7 +169,7 @@
               <div class="status-bar">
                 <div
                   class="status-fill status-diagnosing"
-                  :style="{ width: getStatusPercent('diagnosing') + '%' }"
+                  :style="{width: getStatusPercent('diagnosing') + '%'}"
                 ></div>
               </div>
               <div class="status-info">
@@ -181,7 +181,7 @@
               <div class="status-bar">
                 <div
                   class="status-fill status-processing"
-                  :style="{ width: getStatusPercent('processing') + '%' }"
+                  :style="{width: getStatusPercent('processing') + '%'}"
                 ></div>
               </div>
               <div class="status-info">
@@ -193,7 +193,7 @@
               <div class="status-bar">
                 <div
                   class="status-fill status-resolved"
-                  :style="{ width: getStatusPercent('resolved') + '%' }"
+                  :style="{width: getStatusPercent('resolved') + '%'}"
                 ></div>
               </div>
               <div class="status-info">
@@ -215,11 +215,15 @@
             </div>
             <div class="type-item">
               <span class="type-name">软件故障</span>
-              <span class="type-count text-orange">{{ typeDist.software }}</span>
+              <span class="type-count text-orange">{{
+                typeDist.software
+              }}</span>
             </div>
             <div class="type-item">
               <span class="type-name">通信故障</span>
-              <span class="type-count text-cyan">{{ typeDist.communication }}</span>
+              <span class="type-count text-cyan">{{
+                typeDist.communication
+              }}</span>
             </div>
             <div class="type-item">
               <span class="type-name">链路故障</span>
@@ -241,7 +245,11 @@
           @selection-change="handleSelectionChange"
         >
           <el-table-column type="selection" width="50"></el-table-column>
-          <el-table-column type="index" label="序号" width="60"></el-table-column>
+          <el-table-column
+            type="index"
+            label="序号"
+            width="60"
+          ></el-table-column>
           <el-table-column prop="FAULT_ID" label="故障ID" width="120">
             <template slot-scope="scope">
               <span class="font-num text-cyan">{{ scope.row.FAULT_ID }}</span>
@@ -312,7 +320,9 @@
                 icon="el-icon-check"
                 class="btn-modify"
                 @click="handleResolveFault(scope.row)"
-                :disabled="!scope.row.SOLUTION || scope.row.STATUS === 'resolved'"
+                :disabled="
+                  !scope.row.SOLUTION || scope.row.STATUS === 'resolved'
+                "
               >
                 下发策略
               </el-button>
@@ -348,11 +358,15 @@
           <div class="detail-grid">
             <div class="detail-item">
               <span class="detail-label">故障ID:</span>
-              <span class="detail-value text-cyan">{{ currentFault.FAULT_ID }}</span>
+              <span class="detail-value text-cyan">{{
+                currentFault.FAULT_ID
+              }}</span>
             </div>
             <div class="detail-item">
               <span class="detail-label">故障类型:</span>
-              <span class="detail-value">{{ getFaultTypeText(currentFault.FAULT_TYPE) }}</span>
+              <span class="detail-value">{{
+                getFaultTypeText(currentFault.FAULT_TYPE)
+              }}</span>
             </div>
             <div class="detail-item">
               <span class="detail-label">故障等级:</span>
@@ -372,7 +386,9 @@
             </div>
             <div class="detail-item">
               <span class="detail-label">发现时间:</span>
-              <span class="detail-value">{{ formatTime(currentFault.DETECT_TIME) }}</span>
+              <span class="detail-value">{{
+                formatTime(currentFault.DETECT_TIME)
+              }}</span>
             </div>
           </div>
         </div>
@@ -387,11 +403,15 @@
           <div class="diagnosis-content">
             <div class="diagnosis-item">
               <span class="diagnosis-label">故障原因:</span>
-              <span class="diagnosis-value">{{ currentFault.DIAGNOSIS.cause }}</span>
+              <span class="diagnosis-value">{{
+                currentFault.DIAGNOSIS.cause
+              }}</span>
             </div>
             <div class="diagnosis-item">
               <span class="diagnosis-label">影响范围:</span>
-              <span class="diagnosis-value">{{ currentFault.DIAGNOSIS.impact }}</span>
+              <span class="diagnosis-value">{{
+                currentFault.DIAGNOSIS.impact
+              }}</span>
             </div>
             <div class="diagnosis-item">
               <span class="diagnosis-label">紧急程度:</span>
@@ -407,7 +427,9 @@
           <div class="solution-content">
             <div class="solution-item">
               <span class="solution-label">策略类型:</span>
-              <span class="solution-value">{{ currentFault.SOLUTION.type }}</span>
+              <span class="solution-value">{{
+                currentFault.SOLUTION.type
+              }}</span>
             </div>
             <div class="solution-item">
               <span class="solution-label">处理步骤:</span>
@@ -424,19 +446,27 @@
             </div>
             <div class="solution-item">
               <span class="solution-label">预期效果:</span>
-              <span class="solution-value">{{ currentFault.SOLUTION.effect }}</span>
+              <span class="solution-value">{{
+                currentFault.SOLUTION.effect
+              }}</span>
             </div>
           </div>
         </div>
       </div>
 
       <div slot="footer">
-        <el-button size="mini" @click="detailDialogVisible = false">关闭</el-button>
+        <el-button size="mini" @click="detailDialogVisible = false"
+          >关闭</el-button
+        >
         <el-button
           type="primary"
           size="mini"
           @click="handleResolveFromDialog"
-          v-if="currentFault && currentFault.SOLUTION && currentFault.STATUS !== 'resolved'"
+          v-if="
+            currentFault &&
+            currentFault.SOLUTION &&
+            currentFault.STATUS !== 'resolved'
+          "
         >
           下发处置策略
         </el-button>
@@ -490,7 +520,9 @@ export default {
       return this.selectedFaults.length > 0
     },
     hasDiagnosedFaults() {
-      return this.selectedFaults.some(f => f.STATUS === 'diagnosing' || f.DIAGNOSIS)
+      return this.selectedFaults.some(
+        f => f.STATUS === 'diagnosing' || f.DIAGNOSIS
+      )
     }
   },
   mounted() {
@@ -527,11 +559,7 @@ export default {
             },
             SOLUTION: {
               type: '频率切换',
-              steps: [
-                '切换到备用频段B',
-                '重新建立通信链路',
-                '验证通信质量'
-              ],
+              steps: ['切换到备用频段B', '重新建立通信链路', '验证通信质量'],
               effect: '恢复正常通信，消除干扰影响'
             }
           },
@@ -572,11 +600,7 @@ export default {
             },
             SOLUTION: {
               type: '功率调整',
-              steps: [
-                '提升发射功率5dB',
-                '启用纠错编码',
-                '优化天线指向'
-              ],
+              steps: ['提升发射功率5dB', '启用纠错编码', '优化天线指向'],
               effect: '信号强度恢复正常，误码率降至可接受范围'
             }
           },
@@ -620,17 +644,17 @@ export default {
     },
     getLevelType(level) {
       const typeMap = {
-        '1': 'danger',
-        '2': 'warning',
-        '3': 'info'
+        1: 'danger',
+        2: 'warning',
+        3: 'info'
       }
       return typeMap[level] || 'info'
     },
     getLevelText(level) {
       const textMap = {
-        '1': '一级',
-        '2': '二级',
-        '3': '三级'
+        1: '一级',
+        2: '二级',
+        3: '三级'
       }
       return textMap[level] || level
     },
@@ -871,10 +895,10 @@ export default {
   background: #0d1522;
   border: 1px solid #172438;
   border-radius: 4px;
-  padding: 10px;
+  padding: 11px;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 11px;
 }
 
 .stat-icon {
@@ -911,7 +935,7 @@ export default {
 }
 
 .stat-label {
-  font-size: 10px;
+  font-size: 11px;
   color: #64748b;
   margin-bottom: 2px;
 }
@@ -930,7 +954,7 @@ export default {
 }
 
 .distribution-header {
-  padding: 8px 10px;
+  padding: 8px 11px;
   border-bottom: 1px solid #17263d;
 }
 
@@ -941,7 +965,7 @@ export default {
 }
 
 .status-list {
-  padding: 10px;
+  padding: 11px;
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -985,7 +1009,7 @@ export default {
 .status-info {
   display: flex;
   justify-content: space-between;
-  font-size: 10px;
+  font-size: 11px;
 }
 
 .status-name {
@@ -1006,7 +1030,7 @@ export default {
 }
 
 .dist-header {
-  padding: 8px 10px;
+  padding: 8px 11px;
   border-bottom: 1px solid #17263d;
 }
 
@@ -1017,7 +1041,7 @@ export default {
 }
 
 .type-list {
-  padding: 10px;
+  padding: 11px;
 }
 
 .type-item {
@@ -1075,7 +1099,7 @@ export default {
   font-size: 12px;
   font-weight: bold;
   color: #38bdf8;
-  margin: 0 0 10px 0;
+  margin: 0 0 11px 0;
   padding-bottom: 6px;
   border-bottom: 1px solid #17263d;
 }

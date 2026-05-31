@@ -82,11 +82,11 @@
             </div>
             <div class="brief-dynamics">
               <span>
-                <Icon icon="mdi:navigation" size="10px" />
+                <Icon icon="mdi:navigation" size="11px" />
                 {{ pt.PTHX || 0 }}°
               </span>
               <span>
-                <Icon icon="mdi:lightning-bolt" size="10px" />
+                <Icon icon="mdi:lightning-bolt" size="11px" />
                 {{ pt.PTSD || 0 }}k/h
               </span>
             </div>
@@ -94,7 +94,7 @@
           </div>
 
           <div class="scroll-loading-tip" v-if="pageConfig.pageNum >= 15">
-            <Icon icon="mdi:alert-outline" size="10px" style="color: #f59e0b" />
+            <Icon icon="mdi:alert-outline" size="11px" style="color: #f59e0b" />
             已锁死最大加载上限 (15页)
           </div>
           <div
@@ -106,7 +106,7 @@
             已加载全部平台
           </div>
           <div class="scroll-loading-tip" v-else-if="loadingMore">
-            <Icon icon="mdi:clock-outline" size="10px" style="color: #38bdf8" />
+            <Icon icon="mdi:clock-outline" size="11px" style="color: #38bdf8" />
             正在同步下一页态势...
           </div>
         </div>
@@ -872,7 +872,7 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 10px;
+  margin-bottom: 11px;
   border-bottom: 1px solid #111b2b;
   padding-bottom: 6px;
 }
@@ -886,7 +886,7 @@ export default {
   color: #06b6d4;
   background: rgba(6, 182, 212, 0.1);
   padding: 2px 6px;
-  border-radius: 10px;
+  border-radius: 11px;
 }
 
 .platform-scroll-list {
@@ -912,7 +912,7 @@ export default {
   border: 1px solid #172438;
   border-left: 3px solid #172438;
   border-radius: 3px;
-  padding: 8px 10px;
+  padding: 8px 11px;
   cursor: pointer;
   position: relative;
   transition: all 0.2s ease;
@@ -943,7 +943,7 @@ export default {
   display: flex;
   justify-content: space-between;
   margin-top: 3px;
-  font-size: 10px;
+  font-size: 11px;
 }
 .bsh-txt {
   color: #415169;
@@ -953,17 +953,17 @@ export default {
 }
 .brief-dynamics {
   display: flex;
-  gap: 10px;
+  gap: 11px;
   margin-top: 5px;
-  font-size: 10px;
+  font-size: 11px;
   color: #8a99ad;
 }
 
 .scroll-loading-tip {
   text-align: center;
-  font-size: 10px;
+  font-size: 11px;
   color: #3b4b61;
-  padding: 10px 0;
+  padding: 11px 0;
 }
 
 /* RIGHT: 宽域级联详情 */
@@ -987,7 +987,7 @@ export default {
 .detail-param-dashboard {
   background: #0c1424;
   border-radius: 4px;
-  padding: 10px;
+  padding: 11px;
   margin-bottom: 12px;
   border-left: 3px solid #38bdf8;
 }
@@ -1014,7 +1014,7 @@ export default {
 }
 .matrix-item label {
   color: #415169;
-  font-size: 10px;
+  font-size: 11px;
 }
 .matrix-item .val {
   font-weight: bold;
@@ -1023,7 +1023,7 @@ export default {
 
 /* 🔥 新增：平台状态统计行样式 */
 .platform-status-summary-bar {
-  margin-top: 10px;
+  margin-top: 11px;
   padding-top: 8px;
   border-top: 1px dashed #1c2d42;
   display: flex;
@@ -1110,7 +1110,7 @@ export default {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 2px 6px;
-  font-size: 10px;
+  font-size: 11px;
   color: #52637a;
 }
 .detail-grid span {
@@ -1185,7 +1185,7 @@ export default {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 11px;
   min-height: 0;
 }
 .chart-item-wrapper {
@@ -1284,7 +1284,7 @@ export default {
 }
 .sub-empty {
   text-align: center;
-  font-size: 10px;
+  font-size: 11px;
   color: #223147;
   padding: 14px;
   border: 1px dashed #111b2b;

@@ -200,7 +200,7 @@
         :model="formNode"
         ref="nodeForm"
         :rules="rulesNode"
-        label-width="110px"
+        label-width="111px"
         size="mini"
       >
         <el-form-item label="节点名称" prop="nodeName">
@@ -279,7 +279,7 @@
         <span>配置线缆路由参数</span>
       </div>
 
-      <el-form :model="formLink" size="mini" label-width="110px">
+      <el-form :model="formLink" size="mini" label-width="111px">
         <el-form-item label="条件表达式(elExp)">
           <el-input
             type="textarea"
@@ -332,7 +332,7 @@
         <span>{{ isEditTree ? '修改目录/流程' : '新增目录/流程' }}</span>
       </div>
 
-      <el-form :model="formTree" size="mini" label-width="110px">
+      <el-form :model="formTree" size="mini" label-width="111px">
         <el-form-item label="上级节点">
           <el-cascader
             v-model="formTree.parentBusinessId"
@@ -1036,7 +1036,7 @@ export default {
   background: #0c1424;
   padding: 8px 12px;
   border-radius: 3px;
-  margin-bottom: 10px;
+  margin-bottom: 11px;
   border: 1px solid #16243a;
 }
 .canvas-top-bar .active-tip {
@@ -1069,7 +1069,7 @@ export default {
   background: #0a101a;
   border: 1px solid #16243a;
   border-radius: 3px;
-  padding: 10px;
+  padding: 11px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -1078,7 +1078,7 @@ export default {
   font-size: 11px;
   color: #52637a;
   font-weight: bold;
-  margin-bottom: 10px;
+  margin-bottom: 11px;
   border-bottom: 1px solid #16243a;
   padding-bottom: 4px;
 }
@@ -1199,7 +1199,7 @@ export default {
   border: 2px dashed #172438;
   border-radius: 50%;
   animation: spin 4s linear infinite;
-  margin-bottom: 10px;
+  margin-bottom: 11px;
 }
 @keyframes spin {
   100% {

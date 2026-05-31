@@ -1116,7 +1116,7 @@ export default {
   background: #080e18;
   border: 1px solid #111b2b;
   border-radius: 4px;
-  padding: 10px;
+  padding: 11px;
   display: flex;
   flex-direction: column;
 }
@@ -1265,7 +1265,7 @@ export default {
 }
 
 .panel-header-summary .badge {
-  font-size: 10px;
+  font-size: 11px;
   background: rgba(6, 182, 212, 0.1);
   padding: 1px 6px;
   border-radius: 4px;
@@ -1461,7 +1461,7 @@ export default {
   overflow-y: auto;
   padding: 8px 12px;
   font-family: monospace;
-  font-size: 10px;
+  font-size: 11px;
 }
 
 .log-item {
@@ -1517,7 +1517,7 @@ export default {
 }
 
 .card-header {
-  padding: 10px 12px;
+  padding: 11px 12px;
   border-bottom: 1px solid #17263d;
 }
 
@@ -1542,7 +1542,7 @@ export default {
 }
 
 .stat-label {
-  font-size: 10px;
+  font-size: 11px;
   color: #64748b;
   margin-bottom: 4px;
 }
@@ -1605,7 +1605,7 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 10px;
+  font-size: 11px;
   font-weight: bold;
 }
 

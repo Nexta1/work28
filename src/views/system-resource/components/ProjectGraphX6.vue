@@ -355,7 +355,7 @@ export default {
   border: 2px dashed #172438;
   border-radius: 50%;
   animation: spin 4s linear infinite;
-  margin-bottom: 10px;
+  margin-bottom: 11px;
 }
 @keyframes spin {
   100% {

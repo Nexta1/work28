@@ -633,7 +633,7 @@
                 style="
                   width: 260px;
                   background: #09101d;
-                  padding: 10px;
+                  padding: 11px;
                   border-radius: 4px;
                 "
               >
@@ -670,7 +670,7 @@
                   style="
                     margin-top: 15px;
                     border-top: 1px solid #1e3557;
-                    padding-top: 10px;
+                    padding-top: 11px;
                   "
                 >
                   <el-button
@@ -726,7 +726,7 @@
         ref="dataModelForm"
         :model="dataModelForm"
         :rules="dataModelRules"
-        label-width="110px"
+        label-width="111px"
         size="mini"
       >
         <el-form-item label="上级目录">
@@ -824,7 +824,7 @@
         ref="labelClassForm"
         :model="labelClassForm"
         :rules="labelClassRules"
-        label-width="110px"
+        label-width="111px"
         size="mini"
       >
         <el-form-item label="上级分类">
@@ -891,7 +891,7 @@
         ref="labelModelForm"
         :model="labelModelForm"
         :rules="labelModelRules"
-        label-width="110px"
+        label-width="111px"
         size="mini"
       >
         <el-form-item label="所属分类" prop="labelClassId">
@@ -1912,7 +1912,7 @@ export default {
   border: 1px solid #111b2b;
   border-radius: 4px;
   min-height: 72px;
-  padding: 10px 12px;
+  padding: 11px 12px;
 }
 .stat-card span {
   color: #52637a;
@@ -2000,7 +2000,7 @@ export default {
 }
 .panel-header-summary {
   justify-content: space-between;
-  margin-bottom: 10px;
+  margin-bottom: 11px;
   border-bottom: 1px solid #111b2b;
   padding-bottom: 8px;
   flex-shrink: 0;
@@ -2015,7 +2015,7 @@ export default {
   flex: 1;
   min-height: 0;
   overflow: auto;
-  margin-top: 10px;
+  margin-top: 11px;
 }
 .tree-node {
   width: 100%;
@@ -2112,7 +2112,7 @@ export default {
 .v-grid-item {
   background: #0d1625;
   border: 1px solid #16253d;
-  padding: 10px;
+  padding: 11px;
   border-radius: 4px;
   display: flex;
   flex-direction: column;
@@ -2143,7 +2143,7 @@ export default {
   font-weight: bold;
   color: #e2e8f0;
   display: block;
-  margin-bottom: 10px;
+  margin-bottom: 11px;
   flex-shrink: 0;
 }
 .scrollable-tokens {
@@ -2162,7 +2162,7 @@ export default {
   background: #111c30;
   border: 1px solid #1d3354;
   border-radius: 3px;
-  padding: 6px 10px;
+  padding: 6px 11px;
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -2191,9 +2191,9 @@ export default {
 .top-fixed-toolbar {
   background: #09101d;
   border: 1px solid #15233c;
-  padding: 10px 12px 2px 12px;
+  padding: 11px 12px 2px 12px;
   border-radius: 4px;
-  margin-bottom: 10px;
+  margin-bottom: 11px;
   justify-content: space-between;
   flex-shrink: 0;
 }
@@ -2383,7 +2383,7 @@ export default {
 .drilldown-filter-bar {
   background: #09111e;
   border: 1px solid #16263f;
-  padding: 10px 12px 2px 12px;
+  padding: 11px 12px 2px 12px;
   border-radius: 4px;
   margin-bottom: 12px;
 }

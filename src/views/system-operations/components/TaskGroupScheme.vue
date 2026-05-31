@@ -538,7 +538,7 @@
         :model="linkForm"
         ref="linkForm"
         :rules="linkRules"
-        label-width="110px"
+        label-width="111px"
         size="mini"
         class="dark-form"
       >
@@ -968,7 +968,7 @@ export default {
   align-items: center;
   justify-content: space-between;
   padding: 0 14px;
-  margin-bottom: 10px;
+  margin-bottom: 11px;
   flex-shrink: 0;
 }
 .search-flex {
@@ -1020,14 +1020,14 @@ export default {
   border-radius: 4px;
   display: flex;
   flex-direction: column;
-  padding: 10px;
+  padding: 11px;
   box-sizing: border-box;
 }
 .sidebar-header-summary {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 10px;
+  margin-bottom: 11px;
   border-bottom: 1px solid #111b2b;
   padding-bottom: 6px;
 }
@@ -1037,11 +1037,11 @@ export default {
   color: #38bdf8;
 }
 .count-badge {
-  font-size: 10px;
+  font-size: 11px;
   color: #64748b;
   background: #0d1522;
   padding: 2px 6px;
-  border-radius: 10px;
+  border-radius: 11px;
 }
 .platform-scroll-list {
   flex: 1;
@@ -1057,7 +1057,7 @@ export default {
   border: 1px solid #172438;
   border-left: 3px solid #64748b;
   border-radius: 3px;
-  padding: 10px;
+  padding: 11px;
   cursor: pointer;
   transition: all 0.2s ease;
 }
@@ -1108,13 +1108,13 @@ export default {
   text-overflow: ellipsis;
 }
 .card-sub-info {
-  font-size: 10px;
+  font-size: 11px;
 }
 .bsh-txt {
   color: #475569;
 }
 .card-count-row {
-  font-size: 10px;
+  font-size: 11px;
   color: #64748b;
 }
 
@@ -1218,7 +1218,7 @@ export default {
 .attribute-data-matrix {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 10px 20px;
+  gap: 11px 20px;
   background: #060b14;
   padding: 12px;
   border-radius: 4px;
@@ -1238,7 +1238,7 @@ export default {
 }
 
 .platform-ids-box {
-  margin-top: 10px;
+  margin-top: 11px;
   background: #060b14;
   padding: 8px 12px;
   border-radius: 4px;
@@ -1256,13 +1256,13 @@ export default {
   color: #38bdf8;
   padding: 1px 6px;
   border-radius: 2px;
-  font-size: 10px;
+  font-size: 11px;
 }
 
 .network-links-grid {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 11px;
 }
 .net-link-sub-card {
   background: #070c14;
@@ -1280,10 +1280,10 @@ export default {
   align-items: center;
   border-bottom: 1px dashed #142030;
   padding-bottom: 6px;
-  margin-bottom: 10px;
+  margin-bottom: 11px;
 }
 .net-id-badge {
-  font-size: 10px;
+  font-size: 11px;
   color: #10b981;
   background: rgba(16, 185, 129, 0.08);
   padding: 2px 6px;
@@ -1304,7 +1304,7 @@ export default {
 .sub-card-body-metrics {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  gap: 10px;
+  gap: 11px;
   text-align: center;
   margin-bottom: 8px;
 }
@@ -1322,7 +1322,7 @@ export default {
   border: 1px dashed #1a365d;
 }
 .met-label {
-  font-size: 10px;
+  font-size: 11px;
   color: #475569;
 }
 .met-value {
@@ -1339,7 +1339,7 @@ export default {
 .sub-card-footer-business {
   background: #09101a;
   border-radius: 2px;
-  padding: 6px 10px;
+  padding: 6px 11px;
   font-size: 11px;
   display: flex;
   gap: 8px;
@@ -1361,7 +1361,7 @@ export default {
   color: #10b981;
   padding: 0 5px;
   border-radius: 2px;
-  font-size: 10px;
+  font-size: 11px;
 }
 
 .empty-fallback {

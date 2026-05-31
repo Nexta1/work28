@@ -47,9 +47,6 @@
 
     <div class="top-dashboard-layout">
       <div class="stats-panel-box">
-        <div class="panel-inner-title">
-          <Icon icon="lucide:bar-chart-3" /> 战术遥测数据统计中心
-        </div>
         <div class="stats-grid-matrix">
           <div class="stats-card">
             <span class="lbl">监控网络总数</span>
@@ -58,7 +55,7 @@
             >
           </div>
           <div class="stats-card">
-            <span class="lbl">活动硬件节点</span>
+            <span class="lbl">设备节点</span>
             <span class="val text-green font-num"
               >{{ deviceList.length }} <small>台</small></span
             >
@@ -68,7 +65,7 @@
             <span class="val text-orange font-num">{{ avgDropRate }}%</span>
           </div>
           <div class="stats-card">
-            <span class="lbl">集群异常告警数</span>
+            <span class="lbl">异常告警</span>
             <span
               class="val font-num"
               :class="globalAlarmCount > 0 ? 'text-red' : 'text-gray'"
@@ -81,13 +78,8 @@
 
       <div class="platform-horizontal-panel bg-center-radar">
         <div class="panel-inner-title">
-          <span
-            ><Icon icon="lucide:compass" /> 检索平台时空航迹态势
-            (横向平铺)</span
-          >
-          <span class="badge font-num text-orange animate-flash"
-            >LIVE SYNC</span
-          >
+          <span><Icon icon="lucide:compass" /> 检索平台时空航迹态势 </span>
+          <span class="badge font-num text-orange animate-flash">实时监控</span>
         </div>
 
         <div class="horizontal-scroll-container" v-loading="loadingPlatform">
@@ -790,7 +782,7 @@ export default {
   align-items: center;
   justify-content: space-between;
   padding: 0 16px;
-  margin-bottom: 10px;
+  margin-bottom: 11px;
   flex-shrink: 0;
 }
 .hub-title {
@@ -865,7 +857,7 @@ export default {
   background: #080e18;
   border: 1px solid #111b2b;
   border-radius: 4px;
-  padding: 10px;
+  padding: 11px;
   box-sizing: border-box;
 }
 .stats-grid-matrix {
@@ -883,7 +875,7 @@ export default {
   justify-content: center;
 }
 .stats-card .lbl {
-  font-size: 10px;
+  font-size: 11px;
   color: #52637a;
   margin-bottom: 1px;
 }
@@ -892,7 +884,7 @@ export default {
   font-weight: bold;
 }
 .stats-card .val small {
-  font-size: 10px;
+  font-size: 11px;
 }
 
 /* 平台实体横向滚动区 */
@@ -901,12 +893,12 @@ export default {
   background: #080e18;
   border: 1px solid #111b2b;
   border-radius: 4px;
-  padding: 10px;
+  padding: 11px;
   box-sizing: border-box;
 }
 .horizontal-scroll-container {
   display: flex;
-  gap: 10px;
+  gap: 11px;
   overflow-x: auto;
   height: 92px;
   padding-bottom: 4px;
@@ -973,7 +965,7 @@ export default {
   transform: scale(0.9);
 }
 .track-cell .value {
-  font-size: 10px;
+  font-size: 11px;
   font-weight: bold;
   margin-top: 1px;
   white-space: nowrap;
@@ -993,7 +985,7 @@ export default {
   border-radius: 4px;
   display: flex;
   flex-direction: column;
-  padding: 10px;
+  padding: 11px;
   box-sizing: border-box;
   min-height: 0;
 }
@@ -1022,11 +1014,11 @@ export default {
   color: #38bdf8;
 }
 .panel-header-summary .badge {
-  font-size: 10px;
+  font-size: 11px;
   color: #06b6d4;
   background: rgba(6, 182, 212, 0.1);
   padding: 1px 6px;
-  border-radius: 10px;
+  border-radius: 11px;
 }
 
 .sub-filter-bar {
@@ -1084,7 +1076,7 @@ export default {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-size: 10px;
+  font-size: 11px;
   color: #52637a;
 }
 .progress-wrapper {
@@ -1141,7 +1133,7 @@ export default {
   background: #0d1522;
   border: 1px solid #172438;
   border-radius: 4px;
-  padding: 8px 10px;
+  padding: 8px 11px;
   position: relative;
   overflow: hidden;
   cursor: pointer;
@@ -1302,7 +1294,7 @@ export default {
 
 .sub-empty {
   text-align: center;
-  font-size: 10px;
+  font-size: 11px;
   color: #223147;
   padding: 20px;
   border: 1px dashed #111b2b;
@@ -1312,7 +1304,7 @@ export default {
   align-items: center;
   justify-content: center;
   width: 100%;
-  font-size: 10px;
+  font-size: 11px;
   color: #223147;
   border: 1px dashed #111b2b;
   height: 100%;
@@ -1386,7 +1378,7 @@ export default {
   color: #415169;
 }
 .detail-row .val {
-  font-size: 10px;
+  font-size: 11px;
   font-weight: bold;
   color: #fff;
 }

@@ -297,7 +297,7 @@
         :model="form"
         ref="strategyForm"
         :rules="rules"
-        label-width="110px"
+        label-width="111px"
         size="mini"
         class="dark-form"
       >
@@ -812,7 +812,7 @@ export default {
   align-items: center;
   justify-content: space-between;
   padding: 0 14px;
-  margin-bottom: 10px;
+  margin-bottom: 11px;
   flex-shrink: 0;
 }
 .search-flex {
@@ -865,14 +865,14 @@ export default {
   border-radius: 4px;
   display: flex;
   flex-direction: column;
-  padding: 10px;
+  padding: 11px;
   box-sizing: border-box;
 }
 .sidebar-header-summary {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 10px;
+  margin-bottom: 11px;
   border-bottom: 1px solid #111b2b;
   padding-bottom: 6px;
 }
@@ -885,8 +885,8 @@ export default {
   background: #0d1522;
   border-color: #1a293d;
   color: #64748b;
-  padding: 4px 10px;
-  font-size: 10px;
+  padding: 4px 11px;
+  font-size: 11px;
 }
 ::v-deep
   .mode-switcher
@@ -946,7 +946,7 @@ export default {
   border: 1px solid #172438;
   border-left: 3px solid #172438;
   border-radius: 3px;
-  padding: 10px;
+  padding: 11px;
   cursor: pointer;
   position: relative;
 }
@@ -971,7 +971,7 @@ export default {
   display: flex;
   justify-content: space-between;
   margin-top: 6px;
-  font-size: 10px;
+  font-size: 11px;
 }
 .bsh-txt {
   color: #52637a;
@@ -1063,18 +1063,18 @@ export default {
   align-items: center;
   border-bottom: 1px dashed #1c2b42;
   padding-bottom: 8px;
-  margin-bottom: 10px;
+  margin-bottom: 11px;
 }
 .header-left {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 11px;
 }
 .strategy-badge {
   background: rgba(56, 189, 248, 0.15);
   border: 1px solid #38bdf8;
   color: #38bdf8;
-  font-size: 10px;
+  font-size: 11px;
   padding: 1px 6px;
   border-radius: 3px;
 }
@@ -1085,18 +1085,18 @@ export default {
   font-weight: bold;
 }
 .strategy-id-tag {
-  font-size: 10px;
+  font-size: 11px;
   color: #475569;
 }
 .header-right-actions {
   display: flex;
-  gap: 10px;
+  gap: 11px;
 }
 .brief-dynamics {
   display: flex;
   gap: 12px;
   margin-top: 4px;
-  font-size: 10px;
+  font-size: 11px;
   color: #8a99ad;
   font-family: monospace;
 }
@@ -1121,10 +1121,10 @@ export default {
 .strategy-card-body {
   background: #060b14;
   border-radius: 4px;
-  padding: 10px;
+  padding: 11px;
 }
 .model-json-title {
-  font-size: 10px;
+  font-size: 11px;
   color: #52637a;
   margin-bottom: 8px;
   font-weight: bold;
@@ -1199,7 +1199,7 @@ export default {
 }
 .divider-text {
   background: #090f1c;
-  padding: 0 10px;
+  padding: 0 11px;
   font-size: 11px;
   color: #38bdf8;
   position: relative;

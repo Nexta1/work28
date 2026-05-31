@@ -2,7 +2,7 @@
   <div class="screen-container">
     <div class="top-search-header">
       <div class="search-flex">
-        <span class="hub-title">🛰️ 数据采集项目流程编排总线</span>
+        <span class="hub-title">🛰️ 数据采集项目流程编排</span>
         <div class="search-item">
           <label>项目名称</label>
           <el-input
@@ -972,7 +972,7 @@ export default {
   background: #080e18;
   border: 1px solid #111b2b;
   border-radius: 4px;
-  padding: 10px 12px;
+  padding: 11px 12px;
   min-height: 68px;
 }
 .stat-card span,
@@ -998,7 +998,7 @@ export default {
   background: #080e18;
   border: 1px solid #111b2b;
   border-radius: 4px;
-  padding: 10px;
+  padding: 11px;
   display: flex;
   flex-direction: column;
 }
@@ -1026,7 +1026,7 @@ export default {
   color: #06b6d4;
 }
 .panel-header-summary .badge {
-  font-size: 10px;
+  font-size: 11px;
   background: rgba(6, 182, 212, 0.1);
   padding: 1px 6px;
   border-radius: 4px;
@@ -1094,7 +1094,7 @@ export default {
   background: #0c1424;
   padding: 8px 12px;
   border-radius: 3px;
-  margin-bottom: 10px;
+  margin-bottom: 11px;
   border: 1px solid #16243a;
   flex-shrink: 0;
 }
@@ -1131,7 +1131,7 @@ export default {
   background: #070c14;
 }
 .step-table-panel {
-  padding: 10px;
+  padding: 11px;
   display: flex;
   flex-direction: column;
 }
@@ -1157,7 +1157,7 @@ export default {
   border: 2px dashed #172438;
   border-radius: 50%;
   animation: spin 4s linear infinite;
-  margin-bottom: 10px;
+  margin-bottom: 11px;
 }
 @keyframes spin {
   100% {

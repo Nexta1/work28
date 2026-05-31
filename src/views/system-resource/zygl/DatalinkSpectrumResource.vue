@@ -129,7 +129,7 @@
         ref="formRef"
         :model="form"
         :rules="rules"
-        label-width="110px"
+        label-width="111px"
         size="mini"
       >
         <el-form-item label="网络号" prop="WLH">

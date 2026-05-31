@@ -36,7 +36,7 @@
             <p style="margin: 5px 0; font-size: 12px; color: #666">
               ID: {{ selectedNode.WLH || selectedNode.id }}
             </p>
-            <div style="margin-top: 10px">
+            <div style="margin-top: 11px">
               <span
                 class="status-indicator"
                 :style="{
@@ -499,7 +499,9 @@ export default {
     rgba(20, 25, 30, 0.98)
   );
   border: 1px solid rgba(0, 229, 255, 0.15);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 229, 255, 0.05);
+  box-shadow:
+    0 11px 30px rgba(0, 0, 0, 0.5),
+    0 0 20px rgba(0, 229, 255, 0.05);
   color: #fff;
   z-index: 1000;
   border-radius: 12px;

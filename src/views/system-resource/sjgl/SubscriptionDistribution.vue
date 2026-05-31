@@ -463,7 +463,7 @@
                   v-model="subscribeQuery.subscribeState"
                   clearable
                   placeholder="全部"
-                  style="width: 110px"
+                  style="width: 111px"
                 >
                   <el-option label="待审核" :value="0" />
                   <el-option label="已拒绝" :value="1" />
@@ -768,7 +768,7 @@
         ref="quickSubscribeForm"
         :model="quickSubscribeForm"
         :rules="quickSubscribeRules"
-        label-width="110px"
+        label-width="111px"
         size="mini"
       >
         <el-form-item label="订阅标识">
@@ -1431,7 +1431,7 @@ export default {
   border: 1px solid #16243a;
   border-radius: 4px;
   padding: 14px 16px;
-  margin-bottom: 10px;
+  margin-bottom: 11px;
 }
 .hero-strip h2 {
   font-size: 18px;
@@ -1468,7 +1468,7 @@ export default {
   color: #94a3b8;
 }
 .toolbar {
-  margin-bottom: 10px;
+  margin-bottom: 11px;
 }
 .card-container {
   flex: 1;
@@ -1595,7 +1595,7 @@ export default {
   line-height: 1.5;
 }
 .pair-roleid {
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 400;
   color: #64748b;
   font-family: 'SF Mono', 'Fira Code', monospace;
@@ -1608,7 +1608,7 @@ export default {
   padding-left: 4px;
 }
 .pair-attr .el-icon-right {
-  font-size: 10px;
+  font-size: 11px;
   color: #4b5563;
   margin-right: 2px;
 }
@@ -1660,7 +1660,7 @@ export default {
   margin-right: 2px;
 }
 .meta-label {
-  font-size: 10px;
+  font-size: 11px;
   color: #4b5563;
   white-space: nowrap;
   letter-spacing: 0.3px;
@@ -1717,7 +1717,7 @@ export default {
 .selector-control-bar {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 11px;
   background: #111c2e;
   padding: 8px 12px;
   border: 1px solid #1c2e4a;
@@ -1735,7 +1735,7 @@ export default {
 }
 
 .pager {
-  margin-top: 10px;
+  margin-top: 11px;
   text-align: right;
 }
 .full-width {
@@ -1750,7 +1750,7 @@ export default {
 }
 .rate-input {
   flex: none;
-  width: 110px;
+  width: 111px;
 }
 .rate-input .el-input-number__decrease,
 .rate-input .el-input-number__increase {

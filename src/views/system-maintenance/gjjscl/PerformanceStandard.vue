@@ -515,7 +515,7 @@ export default {
   height: 100%;
   display: flex;
   flex-direction: column;
-  padding: 10px;
+  padding: 11px;
   box-sizing: border-box;
   background-color: transparent;
 }
@@ -533,7 +533,7 @@ export default {
 }
 .custom-warn-badge {
   display: inline-block;
-  padding: 2px 10px;
+  padding: 2px 11px;
   border-radius: 2px;
   font-size: 11px;
   font-weight: 500;

@@ -79,7 +79,7 @@ export default {
   width: 320px;
   height: 100%;
   background: rgba(13, 25, 41, 0.95);
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(11px);
   z-index: 1000;
   box-shadow: 20px 0 30px rgba(0, 0, 0, 0.5);
   display: flex;
@@ -177,7 +177,7 @@ export default {
   font-size: 11px;
   color: #64748b;
   display: flex;
-  gap: 10px;
+  gap: 11px;
 }
 .split {
   opacity: 0.3;

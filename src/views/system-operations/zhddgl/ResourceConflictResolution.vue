@@ -106,7 +106,9 @@
         <div class="resource-stats">
           <div class="stat-card">
             <div class="stat-label">频谱资源利用率</div>
-            <div class="stat-value text-cyan">{{ resourceStats.spectrumUsage }}%</div>
+            <div class="stat-value text-cyan">
+              {{ resourceStats.spectrumUsage }}%
+            </div>
             <el-progress
               :percentage="resourceStats.spectrumUsage"
               :stroke-width="6"
@@ -116,7 +118,9 @@
 
           <div class="stat-card">
             <div class="stat-label">时隙资源利用率</div>
-            <div class="stat-value text-orange">{{ resourceStats.timeslotUsage }}%</div>
+            <div class="stat-value text-orange">
+              {{ resourceStats.timeslotUsage }}%
+            </div>
             <el-progress
               :percentage="resourceStats.timeslotUsage"
               :stroke-width="6"
@@ -126,7 +130,9 @@
 
           <div class="stat-card">
             <div class="stat-label">功率资源利用率</div>
-            <div class="stat-value text-green">{{ resourceStats.powerUsage }}%</div>
+            <div class="stat-value text-green">
+              {{ resourceStats.powerUsage }}%
+            </div>
             <el-progress
               :percentage="resourceStats.powerUsage"
               :stroke-width="6"
@@ -170,7 +176,9 @@
             </div>
             <div class="dist-item">
               <span class="dist-name">区域数据链</span>
-              <span class="dist-count text-cyan">{{ networkDist.regional }}</span>
+              <span class="dist-count text-cyan">{{
+                networkDist.regional
+              }}</span>
             </div>
             <div class="dist-item">
               <span class="dist-name">局域数据链</span>
@@ -192,15 +200,24 @@
           @selection-change="handleSelectionChange"
         >
           <el-table-column type="selection" width="50"></el-table-column>
-          <el-table-column type="index" label="序号" width="60"></el-table-column>
+          <el-table-column
+            type="index"
+            label="序号"
+            width="60"
+          ></el-table-column>
           <el-table-column prop="CONFLICT_ID" label="冲突ID" width="120">
             <template slot-scope="scope">
-              <span class="font-num text-cyan">{{ scope.row.CONFLICT_ID }}</span>
+              <span class="font-num text-cyan">{{
+                scope.row.CONFLICT_ID
+              }}</span>
             </template>
           </el-table-column>
           <el-table-column prop="NETWORK_TYPE" label="网络类型" width="120">
             <template slot-scope="scope">
-              <el-tag size="mini" :type="getNetworkTypeTag(scope.row.NETWORK_TYPE)">
+              <el-tag
+                size="mini"
+                :type="getNetworkTypeTag(scope.row.NETWORK_TYPE)"
+              >
                 {{ getNetworkTypeText(scope.row.NETWORK_TYPE) }}
               </el-tag>
             </template>
@@ -289,17 +306,24 @@
           <div class="detail-grid">
             <div class="detail-item">
               <span class="detail-label">冲突ID:</span>
-              <span class="detail-value text-cyan">{{ currentConflict.CONFLICT_ID }}</span>
+              <span class="detail-value text-cyan">{{
+                currentConflict.CONFLICT_ID
+              }}</span>
             </div>
             <div class="detail-item">
               <span class="detail-label">网络类型:</span>
-              <el-tag size="small" :type="getNetworkTypeTag(currentConflict.NETWORK_TYPE)">
+              <el-tag
+                size="small"
+                :type="getNetworkTypeTag(currentConflict.NETWORK_TYPE)"
+              >
                 {{ getNetworkTypeText(currentConflict.NETWORK_TYPE) }}
               </el-tag>
             </div>
             <div class="detail-item">
               <span class="detail-label">资源类型:</span>
-              <span class="detail-value">{{ getResourceTypeText(currentConflict.RESOURCE_TYPE) }}</span>
+              <span class="detail-value">{{
+                getResourceTypeText(currentConflict.RESOURCE_TYPE)
+              }}</span>
             </div>
             <div class="detail-item">
               <span class="detail-label">冲突等级:</span>
@@ -309,13 +333,18 @@
             </div>
             <div class="detail-item">
               <span class="detail-label">处理状态:</span>
-              <el-tag size="small" :type="getStatusType(currentConflict.STATUS)">
+              <el-tag
+                size="small"
+                :type="getStatusType(currentConflict.STATUS)"
+              >
                 {{ getStatusText(currentConflict.STATUS) }}
               </el-tag>
             </div>
             <div class="detail-item">
               <span class="detail-label">发现时间:</span>
-              <span class="detail-value">{{ formatTime(currentConflict.DETECT_TIME) }}</span>
+              <span class="detail-value">{{
+                formatTime(currentConflict.DETECT_TIME)
+              }}</span>
             </div>
           </div>
         </div>
@@ -330,22 +359,30 @@
           <div class="strategy-content">
             <div class="strategy-item">
               <span class="strategy-label">策略类型:</span>
-              <span class="strategy-value">{{ currentConflict.STRATEGY.type }}</span>
+              <span class="strategy-value">{{
+                currentConflict.STRATEGY.type
+              }}</span>
             </div>
             <div class="strategy-item">
               <span class="strategy-label">调整方案:</span>
-              <span class="strategy-value">{{ currentConflict.STRATEGY.plan }}</span>
+              <span class="strategy-value">{{
+                currentConflict.STRATEGY.plan
+              }}</span>
             </div>
             <div class="strategy-item">
               <span class="strategy-label">预期效果:</span>
-              <span class="strategy-value">{{ currentConflict.STRATEGY.effect }}</span>
+              <span class="strategy-value">{{
+                currentConflict.STRATEGY.effect
+              }}</span>
             </div>
           </div>
         </div>
       </div>
 
       <div slot="footer">
-        <el-button size="mini" @click="detailDialogVisible = false">关闭</el-button>
+        <el-button size="mini" @click="detailDialogVisible = false"
+          >关闭</el-button
+        >
         <el-button
           type="primary"
           size="mini"
@@ -702,18 +739,18 @@ export default {
 .resource-stats {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 11px;
 }
 
 .stat-card {
   background: #0d1522;
   border: 1px solid #172438;
   border-radius: 4px;
-  padding: 10px;
+  padding: 11px;
 }
 
 .stat-label {
-  font-size: 10px;
+  font-size: 11px;
   color: #64748b;
   margin-bottom: 6px;
 }
@@ -732,7 +769,7 @@ export default {
 }
 
 .summary-header {
-  padding: 8px 10px;
+  padding: 8px 11px;
   border-bottom: 1px solid #17263d;
 }
 
@@ -746,7 +783,7 @@ export default {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 8px;
-  padding: 10px;
+  padding: 11px;
 }
 
 .summary-item {
@@ -792,7 +829,7 @@ export default {
 }
 
 .distribution-header {
-  padding: 8px 10px;
+  padding: 8px 11px;
   border-bottom: 1px solid #17263d;
 }
 
@@ -803,7 +840,7 @@ export default {
 }
 
 .distribution-list {
-  padding: 10px;
+  padding: 11px;
 }
 
 .dist-item {
@@ -861,7 +898,7 @@ export default {
   font-size: 12px;
   font-weight: bold;
   color: #38bdf8;
-  margin: 0 0 10px 0;
+  margin: 0 0 11px 0;
   padding-bottom: 6px;
   border-bottom: 1px solid #17263d;
 }

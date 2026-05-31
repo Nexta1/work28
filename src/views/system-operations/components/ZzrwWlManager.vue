@@ -870,7 +870,7 @@ export default {
   align-items: center;
   justify-content: space-between;
   padding: 0 14px;
-  margin-bottom: 10px;
+  margin-bottom: 11px;
   flex-shrink: 0;
 }
 .search-flex {
@@ -946,14 +946,14 @@ export default {
   border-radius: 4px;
   display: flex;
   flex-direction: column;
-  padding: 10px;
+  padding: 11px;
   box-sizing: border-box;
 }
 .sidebar-header-summary {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 10px;
+  margin-bottom: 11px;
   border-bottom: 1px solid #111b2b;
   padding-bottom: 6px;
 }
@@ -966,8 +966,8 @@ export default {
   background: #0d1522;
   border-color: #1a293d;
   color: #64748b;
-  padding: 4px 10px;
-  font-size: 10px;
+  padding: 4px 11px;
+  font-size: 11px;
 }
 ::v-deep
   .mode-switcher
@@ -999,7 +999,7 @@ export default {
   border: 1px solid #172438;
   border-left: 3px solid #172438;
   border-radius: 3px;
-  padding: 8px 10px;
+  padding: 8px 11px;
   cursor: pointer;
   position: relative;
 }
@@ -1024,7 +1024,7 @@ export default {
   display: flex;
   justify-content: space-between;
   margin-top: 4px;
-  font-size: 10px;
+  font-size: 11px;
 }
 .bsh-txt {
   color: #415169;
@@ -1037,14 +1037,14 @@ export default {
   display: flex;
   gap: 12px;
   margin-top: 4px;
-  font-size: 10px;
+  font-size: 11px;
   color: #8a99ad;
   font-family: monospace;
 }
 .card-status-dot {
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: 11px;
+  right: 11px;
   width: 5px;
   height: 5px;
   border-radius: 50%;
@@ -1083,7 +1083,7 @@ export default {
 .detail-param-dashboard {
   background: #0c1424;
   border-radius: 4px;
-  padding: 10px;
+  padding: 11px;
   margin-bottom: 12px;
   border-left: 3px solid #38bdf8;
 }
@@ -1131,7 +1131,7 @@ export default {
 }
 .matrix-item label {
   color: #475569;
-  font-size: 10px;
+  font-size: 11px;
   font-weight: bold;
 }
 .matrix-item .val {
@@ -1177,7 +1177,7 @@ export default {
   background: #0d1522;
   border: 1px solid #172438;
   border-radius: 4px;
-  padding: 10px;
+  padding: 11px;
   margin-top: 4px;
 }
 .combined-item {
@@ -1202,7 +1202,7 @@ export default {
   color: #06b6d4;
   padding: 1px 4px;
   border-radius: 2px;
-  font-size: 10px;
+  font-size: 11px;
 }
 
 /* 平台联网状态网格卡片流 */
@@ -1236,7 +1236,7 @@ export default {
   color: #fff;
 }
 .status-indicator-tag {
-  font-size: 10px;
+  font-size: 11px;
   font-family: monospace;
 }
 .pt-card-meta {
@@ -1273,7 +1273,7 @@ export default {
   border-left: 2px solid #06b6d4;
 }
 .node-name-bar {
-  font-size: 10px;
+  font-size: 11px;
   color: #64748b;
   padding-bottom: 2px;
   margin-bottom: 4px;
@@ -1284,7 +1284,7 @@ export default {
   font-weight: bold;
 }
 .metric-huge .unit {
-  font-size: 10px;
+  font-size: 11px;
   color: #475569;
 }
 
@@ -1315,7 +1315,7 @@ export default {
 }
 .sub-empty {
   text-align: center;
-  font-size: 10px;
+  font-size: 11px;
   color: #223147;
   padding: 12px;
   width: 100%;

@@ -964,7 +964,7 @@ export default {
   background: #080e18;
   border: 1px solid #111b2b;
   border-radius: 4px;
-  padding: 10px;
+  padding: 11px;
   display: flex;
   flex-direction: column;
 }
@@ -1059,7 +1059,7 @@ export default {
 }
 
 .panel-header-summary .badge {
-  font-size: 10px;
+  font-size: 11px;
   background: rgba(6, 182, 212, 0.1);
   padding: 1px 6px;
   border-radius: 4px;
@@ -1123,7 +1123,7 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 12px;
+  padding: 11px 12px;
   border-bottom: 1px solid #17263d;
 }
 
@@ -1134,7 +1134,7 @@ export default {
 }
 
 .list-count {
-  font-size: 10px;
+  font-size: 11px;
   color: #64748b;
 }
 
@@ -1148,7 +1148,7 @@ export default {
   background: #080e18;
   border: 1px solid #172438;
   border-radius: 4px;
-  padding: 10px;
+  padding: 11px;
   margin-bottom: 8px;
 }
 
@@ -1211,7 +1211,7 @@ export default {
 }
 
 .empty-hint {
-  font-size: 10px !important;
+  font-size: 11px !important;
   color: #64748b !important;
 }
 
@@ -1238,7 +1238,7 @@ export default {
 }
 
 .status-label {
-  font-size: 10px;
+  font-size: 11px;
   color: #64748b;
   margin-bottom: 4px;
 }
@@ -1277,7 +1277,7 @@ export default {
   overflow-y: auto;
   padding: 8px 12px;
   font-family: monospace;
-  font-size: 10px;
+  font-size: 11px;
 }
 
 .log-item {
@@ -1359,7 +1359,7 @@ export default {
   font-size: 12px;
   font-weight: bold;
   color: #38bdf8;
-  margin: 0 0 10px 0;
+  margin: 0 0 11px 0;
   padding-bottom: 6px;
   border-bottom: 1px solid #17263d;
 }

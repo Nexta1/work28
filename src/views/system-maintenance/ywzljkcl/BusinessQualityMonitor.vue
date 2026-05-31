@@ -995,7 +995,7 @@ export default {
 .sync-countdown-badge {
   background: #111e36;
   color: #38bdf8;
-  font-size: 10px;
+  font-size: 11px;
   padding: 2px 8px;
   border-radius: 12px;
 }
@@ -1005,14 +1005,14 @@ export default {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 12px;
-  margin: 10px 0;
+  margin: 11px 0;
   flex-shrink: 0;
 }
 .stat-card {
   background: #080e18;
   border: 1px solid #132238;
   border-radius: 4px;
-  padding: 10px 14px;
+  padding: 11px 14px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -1094,7 +1094,7 @@ export default {
   color: #38bdf8;
 }
 .active-node-desc {
-  font-size: 10px;
+  font-size: 11px;
   font-weight: bold;
 }
 
@@ -1146,7 +1146,7 @@ export default {
   background: #0d1522;
   border: 1px solid #172438;
   border-left: 3px solid #64748b;
-  padding: 8px 10px;
+  padding: 8px 11px;
   border-radius: 3px;
   cursor: pointer;
 }
@@ -1228,7 +1228,7 @@ export default {
   background: #0d1522;
   border: 1px solid #16263d;
   border-radius: 3px;
-  padding: 10px;
+  padding: 11px;
 }
 .task-top-meta {
   display: flex;
@@ -1318,7 +1318,7 @@ export default {
   gap: 1px;
 }
 .sync-meta .node-name {
-  font-size: 10px;
+  font-size: 11px;
   font-weight: bold;
   color: #fff;
 }
@@ -1464,7 +1464,7 @@ export default {
 
 .empty-holder {
   text-align: center;
-  font-size: 10px;
+  font-size: 11px;
   color: #223147;
   padding: 20px;
   border: 1px dashed #111b2b;

@@ -545,7 +545,7 @@ export default {
   height: 100%;
   display: flex;
   flex-direction: column;
-  padding: 10px;
+  padding: 11px;
   box-sizing: border-box;
   background-color: transparent; /* 继承全局背景 */
 }
@@ -589,7 +589,7 @@ export default {
 /* --- 自定义告警级别样式标签 (适配深色科技主题) --- */
 .custom-level-badge {
   display: inline-block;
-  padding: 2px 10px;
+  padding: 2px 11px;
   border-radius: 2px; /* 扁平化圆角 */
   font-size: 11px;
   font-weight: 500;

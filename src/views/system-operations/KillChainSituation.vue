@@ -571,7 +571,7 @@ export default {
 .state-legend-inline {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 11px;
 }
 .state-legend-inline .legend-title {
   font-size: 11px;
@@ -689,7 +689,7 @@ export default {
   align-items: center;
   gap: 8px;
   border-bottom: 1px solid #1f2937;
-  margin-bottom: 10px;
+  margin-bottom: 11px;
   font-size: 12px;
   font-weight: bold;
   color: #14b8a6;
@@ -717,7 +717,7 @@ export default {
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 11px;
   padding-right: 2px;
 }
 .status-cards-scroll-container::-webkit-scrollbar {
@@ -733,7 +733,7 @@ export default {
   background: #1f2937;
   border: 1px solid #374151;
   border-radius: 4px;
-  padding: 10px;
+  padding: 11px;
   position: relative;
   cursor: pointer;
   transition: all 0.2s;
@@ -744,7 +744,7 @@ export default {
   box-shadow: inset 0 0 6px rgba(20, 184, 166, 0.2);
 }
 .card-tag {
-  font-size: 10px;
+  font-size: 11px;
   color: #4b5563;
 }
 .target-info {
@@ -759,7 +759,7 @@ export default {
   color: #fff;
 }
 .mbid {
-  font-size: 10px;
+  font-size: 11px;
   color: #64748b;
 }
 .property {
@@ -775,7 +775,7 @@ export default {
   align-items: center;
 }
 .phase {
-  font-size: 10px;
+  font-size: 11px;
   color: #14b8a6;
   background: rgba(20, 184, 166, 0.1);
   padding: 1px 5px;
@@ -783,7 +783,7 @@ export default {
 }
 .warn {
   color: #ef4444;
-  font-size: 10px;
+  font-size: 11px;
   font-weight: bold;
 }
 
@@ -824,14 +824,14 @@ export default {
 
 /* 群组底部锚定区 */
 .group-info-footer-box {
-  margin-top: 10px;
+  margin-top: 11px;
   background: #1f2937;
-  padding: 10px;
+  padding: 11px;
   border-radius: 4px;
   border: 1px solid #374151;
 }
 .group-info-footer-box .lbl {
-  font-size: 10px;
+  font-size: 11px;
   color: #64748b;
   margin-bottom: 2px;
 }
@@ -860,9 +860,9 @@ export default {
   width: 360px;
   height: 100%;
   background: rgba(15, 23, 42, 0.95);
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(11px);
   border-left: 1px solid rgba(59, 130, 246, 0.3);
-  box-shadow: -10px 0 30px rgba(0, 0, 0, 0.6);
+  box-shadow: -11px 0 30px rgba(0, 0, 0, 0.6);
   z-index: 2000;
   display: flex;
   flex-direction: column;
@@ -940,7 +940,7 @@ export default {
 }
 
 .tab-pane-content {
-  max-height: calc(100% - 10px);
+  max-height: calc(100% - 11px);
   overflow-y: auto;
 }
 .device-section {
@@ -966,7 +966,7 @@ export default {
   background: rgba(30, 41, 59, 0.6);
   border: 1px solid rgba(255, 255, 255, 0.05);
   border-radius: 4px;
-  padding: 10px;
+  padding: 11px;
   margin-bottom: 8px;
 }
 .item-header {
@@ -992,7 +992,7 @@ export default {
 /* 告警面板行 */
 .warn-item-box {
   background: rgba(255, 255, 255, 0.02);
-  margin-bottom: 10px;
+  margin-bottom: 11px;
   display: flex;
   border-radius: 3px;
   overflow: hidden;
@@ -1003,7 +1003,7 @@ export default {
   flex-shrink: 0;
 }
 .warn-main {
-  padding: 10px;
+  padding: 11px;
   flex: 1;
 }
 .warn-top {
@@ -1027,7 +1027,7 @@ export default {
 .warn-footer {
   display: flex;
   justify-content: space-between;
-  font-size: 10px;
+  font-size: 11px;
   color: #64748b;
 }
 .empty-warn {
