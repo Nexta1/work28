@@ -7,7 +7,7 @@
     <!-- 头部 -->
     <div class="node-header" :style="headerStyle">
       <i :class="getIcon"></i>
-      <span class="pt-name">{{ data.killchain_Group_Member_PltName }}</span>
+      <span class="pt-name">{{ data.Killchain_Group_Member_PltName }}</span>
     </div>
 
     <div class="node-body">
@@ -30,15 +30,24 @@
 
         <!-- 统计：如果武器+传感器超过2条，或者存在sbzts设备，显示更多提示 -->
         <div v-if="hasMore" class="more-tag">
-          <i class="el-icon-more"></i>
-          <span>点击查看全部 {{ totalCount }} 个资源...</span>
+          <span>点击查看全部 {{ totalCount }} 个资源</span>
         </div>
       </div>
       <div v-else class="no-res-placeholder">暂无传感器/武器</div>
-      <!-- 网络信息 -->
+      <!-- 网络信息：从 sslWLGHs 杀伤链网络规划获取实际连接 -->
       <div class="net-info">
         <i class="el-icon-connection"></i>
-        <span class="net-tag">{{ data.netName || '未加入网络' }}</span>
+        <span
+          v-if="displayNetConnections.length > 0"
+          class="net-tag net-active"
+        >
+          {{
+            displayNetConnections[0].targetName ||
+            displayNetConnections[0].srcName
+          }}
+        </span>
+        <span v-else-if="data.netName" class="net-tag">{{ data.netName }}</span>
+        <span v-else class="net-tag net-none">未加入网络</span>
       </div>
     </div>
   </div>
@@ -74,8 +83,11 @@ export default {
         background: `${this.themeColor}11`
       }
     },
+    displayNetConnections() {
+      return this.data.netConnections || []
+    },
     getIcon() {
-      const name = this.data.killchain_Group_Member_PltName || ''
+      const name = this.data.Killchain_Group_Member_PltName || ''
       if (name.includes('舰')) return 'el-icon-ship'
       if (name.includes('机')) return 'el-icon-position'
       return 'el-icon-monitor'
@@ -208,7 +220,7 @@ export default {
 }
 
 .net-info {
-  margin-top: 6px;
+  /* margin-top: 6px; */
   border-top: 1px solid #232c3d;
   padding-top: 6px;
   display: flex;
@@ -223,6 +235,13 @@ export default {
   border-radius: 2px;
   font-size: 11px;
   margin-left: 4px;
+}
+.net-active {
+  background: rgba(16, 185, 129, 0.2);
+  color: #34d399;
+}
+.net-none {
+  color: #4b5563;
 }
 
 .node-arrival-flash {

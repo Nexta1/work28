@@ -29,7 +29,7 @@
             ></div>
 
             <div class="item-main">
-              <div class="pt-name">{{ pt.killchain_Group_Member_PltName }}</div>
+              <div class="pt-name">{{ pt.Killchain_Group_Member_PltName }}</div>
               <div class="pt-info">
                 <span
                   ><i class="el-icon-cpu"></i> 传感器:

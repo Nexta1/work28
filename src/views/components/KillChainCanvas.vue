@@ -205,7 +205,7 @@ export default {
 
         // 3. 过滤及渲染平台节点
         const allStageMembers = this.members.filter(
-          m => m.killchain_EXECUTEPHASE == sKey
+          m => m.KILLCHAIN_EXECUTEPHASE == sKey
         )
         const displayMembers = allStageMembers.slice(0, 4)
         const hasMore = allStageMembers.length > 4

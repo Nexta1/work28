@@ -51,6 +51,15 @@
         >
           适配屏幕
         </el-button>
+        <el-button
+          size="mini"
+          icon="el-icon-question"
+          class="help-btn"
+          @click="showGuide = true"
+          title="界面使用说明"
+        >
+          使用说明
+        </el-button>
       </div>
     </div>
 
@@ -173,6 +182,74 @@
 
           <div class="tab-container">
             <div v-show="activeTab === 'device'" class="tab-pane-content">
+              <!-- 数据链网络信息 -->
+              <div class="device-section">
+                <div class="section-tag tag-wl">
+                  <i class="el-icon-connection"></i>
+                  数据链网络 ({{ (currentSelectedPt.sbzts || []).length }})
+                </div>
+                <div class="device-item-card card-wl">
+                  <div class="item-header">
+                    <i class="el-icon-s-data"></i>
+                    <span class="item-name"
+                      >数据链 ID:
+                      {{ currentSelectedPt.SJLID || '未接入' }}</span
+                    >
+                  </div>
+                  <div
+                    v-for="item in currentSelectedPt.sbzts"
+                    :key="item.SBXXID"
+                    class="wl-sub-item"
+                  >
+                    <div class="wl-sub-header">
+                      <i class="el-icon-monitor"></i>
+                      <span class="wl-dev-name">{{ item.SBMC }}</span>
+                      <span
+                        class="wl-health-tag"
+                        :class="
+                          'health-' +
+                          (item.JKZT !== null && item.JKZT !== undefined
+                            ? item.JKZT
+                            : 0)
+                        "
+                      >
+                        {{
+                          {0: '运行中', 1: '未运行', 2: '故障'}[item.JKZT] ||
+                          '未知'
+                        }}
+                      </span>
+                    </div>
+                    <div class="wl-sub-detail">
+                      <span>型号: {{ item.SBXHMC || '-' }}</span>
+                      <span>类型: {{ item.SBLX || '-' }}</span>
+                    </div>
+                    <div
+                      class="wl-sub-metrics"
+                      v-if="
+                        (item.CPU !== null && item.CPU !== undefined) ||
+                        (item.RAM !== null && item.RAM !== undefined)
+                      "
+                    >
+                      <span v-if="item.CPU !== null && item.CPU !== undefined"
+                        >CPU: {{ item.CPU }}%</span
+                      >
+                      <span v-if="item.RAM !== null && item.RAM !== undefined"
+                        >内存: {{ item.RAM }}%</span
+                      >
+                      <span v-if="item.TEMP !== null && item.TEMP !== undefined"
+                        >温度: {{ item.TEMP }}°C</span
+                      >
+                    </div>
+                  </div>
+                  <div
+                    v-if="!(currentSelectedPt.sbzts || []).length"
+                    class="wl-empty-hint"
+                  >
+                    暂无数据链通信设备
+                  </div>
+                </div>
+              </div>
+
               <div class="device-section">
                 <div class="section-tag tag-cgq">
                   传感器元件 ({{ (currentSelectedPt.cgqxxs || []).length }})
@@ -273,6 +350,88 @@
       @close="listDialogVisible = false"
       @select="setCurrentSelectedPt"
     />
+
+    <!-- ============================================================
+         界面使用引导弹窗
+         ============================================================ -->
+    <transition name="slide-fade">
+      <div
+        v-if="showGuide"
+        class="guide-overlay"
+        @click.self="showGuide = false"
+      >
+        <div class="guide-dialog">
+          <div class="guide-header">
+            <i class="el-icon-info"></i>
+            <span>杀伤链态势控制台 - 界面使用说明</span>
+            <i class="el-icon-close close-btn" @click="showGuide = false"></i>
+          </div>
+          <div class="guide-body">
+            <div class="guide-section">
+              <div class="guide-step">①</div>
+              <div class="guide-content">
+                <div class="guide-title">顶部工具栏</div>
+                <div class="guide-desc">
+                  左侧<strong>「当前任务」</strong>下拉框选择作战任务，切换后画布自动刷新。<br />
+                  右侧<strong>「状态标识」</strong>彩色圆点说明当前杀伤链执行状态（正常/异常/完成/中止）。<br />
+                  <strong>「适配屏幕」</strong
+                  >按钮可自动缩放画布至最佳显示比例。
+                </div>
+              </div>
+            </div>
+            <div class="guide-section">
+              <div class="guide-step">②</div>
+              <div class="guide-content">
+                <div class="guide-title">左侧控制舱（多目标杀伤链流水）</div>
+                <div class="guide-desc">
+                  点击<strong>「展开面板」</strong>按钮可查看当前任务下的所有杀伤链卡片。<br />
+                  每张卡片显示<strong>目标名称</strong>、<strong>执行阶段</strong>和<strong>告警数量</strong>。<br />
+                  <strong>点击卡片</strong
+                  >可切换当前查看的杀伤链，画布内容同步更新。<br />
+                  底部的<strong>「当前战术协同群组标识」</strong>显示最近一次刷新的群组编号。
+                </div>
+              </div>
+            </div>
+            <div class="guide-section">
+              <div class="guide-step">③</div>
+              <div class="guide-content">
+                <div class="guide-title">主画布区（杀伤链执行泳道图）</div>
+                <div class="guide-desc">
+                  画布按杀伤链执行阶段分为 <strong>6 个泳道</strong>：发现 →
+                  定位 → 跟踪 → 瞄准 → 打击 → 评估。<br />
+                  当前执行阶段所在泳道会<strong>高亮显示</strong>并带有呼吸光效。<br />
+                  每个泳道中包含参与该阶段的<strong>平台节点卡片</strong>，显示平台名称、传感器和武器信息。<br />
+                  <strong>点击平台节点</strong
+                  >可打开右侧详情面板查看完整设备要素。<br />
+                  若平台数量超过 4
+                  个，泳道底部会出现<strong>「查看更多」</strong>按钮。
+                </div>
+              </div>
+            </div>
+            <div class="guide-section">
+              <div class="guide-step">④</div>
+              <div class="guide-content">
+                <div class="guide-title">右侧详情面板（平台设备遥测详情）</div>
+                <div class="guide-desc">
+                  「设备要素」标签页展示该平台的<strong>传感器</strong>和<strong>武器</strong>详细信息。<br />
+                  「实时告警」标签页展示该平台最近的<strong>越限告警</strong>记录，每
+                  20 秒自动刷新。<br />
+                  告警级别以颜色区分：<span class="tag-warn-l1">一般</span>、
+                  <span class="tag-warn-l2">紧急</span>、
+                  <span class="tag-warn-l3">极严重</span>。
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="guide-footer">
+            <span>提示：数据每 15 秒自动刷新同步</span>
+            <el-button size="mini" type="primary" @click="showGuide = false">
+              我知道了
+            </el-button>
+          </div>
+        </div>
+      </div>
+    </transition>
   </div>
 </template>
 
@@ -296,6 +455,7 @@ export default {
   },
   data() {
     return {
+      showGuide: false, // 控制使用说明弹窗
       leftControlVisible: false, // 控制左侧控制舱的折叠
       isPolling: false,
       timer: null,
@@ -329,6 +489,7 @@ export default {
       lastGroupId: null,
       graphMembers: [], // 传递给画布组件的精简成员属性
       activeKillChainObject: null, // 传递给画布的当前高亮杀伤链快照
+      networkLinks: [], // 当前群组的杀伤链网络规划列表 (sslWLGHs)
       phraseMap: {
         0: '发现',
         1: '定位',
@@ -422,6 +583,9 @@ export default {
           this.lastGroupId = currentGroupId
           this.currentGroupName = currentGroupId
 
+          // 保存当前群组的杀伤链网络规划列表
+          this.networkLinks = firstGroup.sslWLGHs || []
+
           // 核心拉取动作
           await this.loadMembersData(currentGroupId)
         }
@@ -433,11 +597,42 @@ export default {
       const resCY = await getSslqzcyPage(this.currentKillChainId, groupName)
       const rawMembers = resCY.data?.list || resCY.data?.records || []
 
+      // 从 networkLinks(sslWLGHs) 中构建平台ID→网络连接映射
+      const linkMap = {}
+      this.networkLinks.forEach(link => {
+        const srcId = link.YPTID
+        const dstId = link.MDPTID
+        const connInfo = {
+          targetId: dstId,
+          targetName: link.MDPTMC || '未知平台',
+          srcName: link.YPTMC || '未知平台',
+          sendMode: link.FSFS,
+          bandwidth: link.DK,
+          latency: link.SY,
+          xxlx: link.XXLX
+        }
+        if (srcId != null) {
+          if (!linkMap[srcId]) linkMap[srcId] = []
+          linkMap[srcId].push({...connInfo, direction: 'out'})
+        }
+        if (dstId != null) {
+          if (!linkMap[dstId]) linkMap[dstId] = []
+          linkMap[dstId].push({...connInfo, direction: 'in'})
+        }
+      })
+
       this.graphMembers = await Promise.all(
         rawMembers.map(async m => {
           try {
             const resPT = await getptxPage(m.Killchain_Group_Member_PltID)
-            return {...m, ptDetail: resPT.data || resPT || {}}
+            const ptId = m.Killchain_Group_Member_PltID
+            // 附加网络连接信息
+            const connections = linkMap[ptId] || []
+            return {
+              ...m,
+              ptDetail: resPT.data || resPT || {},
+              netConnections: connections
+            }
           } catch (e) {
             return m
           }
@@ -961,6 +1156,10 @@ export default {
   background: rgba(239, 68, 68, 0.2);
   color: #f87171;
 }
+.tag-wl {
+  background: rgba(16, 185, 129, 0.2);
+  color: #34d399;
+}
 
 .device-item-card {
   background: rgba(30, 41, 59, 0.6);
@@ -968,6 +1167,9 @@ export default {
   border-radius: 4px;
   padding: 11px;
   margin-bottom: 8px;
+}
+.card-wl {
+  border-color: rgba(16, 185, 129, 0.15);
 }
 .item-header {
   display: flex;
@@ -987,6 +1189,69 @@ export default {
   font-size: 11px;
   color: #94a3b8;
   padding-left: 18px;
+}
+
+/* 数据链网络子项 */
+.wl-sub-item {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: 3px;
+  padding: 8px;
+  margin-bottom: 6px;
+}
+.wl-sub-item:last-child {
+  margin-bottom: 0;
+}
+.wl-sub-header {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-bottom: 3px;
+  font-size: 11px;
+}
+.wl-dev-name {
+  color: #e2e8f0;
+  font-weight: bold;
+  flex: 1;
+}
+.wl-health-tag {
+  font-size: 10px;
+  padding: 1px 5px;
+  border-radius: 2px;
+  font-weight: bold;
+}
+.health-0 {
+  color: #10b981;
+  background: rgba(16, 185, 129, 0.15);
+}
+.health-1 {
+  color: #f59e0b;
+  background: rgba(245, 158, 11, 0.15);
+}
+.health-2 {
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.15);
+}
+.wl-sub-detail {
+  display: flex;
+  gap: 12px;
+  font-size: 10px;
+  color: #64748b;
+  padding-left: 18px;
+}
+.wl-sub-metrics {
+  display: flex;
+  gap: 10px;
+  font-size: 10px;
+  color: #475569;
+  padding-left: 18px;
+  margin-top: 2px;
+}
+.wl-empty-hint {
+  text-align: center;
+  color: #4b5563;
+  font-size: 11px;
+  padding: 10px 0;
 }
 
 /* 告警面板行 */
@@ -1055,5 +1320,149 @@ export default {
   color: #4b5563;
   font-size: 11px;
   padding: 40px 0;
+}
+
+/* ==========================================================================
+   七、帮助按钮样式
+   ========================================================================== */
+.help-btn {
+  margin-left: 6px;
+}
+.help-btn ::v-deep {
+  background-color: #1f2937 !important;
+  border-color: #374151 !important;
+  color: #60a5fa !important;
+}
+.help-btn:hover ::v-deep {
+  background-color: #374151 !important;
+  border-color: #60a5fa !important;
+  color: #fff !important;
+}
+
+/* ==========================================================================
+   八、使用引导弹窗样式
+   ========================================================================== */
+.guide-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.65);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(2px);
+}
+.guide-dialog {
+  width: 640px;
+  max-height: 80vh;
+  background: #111827;
+  border: 1px solid #1f2937;
+  border-radius: 6px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.guide-header {
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid #1f2937;
+  color: #14b8a6;
+  font-weight: bold;
+  font-size: 14px;
+}
+.guide-header .close-btn {
+  margin-left: auto;
+  cursor: pointer;
+  color: #64748b;
+  font-size: 16px;
+}
+.guide-header .close-btn:hover {
+  color: #ef4444;
+}
+.guide-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.guide-body::-webkit-scrollbar {
+  width: 4px;
+}
+.guide-body::-webkit-scrollbar-thumb {
+  background: #374151;
+  border-radius: 2px;
+}
+.guide-section {
+  display: flex;
+  gap: 12px;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: 4px;
+}
+.guide-step {
+  width: 28px;
+  height: 28px;
+  background: #14b8a6;
+  color: #0f172a;
+  font-weight: bold;
+  font-size: 13px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.guide-content {
+  flex: 1;
+}
+.guide-title {
+  color: #f1f5f9;
+  font-weight: bold;
+  font-size: 13px;
+  margin-bottom: 4px;
+}
+.guide-desc {
+  color: #94a3b8;
+  font-size: 12px;
+  line-height: 1.8;
+}
+.guide-desc strong {
+  color: #e2e8f0;
+}
+.tag-warn-l1 {
+  color: #e6a23c;
+  background: rgba(230, 162, 60, 0.15);
+  padding: 0 4px;
+  border-radius: 2px;
+}
+.tag-warn-l2 {
+  color: #f56c6c;
+  background: rgba(245, 108, 108, 0.15);
+  padding: 0 4px;
+  border-radius: 2px;
+}
+.tag-warn-l3 {
+  color: #9d0000;
+  background: rgba(157, 0, 0, 0.15);
+  padding: 0 4px;
+  border-radius: 2px;
+}
+.guide-footer {
+  padding: 12px 20px;
+  border-top: 1px solid #1f2937;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #64748b;
+  font-size: 11px;
 }
 </style>
