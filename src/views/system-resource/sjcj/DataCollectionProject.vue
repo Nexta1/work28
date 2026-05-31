@@ -52,6 +52,24 @@
         >
           同步数据源
         </el-button>
+        <el-button
+          type="warning"
+          size="mini"
+          icon="el-icon-upload2"
+          class="action-btn"
+          @click="openImportLogDialog"
+        >
+          导入日志
+        </el-button>
+        <el-button
+          type="success"
+          size="mini"
+          icon="el-icon-search"
+          class="action-btn"
+          @click="openLogQueryDialog"
+        >
+          日志查询
+        </el-button>
       </div>
     </div>
 
@@ -892,6 +910,230 @@
         >
       </span>
     </el-dialog>
+
+    <!-- 导入日志弹窗 -->
+    <el-dialog
+      title="导入设备日志"
+      :visible.sync="importLogDialogVisible"
+      width="500px"
+      append-to-body
+    >
+      <el-form label-width="100px" size="mini">
+        <el-form-item label="选择文件">
+          <div style="display: flex; align-items: center; gap: 10px">
+            <el-button
+              size="mini"
+              type="primary"
+              icon="el-icon-folder-opened"
+              @click="$refs.fileInput.click()"
+            >
+              选取文件
+            </el-button>
+            <span v-if="selectedFile" style="color: #10b981; font-size: 12px">
+              <i class="el-icon-document"></i> {{ selectedFile.name }}
+            </span>
+            <span v-else style="color: #64748b; font-size: 11px"
+              >未选择文件</span
+            >
+          </div>
+          <input
+            ref="fileInput"
+            type="file"
+            accept=".csv,.zip"
+            style="display: none"
+            @change="handleFileSelect"
+          />
+          <div style="color: #94a3b8; font-size: 11px; margin-top: 6px">
+            支持 .csv 或 .zip 格式文件
+          </div>
+        </el-form-item>
+      </el-form>
+      <span slot="footer">
+        <el-button size="mini" @click="importLogDialogVisible = false"
+          >取消</el-button
+        >
+        <el-button
+          size="mini"
+          type="warning"
+          :loading="uploading"
+          :disabled="!selectedFile"
+          @click="submitImportLog"
+        >
+          {{ uploading ? '导入中...' : '开始导入' }}
+        </el-button>
+      </span>
+    </el-dialog>
+
+    <!-- 日志查询弹窗 -->
+    <el-dialog
+      title="设备日志查询"
+      :visible.sync="logQueryDialogVisible"
+      width="1100px"
+      append-to-body
+      top="3vh"
+    >
+      <div class="log-query-filter">
+        <el-form :inline="true" size="mini" label-width="80px">
+          <el-form-item label="日志级别">
+            <el-select
+              v-model="logQuery.logLevel"
+              clearable
+              placeholder="全部"
+              style="width: 120px"
+            >
+              <el-option label="INFO" value="INFO" />
+              <el-option label="WARN" value="WARN" />
+              <el-option label="ERROR" value="ERROR" />
+              <el-option label="DEBUG" value="DEBUG" />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="通信协议">
+            <el-select
+              v-model="logQuery.protocol"
+              clearable
+              placeholder="全部"
+              style="width: 130px"
+            >
+              <el-option label="TCP" value="TCP" />
+              <el-option label="UDP" value="UDP" />
+              <el-option label="HTTP" value="HTTP" />
+              <el-option label="MQTT" value="MQTT" />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="链路类型">
+            <el-select
+              v-model="logQuery.linkType"
+              clearable
+              placeholder="全部"
+              style="width: 130px"
+            >
+              <el-option label="有线" value="有线" />
+              <el-option label="无线" value="无线" />
+              <el-option label="卫星" value="卫星" />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="源平台ID">
+            <el-input
+              v-model="logQuery.srcPTID"
+              placeholder="源平台ID"
+              style="width: 120px"
+            />
+          </el-form-item>
+          <el-form-item label="目标平台ID">
+            <el-input
+              v-model="logQuery.dstPTID"
+              placeholder="目标平台ID"
+              style="width: 120px"
+            />
+          </el-form-item>
+          <el-form-item>
+            <el-button
+              type="primary"
+              icon="el-icon-search"
+              @click="fetchLogs(1)"
+              >查询</el-button
+            >
+            <el-button icon="el-icon-refresh" @click="resetLogQuery"
+              >重置</el-button
+            >
+          </el-form-item>
+        </el-form>
+      </div>
+
+      <el-table
+        :data="logList"
+        size="mini"
+        stripe
+        border
+        height="420px"
+        v-loading="loadingLogs"
+        class="dark-table"
+      >
+        <el-table-column prop="logTime" label="日志时间" width="150" />
+        <el-table-column
+          prop="logLevel"
+          label="级别"
+          width="100"
+          align="center"
+        >
+          <template slot-scope="scope">
+            <el-tag
+              size="mini"
+              :type="
+                scope.row.logLevel === 'ERROR'
+                  ? 'danger'
+                  : scope.row.logLevel === 'WARN'
+                    ? 'warning'
+                    : 'info'
+              "
+            >
+              {{ scope.row.logLevel }}
+            </el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="xxXH"
+          label="信息序号"
+          width="80"
+          align="center"
+        />
+        <el-table-column
+          prop="srcSBMC"
+          label="源设备"
+          min-width="100"
+          show-overflow-tooltip
+        />
+        <el-table-column
+          prop="dstSBMC"
+          label="目标设备"
+          min-width="100"
+          show-overflow-tooltip
+        />
+        <el-table-column
+          prop="protocol"
+          label="协议"
+          width="80"
+          align="center"
+        />
+        <el-table-column
+          prop="linkType"
+          label="链路类型"
+          width="80"
+          align="center"
+        />
+        <el-table-column
+          prop="opType"
+          label="操作类型"
+          width="90"
+          align="center"
+        />
+        <el-table-column
+          prop="statusCode"
+          label="状态码"
+          width="70"
+          align="center"
+        />
+        <el-table-column
+          prop="logMsg"
+          label="日志消息"
+          min-width="180"
+          show-overflow-tooltip
+        />
+      </el-table>
+
+      <div class="log-pagination">
+        <el-pagination
+          small
+          layout="total, prev, pager, next, sizes"
+          :current-page.sync="logPage.pageNum"
+          :page-size.sync="logPage.pageSize"
+          :page-sizes="[10, 20, 50, 100]"
+          :total="logTotal"
+          @current-change="fetchLogs"
+          @size-change="fetchLogs(1)"
+        />
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -922,6 +1164,22 @@ export default {
       stepDialogVisible: false,
       isEditProject: false,
       isEditStep: false,
+      importLogDialogVisible: false,
+      uploading: false,
+      uploadedFileName: '',
+      selectedFile: null,
+      logQueryDialogVisible: false,
+      loadingLogs: false,
+      logList: [],
+      logTotal: 0,
+      logPage: {pageNum: 1, pageSize: 20},
+      logQuery: {
+        logLevel: '',
+        protocol: '',
+        linkType: '',
+        srcPTID: '',
+        dstPTID: ''
+      },
       showBottomTable: false,
       formRenderKey: 1,
 
@@ -1438,6 +1696,118 @@ export default {
     },
     stepStateText(state) {
       return Number(state) === 1 ? '启用' : '停用'
+    },
+    openImportLogDialog() {
+      this.importLogDialogVisible = true
+      this.uploadedFileName = ''
+      this.selectedFile = null
+      this.$nextTick(() => {
+        if (this.$refs.fileInput) {
+          this.$refs.fileInput.value = ''
+        }
+      })
+    },
+    handleFileSelect(e) {
+      const files = e.target.files
+      if (files && files.length > 0) {
+        const file = files[0]
+        const ext = file.name.split('.').pop().toLowerCase()
+        if (ext !== 'csv' && ext !== 'zip') {
+          this.$message.error('仅支持 .csv 或 .zip 格式文件')
+          this.selectedFile = null
+          this.$refs.fileInput.value = ''
+          return
+        }
+        this.selectedFile = file
+      } else {
+        this.selectedFile = null
+      }
+    },
+    submitImportLog() {
+      if (!this.selectedFile) {
+        this.$message.warning('请先选择文件')
+        return
+      }
+      this.uploading = true
+      const formData = new FormData()
+      formData.append('file', this.selectedFile)
+      request({
+        url: '/rest/deviceLog/upload',
+        method: 'post',
+        headers: {'Content-Type': 'multipart/form-data'},
+        data: formData
+      })
+        .then(res => {
+          const fileName = res && res.length > 0 ? res[0] : res || ''
+          if (!fileName) {
+            this.$message.error('文件上传失败，返回为空')
+            this.uploading = false
+            return
+          }
+          this.uploadedFileName = fileName
+          this.$message.success('文件上传成功')
+          // 上传成功后自动调用导入接口
+          return request({
+            url: `/device/deviceLog/import/${fileName}`,
+            method: 'post'
+          })
+        })
+        .then(() => {
+          this.$message.success('日志导入成功')
+          this.importLogDialogVisible = false
+          this.uploading = false
+        })
+        .catch(() => {
+          this.$message.error('日志导入失败')
+          this.uploading = false
+        })
+    },
+    openLogQueryDialog() {
+      this.logQueryDialogVisible = true
+      this.$nextTick(() => {
+        this.fetchLogs(1)
+      })
+    },
+    fetchLogs(page) {
+      if (page) this.logPage.pageNum = page
+      this.loadingLogs = true
+      const params = {}
+      if (this.logQuery.logLevel) params.logLevel = this.logQuery.logLevel
+      if (this.logQuery.protocol) params.protocol = this.logQuery.protocol
+      if (this.logQuery.linkType) params.linkType = this.logQuery.linkType
+      if (this.logQuery.srcPTID) params.srcPTID = this.logQuery.srcPTID
+      if (this.logQuery.dstPTID) params.dstPTID = this.logQuery.dstPTID
+      request({
+        url: '/rest/deviceLogPage',
+        method: 'post',
+        data: {
+          pageNum: this.logPage.pageNum,
+          pageSize: this.logPage.pageSize,
+          params
+        }
+      })
+        .then(res => {
+          const data = res.data || res
+          this.logList = data.list || []
+          this.logTotal = data.total || 0
+        })
+        .catch(() => {
+          this.logList = []
+          this.logTotal = 0
+        })
+        .finally(() => {
+          this.loadingLogs = false
+        })
+    },
+    resetLogQuery() {
+      this.logQuery = {
+        logLevel: '',
+        protocol: '',
+        linkType: '',
+        srcPTID: '',
+        dstPTID: ''
+      }
+      this.fetchLogs(1)
     }
   }
 }
@@ -1808,5 +2178,39 @@ export default {
   background-color: #111c30 !important;
   border-color: #1e3557 !important;
   color: #38bdf8 !important;
+}
+
+/* 日志查询 */
+.log-query-filter {
+  background: #0c1424;
+  border: 1px solid #16243a;
+  border-radius: 4px;
+  padding: 10px 12px;
+  margin-bottom: 10px;
+}
+.log-query-filter ::v-deep .el-form-item {
+  margin-bottom: 0;
+}
+.log-query-filter ::v-deep .el-form-item__label {
+  color: #94a3b8;
+  font-size: 11px;
+}
+.log-pagination {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+.log-pagination ::v-deep .el-pagination {
+  color: #94a3b8;
+}
+.log-pagination ::v-deep .el-pagination button,
+.log-pagination ::v-deep .el-pager li {
+  background-color: #0c1424;
+  color: #94a3b8;
+  border: 1px solid #1e3557;
+}
+.log-pagination ::v-deep .el-pager li.active {
+  background-color: #1e3a5f;
+  color: #38bdf8;
 }
 </style>
