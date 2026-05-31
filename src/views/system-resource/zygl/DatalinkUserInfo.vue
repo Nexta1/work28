@@ -86,7 +86,7 @@
                 </el-table-column>
                 <el-table-column
                   label="操作"
-                  width="120"
+                  width="150"
                   fixed="right"
                   align="center"
                 >
@@ -94,6 +94,7 @@
                     <el-button
                       type="text"
                       size="mini"
+                      icon="el-icon-edit"
                       @click="openDialog(true, scope.row)"
                     >
                       修改
@@ -101,6 +102,7 @@
                     <el-button
                       type="text"
                       size="mini"
+                      icon="el-icon-delete"
                       class="text-red"
                       @click="handleDelete(scope.row)"
                     >

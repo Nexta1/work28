@@ -4,7 +4,7 @@
       <el-tab-pane label="装备信息" name="sbxx">
         <div class="tab-pane-body" v-loading="loading.sbxx">
           <div class="panel-header-summary">
-            <span class="title text-cyan">装备信息 (sbxx)</span>
+            <span class="title text-cyan">装备信息</span>
             <el-button
               type="primary"
               size="mini"
@@ -15,6 +15,20 @@
             </el-button>
           </div>
           <div class="filter-action-row">
+            <el-select
+              v-model="sbxxQuery.PTID"
+              size="mini"
+              clearable
+              placeholder="平台ID"
+              class="filter-item"
+            >
+              <el-option
+                v-for="item in ptxxOptions"
+                :key="item.PTXXID || item.ptxxid"
+                :label="item.PTMC || item.ptmc"
+                :value="pickRowId(item, ['PTXXID', 'ptxxid'])"
+              />
+            </el-select>
             <el-input
               v-model="sbxxQuery.SBMC"
               size="mini"
@@ -54,7 +68,7 @@
               <el-table-column prop="opTime" label="操作时间" min-width="150" />
               <el-table-column
                 label="操作"
-                width="120"
+                width="150"
                 fixed="right"
                 align="center"
               >
@@ -62,12 +76,14 @@
                   <el-button
                     type="text"
                     size="mini"
+                    icon="el-icon-edit"
                     @click="openSbxxDialog(true, scope.row)"
                     >修改</el-button
                   >
                   <el-button
                     type="text"
                     size="mini"
+                    icon="el-icon-delete"
                     class="text-red"
                     @click="deleteSbxx(scope.row)"
                     >删除</el-button
@@ -92,7 +108,7 @@
       <el-tab-pane label="装备型号" name="sbxh">
         <div class="tab-pane-body" v-loading="loading.sbxh">
           <div class="panel-header-summary">
-            <span class="title text-cyan">装备型号 (sbxhInfo)</span>
+            <span class="title text-cyan">装备型号</span>
             <el-button
               type="primary"
               size="mini"
@@ -140,7 +156,7 @@
               <el-table-column prop="opTime" label="操作时间" min-width="150" />
               <el-table-column
                 label="操作"
-                width="120"
+                width="150"
                 fixed="right"
                 align="center"
               >
@@ -148,12 +164,14 @@
                   <el-button
                     type="text"
                     size="mini"
+                    icon="el-icon-edit"
                     @click="openSbxhDialog(true, scope.row)"
                     >修改</el-button
                   >
                   <el-button
                     type="text"
                     size="mini"
+                    icon="el-icon-delete"
                     class="text-red"
                     @click="deleteSbxh(scope.row)"
                     >删除</el-button
@@ -179,24 +197,16 @@
         <div class="tab-pane-body" v-loading="loading.network">
           <div class="panel-header-summary">
             <span class="title text-cyan">装备入退网监测</span>
+            <el-button
+              type="primary"
+              size="mini"
+              icon="el-icon-plus"
+              @click="openNetworkDialog(false)"
+            >
+              新增记录
+            </el-button>
           </div>
           <div class="filter-action-row">
-            <el-input-number
-              v-model="networkQuery.SBID"
-              size="mini"
-              :min="0"
-              controls-position="right"
-              placeholder="设备ID"
-              class="filter-item-num"
-            />
-            <el-input-number
-              v-model="networkQuery.WLH"
-              size="mini"
-              :min="0"
-              controls-position="right"
-              placeholder="网络号"
-              class="filter-item-num"
-            />
             <el-select
               v-model="networkQuery.SBWLZT"
               size="mini"
@@ -204,12 +214,8 @@
               placeholder="入退网状态"
               class="filter-item"
             >
-              <el-option
-                v-for="item in sbwlztOptions"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-              />
+              <el-option label="入网" :value="1" />
+              <el-option label="退网" :value="2" />
             </el-select>
             <el-button
               type="primary"
@@ -229,18 +235,54 @@
               stripe
               border
             >
-              <el-table-column prop="SBXXID" label="装备标识" width="90" />
-              <el-table-column prop="SBMC" label="装备名称" min-width="140" />
+              <el-table-column prop="SBMC" label="设备名称" min-width="130" />
               <el-table-column
                 prop="SBID"
                 label="设备ID"
-                width="100"
+                width="90"
                 class-name="font-num"
               />
-              <el-table-column prop="PTMC" label="平台" width="120" />
-              <el-table-column prop="zyzyzt" label="资源状态" width="100" />
-              <el-table-column prop="jkzt" label="接口状态" width="100" />
-              <el-table-column prop="opTime" label="记录时间" min-width="150" />
+              <el-table-column prop="WLMC" label="网络名称" width="120" />
+              <el-table-column
+                prop="WLH"
+                label="网络号"
+                width="90"
+                class-name="font-num"
+              />
+              <el-table-column prop="RWSJ" label="入网时间" min-width="150" />
+              <el-table-column prop="TWSJ" label="退网时间" min-width="150" />
+              <el-table-column
+                prop="SBWLZT"
+                label="状态"
+                width="70"
+                :formatter="
+                  (_, __, v) => (v === 1 ? '入网' : v === 2 ? '退网' : '-')
+                "
+              />
+              <el-table-column
+                label="操作"
+                width="150"
+                fixed="right"
+                align="center"
+              >
+                <template slot-scope="scope">
+                  <el-button
+                    type="text"
+                    size="mini"
+                    icon="el-icon-edit"
+                    @click="openNetworkDialog(true, scope.row)"
+                    >修改</el-button
+                  >
+                  <el-button
+                    type="text"
+                    size="mini"
+                    icon="el-icon-delete"
+                    class="text-red"
+                    @click="deleteNetwork(scope.row)"
+                    >删除</el-button
+                  >
+                </template>
+              </el-table-column>
             </el-table>
           </div>
           <div class="pagination-row">
@@ -270,12 +312,20 @@
         label-width="100px"
         size="mini"
       >
-        <el-form-item label="平台ID" prop="PTID">
-          <el-input-number
+        <el-form-item label="所属平台" prop="PTID">
+          <el-select
             v-model="sbxxForm.PTID"
-            :min="0"
+            filterable
             class="full-width"
-          />
+            placeholder="选择平台"
+          >
+            <el-option
+              v-for="item in ptxxOptions"
+              :key="item.PTXXID || item.ptxxid"
+              :label="item.PTMC || item.ptmc"
+              :value="pickRowId(item, ['PTXXID', 'ptxxid'])"
+            />
+          </el-select>
         </el-form-item>
         <el-form-item label="装备ID" prop="SBID">
           <el-input-number
@@ -292,13 +342,13 @@
             v-model="sbxxForm.ZYXH"
             filterable
             class="full-width"
-            placeholder="选择型号"
+            placeholder="选择资源型号"
           >
             <el-option
               v-for="item in sbxhListAll"
-              :key="item.SBXHID || item.sbxhid"
+              :key="item.ZYXH"
               :label="item.SBXHMC || item.sbxhmc"
-              :value="pickRowId(item, ['SBXHID', 'sbxhid', 'ZYXH'])"
+              :value="item.ZYXH"
             />
           </el-select>
         </el-form-item>
@@ -349,13 +399,72 @@
         >
       </span>
     </el-dialog>
+
+    <el-dialog
+      :title="networkEdit ? '修改入退网记录' : '新增入退网记录'"
+      :visible.sync="networkDialogVisible"
+      width="480px"
+      append-to-body
+    >
+      <el-form
+        ref="networkFormRef"
+        :model="networkForm"
+        :rules="networkRules"
+        label-width="110px"
+        size="mini"
+      >
+        <el-form-item label="设备ID" prop="SBID">
+          <el-input-number
+            v-model="networkForm.SBID"
+            :min="0"
+            class="full-width"
+          />
+        </el-form-item>
+        <el-form-item label="网络号" prop="WLH">
+          <el-input-number
+            v-model="networkForm.WLH"
+            :min="0"
+            class="full-width"
+          />
+        </el-form-item>
+        <el-form-item label="入网时间" prop="RWSJ">
+          <el-date-picker
+            v-model="networkForm.RWSJ"
+            type="datetime"
+            value-format="yyyy-MM-dd HH:mm:ss"
+            class="full-width"
+          />
+        </el-form-item>
+        <el-form-item label="退网时间" prop="TWSJ">
+          <el-date-picker
+            v-model="networkForm.TWSJ"
+            type="datetime"
+            value-format="yyyy-MM-dd HH:mm:ss"
+            class="full-width"
+          />
+        </el-form-item>
+        <el-form-item label="状态" prop="SBWLZT">
+          <el-select v-model="networkForm.SBWLZT" class="full-width">
+            <el-option label="入网" :value="1" />
+            <el-option label="退网" :value="2" />
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <span slot="footer">
+        <el-button size="mini" @click="networkDialogVisible = false"
+          >取消</el-button
+        >
+        <el-button size="mini" type="primary" @click="submitNetwork"
+          >保存</el-button
+        >
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import request from '@/utils/request'
 import {apiAdd, apiDelete, apiPage, apiUpdate} from '@/api/common.js'
-import {SBWLZT_OPTIONS} from '@/api/resourceManagement.js'
 import resourcePageMixin from '../mixins/resourcePageMixin'
 
 export default {
@@ -365,11 +474,11 @@ export default {
     return {
       activeTab: 'sbxx',
       loading: {sbxx: false, sbxh: false, network: false},
-      sbwlztOptions: SBWLZT_OPTIONS,
+      ptxxOptions: [],
       sbxxList: [],
       sbxxTotal: 0,
       sbxxPage: {pageNum: 1, pageSize: 15},
-      sbxxQuery: {SBMC: ''},
+      sbxxQuery: {PTID: null, SBMC: ''},
       sbxxDialogVisible: false,
       sbxxEdit: false,
       sbxxForm: {SBXXID: null, PTID: null, SBID: null, SBMC: '', ZYXH: null},
@@ -392,10 +501,26 @@ export default {
       networkList: [],
       networkTotal: 0,
       networkPage: {pageNum: 1, pageSize: 15},
-      networkQuery: {SBID: null, WLH: null, SBWLZT: null}
+      networkQuery: {SBWLZT: null},
+      networkDialogVisible: false,
+      networkEdit: false,
+      networkForm: {
+        SBWLID: null,
+        SBID: null,
+        WLH: null,
+        RWSJ: null,
+        TWSJ: null,
+        SBWLZT: 1
+      },
+      networkRules: {
+        SBID: [{required: true, message: '请输入设备ID', trigger: 'blur'}],
+        WLH: [{required: true, message: '请输入网络号', trigger: 'blur'}],
+        SBWLZT: [{required: true, message: '请选择状态', trigger: 'change'}]
+      }
     }
   },
   mounted() {
+    this.loadPtxx()
     this.fetchSbxx()
     this.fetchSbxh()
     this.loadSbxhAll()
@@ -406,6 +531,13 @@ export default {
     }
   },
   methods: {
+    loadPtxx() {
+      request({url: '/rest/ptxx/ptxxs', method: 'get'})
+        .then(res => {
+          this.ptxxOptions = this.normalizeList(res)
+        })
+        .catch(() => {})
+    },
     loadSbxhAll() {
       request({url: '/rest/sbxhInfo/sbxhInfos', method: 'get'}).then(res => {
         this.sbxhListAll = this.normalizeList(res)
@@ -413,15 +545,19 @@ export default {
     },
     fetchSbxx() {
       this.loading.sbxx = true
+      const params = {}
+      if (this.sbxxQuery.PTID != null) params.PTID = this.sbxxQuery.PTID
+      if (this.sbxxQuery.SBMC) params.SBMC = this.sbxxQuery.SBMC
       apiPage('sbxx', {
         pageNum: this.sbxxPage.pageNum,
         pageSize: this.sbxxPage.pageSize,
-        params: {SBMC: this.sbxxQuery.SBMC || undefined}
+        params
       })
         .then(res => {
           this.sbxxList = this.normalizeList(res)
           this.sbxxTotal = (res.data && res.data.total) || this.sbxxList.length
         })
+        .catch(() => {})
         .finally(() => {
           this.loading.sbxx = false
         })
@@ -453,21 +589,25 @@ export default {
         const action = this.sbxxEdit
           ? apiUpdate('sbxx', this.sbxxForm)
           : apiAdd('sbxx', this.sbxxForm)
-        action.then(() => {
-          this.$message.success('装备信息已保存')
-          this.sbxxDialogVisible = false
-          this.fetchSbxx()
-        })
+        action
+          .then(() => {
+            this.$message.success('装备信息已保存')
+            this.sbxxDialogVisible = false
+            this.fetchSbxx()
+          })
+          .catch(() => {})
       })
     },
     deleteSbxx(row) {
       const id = this.pickRowId(row, ['SBXXID', 'sbxxid'])
       this.$confirm('确定删除该装备信息吗？', '提示', {type: 'warning'}).then(
         () => {
-          apiDelete('sbxx', id).then(() => {
-            this.$message.success('删除成功')
-            this.fetchSbxx()
-          })
+          apiDelete('sbxx', id)
+            .then(() => {
+              this.$message.success('删除成功')
+              this.fetchSbxx()
+            })
+            .catch(() => {})
         }
       )
     },
@@ -482,6 +622,7 @@ export default {
           this.sbxhList = this.normalizeList(res)
           this.sbxhTotal = (res.data && res.data.total) || this.sbxhList.length
         })
+        .catch(() => {})
         .finally(() => {
           this.loading.sbxh = false
         })
@@ -512,34 +653,36 @@ export default {
         const action = this.sbxhEdit
           ? apiUpdate('sbxhInfo', this.sbxhForm)
           : apiAdd('sbxhInfo', this.sbxhForm)
-        action.then(() => {
-          this.$message.success('装备型号已保存')
-          this.sbxhDialogVisible = false
-          this.fetchSbxh()
-          this.loadSbxhAll()
-        })
+        action
+          .then(() => {
+            this.$message.success('装备型号已保存')
+            this.sbxhDialogVisible = false
+            this.fetchSbxh()
+            this.loadSbxhAll()
+          })
+          .catch(() => {})
       })
     },
     deleteSbxh(row) {
       const id = this.pickRowId(row, ['SBXHID', 'sbxhInfoId', 'sbxhid'])
       this.$confirm('确定删除该装备型号吗？', '提示', {type: 'warning'}).then(
         () => {
-          apiDelete('sbxhInfo', id).then(() => {
-            this.$message.success('删除成功')
-            this.fetchSbxh()
-            this.loadSbxhAll()
-          })
+          apiDelete('sbxhInfo', id)
+            .then(() => {
+              this.$message.success('删除成功')
+              this.fetchSbxh()
+              this.loadSbxhAll()
+            })
+            .catch(() => {})
         }
       )
     },
     fetchNetwork() {
       this.loading.network = true
       const params = {}
-      if (this.networkQuery.SBID != null) params.SBID = this.networkQuery.SBID
-      if (this.networkQuery.WLH != null) params.WLH = this.networkQuery.WLH
       if (this.networkQuery.SBWLZT != null)
         params.SBWLZT = this.networkQuery.SBWLZT
-      apiPage('sbxx', {
+      apiPage('sbwl', {
         pageNum: this.networkPage.pageNum,
         pageSize: this.networkPage.pageSize,
         params
@@ -549,6 +692,7 @@ export default {
           this.networkTotal =
             (res.data && res.data.total) || this.networkList.length
         })
+        .catch(() => {})
         .finally(() => {
           this.loading.network = false
         })
@@ -556,6 +700,60 @@ export default {
     searchNetwork() {
       this.networkPage.pageNum = 1
       this.fetchNetwork()
+    },
+    openNetworkDialog(isEdit, row = null) {
+      this.networkEdit = isEdit
+      this.networkForm =
+        isEdit && row
+          ? {
+              SBWLID: this.pickRowId(row, ['SBWLID', 'sbwlid']),
+              SBID: row.SBID,
+              WLH: row.WLH,
+              RWSJ: row.RWSJ,
+              TWSJ: row.TWSJ,
+              SBWLZT: row.SBWLZT
+            }
+          : {
+              SBWLID: null,
+              SBID: null,
+              WLH: null,
+              RWSJ: null,
+              TWSJ: null,
+              SBWLZT: 1
+            }
+      this.networkDialogVisible = true
+      this.$nextTick(
+        () =>
+          this.$refs.networkFormRef && this.$refs.networkFormRef.clearValidate()
+      )
+    },
+    submitNetwork() {
+      this.$refs.networkFormRef.validate(valid => {
+        if (!valid) return
+        const action = this.networkEdit
+          ? apiUpdate('sbwl', this.networkForm)
+          : apiAdd('sbwl', this.networkForm)
+        action
+          .then(() => {
+            this.$message.success('入退网记录已保存')
+            this.networkDialogVisible = false
+            this.fetchNetwork()
+          })
+          .catch(() => {})
+      })
+    },
+    deleteNetwork(row) {
+      const id = this.pickRowId(row, ['SBWLID', 'sbwlid'])
+      this.$confirm('确定删除该入退网记录吗？', '提示', {type: 'warning'}).then(
+        () => {
+          apiDelete('sbwl', id)
+            .then(() => {
+              this.$message.success('删除成功')
+              this.fetchNetwork()
+            })
+            .catch(() => {})
+        }
+      )
     }
   }
 }

@@ -2,7 +2,7 @@
   <div class="screen-container">
     <div class="main-panel" v-loading="loading">
       <div class="panel-header-summary">
-        <span class="title text-cyan">📡 数据链频谱资源管理</span>
+        <span class="title text-cyan">数据链频谱资源管理</span>
         <el-button
           type="primary"
           size="mini"
@@ -42,13 +42,6 @@
             :value="item.value"
           />
         </el-select>
-        <el-input
-          v-model="query.WLH"
-          size="mini"
-          clearable
-          placeholder="网络号"
-          class="filter-item"
-        />
         <el-button
           type="primary"
           size="mini"
@@ -72,31 +65,22 @@
           border
         >
           <el-table-column prop="frequencyId" label="标识" width="70" />
+          <el-table-column prop="WLMC" label="网络名称" min-width="140" />
           <el-table-column
             prop="WLH"
             label="网络号"
-            width="110"
+            width="100"
             class-name="font-num"
           />
-          <el-table-column
-            prop="WLNM"
-            label="网络内码"
-            width="120"
-            :formatter="(_, __, val) => mapLabel(wlnmOptions, val)"
-          />
-          <el-table-column
-            prop="WLLX"
-            label="网络类型"
-            width="140"
-            :formatter="(_, __, val) => mapLabel(wllxOptions, val)"
-          />
+          <el-table-column prop="WLNMMC" label="网络内码" width="120" />
+          <el-table-column prop="WLLXMC" label="网络类型" width="140" />
           <el-table-column prop="startFrequency" label="起始频率" width="100" />
           <el-table-column prop="endFrequency" label="终止频率" width="100" />
           <el-table-column prop="opUserName" label="操作人" width="90" />
           <el-table-column prop="opTime" label="操作时间" min-width="150" />
           <el-table-column
             label="操作"
-            width="120"
+            width="150"
             fixed="right"
             align="center"
           >
@@ -104,6 +88,7 @@
               <el-button
                 type="text"
                 size="mini"
+                icon="el-icon-edit"
                 @click="openDialog(true, scope.row)"
               >
                 修改
@@ -111,6 +96,7 @@
               <el-button
                 type="text"
                 size="mini"
+                icon="el-icon-delete"
                 class="text-red"
                 @click="handleDelete(scope.row)"
               >
@@ -172,16 +158,16 @@
         <el-form-item label="起始频率" prop="startFrequency">
           <el-input-number
             v-model="form.startFrequency"
-            :precision="2"
-            :step="0.1"
+            :min="0"
+            :precision="0"
             class="full-width"
           />
         </el-form-item>
         <el-form-item label="终止频率" prop="endFrequency">
           <el-input-number
             v-model="form.endFrequency"
-            :precision="2"
-            :step="0.1"
+            :min="0"
+            :precision="0"
             class="full-width"
           />
         </el-form-item>
@@ -215,7 +201,7 @@ export default {
       tableData: [],
       total: 0,
       page: {pageNum: 1, pageSize: 15},
-      query: {WLNM: null, WLLX: null, WLH: ''},
+      query: {WLNM: null, WLLX: null},
       wlnmOptions: [],
       wllxOptions: [],
       dialogVisible: false,
@@ -263,7 +249,6 @@ export default {
         params.WLNM = this.query.WLNM
       if (this.query.WLLX != null && this.query.WLLX !== '')
         params.WLLX = this.query.WLLX
-      if (this.query.WLH) params.WLH = this.query.WLH
       return params
     },
     fetchList() {
@@ -277,6 +262,7 @@ export default {
           this.tableData = this.normalizeList(res)
           this.total = (res.data && res.data.total) || this.tableData.length
         })
+        .catch(() => {})
         .finally(() => {
           this.loading = false
         })
@@ -286,7 +272,7 @@ export default {
       this.fetchList()
     },
     resetQuery() {
-      this.query = {WLNM: null, WLLX: null, WLH: ''}
+      this.query = {WLNM: null, WLLX: null}
       this.handleSearch()
     },
     openDialog(isEdit, row = null) {
@@ -313,11 +299,13 @@ export default {
         const action = this.isEdit
           ? apiUpdate(this.baseUrl, this.form)
           : apiAdd(this.baseUrl, this.form)
-        action.then(() => {
-          this.$message.success('频谱信息已保存')
-          this.dialogVisible = false
-          this.fetchList()
-        })
+        action
+          .then(() => {
+            this.$message.success('频谱信息已保存')
+            this.dialogVisible = false
+            this.fetchList()
+          })
+          .catch(() => {})
       })
     },
     handleDelete(row) {
@@ -325,10 +313,12 @@ export default {
       if (!id) return
       this.$confirm('确定删除该频谱记录吗？', '提示', {type: 'warning'}).then(
         () => {
-          apiDelete(this.baseUrl, id).then(() => {
-            this.$message.success('删除成功')
-            this.fetchList()
-          })
+          apiDelete(this.baseUrl, id)
+            .then(() => {
+              this.$message.success('删除成功')
+              this.fetchList()
+            })
+            .catch(() => {})
         }
       )
     }
