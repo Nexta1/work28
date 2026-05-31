@@ -74,7 +74,7 @@ export const transformTopologyData = rawData => {
             else if (node.ptmc.includes('电脑')) nodeIcon = IMAGE_MAP['电脑']
 
             return {
-              id: node.PTID + 'pt',
+              id: group.ZZRWQZID + 'qz' + node.PTID + 'pt',
               name: node.PTMC,
               type: node.ptlx || '终端', // 假设有类型字段
               icon: nodeIcon

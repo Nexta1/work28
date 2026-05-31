@@ -26,7 +26,7 @@
               </span>
 
               <span class="user" v-if="userInfo">
-                {{ userInfo.name }} | {{ userInfo.role }}
+                {{ userInfo.name }}
               </span>
 
               <button class="logout-btn" @click="logout">退出</button>

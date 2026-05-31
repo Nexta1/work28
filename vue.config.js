@@ -18,7 +18,14 @@ module.exports = {
       }
     },
     // 如果之前写死了 host: '192.168.43.10'，请务必删掉或改成下面这样：
-    host: '0.0.0.0'
+    host: '0.0.0.0',
+    // 代理：将 /rest/* 请求转发到后端，解决跨设备访问 localhost 问题
+    proxy: {
+      '/rest': {
+        target: 'http://localhost:8072',
+        changeOrigin: true
+      }
+    }
   },
   // 方式 A: 使用 configureWebpack (简单直接)
   configureWebpack: {
