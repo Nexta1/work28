@@ -42,6 +42,14 @@
         <div class="legend-node">
           <span class="dot bg-fault"></span>故障告警
         </div>
+        <el-button
+          size="mini"
+          icon="el-icon-document"
+          class="event-query-btn"
+          @click="eventDrawerVisible = true"
+        >
+          事件查询
+        </el-button>
       </div>
     </div>
 
@@ -454,6 +462,13 @@
         </div>
       </div>
     </el-dialog>
+
+    <!-- 事件查询抽屉 -->
+    <EventQueryDrawer
+      :visible="eventDrawerVisible"
+      page-title="性能监视"
+      @close="eventDrawerVisible = false"
+    />
   </div>
 </template>
 
@@ -462,11 +477,16 @@ import * as echarts from 'echarts'
 import {getsbxxPage, getPlatformPage, getPlatformTypeMap} from '@/api/platform'
 import {wllxMap} from '@/api/map'
 import {wlzt} from '@/api/network'
+import EventQueryDrawer from '../components/EventQueryDrawer.vue'
 
 export default {
   name: 'LinkPerformanceMonitor',
+  components: {
+    EventQueryDrawer
+  },
   data() {
     return {
+      eventDrawerVisible: false,
       loadingDevice: false,
       loadingPlatform: false,
       loadingLink: false,
@@ -835,6 +855,7 @@ export default {
 .monitor-legend {
   display: flex;
   gap: 12px;
+  align-items: center;
 }
 .legend-node {
   display: flex;
@@ -856,6 +877,9 @@ export default {
 }
 .bg-fault {
   background: #ef4444;
+}
+.event-query-btn {
+  margin-left: 12px;
 }
 
 /* ==================== 上层横向平铺区 ==================== */

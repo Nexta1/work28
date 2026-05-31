@@ -13,6 +13,14 @@
         <div class="legend-node"><span class="dot bg-safe"></span>稳健运行</div>
         <div class="legend-node"><span class="dot bg-warn"></span>轻度越限</div>
         <div class="legend-node"><span class="dot bg-crit"></span>严重告警</div>
+        <el-button
+          size="mini"
+          icon="el-icon-document"
+          class="event-query-btn"
+          @click="eventDrawerVisible = true"
+        >
+          事件查询
+        </el-button>
         <div class="sync-countdown-badge font-num">
           <Icon
             icon="lucide:refresh-cw"
@@ -526,11 +534,18 @@
         </div>
       </div>
     </div>
+    <!-- 事件查询抽屉 -->
+    <EventQueryDrawer
+      :visible="eventDrawerVisible"
+      page-title="业务质量监控"
+      @close="eventDrawerVisible = false"
+    />
   </div>
 </template>
 
 <script>
 import * as echarts from 'echarts'
+import EventQueryDrawer from '../components/EventQueryDrawer.vue'
 import {
   getPlatformPage,
   getServiceInfoPage,
@@ -541,8 +556,12 @@ import {wllxMap} from '@/api/map'
 
 export default {
   name: 'BusinessQualityMonitor',
+  components: {
+    EventQueryDrawer
+  },
   data() {
     return {
+      eventDrawerVisible: false,
       loadingLink: false,
       loadingTimeSync: false,
       loadingTask: false,
@@ -583,7 +602,9 @@ export default {
     }, 15000)
   },
   mounted() {
-    this.initTrendChart()
+    this.$nextTick(() => {
+      this.initTrendChart()
+    })
     window.addEventListener('resize', this.resizeChart)
   },
   beforeDestroy() {
@@ -933,7 +954,9 @@ export default {
     },
 
     initTrendChart() {
-      this.chartIns = echarts.init(this.$refs.linkTrendChart, 'dark')
+      const el = this.$refs.linkTrendChart
+      if (!el || el.clientWidth === 0 || el.clientHeight === 0) return
+      this.chartIns = echarts.init(el, 'dark')
       this.renderTrendChart()
     },
     renderTrendChart() {
@@ -1067,6 +1090,9 @@ export default {
   display: flex;
   align-items: center;
   gap: 14px;
+}
+.global-legend .event-query-btn {
+  margin: 0 4px;
 }
 .legend-node {
   display: flex;

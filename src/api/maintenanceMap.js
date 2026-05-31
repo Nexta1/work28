@@ -1,4 +1,4 @@
-import request from '@/utils/request'
+import request from '@/utils/request-maintenance'
 // 返回值都是数组
 // 查询所有数据类型
 export function unitInfo() {
@@ -47,5 +47,17 @@ export function qualityStates() {
   return request({
     url: `/rest/operationStandard/qualityStates`,
     method: 'get'
+  })
+}
+
+/**
+ * 分页查询业务质量标准事件
+ * @param {Object} params - { start, length, groupValue, metricName, eventTimestampBegin, eventTimestampEnd }
+ */
+export function getOperationStandardEventPage(params) {
+  return request({
+    url: '/rest/operationStandardEvent',
+    method: 'get',
+    params
   })
 }
