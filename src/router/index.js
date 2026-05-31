@@ -4,6 +4,15 @@ import VueRouter from 'vue-router'
 Vue.use(VueRouter)
 const routes = [
   {
+    path: '/login',
+    name: 'Login',
+    component: () => import('@/views/auth/Login.vue'),
+    meta: {
+      title: '登录',
+      requiresAuth: false
+    }
+  },
+  {
     path: '/',
     name: '/',
     redirect: '/task-decomposition'
@@ -531,10 +540,16 @@ router.beforeEach((to, from, next) => {
     ? `${to.meta.title} - 体系运控分系统`
     : '体系运控分系统'
 
-  // 简单的权限检查（实际项目中替换为真实的认证逻辑）
-  const isAuthenticated = localStorage.getItem('token') || !to.meta.requiresAuth
+  // 免登录页面直接放行
+  if (to.path === '/login') {
+    next()
+    return
+  }
 
-  if (to.meta.requiresAuth && !isAuthenticated) {
+  // 权限校验：从 localStorage 读取 token（避免 store 未初始化时的时序问题）
+  const token = localStorage.getItem('token')
+
+  if (to.meta.requiresAuth && !token) {
     next('/login')
   } else {
     next()

@@ -1,48 +1,126 @@
 // src/store/index.js
 import Vue from 'vue'
 import Vuex from 'vuex'
+import {getCurrentUser, login, logout} from '@/api/user'
 
-// 1. 必须先通过 Vue.use() 安装插件
 Vue.use(Vuex)
 
-// 2. 创建并导出 Vuex 的实例
-export default new Vuex.Store({
-  // state: 存放公共数据的地方（类似于组件的 data）
+const store = new Vuex.Store({
   state: {
-    userInfo: {
-      name: '阿珍',
-      level: 1
-    },
-    count: 0
+    token: localStorage.getItem('token') || '',
+    userInfo: null,
+    permissions: []
   },
 
-  // getters: 从 state 中派生出的数据（类似于组件的 computed 计算属性）
   getters: {
-    vipDescription(state) {
-      return `${state.userInfo.name} 的当前等级是: Lv.${state.userInfo.level}`
-    }
-  },
-
-  // mutations: 唯一能修改 state 的地方，必须是同步函数
-  mutations: {
-    // 增加计数
-    INCREMENT(state, payload) {
-      state.count += payload
+    isAuthenticated(state) {
+      return !!state.token
     },
-    // 更新用户名
-    UPDATE_NAME(state, newName) {
-      state.userInfo.name = newName
+    currentUser(state) {
+      return state.userInfo
+    },
+    userPermissions(state) {
+      return state.permissions
     }
   },
 
-  // actions: 负责异步操作（如发请求），不能直接修改 state，必须提交 mutation
+  mutations: {
+    SET_TOKEN(state, token) {
+      state.token = token
+      if (token) {
+        localStorage.setItem('token', token)
+      } else {
+        localStorage.removeItem('token')
+      }
+    },
+    SET_USER_INFO(state, userInfo) {
+      state.userInfo = userInfo
+      if (userInfo) {
+        localStorage.setItem('userInfo', JSON.stringify(userInfo))
+      } else {
+        localStorage.removeItem('userInfo')
+      }
+    },
+    SET_PERMISSIONS(state, permissions) {
+      state.permissions = permissions || []
+    }
+  },
+
   actions: {
-    // 模拟异步升级
-    asyncLevelUp({commit}) {
-      setTimeout(() => {
-        // 假设从后端获取了新等级，提交给 mutation 改变状态
-        commit('INCREMENT', 1)
-      }, 1000)
+    /**
+     * 登录
+     */
+    async login({commit}, {userCode, userPassword}) {
+      const res = await login({userCode, userPassword})
+      if (res.code === 0 && res.data) {
+        commit('SET_TOKEN', res.data)
+        // 登录成功后获取用户信息
+        await store.dispatch('fetchCurrentUser')
+        return true
+      }
+      throw new Error(res.message || '登录失败')
+    },
+
+    /**
+     * 获取当前用户信息
+     */
+    async fetchCurrentUser({commit}) {
+      try {
+        const res = await getCurrentUser()
+        if (res.code === 0 && res.data) {
+          const user = res.data
+          commit('SET_USER_INFO', {
+            userId: user.userId,
+            userCode: user.userCode,
+            name: user.userName,
+            role: user.roleNames || '普通用户',
+            mobile: user.userMobile
+          })
+          commit('SET_PERMISSIONS', user.userPrivs || [])
+          return user
+        }
+      } catch (e) {
+        // token 失效，清除登录状态
+        commit('SET_TOKEN', '')
+        commit('SET_USER_INFO', null)
+        commit('SET_PERMISSIONS', [])
+      }
+      return null
+    },
+
+    /**
+     * 退出登录
+     */
+    async logout({commit}) {
+      try {
+        await logout()
+      } catch {
+        // 忽略退出接口异常
+      }
+      commit('SET_TOKEN', '')
+      commit('SET_USER_INFO', null)
+      commit('SET_PERMISSIONS', [])
+      window.location.href = '/login'
+    },
+
+    /**
+     * 从 localStorage 恢复登录状态
+     */
+    restoreSession({commit}) {
+      const token = localStorage.getItem('token')
+      const saved = localStorage.getItem('userInfo')
+      if (token) {
+        commit('SET_TOKEN', token)
+      }
+      if (saved) {
+        try {
+          commit('SET_USER_INFO', JSON.parse(saved))
+        } catch {
+          localStorage.removeItem('userInfo')
+        }
+      }
     }
   }
 })
+
+export default store

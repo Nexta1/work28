@@ -2,7 +2,14 @@
   <div class="permission-page">
     <div class="top-search-header">
       <div class="search-flex">
-        <span class="hub-title">🔐 用户角色与数据权限管控总线</span>
+        <span class="hub-title">
+          <Icon
+            icon="mdi:lock-outline"
+            :size="18"
+            style="vertical-align: middle; color: #f59e0b"
+          />
+          用户角色与数据权限管控总线
+        </span>
         <span class="header-subtitle"
           >用户管理、角色管理分区隔离，详情独立配置</span
         >
@@ -53,7 +60,15 @@
 
     <div class="main-tab-container">
       <el-tabs v-model="activeMainTab" class="dark-tabs fill-tabs">
-        <el-tab-pane name="userSection" label="👤 用户权限管理">
+        <el-tab-pane name="userSection">
+          <span slot="label"
+            ><Icon
+              icon="mdi:account-outline"
+              :size="16"
+              style="vertical-align: middle; color: #38bdf8"
+            />
+            用户权限管理</span
+          >
           <div class="tab-layout-split user-layout-weight">
             <div class="domain-panel" v-loading="loadingUsers">
               <div class="panel-header-summary">
@@ -105,7 +120,12 @@
                       class="card-title ellipsis-text"
                       :title="user.userName"
                     >
-                      🔹 {{ user.userName || user.userCode }}
+                      <Icon
+                        icon="mdi:circle-small"
+                        :size="14"
+                        style="vertical-align: middle; color: #38bdf8"
+                      />
+                      {{ user.userName || user.userCode }}
                     </span>
                     <span
                       class="status-tag"
@@ -180,8 +200,13 @@
               <div v-if="activeUser" class="pane-content-box">
                 <div class="section-toolbar">
                   <div>
-                    <span class="section-title"
-                      >✨ 当前用户：{{
+                    <span class="section-title">
+                      <Icon
+                        icon="mdi:star-outline"
+                        :size="16"
+                        style="vertical-align: middle; color: #f59e0b"
+                      />
+                      当前用户：{{
                         activeUser.userName || activeUser.userCode
                       }}</span
                     >
@@ -216,7 +241,15 @@
           </div>
         </el-tab-pane>
 
-        <el-tab-pane name="roleSection" label="🧩 角色权限管理">
+        <el-tab-pane name="roleSection">
+          <span slot="label"
+            ><Icon
+              icon="mdi:puzzle-outline"
+              :size="16"
+              style="vertical-align: middle; color: #a78bfa"
+            />
+            角色权限管理</span
+          >
           <div class="tab-layout-split default-role-weight">
             <div class="domain-panel" v-loading="loadingRoles">
               <div class="panel-header-summary">
@@ -288,8 +321,13 @@
                 <div class="tree-sub-card">
                   <div class="section-toolbar">
                     <div>
-                      <span class="section-title"
-                        >🛰️ 前端功能权限 [{{ activeRole.roleName }}]</span
+                      <span class="section-title">
+                        <Icon
+                          icon="mdi:satellite-uplink"
+                          :size="16"
+                          style="vertical-align: middle; color: #38bdf8"
+                        />
+                        前端功能权限 [{{ activeRole.roleName }}]</span
                       >
                       <small class="muted font-num"
                         >已赋权数: {{ activeModuleCount }}</small
@@ -319,8 +357,13 @@
                 <div class="tree-sub-card">
                   <div class="section-toolbar">
                     <div>
-                      <span class="section-title"
-                        >📂 数据目录权限 [{{ activeRole.roleName }}]</span
+                      <span class="section-title">
+                        <Icon
+                          icon="mdi:folder-open-outline"
+                          :size="16"
+                          style="vertical-align: middle; color: #f59e0b"
+                        />
+                        数据目录权限 [{{ activeRole.roleName }}]</span
                       >
                       <small class="muted font-num"
                         >已赋权数: {{ activeDataModelCount }}</small

@@ -4,47 +4,91 @@
 
     <div class="login-box">
       <div class="login-header">
-        <div class="logo-large">⚡</div>
-        <h1>KILL CHAIN OS</h1>
-        <p>杀伤链路构建系统</p>
+        <div class="logo-large">
+          <Icon icon="mdi:shield-check" :size="52" color="#00f3ff" />
+        </div>
+        <h1>体系运控分系统</h1>
+        <p>SYSTEM CONTROL PLATFORM</p>
       </div>
+
+      <el-alert
+        v-if="errorMsg"
+        :title="errorMsg"
+        type="error"
+        show-icon
+        :closable="true"
+        @close="errorMsg = ''"
+        style="margin-bottom: 16px"
+      />
 
       <form @submit.prevent="handleLogin">
         <div class="form-group">
-          <label>用户名</label>
+          <label>
+            <Icon
+              icon="mdi:account-outline"
+              :size="14"
+              color="#00f3ff"
+              style="vertical-align: middle; margin-right: 4px"
+            />
+            登录账号
+          </label>
           <input
             type="text"
-            v-model="form.username"
-            placeholder="请输入用户名"
+            v-model="form.userCode"
+            placeholder="请输入登录账号"
             required
+            autocomplete="username"
           />
         </div>
 
         <div class="form-group">
-          <label>密码</label>
+          <label>
+            <Icon
+              icon="mdi:lock-outline"
+              :size="14"
+              color="#00f3ff"
+              style="vertical-align: middle; margin-right: 4px"
+            />
+            登录密码
+          </label>
           <input
             type="password"
-            v-model="form.password"
+            v-model="form.userPassword"
             placeholder="请输入密码"
             required
+            autocomplete="current-password"
           />
         </div>
 
-        <div class="form-options">
-          <label class="remember">
-            <input type="checkbox" v-model="form.remember" />
-            <span>记住我</span>
-          </label>
-          <a href="#" class="forgot">忘记密码?</a>
-        </div>
-
         <button type="submit" class="login-btn" :disabled="loading">
-          {{ loading ? '登录中...' : '进入系统' }}
+          <span v-if="loading">
+            <Icon
+              icon="mdi:loading"
+              :size="16"
+              class="spin-icon"
+              style="vertical-align: middle; margin-right: 6px"
+            />
+          </span>
+          <span v-else>
+            <Icon
+              icon="mdi:login"
+              :size="16"
+              style="vertical-align: middle; margin-right: 6px"
+            />
+          </span>
+          {{ loading ? '验证中...' : '进入系统' }}
         </button>
       </form>
 
       <div class="login-footer">
-        <p>系统版本 v2.6.4 | 军事机密 严禁外泄</p>
+        <p>
+          <Icon
+            icon="mdi:security"
+            :size="12"
+            style="vertical-align: middle; margin-right: 4px"
+          />
+          系统版本 v2.6.4 | 军事机密 严禁外泄
+        </p>
       </div>
     </div>
 
@@ -52,6 +96,10 @@
     <div class="decoration-circle c1"></div>
     <div class="decoration-circle c2"></div>
     <div class="decoration-circle c3"></div>
+
+    <!-- 角落粒子 -->
+    <div class="corner-tl"></div>
+    <div class="corner-br"></div>
   </div>
 </template>
 
@@ -62,33 +110,30 @@ export default {
   data() {
     return {
       form: {
-        username: '',
-        password: '',
-        remember: false
+        userCode: '',
+        userPassword: ''
       },
-      loading: false
+      loading: false,
+      errorMsg: ''
     }
   },
 
   methods: {
-    handleLogin() {
+    async handleLogin() {
       this.loading = true
+      this.errorMsg = ''
 
-      // 模拟登录（实际项目中替换为真实API）
-      setTimeout(() => {
-        localStorage.setItem('token', 'mock-token-' + Date.now())
-        localStorage.setItem(
-          'userInfo',
-          JSON.stringify({
-            name: this.form.username || '指挥员',
-            role: '高级指挥官',
-            id: 'CMD-001'
-          })
-        )
-
+      try {
+        await this.$store.dispatch('login', {
+          userCode: this.form.userCode,
+          userPassword: this.form.userPassword
+        })
         this.$router.push('/')
+      } catch (e) {
+        this.errorMsg = e.message || '登录失败，请检查账号密码'
+      } finally {
         this.loading = false
-      }, 1000)
+      }
     }
   }
 }
@@ -111,151 +156,154 @@ export default {
   left: 0;
   width: 100%;
   height: 100%;
-  background-image: linear-gradient(
-      rgba(0, 243, 255, 0.03) 1px,
-      transparent 1px
-    ),
+  background-image:
+    linear-gradient(rgba(0, 243, 255, 0.03) 1px, transparent 1px),
     linear-gradient(90deg, rgba(0, 243, 255, 0.03) 1px, transparent 1px);
   background-size: 50px 50px;
   pointer-events: none;
 }
 
 .login-box {
-  background: rgba(10, 15, 30, 0.95);
-  border: 1px solid rgba(0, 243, 255, 0.3);
+  background: linear-gradient(
+    135deg,
+    rgba(10, 15, 30, 0.97),
+    rgba(5, 8, 18, 0.97)
+  );
+  border: 1px solid rgba(0, 243, 255, 0.25);
   border-radius: 8px;
-  padding: 40px;
+  padding: 44px 40px 36px;
   width: 400px;
   position: relative;
   z-index: 10;
-  box-shadow: 0 0 40px rgba(0, 243, 255, 0.1);
+  box-shadow:
+    0 0 60px rgba(0, 243, 255, 0.06),
+    inset 0 1px 0 rgba(0, 243, 255, 0.06);
+}
+
+.login-box::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: 20%;
+  right: 20%;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(0, 243, 255, 0.5),
+    transparent
+  );
 }
 
 .login-header {
   text-align: center;
-  margin-bottom: 30px;
+  margin-bottom: 32px;
 }
 
 .logo-large {
-  font-size: 48px;
-  margin-bottom: 10px;
-  animation: pulse 2s infinite;
+  margin-bottom: 14px;
+  display: flex;
+  justify-content: center;
+  animation: float 3s ease-in-out infinite;
 }
 
 .login-header h1 {
-  color: #00f3ff;
-  font-size: 20px;
-  letter-spacing: 3px;
-  margin-bottom: 5px;
+  color: #e2e8f0;
+  font-size: 22px;
+  letter-spacing: 4px;
+  margin-bottom: 6px;
+  font-weight: 600;
 }
 
 .login-header p {
-  color: #666;
-  font-size: 12px;
+  color: #4b5563;
+  font-size: 11px;
+  letter-spacing: 3px;
 }
 
 .form-group {
-  margin-bottom: 20px;
+  margin-bottom: 22px;
 }
 
 .form-group label {
   display: block;
-  color: #888;
+  color: #94a3b8;
   font-size: 12px;
   margin-bottom: 8px;
-  text-transform: uppercase;
   letter-spacing: 1px;
 }
 
 .form-group input {
   width: 100%;
-  background: rgba(0, 0, 0, 0.3);
-  border: 1px solid rgba(0, 243, 255, 0.2);
-  color: #fff;
-  padding: 12px;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(0, 243, 255, 0.15);
+  border-radius: 4px;
+  color: #e2e8f0;
+  padding: 12px 14px;
   font-size: 14px;
   transition: all 0.3s;
+  box-sizing: border-box;
 }
 
 .form-group input:focus {
   outline: none;
-  border-color: #00f3ff;
-  box-shadow: 0 0 10px rgba(0, 243, 255, 0.2);
+  border-color: rgba(0, 243, 255, 0.5);
+  box-shadow: 0 0 12px rgba(0, 243, 255, 0.1);
+  background: rgba(0, 0, 0, 0.5);
 }
 
-.form-options {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 25px;
-  font-size: 12px;
-}
-
-.remember {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  color: #888;
-  cursor: pointer;
-}
-
-.remember input {
-  accent-color: #00f3ff;
-}
-
-.forgot {
-  color: #00f3ff;
-  text-decoration: none;
-}
-
-.forgot:hover {
-  text-decoration: underline;
+.form-group input::placeholder {
+  color: #475569;
 }
 
 .login-btn {
   width: 100%;
   background: linear-gradient(
     90deg,
-    rgba(0, 243, 255, 0.2),
-    rgba(0, 243, 255, 0.1)
+    rgba(0, 243, 255, 0.15),
+    rgba(0, 243, 255, 0.08)
   );
-  border: 1px solid #00f3ff;
+  border: 1px solid rgba(0, 243, 255, 0.35);
+  border-radius: 4px;
   color: #00f3ff;
   padding: 14px;
   font-size: 14px;
   cursor: pointer;
   transition: all 0.3s;
-  text-transform: uppercase;
-  letter-spacing: 2px;
+  letter-spacing: 3px;
+  font-weight: 500;
+  margin-top: 8px;
 }
 
 .login-btn:hover:not(:disabled) {
-  background: rgba(0, 243, 255, 0.3);
-  box-shadow: 0 0 20px rgba(0, 243, 255, 0.3);
+  background: rgba(0, 243, 255, 0.25);
+  box-shadow: 0 0 24px rgba(0, 243, 255, 0.15);
+  border-color: rgba(0, 243, 255, 0.6);
 }
 
 .login-btn:disabled {
-  opacity: 0.6;
+  opacity: 0.5;
   cursor: not-allowed;
 }
 
 .login-footer {
-  margin-top: 30px;
-  padding-top: 20px;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  margin-top: 28px;
+  padding-top: 18px;
+  border-top: 1px solid rgba(255, 255, 255, 0.04);
   text-align: center;
 }
 
 .login-footer p {
-  color: #444;
+  color: #334155;
   font-size: 11px;
+  letter-spacing: 0.5px;
 }
 
 /* 装饰圆圈 */
 .decoration-circle {
   position: absolute;
   border-radius: 50%;
-  border: 1px solid rgba(0, 243, 255, 0.1);
+  border: 1px solid rgba(0, 243, 255, 0.08);
   pointer-events: none;
 }
 
@@ -281,8 +329,36 @@ export default {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  border-color: rgba(255, 0, 60, 0.1);
+  border-color: rgba(56, 189, 248, 0.06);
   animation: pulse 4s ease-in-out infinite;
+}
+
+.corner-tl {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(
+    circle at 0 0,
+    rgba(0, 243, 255, 0.04),
+    transparent 70%
+  );
+  pointer-events: none;
+}
+
+.corner-br {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(
+    circle at 100% 100%,
+    rgba(56, 189, 248, 0.04),
+    transparent 70%
+  );
+  pointer-events: none;
 }
 
 @keyframes rotate {
@@ -303,6 +379,29 @@ export default {
   50% {
     opacity: 0.6;
     transform: scale(1.05);
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+.spin-icon {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
   }
 }
 </style>

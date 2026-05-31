@@ -104,17 +104,13 @@
           </div>
 
           <div v-loading="loadingSubject" class="card-container">
-            <el-row :gutter="14">
-              <el-col
-                :xs="24"
-                :sm="12"
-                :md="8"
-                :lg="6"
-                v-for="item in subjectList"
-                :key="item.subjectId"
-                style="margin-bottom: 14px"
-              >
-                <el-card shadow="hover" :body-style="{padding: '14px'}">
+            <div class="card-grid">
+              <div v-for="item in subjectList" :key="item.subjectId">
+                <el-card
+                  shadow="hover"
+                  :body-style="{padding: '14px'}"
+                  class="subject-card"
+                >
                   <div class="card-title-row">
                     <span class="card-title-text">{{ item.keyword }}</span>
                     <el-tag size="mini" type="info">{{
@@ -122,27 +118,87 @@
                     }}</el-tag>
                   </div>
                   <div class="card-body-content">
-                    <div>
-                      <span class="label-txt">标签模型:</span>
-                      {{ item.labelModelNames || '--' }}
+                    <div class="info-row">
+                      <span class="info-label">模型关联</span>
+                      <div class="model-pair-group">
+                        <template v-if="getModelAttrList(item).length > 0">
+                          <div
+                            v-for="(pair, idx) in getModelAttrList(item)"
+                            :key="idx"
+                            class="model-pair-item"
+                          >
+                            <span class="pair-model">
+                              {{ pair.modelName }}
+                              <span class="pair-roleid" v-if="pair.modelId">
+                                ({{ pair.modelId }})
+                              </span>
+                            </span>
+                            <span class="pair-attr">
+                              <i class="el-icon-right"></i>
+                              {{ pair.attrName || '--' }}
+                            </span>
+                          </div>
+                        </template>
+                        <span v-else class="text-dim">--</span>
+                      </div>
                     </div>
-                    <div>
-                      <span class="label-txt">输出属性:</span>
-                      {{ item.selectAttrNames || '--' }}
-                    </div>
-                    <div>
-                      <span class="label-txt">输出类型:</span>
-                      <span class="text-orange">{{
-                        formatOutputType(item.outputType)
-                      }}</span>
-                    </div>
-                    <div>
-                      <span class="label-txt">更新频率:</span>
-                      {{ item.updateRate }}
+                    <div class="info-row">
+                      <div class="meta-group">
+                        <div class="meta-item">
+                          <span class="meta-badge type-badge">{{
+                            formatOutputType(item.outputType)
+                          }}</span>
+                          <span class="meta-label">输出类型</span>
+                        </div>
+                        <div class="meta-divider"></div>
+                        <div class="meta-item">
+                          <span class="meta-badge rate-badge">{{
+                            formatUpdateRate(item)
+                          }}</span>
+                          <span class="meta-label">更新频率</span>
+                        </div>
+                        <div class="meta-divider"></div>
+                        <div class="meta-item">
+                          <el-tag
+                            :type="item.subjectState === 1 ? 'success' : 'info'"
+                            size="mini"
+                            class="state-badge"
+                            effect="dark"
+                          >
+                            <i
+                              :class="
+                                item.subjectState === 1
+                                  ? 'el-icon-success'
+                                  : 'el-icon-warning'
+                              "
+                            ></i>
+                            {{ item.subjectState === 1 ? '已启用' : '未启用' }}
+                          </el-tag>
+                          <!-- <span class="meta-label">状态</span> -->
+                        </div>
+                      </div>
                     </div>
                   </div>
                   <div class="card-footer-row">
-                    <div>
+                    <div
+                      v-if="
+                        item.subjectState === 1 ||
+                        item.loginUserSubscribeState === 2
+                      "
+                      class="card-footer-right"
+                    >
+                      <el-button
+                        size="mini"
+                        type="primary"
+                        plain
+                        icon="el-icon-download"
+                        @click="outputSubject(item)"
+                        >输出</el-button
+                      >
+                    </div>
+                  </div>
+                  <div class="card-subscribe-row">
+                    <div class="card-footer-left" v-if="isOwner(item)">
                       <el-button
                         size="mini"
                         type="text"
@@ -159,31 +215,29 @@
                         >删除</el-button
                       >
                     </div>
-                    <div>
-                      <span
-                        v-if="item.loginUserSubscribeState === 1"
-                        class="status-txt text-orange"
-                        >审核中</span
-                      >
-                      <span
-                        v-else-if="item.loginUserSubscribeState === 2"
-                        class="status-txt text-green"
-                        >已订阅</span
-                      >
-                      <el-button
-                        v-else
-                        size="mini"
-                        type="success"
-                        plain
-                        icon="el-icon-star-off"
-                        @click="openQuickSubscribe(item)"
-                        >订阅</el-button
-                      >
-                    </div>
+                    <span
+                      v-if="item.loginUserSubscribeState === 1"
+                      class="status-txt text-orange"
+                      >审核中</span
+                    >
+                    <span
+                      v-else-if="item.loginUserSubscribeState === 2"
+                      class="status-txt text-green"
+                      >已订阅</span
+                    >
+                    <el-button
+                      v-else
+                      size="mini"
+                      type="success"
+                      plain
+                      icon="el-icon-star-off"
+                      @click="openQuickSubscribe(item)"
+                      >订阅</el-button
+                    >
                   </div>
                 </el-card>
-              </el-col>
-            </el-row>
+              </div>
+            </div>
           </div>
 
           <el-pagination
@@ -229,47 +283,112 @@
           </div>
 
           <div v-loading="loadingSubject" class="card-container">
-            <el-row :gutter="14">
-              <el-col
-                :xs="24"
-                :sm="12"
-                :md="8"
-                :lg="6"
-                v-for="item in subjectOwnList"
-                :key="item.subjectId"
-                style="margin-bottom: 14px"
-              >
+            <div class="card-grid">
+              <div v-for="item in subjectOwnList" :key="item.subjectId">
                 <el-card
                   shadow="hover"
                   :body-style="{padding: '14px'}"
-                  class="own-card"
+                  class="subject-card own-card"
                 >
                   <div class="card-title-row">
                     <span class="card-title-text">{{ item.keyword }}</span>
                     <el-tag size="mini" type="success">我的</el-tag>
                   </div>
                   <div class="card-body-content">
-                    <div>
-                      <span class="label-txt">标签模型:</span>
-                      {{ item.labelModelNames || '--' }}
+                    <div class="info-row">
+                      <span class="info-label">模型关联</span>
+                      <div class="model-pair-group">
+                        <template v-if="getModelAttrList(item).length > 0">
+                          <div
+                            v-for="(pair, idx) in getModelAttrList(item)"
+                            :key="idx"
+                            class="model-pair-item"
+                          >
+                            <span class="pair-model">
+                              {{ pair.modelName }}
+                              <span class="pair-roleid" v-if="pair.modelId">
+                                ({{ pair.modelId }})
+                              </span>
+                            </span>
+                            <span class="pair-attr">
+                              <i class="el-icon-right"></i>
+                              {{ pair.attrName || '--' }}
+                            </span>
+                          </div>
+                        </template>
+                        <span v-else class="text-dim">--</span>
+                      </div>
                     </div>
-                    <div>
-                      <span class="label-txt">输出属性:</span>
-                      {{ item.selectAttrNames || '--' }}
-                    </div>
-                    <div>
-                      <span class="label-txt">输出类型:</span>
-                      <span class="text-orange">{{
-                        formatOutputType(item.outputType)
-                      }}</span>
-                    </div>
-                    <div>
-                      <span class="label-txt">更新频率:</span>
-                      {{ item.updateRate }}
+                    <div class="info-row">
+                      <div class="meta-group">
+                        <div class="meta-item">
+                          <span class="meta-badge type-badge">{{
+                            formatOutputType(item.outputType)
+                          }}</span>
+                          <span class="meta-label">输出类型</span>
+                        </div>
+                        <div class="meta-divider"></div>
+                        <div class="meta-item">
+                          <span class="meta-badge rate-badge">{{
+                            formatUpdateRate(item)
+                          }}</span>
+                          <span class="meta-label">更新频率</span>
+                        </div>
+                        <div class="meta-divider"></div>
+                        <div class="meta-item">
+                          <el-tag
+                            :type="item.subjectState === 1 ? 'success' : 'info'"
+                            size="mini"
+                            class="state-badge"
+                            effect="dark"
+                          >
+                            <i
+                              :class="
+                                item.subjectState === 1
+                                  ? 'el-icon-success'
+                                  : 'el-icon-warning'
+                              "
+                            ></i>
+                            {{ item.subjectState === 1 ? '已启用' : '未启用' }}
+                          </el-tag>
+                          <!-- <span class="meta-label">状态</span> -->
+                        </div>
+                      </div>
                     </div>
                   </div>
                   <div class="card-footer-row">
-                    <div>
+                    <div class="card-footer-right">
+                      <el-button
+                        v-if="item.subjectState === 1 && isOwner(item)"
+                        size="mini"
+                        type="warning"
+                        plain
+                        icon="el-icon-video-pause"
+                        @click="disableSubject(item)"
+                        >停用</el-button
+                      >
+                      <el-button
+                        v-else-if="item.subjectState !== 1 && isOwner(item)"
+                        size="mini"
+                        type="success"
+                        plain
+                        icon="el-icon-video-play"
+                        @click="enableSubject(item)"
+                        >启用</el-button
+                      >
+                      <el-button
+                        v-if="item.subjectState === 1"
+                        size="mini"
+                        type="primary"
+                        plain
+                        icon="el-icon-download"
+                        @click="outputSubject(item)"
+                        >输出</el-button
+                      >
+                    </div>
+                  </div>
+                  <div class="card-subscribe-row">
+                    <div class="card-footer-left" v-if="isOwner(item)">
                       <el-button
                         size="mini"
                         type="text"
@@ -286,10 +405,29 @@
                         >删除</el-button
                       >
                     </div>
+                    <span
+                      v-if="item.loginUserSubscribeState === 1"
+                      class="status-txt text-orange"
+                      >审核中</span
+                    >
+                    <span
+                      v-else-if="item.loginUserSubscribeState === 2"
+                      class="status-txt text-green"
+                      >已订阅</span
+                    >
+                    <el-button
+                      v-else
+                      size="mini"
+                      type="success"
+                      plain
+                      icon="el-icon-star-off"
+                      @click="openQuickSubscribe(item)"
+                      >订阅</el-button
+                    >
                   </div>
                 </el-card>
-              </el-col>
-            </el-row>
+              </div>
+            </div>
           </div>
 
           <el-pagination
@@ -588,24 +726,24 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="8">
-            <el-form-item label="频率类型">
-              <el-input-number
-                v-model="subjectForm.updateRateType"
-                :min="0"
-                controls-position="right"
-                class="full-width"
-              />
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="更新率">
-              <el-input-number
-                v-model="subjectForm.updateRate"
-                :min="0"
-                controls-position="right"
-                class="full-width"
-              />
+          <el-col :span="16">
+            <el-form-item label="更新频率">
+              <div class="rate-combined">
+                <el-input-number
+                  v-model="subjectForm.updateRate"
+                  :min="0"
+                  controls-position="right"
+                  class="rate-input"
+                />
+                <el-select
+                  v-model="subjectForm.updateRateType"
+                  class="rate-type-select"
+                >
+                  <el-option label="月" :value="0" />
+                  <el-option label="时" :value="1" />
+                  <el-option label="分" :value="2" />
+                </el-select>
+              </div>
             </el-form-item>
           </el-col>
         </el-row>
@@ -758,6 +896,13 @@ export default {
       }
     }
   },
+  computed: {
+    // 获取当前登录用户信息
+    currentUser() {
+      return this.$store.getters.currentUser
+    }
+  },
+
   mounted() {
     this.fetchClassTree()
     this.fetchLabelClassTree() // 加载标签左侧级联树
@@ -766,6 +911,16 @@ export default {
     this.fetchSubscribes()
   },
   methods: {
+    /**
+     * 判断当前登录用户是否为数据创建者（只有创建者才能编辑/删除/启停）
+     */
+    isOwner(item) {
+      if (!this.currentUser || !item) return false
+      // 支持多种可能的字段名以适应不同后端设计
+      const ownerId = item.opUserId || item.createBy || item.userId
+      console.log(item, this.currentUser)
+      return ownerId && Number(ownerId) === Number(this.currentUser.userId)
+    },
     getEmptyClassForm() {
       return {
         subjectClassId: null,
@@ -1090,6 +1245,39 @@ export default {
         })
       })
     },
+    enableSubject(row) {
+      this.$confirm(`确定启用主题 [${row.keyword}] 吗？`, '提示', {
+        type: 'info'
+      }).then(() => {
+        request({
+          url: `/rest/subjectInfo/enable/${row.subjectId}`,
+          method: 'post'
+        }).then(() => {
+          this.$message.success('主题已启用')
+          this.fetchSubjects(0)
+          this.fetchSubjects(2)
+        })
+      })
+    },
+    disableSubject(row) {
+      this.$confirm(`确定停用主题 [${row.keyword}] 吗？`, '提示', {
+        type: 'warning'
+      }).then(() => {
+        request({
+          url: `/rest/subjectInfo/disable/${row.subjectId}`,
+          method: 'post'
+        }).then(() => {
+          this.$message.success('主题已停用')
+          this.fetchSubjects(0)
+          this.fetchSubjects(2)
+        })
+      })
+    },
+    outputSubject(row) {
+      const baseUrl = process.env.VUE_APP_BASE_API || location.origin
+      const outputUrl = `${baseUrl}/rest/subjectInfo/output/${row.subjectId}`
+      window.open(outputUrl, '_blank')
+    },
     auditSubscribe(row, accept) {
       const url = accept
         ? `/rest/subscribeInfo/accept/${row.subscribeId}`
@@ -1099,6 +1287,62 @@ export default {
         this.fetchSubscribes()
         this.fetchSubjects(0)
       })
+    },
+    /**
+     * 格式化更新频率：将 updateRate 和 updateRateType 合并展示
+     * updateRateType: 0=月, 1=时, 2=分
+     */
+    formatUpdateRate(item) {
+      if (!item && item.updateRate === null && item.updateRate === undefined)
+        return '--'
+      const typeMap = {0: '月', 1: '时', 2: '分'}
+      const typeLabel = typeMap[item.updateRateType] || ''
+      return item.updateRate + typeLabel
+    },
+    /**
+     * 将逗号分隔的字符串拆分为数组，用于 v-for 渲染标签
+     */
+    splitNames(str) {
+      if (!str) return []
+      return String(str)
+        .split(',')
+        .map(s => s.trim())
+        .filter(Boolean)
+    },
+    /**
+     * 将标签模型与输出属性合并为一一对应的配对列表
+     * 每条记录包含：modelId(roleId), modelName, attrName
+     */
+    getModelAttrList(item) {
+      if (!item) return []
+      const ids = item.labelModelIds
+        ? String(item.labelModelIds)
+            .split(',')
+            .map(s => s.trim())
+            .filter(Boolean)
+        : []
+      const names = item.labelModelNames
+        ? String(item.labelModelNames)
+            .split(',')
+            .map(s => s.trim())
+            .filter(Boolean)
+        : []
+      const attrs = item.selectAttrNames
+        ? String(item.selectAttrNames)
+            .split(',')
+            .map(s => s.trim())
+            .filter(Boolean)
+        : []
+      const maxLen = Math.max(ids.length, names.length, attrs.length)
+      const result = []
+      for (let i = 0; i < maxLen; i++) {
+        result.push({
+          modelId: ids[i] || '',
+          modelName: names[i] || '',
+          attrName: attrs[i] || ''
+        })
+      }
+      return result
     },
     formatOutputType(val) {
       return Number(val) === 1 ? 'XML' : 'JSON'
@@ -1232,42 +1476,227 @@ export default {
   overflow-x: hidden;
   padding: 2px 4px;
 }
+
+/* 🛠️ 修复卡片高度不一致：使用 CSS Grid 布局替代 el-row/el-col */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 14px;
+}
+.card-grid > div {
+  display: flex;
+}
+.subject-card {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.subject-card .el-card__body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
 .card-title-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid #1f2d3d;
+  border-bottom: 1px solid rgba(56, 189, 248, 0.08);
   padding-bottom: 8px;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 .card-title-text {
-  font-weight: bold;
+  font-weight: 600;
   font-size: 13px;
-  color: #f1f5f9;
+  color: #e2e8f0;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  letter-spacing: 0.3px;
 }
 .card-body-content {
+  flex: 1;
   display: flex;
   flex-direction: column;
   gap: 6px;
   font-size: 12px;
   color: #94a3b8;
-  margin-bottom: 12px;
 }
-.card-body-content div {
+
+/* 信息行 — 优化为紧凑且视觉清晰的布局 */
+.info-row {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 4px 6px;
+  border-radius: 3px;
+  transition: background 0.2s;
+}
+.info-row:hover {
+  background: rgba(56, 189, 248, 0.04);
+}
+.info-label {
+  font-size: 11px;
+  color: #64748b;
+  font-weight: 600;
+  letter-spacing: 0.5px;
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  min-width: 52px;
+  padding-top: 2px;
+  flex-shrink: 0;
+  position: relative;
 }
-.label-txt {
+.info-label::after {
+  content: '';
+  position: absolute;
+  right: -4px;
+  top: 4px;
+  bottom: 4px;
+  width: 1px;
+  background: #1e2a3a;
+}
+.info-value {
+  color: #cbd5e1;
+  font-size: 12px;
+  display: inline;
+  line-height: 1.6;
+  word-break: break-word;
+  cursor: default;
+  padding-left: 4px;
+}
+
+/* 模型与属性合并配对展示组 */
+.model-pair-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  min-width: 0;
+}
+.model-pair-item {
+  display: flex;
+  /* flex-direction: column; */
+  gap: 1px;
+  background: rgba(56, 189, 248, 0.04);
+  border: 1px solid rgba(56, 189, 248, 0.08);
+  border-radius: 3px;
+  padding: 4px 8px;
+  transition: all 0.2s;
+}
+.model-pair-item:hover {
+  background: rgba(56, 189, 248, 0.08);
+  border-color: rgba(56, 189, 248, 0.18);
+}
+.pair-model {
+  font-size: 12px;
+  font-weight: 600;
+  color: #e2e8f0;
+  line-height: 1.5;
+}
+.pair-roleid {
+  font-size: 10px;
+  font-weight: 400;
+  color: #64748b;
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  margin-left: 2px;
+}
+.pair-attr {
+  font-size: 11px;
+  color: #94a3b8;
+  line-height: 1.5;
+  padding-left: 4px;
+}
+.pair-attr .el-icon-right {
+  font-size: 10px;
   color: #4b5563;
-  margin-right: 4px;
+  margin-right: 2px;
+}
+.text-dim {
+  color: #475569;
+  font-style: italic;
+  font-size: 12px;
+}
+
+/* 底部三列元信息组 — 增强视觉层次 */
+.meta-group {
+  display: flex;
+  align-items: center;
+  /* background: linear-gradient(135deg, #0a111f 0%, #0d1728 100%); */
+  border: 1px solid #16243a;
+  border-radius: 4px;
+  padding: 5px 6px;
+  margin-top: 2px;
+  width: 100%;
+}
+.meta-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  min-width: 0;
+  padding: 2px 0;
+}
+.meta-badge {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.04);
+}
+.type-badge {
+  color: #f59e0b;
+}
+
+.rate-badge {
+  color: #38bdf8;
+  font-family: 'SF Mono', 'Fira Code', monospace;
+}
+.state-badge {
+  font-size: 11px !important;
+  border: none !important;
+}
+.state-badge i {
+  margin-right: 2px;
+}
+.meta-label {
+  font-size: 10px;
+  color: #4b5563;
+  white-space: nowrap;
+  letter-spacing: 0.3px;
+}
+.meta-divider {
+  width: 1px;
+  height: 26px;
+  background: linear-gradient(to bottom, transparent, #1e2a3a, transparent);
+  flex-shrink: 0;
+  margin: 0 4px;
 }
 .card-footer-row {
-  border-top: 1px solid #1f2d3d;
+  border-top: 1px solid rgba(56, 189, 248, 0.06);
   padding-top: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+.card-footer-left {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.card-footer-right {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: auto;
+}
+.card-subscribe-row {
+  border-top: 1px solid rgba(56, 189, 248, 0.06);
+  padding-top: 6px;
+  margin-top: 6px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -1311,6 +1740,25 @@ export default {
 }
 .full-width {
   width: 100%;
+}
+
+/* 更新频率组合控件 */
+.rate-combined {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.rate-input {
+  flex: none;
+  width: 110px;
+}
+.rate-input .el-input-number__decrease,
+.rate-input .el-input-number__increase {
+  background: transparent;
+}
+.rate-type-select {
+  width: 90px;
+  flex-shrink: 0;
 }
 .text-blue {
   color: #38bdf8;

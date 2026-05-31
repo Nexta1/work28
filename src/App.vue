@@ -1,154 +1,158 @@
 <template>
   <div id="app">
-    <template v-if="isLoginPage">
-      <router-view />
-    </template>
-
-    <template v-else>
-      <div class="app-layout">
-        <header class="system-header">
-          <div class="header-left">
-            <button
-              v-if="!navVisible"
-              class="top-nav-btn left-expand-btn"
-              @click="toggleNav"
-            >
-              <Icon icon="lucide:menu" :size="16" />
-            </button>
-
-            <div class="header-page-title">
-              {{ currentMenuTitle }}
-            </div>
-          </div>
-
-          <div class="system-info">
-            <span class="time">
-              {{ currentTime }}
-            </span>
-
-            <span class="user" v-if="userInfo">
-              {{ userInfo.name }} | {{ userInfo.role }}
-            </span>
-
-            <button class="logout-btn" @click="logout">退出</button>
-          </div>
-        </header>
-
-        <div class="main-layout">
-          <aside class="left-menu" :class="{hidden: !navVisible}">
-            <div class="menu-header">
-              <div class="menu-title">体系运营管理</div>
-
-              <button class="collapse-btn" @click="toggleNav">
-                <Icon icon="lucide:chevron-left" :size="16" />
-              </button>
-            </div>
-
-            <div class="menu-content">
-              <div
-                v-for="subsystem in subsystems"
-                :key="subsystem"
-                class="subsystem-block"
+    <!-- 路由就绪后再渲染，防止刷新时登录页闪现菜单 -->
+    <template v-if="routeReady">
+      <!-- 菜单布局：仅在非登录页显示 -->
+      <template v-if="!isLoginPage">
+        <div class="app-layout">
+          <header class="system-header">
+            <div class="header-left">
+              <button
+                v-if="!navVisible"
+                class="top-nav-btn left-expand-btn"
+                @click="toggleNav"
               >
-                <div
-                  class="subsystem-title"
-                  @click="toggleSubsystem(subsystem)"
-                >
-                  <span class="subsystem-text">{{ subsystem }}</span>
-                  <Icon
-                    icon="lucide:chevron-down"
-                    :size="14"
-                    class="subsystem-arrow"
-                    :class="{collapsed: isSubsystemCollapsed(subsystem)}"
-                  />
-                </div>
+                <Icon icon="lucide:menu" :size="16" />
+              </button>
 
-                <transition name="menu-expand">
-                  <div
-                    class="modules-container"
-                    v-show="!isSubsystemCollapsed(subsystem)"
-                  >
-                    <div
-                      v-for="category in getCategoriesBySubsystem(subsystem)"
-                      :key="category"
-                      class="module-group"
-                    >
-                      <template
-                        v-if="getModuleRoutes(subsystem, category).length > 0"
-                      >
-                        <div
-                          v-for="moduleRoute in getModuleRoutes(
-                            subsystem,
-                            category
-                          )"
-                          :key="moduleRoute.path"
-                          class="module-item"
-                          :class="{
-                            active:
-                              getSubRoutes(category).length === 0 &&
-                              $route.path === moduleRoute.path
-                          }"
-                          @click="handleModuleClick(moduleRoute, category)"
-                        >
-                          <Icon
-                            :icon="moduleRoute.meta.icon || 'lucide:box'"
-                            :size="18"
-                            class="nav-icon"
-                          />
-
-                          <span class="nav-text">
-                            {{ moduleRoute.meta.title }}
-                          </span>
-
-                          <Icon
-                            v-if="getSubRoutes(category).length > 0"
-                            icon="lucide:chevron-right"
-                            :size="14"
-                            class="module-arrow"
-                            :class="{expanded: isCategoryExpanded(category)}"
-                          />
-                        </div>
-
-                        <transition name="menu-expand">
-                          <div
-                            v-if="
-                              isCategoryExpanded(category) &&
-                              getSubRoutes(category).length > 0
-                            "
-                            class="sub-items-container"
-                          >
-                            <router-link
-                              v-for="subRoute in getSubRoutes(category)"
-                              :key="subRoute.path"
-                              :to="subRoute.path"
-                              class="nav-item"
-                              :class="{active: $route.path === subRoute.path}"
-                            >
-                              <Icon
-                                :icon="subRoute.meta.icon || 'lucide:file-text'"
-                                :size="16"
-                                class="nav-icon"
-                              />
-
-                              <span class="nav-text">
-                                {{ subRoute.meta.title }}
-                              </span>
-                            </router-link>
-                          </div>
-                        </transition>
-                      </template>
-                    </div>
-                  </div>
-                </transition>
+              <div class="header-page-title">
+                {{ currentMenuTitle }}
               </div>
             </div>
-          </aside>
 
-          <main class="content-area">
-            <router-view />
-          </main>
+            <div class="system-info">
+              <span class="time">
+                {{ currentTime }}
+              </span>
+
+              <span class="user" v-if="userInfo">
+                {{ userInfo.name }} | {{ userInfo.role }}
+              </span>
+
+              <button class="logout-btn" @click="logout">退出</button>
+            </div>
+          </header>
+
+          <div class="main-layout">
+            <aside class="left-menu" :class="{hidden: !navVisible}">
+              <div class="menu-header">
+                <div class="menu-title">体系运营管理</div>
+
+                <button class="collapse-btn" @click="toggleNav">
+                  <Icon icon="lucide:chevron-left" :size="16" />
+                </button>
+              </div>
+
+              <div class="menu-content">
+                <div
+                  v-for="subsystem in subsystems"
+                  :key="subsystem"
+                  class="subsystem-block"
+                >
+                  <div
+                    class="subsystem-title"
+                    @click="toggleSubsystem(subsystem)"
+                  >
+                    <span class="subsystem-text">{{ subsystem }}</span>
+                    <Icon
+                      icon="lucide:chevron-down"
+                      :size="14"
+                      class="subsystem-arrow"
+                      :class="{collapsed: isSubsystemCollapsed(subsystem)}"
+                    />
+                  </div>
+
+                  <transition name="menu-expand">
+                    <div
+                      class="modules-container"
+                      v-show="!isSubsystemCollapsed(subsystem)"
+                    >
+                      <div
+                        v-for="category in getCategoriesBySubsystem(subsystem)"
+                        :key="category"
+                        class="module-group"
+                      >
+                        <template
+                          v-if="getModuleRoutes(subsystem, category).length > 0"
+                        >
+                          <div
+                            v-for="moduleRoute in getModuleRoutes(
+                              subsystem,
+                              category
+                            )"
+                            :key="moduleRoute.path"
+                            class="module-item"
+                            :class="{
+                              active:
+                                getSubRoutes(category).length === 0 &&
+                                $route.path === moduleRoute.path
+                            }"
+                            @click="handleModuleClick(moduleRoute, category)"
+                          >
+                            <Icon
+                              :icon="moduleRoute.meta.icon || 'lucide:box'"
+                              :size="18"
+                              class="nav-icon"
+                            />
+
+                            <span class="nav-text">
+                              {{ moduleRoute.meta.title }}
+                            </span>
+
+                            <Icon
+                              v-if="getSubRoutes(category).length > 0"
+                              icon="lucide:chevron-right"
+                              :size="14"
+                              class="module-arrow"
+                              :class="{expanded: isCategoryExpanded(category)}"
+                            />
+                          </div>
+
+                          <transition name="menu-expand">
+                            <div
+                              v-if="
+                                isCategoryExpanded(category) &&
+                                getSubRoutes(category).length > 0
+                              "
+                              class="sub-items-container"
+                            >
+                              <router-link
+                                v-for="subRoute in getSubRoutes(category)"
+                                :key="subRoute.path"
+                                :to="subRoute.path"
+                                class="nav-item"
+                                :class="{active: $route.path === subRoute.path}"
+                              >
+                                <Icon
+                                  :icon="
+                                    subRoute.meta.icon || 'lucide:file-text'
+                                  "
+                                  :size="16"
+                                  class="nav-icon"
+                                />
+
+                                <span class="nav-text">
+                                  {{ subRoute.meta.title }}
+                                </span>
+                              </router-link>
+                            </div>
+                          </transition>
+                        </template>
+                      </div>
+                    </div>
+                  </transition>
+                </div>
+              </div>
+            </aside>
+
+            <main class="content-area">
+              <router-view v-if="!isLoginPage" />
+            </main>
+          </div>
         </div>
-      </div>
+      </template>
+      <!-- 登录页：全屏居中，无菜单布局 -->
+      <router-view v-if="isLoginPage" />
     </template>
   </div>
 </template>
@@ -159,8 +163,8 @@ export default {
 
   data() {
     return {
+      routeReady: false,
       currentTime: '',
-      userInfo: null,
       timer: null,
       navVisible: true,
       collapsedCategories: {},
@@ -170,7 +174,10 @@ export default {
 
   computed: {
     isLoginPage() {
-      return this.$route.path === '/login'
+      return this.$route && this.$route.path === '/login'
+    },
+    userInfo() {
+      return this.$store.getters.currentUser
     },
 
     subsystems() {
@@ -183,11 +190,15 @@ export default {
   },
 
   mounted() {
+    // 等待路由就绪后再渲染，防止刷新时登录页闪现菜单背景
+    this.$router.onReady(() => {
+      this.routeReady = true
+    })
     this.updateTime()
     this.timer = setInterval(() => {
       this.updateTime()
     }, 1000)
-    this.loadUserInfo()
+    this.$store.dispatch('restoreSession')
   },
 
   beforeDestroy() {
@@ -280,17 +291,8 @@ export default {
       })
     },
 
-    loadUserInfo() {
-      const saved = localStorage.getItem('userInfo')
-      if (saved) {
-        this.userInfo = JSON.parse(saved)
-      }
-    },
-
     logout() {
-      localStorage.removeItem('token')
-      localStorage.removeItem('userInfo')
-      this.$router.push('/login')
+      this.$store.dispatch('logout')
     }
   }
 }

@@ -2,7 +2,14 @@
   <div class="governance-page">
     <div class="top-search-header">
       <div class="search-flex">
-        <span class="hub-title">📋 数据治理模型维护总线</span>
+        <span class="hub-title">
+          <Icon
+            icon="mdi:clipboard-text-outline"
+            :size="18"
+            style="vertical-align: middle; color: #38bdf8"
+          />
+          数据治理模型维护总线
+        </span>
         <span class="header-subtitle">数据分类模型与数据标注模型分区维护</span>
       </div>
       <el-button
@@ -62,7 +69,14 @@
           <div class="tab-layout">
             <div class="side-panel" v-loading="loadingDataModel">
               <div class="panel-header-summary">
-                <span class="title">🗂️ 数据分类导航树</span>
+                <span class="title">
+                  <Icon
+                    icon="mdi:folder-outline"
+                    :size="18"
+                    style="vertical-align: middle; color: #f59e0b"
+                  />
+                  数据分类导航树
+                </span>
                 <el-button
                   type="primary"
                   size="mini"
@@ -178,8 +192,13 @@
                 </div>
 
                 <div class="visual-tables-block fixed-height-block">
-                  <span class="block-subtitle"
-                    >🔗 映射绑定物理实体表名称 (点击表名可下钻预览数据)</span
+                  <span class="block-subtitle">
+                    <Icon
+                      icon="mdi:link-variant"
+                      :size="16"
+                      style="vertical-align: middle; color: #38bdf8"
+                    />
+                    映射绑定物理实体表名称 (点击表名可下钻预览数据)</span
                   >
                   <div
                     v-if="activeDataModel.tableNames"
@@ -215,7 +234,14 @@
           <div class="tab-layout">
             <div class="side-panel" v-loading="loadingLabelClass">
               <div class="panel-header-summary">
-                <span class="title">🏷️ 标注分类导航树</span>
+                <span class="title">
+                  <Icon
+                    icon="mdi:tag-outline"
+                    :size="18"
+                    style="vertical-align: middle; color: #10b981"
+                  />
+                  标注分类导航树
+                </span>
                 <el-button
                   type="primary"
                   size="mini"
@@ -329,7 +355,12 @@
                 <div class="visual-hero-card label-class-theme static-top-card">
                   <div class="hero-top-flex">
                     <h3 class="hero-title">
-                      🏷️ {{ activeLabelClass.className }}
+                      <Icon
+                        icon="mdi:tag-outline"
+                        :size="20"
+                        style="vertical-align: middle; color: #10b981"
+                      />
+                      {{ activeLabelClass.className }}
                     </h3>
                     <div class="tag-group">
                       <el-tag size="mini" type="info">{{
@@ -345,9 +376,13 @@
                   </p>
                 </div>
 
-                <span class="block-subtitle"
-                  >📌 包含的具体标签模型看板
-                  (点击卡片穿透检索透视底层数据)</span
+                <span class="block-subtitle">
+                  <Icon
+                    icon="mdi:pin"
+                    :size="16"
+                    style="vertical-align: middle; color: #f43f5e"
+                  />
+                  包含的具体标签模型看板 (点击卡片穿透检索透视底层数据)</span
                 >
 
                 <div
@@ -380,9 +415,20 @@
                       {{ model.labelMemo || '未补充额外注释说明。' }}
                     </p>
                     <div class="card-footer-flex">
-                      <span>👤 {{ model.opUserName || '系统' }}</span>
                       <span
-                        >⏱️
+                        ><Icon
+                          icon="mdi:account-outline"
+                          :size="14"
+                          style="vertical-align: middle; color: #38bdf8"
+                        />
+                        {{ model.opUserName || '系统' }}</span
+                      >
+                      <span>
+                        <Icon
+                          icon="mdi:clock-outline"
+                          :size="14"
+                          style="vertical-align: middle; color: #94a3b8"
+                        />
                         {{
                           model.opTime ? model.opTime.split(' ')[0] : '--'
                         }}</span
@@ -498,7 +544,15 @@
 
       <div v-else class="drilldown-body label-workbench-dialog">
         <el-tabs v-model="labelSubTab" class="dark-tabs">
-          <el-tab-pane label="📋 已标注历史明细" name="hasLabeled">
+          <el-tab-pane name="hasLabeled">
+            <span slot="label"
+              ><Icon
+                icon="mdi:clipboard-text-outline"
+                :size="16"
+                style="vertical-align: middle; color: #38bdf8"
+              />
+              已标注历史明细</span
+            >
             <div class="drilldown-filter-bar">
               <el-form :inline="true" size="mini" class="dark-form-inline">
                 <el-form-item label="过滤字段">
@@ -564,7 +618,15 @@
             />
           </el-tab-pane>
 
-          <el-tab-pane label="✍️ 增量手工标注" name="manualLabel">
+          <el-tab-pane name="manualLabel">
+            <span slot="label"
+              ><Icon
+                icon="mdi:pencil-plus"
+                :size="16"
+                style="vertical-align: middle; color: #10b981"
+              />
+              增量手工标注</span
+            >
             <div class="manual-layout" style="display: flex; gap: 15px">
               <div
                 class="manual-selector-sidebar"
@@ -1247,7 +1309,7 @@ export default {
       this.drillQueryForm.itemKey = ''
       this.drillQueryForm.itemValue = ''
 
-      this.drillDownTitle = `🔍 物理数据穿透元模型视窗 -> [物理实体表: ${tableName}]`
+      this.drillDownTitle = `物理数据穿透元模型视窗 -> [物理实体表: ${tableName}]`
       this.drillDownVisible = true
       this.executeDrillQuery(true) // 传入 true 代表首次查询，需要刷新表头候选集
     },
@@ -1268,7 +1330,7 @@ export default {
 
       this.drillQueryForm.itemKey = ''
       this.drillQueryForm.itemValue = ''
-      this.drillDownTitle = `🔍 标注模型数据穿透元模型视窗 -> [标签名称: ${model.labelName}]`
+      this.drillDownTitle = `标注模型数据穿透元模型视窗 -> [标签名称: ${model.labelName}]`
       this.drillDownVisible = true
 
       // 加载已标注的列表数据
