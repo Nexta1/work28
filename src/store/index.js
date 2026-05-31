@@ -54,8 +54,12 @@ const store = new Vuex.Store({
       const res = await login({userCode, userPassword})
       if (res.code === 0 && res.data) {
         commit('SET_TOKEN', res.data)
-        // 登录成功后获取用户信息
-        await store.dispatch('fetchCurrentUser')
+        // 登录成功后获取用户信息（失败不阻塞，保留 token 继续跳转）
+        try {
+          await store.dispatch('fetchCurrentUser')
+        } catch (e) {
+          console.warn('获取用户信息失败，已保留登录状态:', e)
+        }
         return true
       }
       throw new Error(res.message || '登录失败')
@@ -80,8 +84,8 @@ const store = new Vuex.Store({
           return user
         }
       } catch (e) {
-        // token 失效，清除登录状态
-        commit('SET_TOKEN', '')
+        // token 失效，清除登录状态（但登录流程中由 login action 自行处理，勿重复清除）
+        console.warn('获取当前用户信息失败:', e)
         commit('SET_USER_INFO', null)
         commit('SET_PERMISSIONS', [])
       }

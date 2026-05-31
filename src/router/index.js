@@ -517,6 +517,11 @@ const routes = [
       parentModule: '数据管理',
       requiresAuth: true
     }
+  },
+  // 404 兜底 - 匹配所有未定义路由，重定向到首页
+  {
+    path: '*',
+    redirect: '/'
   }
 ]
 
@@ -530,6 +535,15 @@ const router = new VueRouter({
     } else {
       return {x: 0, y: 0}
     }
+  }
+})
+
+// 路由错误处理（防止异步组件加载失败等导致白屏）
+router.onError(error => {
+  console.error('路由导航错误:', error)
+  // 当异步组件加载失败时，尝试刷新页面
+  if (/Loading chunk |Failed to fetch/i.test(error.message)) {
+    window.location.reload()
   }
 })
 
