@@ -341,7 +341,7 @@ import {
   getWqxhInfos,
   normalizeMapOptions
 } from '@/api/resourceManagement.js'
-import resourcePageMixin from './mixins/resourcePageMixin'
+import resourcePageMixin from '../mixins/resourcePageMixin'
 
 const MODULE_CONFIG = {
   platform_model: {
@@ -720,7 +720,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-@use './styles/resource-screen.scss' as *;
+@use '../styles/resource-screen.scss' as *;
 
 .filter-item {
   width: 160px;

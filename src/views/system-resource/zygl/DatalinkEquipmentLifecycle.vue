@@ -356,7 +356,7 @@
 import request from '@/utils/request'
 import {apiAdd, apiDelete, apiPage, apiUpdate} from '@/api/common.js'
 import {SBWLZT_OPTIONS} from '@/api/resourceManagement.js'
-import resourcePageMixin from './mixins/resourcePageMixin'
+import resourcePageMixin from '../mixins/resourcePageMixin'
 
 export default {
   name: 'DatalinkEquipmentLifecycle',
@@ -562,7 +562,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-@use './styles/resource-screen.scss' as *;
+@use '../styles/resource-screen.scss' as *;
 
 .filter-item {
   width: 160px;

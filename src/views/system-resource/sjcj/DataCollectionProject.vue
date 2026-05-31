@@ -891,7 +891,7 @@
 import request from '@/utils/request'
 import {apiAdd, apiDelete, apiPage, apiUpdate} from '@/api/common.js'
 // 需求 1：导入抽离出去的 X6 渲染画布独立组件
-import ProjectGraphX6 from './components/ProjectGraphX6.vue'
+import ProjectGraphX6 from '../components/ProjectGraphX6.vue'
 
 export default {
   name: 'DataCollectionProject',

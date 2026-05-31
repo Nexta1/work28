@@ -12,7 +12,8 @@ const routes = [
   {
     path: '/task-decomposition',
     name: 'TaskDecomposition',
-    component: () => import('@/views/system-operations/TaskDecomposition.vue'),
+    component: () =>
+      import('@/views/system-operations/rwxqfj/TaskDecomposition.vue'),
     meta: {
       title: '任务需求分解',
       subsystem: '体系运营管理',
@@ -27,7 +28,8 @@ const routes = [
   {
     path: '/control-strategy',
     name: 'ControlStrategy',
-    component: () => import('@/views/system-operations/ControlStrategy.vue'),
+    component: () =>
+      import('@/views/system-operations/ykclzd/ControlStrategy.vue'),
     meta: {
       title: '运控策略制定',
       subsystem: '体系运营管理',
@@ -40,7 +42,8 @@ const routes = [
   {
     path: '/task-group-config-strategy',
     name: 'TaskGroupConfigStrategy',
-    component: () => import('@/views/system-operations/ScenarioStrategy.vue'),
+    component: () =>
+      import('@/views/system-operations/ykclzd/ScenarioStrategy.vue'),
     meta: {
       title: '任务群组配置策略生成',
       subsystem: '体系运营管理',
@@ -53,7 +56,8 @@ const routes = [
   {
     path: '/hierarchical-control-strategy',
     name: 'OcStrategyConfig',
-    component: () => import('@/views/system-operations/OcStrategyConfig.vue'),
+    component: () =>
+      import('@/views/system-operations/ykclzd/OcStrategyConfig.vue'),
     meta: {
       title: '分级体系运控策略生成',
       subsystem: '体系运营管理',
@@ -66,7 +70,8 @@ const routes = [
   {
     path: '/datalink-assurance-plan',
     name: 'DataLinkGuarantee',
-    component: () => import('@/views/system-operations/DataLinkGuarantee.vue'),
+    component: () =>
+      import('@/views/system-operations/ykclzd/DataLinkGuarantee.vue'),
     meta: {
       title: '数据链保障方案构建',
       subsystem: '体系运营管理',
@@ -80,7 +85,7 @@ const routes = [
     path: '/parallel-system-simulation',
     name: 'ParallelSystemSimulation',
     component: () =>
-      import('@/views/system-operations/ParallelSystemSimulation.vue'),
+      import('@/views/system-operations/ykclzd/ParallelSystemSimulation.vue'),
     meta: {
       title: '平行系统推演',
       subsystem: '体系运营管理',
@@ -93,7 +98,8 @@ const routes = [
   {
     path: '/datalink-fault-diagnosis',
     name: 'DatalinkFaultDiagnosis',
-    component: () => import('@/views/system-operations/FaultStrategy.vue'),
+    component: () =>
+      import('@/views/system-operations/ykclzd/FaultStrategy.vue'),
     meta: {
       title: '数据链故障诊断和处理策略',
       subsystem: '体系运营管理',
@@ -109,7 +115,7 @@ const routes = [
     path: '/scheduling-management',
     name: 'SchedulingManagement',
     component: () =>
-      import('@/views/system-operations/SchedulingManagement.vue'),
+      import('@/views/system-operations/zhddgl/SchedulingManagement.vue'),
     meta: {
       title: '综合调度管理',
       subsystem: '体系运营管理',
@@ -122,7 +128,8 @@ const routes = [
   {
     path: '/task-monitoring',
     name: 'TaskMonitoring',
-    component: () => import('@/views/system-operations/TaskMonitoring.vue'),
+    component: () =>
+      import('@/views/system-operations/zhddgl/TaskMonitoring.vue'),
     meta: {
       title: '作战任务监视',
       subsystem: '体系运营管理',
@@ -136,7 +143,7 @@ const routes = [
     path: '/task-group-management',
     name: 'TaskGroupManagement',
     component: () =>
-      import('@/views/system-operations/TaskGroupManagement.vue'),
+      import('@/views/system-operations/zhddgl/TaskGroupManagement.vue'),
     meta: {
       title: '任务群组管理',
       subsystem: '体系运营管理',
@@ -150,7 +157,7 @@ const routes = [
     path: '/resource-conflict-resolution',
     name: 'ResourceConflictResolution',
     component: () =>
-      import('@/views/system-operations/ResourceConflictResolution.vue'),
+      import('@/views/system-operations/zhddgl/ResourceConflictResolution.vue'),
     meta: {
       title: '数据链资源冲突消解',
       subsystem: '体系运营管理',
@@ -163,7 +170,8 @@ const routes = [
   {
     path: '/fault-handling',
     name: 'FaultHandling',
-    component: () => import('@/views/system-operations/FaultHandling.vue'),
+    component: () =>
+      import('@/views/system-operations/zhddgl/FaultHandling.vue'),
     meta: {
       title: '数据链故障处理',
       subsystem: '体系运营管理',
@@ -178,7 +186,8 @@ const routes = [
   {
     path: '/business-operation',
     name: 'BusinessOperation',
-    component: () => import('@/views/system-operations/BusinessOperation.vue'),
+    component: () =>
+      import('@/views/system-operations/ywktyx/BusinessOperation.vue'),
     meta: {
       title: '业务开通运行',
       subsystem: '体系运营管理',
@@ -191,7 +200,8 @@ const routes = [
   {
     path: '/control-strategy-optimization',
     name: 'ControlStrategyOptimization',
-    component: () => import('@/views/system-operations/BusinessOperation.vue'),
+    component: () =>
+      import('@/views/system-operations/ywktyx/BusinessOperation.vue'),
     meta: {
       title: '运控策略优选与生成',
       subsystem: '体系运营管理',
@@ -205,7 +215,7 @@ const routes = [
     path: '/config-strategy-deployment',
     name: 'ConfigStrategyDeployment',
     component: () =>
-      import('@/views/system-operations/ServiceTemplateDashboard.vue'),
+      import('@/views/system-operations/ywktyx/ServiceTemplateDashboard.vue'),
     meta: {
       title: '服务模板和信息维护',
       subsystem: '体系运营管理',
@@ -220,7 +230,7 @@ const routes = [
   {
     path: '/control-situation-monitoring',
     name: 'ControlSituationMonitoring',
-    component: () => import('@/views/system-operations/Dashboard.vue'),
+    component: () => import('@/views/system-operations/yktsjs/Dashboard.vue'),
     meta: {
       title: '运控态势监视',
       subsystem: '体系运营管理',
@@ -233,7 +243,7 @@ const routes = [
   {
     path: '/statistic-data-monitoring',
     name: 'StatisticDataMonitoring',
-    component: () => import('@/views/system-operations/Dashboard.vue'),
+    component: () => import('@/views/system-operations/yktsjs/Dashboard.vue'),
     meta: {
       title: '统计数据监视',
       subsystem: '体系运营管理',
@@ -246,7 +256,8 @@ const routes = [
   {
     path: '/kill-chain-situation',
     name: 'KillChainSituation',
-    component: () => import('@/views/system-operations/KillChainSituation.vue'),
+    component: () =>
+      import('@/views/system-operations/yktsjs/KillChainSituation.vue'),
     meta: {
       title: '杀伤链运行态势监视',
       subsystem: '体系运营管理',
@@ -259,7 +270,8 @@ const routes = [
   {
     path: '/combat-resource-status',
     name: 'CombatResourceStatus',
-    component: () => import('@/views/system-operations/DeviceMonitor.vue'),
+    component: () =>
+      import('@/views/system-operations/yktsjs/DeviceMonitor.vue'),
     meta: {
       title: '资源装备状态监视',
       subsystem: '体系运营管理',
@@ -272,7 +284,8 @@ const routes = [
   {
     path: '/network-status-monitoring',
     name: 'NetworkStatusMonitoring',
-    component: () => import('@/views/system-operations/NetworkTopology.vue'),
+    component: () =>
+      import('@/views/system-operations/yktsjs/NetworkTopology.vue'),
     meta: {
       title: '网络状态信息监视',
       subsystem: '体系运营管理',
@@ -287,7 +300,8 @@ const routes = [
   {
     path: '/alarm-monitoring',
     name: 'AlarmMonitoring',
-    component: () => import('@/views/system-maintenance/WarnInfoDashboard.vue'),
+    component: () =>
+      import('@/views/system-maintenance/gjjscl/WarnInfoDashboard.vue'),
     meta: {
       title: '告警监视处理',
       subsystem: '系统运维',
@@ -301,7 +315,7 @@ const routes = [
     path: '/performance-monitoring',
     name: 'PerformanceMonitoring',
     component: () =>
-      import('@/views/system-maintenance/LinkPerformanceMonitor.vue'),
+      import('@/views/system-maintenance/xnjscl/LinkPerformanceMonitor.vue'),
     meta: {
       title: '性能监视处理',
       subsystem: '系统运维',
@@ -315,7 +329,7 @@ const routes = [
     path: '/business-quality-monitor',
     name: 'BusinessQualityMonitorModule',
     component: () =>
-      import('@/views/system-maintenance/BusinessQualityMonitor.vue'),
+      import('@/views/system-maintenance/ywzljkcl/BusinessQualityMonitor.vue'),
     meta: {
       title: '业务质量监控处理',
       subsystem: '系统运维',
@@ -329,7 +343,7 @@ const routes = [
     path: '/equipment-maintenance',
     name: 'EquipmentMaintenance',
     component: () =>
-      import('@/views/system-maintenance/EquipmentMaintenance.vue'),
+      import('@/views/system-maintenance/zbwhcs/EquipmentMaintenance.vue'),
     meta: {
       title: '装备维护测试',
       category: '装备维护测试',
@@ -344,7 +358,7 @@ const routes = [
     path: '/data-collection',
     name: 'DataCollection',
     component: () =>
-      import('@/views/system-resource/DataCollectionProject.vue'),
+      import('@/views/system-resource/sjcj/DataCollectionProject.vue'),
     meta: {
       title: '数据采集',
       subsystem: '资源和数据管理',
@@ -358,7 +372,8 @@ const routes = [
   {
     path: '/resource-management',
     name: 'ResourceManagement',
-    component: () => import('@/views/system-resource/ResourceManagement.vue'),
+    component: () =>
+      import('@/views/system-resource/zygl/ResourceManagement.vue'),
     meta: {
       title: '资源管理',
       subsystem: '资源和数据管理',
@@ -372,7 +387,7 @@ const routes = [
     path: '/information-resource-management',
     name: 'InformationResourceManagement',
     component: () =>
-      import('@/views/system-resource/InformationResourceManagement.vue'),
+      import('@/views/system-resource/zygl/InformationResourceManagement.vue'),
     meta: {
       title: '信息资源管理',
       subsystem: '资源和数据管理',
@@ -386,7 +401,7 @@ const routes = [
     path: '/datalink-equipment-lifecycle',
     name: 'DatalinkEquipmentLifecycle',
     component: () =>
-      import('@/views/system-resource/DatalinkEquipmentLifecycle.vue'),
+      import('@/views/system-resource/zygl/DatalinkEquipmentLifecycle.vue'),
     meta: {
       title: '数据链装备全生命周期管理',
       subsystem: '资源和数据管理',
@@ -400,7 +415,7 @@ const routes = [
     path: '/datalink-spectrum-resource',
     name: 'DatalinkSpectrumResource',
     component: () =>
-      import('@/views/system-resource/DatalinkSpectrumResource.vue'),
+      import('@/views/system-resource/zygl/DatalinkSpectrumResource.vue'),
     meta: {
       title: '数据链频谱资源管理',
       subsystem: '资源和数据管理',
@@ -413,7 +428,8 @@ const routes = [
   {
     path: '/datalink-user-info',
     name: 'DatalinkUserInfo',
-    component: () => import('@/views/system-resource/DatalinkUserInfo.vue'),
+    component: () =>
+      import('@/views/system-resource/zygl/DatalinkUserInfo.vue'),
     meta: {
       title: '数据链用户信息',
       subsystem: '资源和数据管理',
@@ -427,7 +443,7 @@ const routes = [
   {
     path: '/data-management',
     name: 'DataManagement',
-    component: () => import('@/views/system-resource/DataManagement.vue'),
+    component: () => import('@/views/system-resource/sjgl/DataManagement.vue'),
     meta: {
       title: '数据管理',
       subsystem: '资源和数据管理',
@@ -440,7 +456,8 @@ const routes = [
   {
     path: '/permission-management',
     name: 'PermissionManagement',
-    component: () => import('@/views/system-resource/PermissionManagement.vue'),
+    component: () =>
+      import('@/views/system-resource/sjgl/PermissionManagement.vue'),
     meta: {
       title: '权限管理',
       subsystem: '资源和数据管理',
@@ -453,7 +470,8 @@ const routes = [
   {
     path: '/data-governance-model',
     name: 'DataGovernanceModel',
-    component: () => import('@/views/system-resource/DataGovernanceModel.vue'),
+    component: () =>
+      import('@/views/system-resource/sjgl/DataGovernanceModel.vue'),
     meta: {
       title: '数据治理模型维护',
       subsystem: '资源和数据管理',
@@ -467,7 +485,7 @@ const routes = [
     path: '/classification-storage',
     name: 'ClassificationStorage',
     component: () =>
-      import('@/views/system-resource/ClassificationStorage.vue'),
+      import('@/views/system-resource/sjgl/ClassificationStorage.vue'),
     meta: {
       title: '分类存储',
       subsystem: '资源和数据管理',
@@ -481,7 +499,7 @@ const routes = [
     path: '/subscription-distribution',
     name: 'SubscriptionDistribution',
     component: () =>
-      import('@/views/system-resource/SubscriptionDistribution.vue'),
+      import('@/views/system-resource/sjgl/SubscriptionDistribution.vue'),
     meta: {
       title: '订阅分发',
       subsystem: '资源和数据管理',

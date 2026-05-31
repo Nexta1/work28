@@ -143,8 +143,8 @@ import {taskGetPage, getOrganizationByTaskId} from '@/api/task'
 
 import {getYXJMap} from '@/api/map'
 import {buildTree} from '@/utils'
-import OperationalControlScheme from './components/OperationalControlScheme.vue'
-import TaskGroupScheme from './components/TaskGroupScheme.vue'
+import OperationalControlScheme from '../components/OperationalControlScheme.vue'
+import TaskGroupScheme from '../components/TaskGroupScheme.vue'
 
 export default {
   name: 'ZzrwOrchestrationDashboard',

@@ -247,9 +247,17 @@
           <div class="sub-section" style="flex: 1.3">
             <div class="sub-section-title">目标分类统计</div>
             <div class="kc-target-summary">
-              <span v-for="(cnt, type) in targetByCategory" :key="type" class="kc-target-tag">
-                <i class="kc-target-dot" :style="{ background: targetColorMap[type] || '#64748b' }"></i>
-                {{ targetTypeLabel(type) }} <em class="kc-target-num">{{ cnt }}</em>
+              <span
+                v-for="(cnt, type) in targetByCategory"
+                :key="type"
+                class="kc-target-tag"
+              >
+                <i
+                  class="kc-target-dot"
+                  :style="{background: targetColorMap[type] || '#64748b'}"
+                ></i>
+                {{ targetTypeLabel(type) }}
+                <em class="kc-target-num">{{ cnt }}</em>
               </span>
             </div>
             <div ref="targetCategoryChart" class="sub-chart"></div>
@@ -390,7 +398,7 @@ import {
   getNetworkOption,
   getAlertPieOption,
   getFaultBarOption
-} from './chartOptions'
+} from '../chartOptions'
 
 export default {
   name: 'Dashboard',
@@ -418,7 +426,7 @@ export default {
       // 目标数据
       targetList: [],
       targetByCategory: {},
-      targetColorMap: { '1': '#f43f5e', '2': '#38bdf8', '3': '#f59e0b', '4': '#8b5cf6' },
+      targetColorMap: {1: '#f43f5e', 2: '#38bdf8', 3: '#f59e0b', 4: '#8b5cf6'},
       // 平台在线
       platformData: {
         labels: ['指挥平台', '侦察平台', '打击平台', '保障平台'],
@@ -736,7 +744,7 @@ export default {
     },
     // ---- 目标类型标签 ----
     targetTypeLabel(type) {
-      const map = { '1': '陆', '2': '海', '3': '空', '4': '天' }
+      const map = {1: '陆', 2: '海', 3: '空', 4: '天'}
       return map[type] || `类型${type}`
     },
     // ---- 图表初始化 ----
@@ -895,7 +903,12 @@ export default {
       const typeLabel = this.targetTypeLabel
       if (entries.length === 0) {
         chart.setOption({
-          title: {text: '暂无目标数据', textStyle: {color: '#64748b', fontSize: 12}, left: 'center', top: 'center'}
+          title: {
+            text: '暂无目标数据',
+            textStyle: {color: '#64748b', fontSize: 12},
+            left: 'center',
+            top: 'center'
+          }
         })
         return
       }
@@ -919,21 +932,26 @@ export default {
           splitLine: {lineStyle: {color: '#111b2b'}},
           axisLabel: {color: '#64748b', fontSize: 9}
         },
-        series: [{
-          type: 'bar',
-          barWidth: '45%',
-          data: entries.map(([name, value]) => ({
-            value,
-            itemStyle: {color: this.targetColorMap[name] || '#64748b', borderRadius: [4, 4, 0, 0]}
-          })),
-          label: {
-            show: true,
-            position: 'top',
-            color: '#cbd5e1',
-            fontSize: 10,
-            fontWeight: 'bold'
+        series: [
+          {
+            type: 'bar',
+            barWidth: '45%',
+            data: entries.map(([name, value]) => ({
+              value,
+              itemStyle: {
+                color: this.targetColorMap[name] || '#64748b',
+                borderRadius: [4, 4, 0, 0]
+              }
+            })),
+            label: {
+              show: true,
+              position: 'top',
+              color: '#cbd5e1',
+              fontSize: 10,
+              fontWeight: 'bold'
+            }
           }
-        }]
+        ]
       })
     },
     initNetworkChart() {
@@ -969,7 +987,13 @@ export default {
           top: 0,
           right: 0
         },
-        grid: {top: '18%', bottom: '15%', left: '12%', right: '10%', containLabel: true},
+        grid: {
+          top: '18%',
+          bottom: '15%',
+          left: '12%',
+          right: '10%',
+          containLabel: true
+        },
         xAxis: {
           type: 'category',
           data: this.platformData.labels,

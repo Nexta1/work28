@@ -750,7 +750,7 @@ import {
   getPtxhInfos,
   normalizeMapOptions
 } from '@/api/resourceManagement.js'
-import resourcePageMixin from './mixins/resourcePageMixin'
+import resourcePageMixin from '../mixins/resourcePageMixin'
 
 export default {
   name: 'InformationResourceManagement',
@@ -1212,7 +1212,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-@use './styles/resource-screen.scss' as *;
+@use '../styles/resource-screen.scss' as *;
 
 .filter-item {
   width: 150px;

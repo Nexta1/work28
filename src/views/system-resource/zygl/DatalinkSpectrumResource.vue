@@ -203,7 +203,7 @@ import {
   getFrequencyWLLXMap,
   normalizeMapOptions
 } from '@/api/resourceManagement.js'
-import resourcePageMixin from './mixins/resourcePageMixin'
+import resourcePageMixin from '../mixins/resourcePageMixin'
 
 export default {
   name: 'DatalinkSpectrumResource',
@@ -337,7 +337,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-@use './styles/resource-screen.scss' as *;
+@use '../styles/resource-screen.scss' as *;
 .filter-item {
   width: 160px;
 }

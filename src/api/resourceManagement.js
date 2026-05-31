@@ -16,8 +16,17 @@ export function normalizeMapOptions(res) {
 }
 
 /** 编识号段 - 战区 / 军种 */
-export function getBshSegmentTheaterMap() {
-  return request({url: '/rest/bshSegment/threaterCommandMap', method: 'get'})
+export async function getBshSegmentTheaterMap() {
+  return {
+    data: {
+      1: '东部战区',
+      2: '南部战区',
+      3: '西部战区',
+      4: '北部战区',
+      5: '中部战区',
+      6: '战区联合'
+    }
+  }
 }
 export function getBshSegmentArmyMap() {
   return request({url: '/rest/bshSegment/SSJZNMMap', method: 'get'})

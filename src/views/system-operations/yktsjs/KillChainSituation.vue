@@ -277,8 +277,8 @@
 </template>
 
 <script>
-import KillChainCanvas from '../components/KillChainCanvas.vue'
-import SideDetails from '../components/SideDetails.vue'
+import KillChainCanvas from '../../components/KillChainCanvas.vue'
+import SideDetails from '../../components/SideDetails.vue'
 import {taskGetPage} from '@/api/task'
 import {
   getSslxxPage,
