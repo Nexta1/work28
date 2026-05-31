@@ -1118,9 +1118,9 @@
 }
 
 /* 2. 当用户开始点击、或者已经选中了至少一个标签时，内部搜索框的 placeholder 恢复常态（如果有的话） */
-.el-cascader__tags ~ .el-input .el-input__inner::placeholder {
-  /* 如果原生标签容器存在，让外层 placeholder 正常遵循组件逻辑 */
-}
+/* .el-cascader__tags ~ .el-input .el-input__inner::placeholder {
+  如果原生标签容器存在，让外层 placeholder 正常遵循组件逻辑
+} */
 
 /* 3. 确保两个输入框的定位和字体完全等高重合，防止即使显示也对不齐 */
 .el-cascader {

@@ -397,7 +397,7 @@ import {
   getNetworkOption,
   getAlertPieOption,
   getFaultBarOption
-} from '../chartOptions'
+} from './chartOptions'
 
 export default {
   name: 'Dashboard',

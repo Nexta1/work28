@@ -6,13 +6,12 @@
 
         <div class="search-item">
           <label>作战任务名称</label>
-          <input
-            type="text"
+          <el-input
             v-model="queryParam.RWMC"
             @input="loadZzrwxxList"
             placeholder="输入任务名称搜索..."
-            class="global-input"
             style="width: 260px"
+            size="small"
           />
         </div>
       </div>
@@ -312,15 +311,6 @@ export default {
   font-size: 11px;
   color: #52637a;
 }
-.global-input {
-  background: #0d1522;
-  border: 1px solid #1e3557;
-  color: #fff;
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 11px;
-  outline: none;
-}
 .action-btn {
   background: #101b2e;
   border: 1px solid #1e3557;
@@ -488,8 +478,7 @@ export default {
   margin-left: auto;
 }
 
-.font-num {
-}
+/* font-num */
 .text-blue {
   color: #38bdf8 !important;
 }

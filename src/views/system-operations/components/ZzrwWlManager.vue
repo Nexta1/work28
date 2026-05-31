@@ -11,11 +11,11 @@
             />
             网络检索
           </label>
-          <input
-            type="text"
+          <el-input
             v-model="searchQuery.WLMC"
             @input="handleSearch"
             placeholder="输入网络名称检索..."
+            size="small"
           />
         </div>
         <div class="search-btn-group">

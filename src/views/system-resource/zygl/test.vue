@@ -2195,8 +2195,7 @@ export default {
   margin-top: 12px;
   text-align: right;
 }
-.font-num {
-}
+/* font-num */
 .text-blue {
   color: #38bdf8 !important;
 }

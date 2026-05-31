@@ -32,12 +32,11 @@
             />
             登录账号
           </label>
-          <input
-            type="text"
+          <el-input
             v-model="form.userCode"
             placeholder="请输入登录账号"
-            required
             autocomplete="username"
+            size="small"
           />
         </div>
 
@@ -51,12 +50,13 @@
             />
             登录密码
           </label>
-          <input
-            type="password"
+          <el-input
             v-model="form.userPassword"
+            type="password"
             placeholder="请输入密码"
-            required
             autocomplete="current-password"
+            size="small"
+            show-password
           />
         </div>
 

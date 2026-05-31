@@ -4,25 +4,28 @@
       <div class="search-flex">
         <div class="search-item">
           <label>平台检索</label>
-          <input
-            type="text"
+          <el-input
             v-model="queryParams.PTMC"
             @input="handleSearch"
             placeholder="输入平台名称..."
+            size="small"
           />
         </div>
         <div class="search-item">
           <label>平台类型</label>
-          <select v-model="queryParams.PTLX" @change="handleSearch">
-            <option value="">全部类型</option>
-            <option
+          <el-select
+            v-model="queryParams.PTLX"
+            @change="handleSearch"
+            size="small"
+          >
+            <el-option label="全部类型" :value="''"></el-option>
+            <el-option
               v-for="(val, key) in platformTypeMap"
               :key="key"
+              :label="val"
               :value="key"
-            >
-              {{ val }}
-            </option>
-          </select>
+            />
+          </el-select>
         </div>
       </div>
 
@@ -90,10 +93,10 @@
             <div v-if="pt.JKZT === 2" class="alarm-flash-dot"></div>
           </div>
 
-            <div class="scroll-loading-tip" v-if="pageConfig.pageNum >= 15">
-              <Icon icon="mdi:alert-outline" size="10px" style="color: #f59e0b" />
-              已锁死最大加载上限 (15页)
-            </div>
+          <div class="scroll-loading-tip" v-if="pageConfig.pageNum >= 15">
+            <Icon icon="mdi:alert-outline" size="10px" style="color: #f59e0b" />
+            已锁死最大加载上限 (15页)
+          </div>
           <div
             class="scroll-loading-tip"
             v-else-if="
@@ -200,7 +203,11 @@
           <div class="sub-fluid-layout">
             <div class="matrix-column">
               <div class="column-title">
-                <Icon icon="mdi:crosshairs" size="12px" style="color: #ef4444" />
+                <Icon
+                  icon="mdi:crosshairs"
+                  size="12px"
+                  style="color: #ef4444"
+                />
                 挂载武器矩阵 (全量 {{ weaponList.length }})
               </div>
               <div class="matrix-scroll-box">

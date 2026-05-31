@@ -4,11 +4,11 @@
       <div class="search-flex">
         <div class="search-item">
           <label>群组名称</label>
-          <input
-            type="text"
+          <el-input
             v-model="searchQuery.QZMC"
             @input="handleSearch"
             placeholder="群组名称, 如: 指挥"
+            size="small"
           />
         </div>
       </div>
@@ -1422,8 +1422,7 @@ export default {
 .text-gray {
   color: #334155;
 }
-.font-num {
-}
+/* font-num */
 
 .dialog-custom-title {
   display: flex;
@@ -1456,20 +1455,5 @@ export default {
   border-color: #1e293b !important;
   color: #fff !important;
   font-size: 11px;
-}
-::v-deep .el-cascader__dropdown,
-::v-deep .el-select-dropdown {
-  background-color: #09101d !important;
-  border: 1px solid #223755 !important;
-}
-::v-deep .el-cascader-node:hover,
-::v-deep .el-select-dropdown__item.hover {
-  background-color: #14253d !important;
-  color: #38bdf8 !important;
-}
-::v-deep .el-cascader-node.is-selectable.is-active,
-::v-deep .el-select-dropdown__item.selected {
-  color: #10b981 !important;
-  font-weight: bold;
 }
 </style>

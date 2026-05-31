@@ -5,20 +5,20 @@
         <span class="hub-title">🛰️ 数据采集项目流程编排总线</span>
         <div class="search-item">
           <label>项目名称</label>
-          <input
+          <el-input
             v-model="projectQuery.projectName"
-            class="global-input"
             placeholder="输入项目名称..."
             @input="fetchProjects"
+            size="small"
           />
         </div>
         <div class="search-item">
           <label>项目分组</label>
-          <input
+          <el-input
             v-model="projectQuery.projectGroup"
-            class="global-input"
             placeholder="输入项目分组..."
             @input="fetchProjects"
+            size="small"
           />
         </div>
       </div>
@@ -955,16 +955,6 @@ export default {
   font-size: 11px;
   color: #52637a;
 }
-.global-input {
-  background: #0d1522;
-  border: 1px solid #1e3557;
-  color: #fff;
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 11px;
-  outline: none;
-  width: 180px;
-}
 .action-btn {
   background: #101b2e;
   border: 1px solid #1e3557;
@@ -1179,8 +1169,7 @@ export default {
   text-align: center;
   flex-shrink: 0;
 }
-.font-num {
-}
+/* font-num */
 .text-blue {
   color: #38bdf8 !important;
 }
@@ -1204,28 +1193,5 @@ export default {
 }
 .full-width {
   width: 100%;
-}
-::v-deep .el-input__inner,
-::v-deep .el-textarea__inner {
-  background: #0d1522;
-  border-color: #1e3557;
-  color: #fff;
-}
-::v-deep .el-table,
-::v-deep .el-table th,
-::v-deep .el-table tr {
-  background: #070c14;
-  color: #cbd5e1;
-}
-::v-deep .el-table td,
-::v-deep .el-table th.is-leaf {
-  border-bottom-color: #172438;
-}
-::v-deep .el-table--border,
-::v-deep .el-table--group {
-  border-color: #172438;
-}
-::v-deep .el-table--enable-row-hover .el-table__body tr:hover > td {
-  background: #13253e;
 }
 </style>

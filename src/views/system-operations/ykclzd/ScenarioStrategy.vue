@@ -5,20 +5,19 @@
         <span class="hub-title">任务群组配置方案</span>
         <div class="search-item">
           <label>网络组网体制</label>
-          <select
+          <el-select
             v-model="listQuery.WLLX"
             @change="handleSearch"
-            class="global-select"
+            size="small"
           >
-            <option value="">全部体制方案</option>
-            <option
+            <el-option label="全部体制方案" :value="''"></el-option>
+            <el-option
               v-for="(label, value) in wllxMapData"
               :key="value"
+              :label="label"
               :value="String(value)"
-            >
-              {{ label }}
-            </option>
-          </select>
+            />
+          </el-select>
         </div>
       </div>
       <div class="monitor-legend">
@@ -828,15 +827,6 @@ export default {
   font-size: 11px;
   color: #52637a;
 }
-.global-select {
-  background: #0d1522;
-  border: 1px solid #1e3557;
-  color: #38bdf8;
-  padding: 3px 6px;
-  border-radius: 4px;
-  font-size: 11px;
-  outline: none;
-}
 
 .main-body-layout {
   flex: 1;
@@ -1003,19 +993,6 @@ export default {
   text-align: justify;
   max-height: 60px;
   overflow: auto;
-}
-
-.inner-input,
-.inner-select {
-  background: #0d1522;
-  border: 1px solid #1a293d;
-  color: #fff;
-  padding: 4px;
-  border-radius: 3px;
-  font-size: 11px;
-  outline: none;
-  width: 100%;
-  box-sizing: border-box;
 }
 .checkbox-matrix {
   padding: 4px 0;

@@ -7,13 +7,12 @@
 
         <div class="search-item">
           <label>装备名称</label>
-          <input
-            type="text"
+          <el-input
             v-model="queryParam.EQUIPMENT_NAME"
             @input="loadEquipmentList"
             placeholder="输入装备名称搜索..."
-            class="global-input"
             style="width: 200px"
+            size="small"
           />
         </div>
 
@@ -80,7 +79,9 @@
             />
             装备列表
           </span>
-          <span class="badge font-num text-cyan">{{ equipmentList.length }} 项</span>
+          <span class="badge font-num text-cyan"
+            >{{ equipmentList.length }} 项</span
+          >
         </div>
 
         <div class="equipment-scroll-box">
@@ -88,11 +89,18 @@
             v-for="equip in equipmentList"
             :key="equip.EQUIPMENT_ID"
             class="equipment-item-card"
-            :class="{ 'equipment-active': selectedEquipments.includes(equip.EQUIPMENT_ID) }"
+            :class="{
+              'equipment-active': selectedEquipments.includes(
+                equip.EQUIPMENT_ID
+              )
+            }"
             @click="toggleSelectEquipment(equip.EQUIPMENT_ID)"
           >
             <div class="equipment-card-header">
-              <span class="equip-name ellipsis-text" :title="equip.EQUIPMENT_NAME">
+              <span
+                class="equip-name ellipsis-text"
+                :title="equip.EQUIPMENT_NAME"
+              >
                 <Icon
                   icon="lucide:package"
                   :size="12"
@@ -110,7 +118,9 @@
               <div class="meta-grid">
                 <div>
                   装备ID:
-                  <span class="text-blue font-num">{{ equip.EQUIPMENT_ID }}</span>
+                  <span class="text-blue font-num">{{
+                    equip.EQUIPMENT_ID
+                  }}</span>
                 </div>
                 <div>
                   类型:
@@ -138,7 +148,11 @@
           <!-- 维护方案生成 -->
           <el-tab-pane name="planGeneration" class="full-pane">
             <span slot="label">
-              <Icon icon="lucide:file-plus" :size="14" style="margin-right: 4px" />
+              <Icon
+                icon="lucide:file-plus"
+                :size="14"
+                style="margin-right: 4px"
+              />
               维护方案生成
             </span>
             <div class="pane-content-box" style="height: 100%">
@@ -146,7 +160,9 @@
                 <div class="generated-plans-list">
                   <div class="list-header">
                     <span class="list-title">已生成的维护方案</span>
-                    <span class="list-count">{{ generatedPlans.length }} 个方案</span>
+                    <span class="list-count"
+                      >{{ generatedPlans.length }} 个方案</span
+                    >
                   </div>
 
                   <div class="plans-scroll-box">
@@ -157,26 +173,37 @@
                     >
                       <div class="plan-header">
                         <span class="plan-name">{{ plan.planName }}</span>
-                        <el-tag size="mini" :type="getPlanStatusType(plan.status)">
+                        <el-tag
+                          size="mini"
+                          :type="getPlanStatusType(plan.status)"
+                        >
                           {{ getPlanStatusText(plan.status) }}
                         </el-tag>
                       </div>
                       <div class="plan-info">
                         <div class="info-row">
                           <span class="info-label">装备:</span>
-                          <span class="info-value">{{ plan.equipmentName }}</span>
+                          <span class="info-value">{{
+                            plan.equipmentName
+                          }}</span>
                         </div>
                         <div class="info-row">
                           <span class="info-label">维护类型:</span>
-                          <span class="info-value">{{ plan.maintenanceType }}</span>
+                          <span class="info-value">{{
+                            plan.maintenanceType
+                          }}</span>
                         </div>
                         <div class="info-row">
                           <span class="info-label">预计耗时:</span>
-                          <span class="info-value text-orange">{{ plan.estimatedTime }}</span>
+                          <span class="info-value text-orange">{{
+                            plan.estimatedTime
+                          }}</span>
                         </div>
                         <div class="info-row">
                           <span class="info-label">生成时间:</span>
-                          <span class="info-value">{{ formatTime(plan.generateTime) }}</span>
+                          <span class="info-value">{{
+                            formatTime(plan.generateTime)
+                          }}</span>
                         </div>
                       </div>
                       <div class="plan-actions">
@@ -225,19 +252,27 @@
                 <div class="dispatch-status-overview">
                   <div class="status-card">
                     <div class="status-label">待下发</div>
-                    <div class="status-value text-warning">{{ dispatchStats.pending }}</div>
+                    <div class="status-value text-warning">
+                      {{ dispatchStats.pending }}
+                    </div>
                   </div>
                   <div class="status-card">
                     <div class="status-label">下发中</div>
-                    <div class="status-value text-cyan">{{ dispatchStats.sending }}</div>
+                    <div class="status-value text-cyan">
+                      {{ dispatchStats.sending }}
+                    </div>
                   </div>
                   <div class="status-card">
                     <div class="status-label">已完成</div>
-                    <div class="status-value text-success">{{ dispatchStats.completed }}</div>
+                    <div class="status-value text-success">
+                      {{ dispatchStats.completed }}
+                    </div>
                   </div>
                   <div class="status-card">
                     <div class="status-label">失败</div>
-                    <div class="status-value text-danger">{{ dispatchStats.failed }}</div>
+                    <div class="status-value text-danger">
+                      {{ dispatchStats.failed }}
+                    </div>
                   </div>
                 </div>
 
@@ -272,7 +307,11 @@
           <!-- 测试结果显示 -->
           <el-tab-pane name="testResults" class="full-pane">
             <span slot="label">
-              <Icon icon="lucide:chart-bar" :size="14" style="margin-right: 4px" />
+              <Icon
+                icon="lucide:chart-bar"
+                :size="14"
+                style="margin-right: 4px"
+              />
               测试结果显示
             </span>
             <div class="pane-content-box" style="height: 100%">
@@ -319,20 +358,38 @@
                   style="width: 100%"
                   height="100%"
                 >
-                  <el-table-column type="index" label="序号" width="60"></el-table-column>
-                  <el-table-column prop="EQUIPMENT_NAME" label="装备名称" width="150">
+                  <el-table-column
+                    type="index"
+                    label="序号"
+                    width="60"
+                  ></el-table-column>
+                  <el-table-column
+                    prop="EQUIPMENT_NAME"
+                    label="装备名称"
+                    width="150"
+                  >
                     <template slot-scope="scope">
-                      <span class="text-blue">{{ scope.row.EQUIPMENT_NAME }}</span>
+                      <span class="text-blue">{{
+                        scope.row.EQUIPMENT_NAME
+                      }}</span>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="TEST_ITEM" label="测试项目" min-width="180">
+                  <el-table-column
+                    prop="TEST_ITEM"
+                    label="测试项目"
+                    min-width="180"
+                  >
                     <template slot-scope="scope">
                       <span class="ellipsis-text" :title="scope.row.TEST_ITEM">
                         {{ scope.row.TEST_ITEM }}
                       </span>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="TEST_RESULT" label="测试结果" width="100">
+                  <el-table-column
+                    prop="TEST_RESULT"
+                    label="测试结果"
+                    width="100"
+                  >
                     <template slot-scope="scope">
                       <el-tag
                         size="mini"
@@ -347,9 +404,15 @@
                       <span class="font-num">{{ scope.row.TEST_VALUE }}</span>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="STANDARD_VALUE" label="标准值" width="120">
+                  <el-table-column
+                    prop="STANDARD_VALUE"
+                    label="标准值"
+                    width="120"
+                  >
                     <template slot-scope="scope">
-                      <span class="font-num">{{ scope.row.STANDARD_VALUE }}</span>
+                      <span class="font-num">{{
+                        scope.row.STANDARD_VALUE
+                      }}</span>
                     </template>
                   </el-table-column>
                   <el-table-column prop="DEVIATION" label="偏差率" width="100">
@@ -359,7 +422,11 @@
                       </span>
                     </template>
                   </el-table-column>
-                  <el-table-column prop="TEST_TIME" label="测试时间" width="160">
+                  <el-table-column
+                    prop="TEST_TIME"
+                    label="测试时间"
+                    width="160"
+                  >
                     <template slot-scope="scope">
                       {{ formatTime(scope.row.TEST_TIME) }}
                     </template>
@@ -406,21 +473,30 @@
             </div>
             <div class="detail-item">
               <span class="detail-label">维护类型:</span>
-              <span class="detail-value">{{ currentPlan.maintenanceType }}</span>
+              <span class="detail-value">{{
+                currentPlan.maintenanceType
+              }}</span>
             </div>
             <div class="detail-item">
               <span class="detail-label">预计耗时:</span>
-              <span class="detail-value text-orange">{{ currentPlan.estimatedTime }}</span>
+              <span class="detail-value text-orange">{{
+                currentPlan.estimatedTime
+              }}</span>
             </div>
             <div class="detail-item">
               <span class="detail-label">优先级:</span>
-              <el-tag size="small" :type="getPriorityType(currentPlan.priority)">
+              <el-tag
+                size="small"
+                :type="getPriorityType(currentPlan.priority)"
+              >
                 {{ getPriorityText(currentPlan.priority) }}
               </el-tag>
             </div>
             <div class="detail-item">
               <span class="detail-label">生成时间:</span>
-              <span class="detail-value">{{ formatTime(currentPlan.generateTime) }}</span>
+              <span class="detail-value">{{
+                formatTime(currentPlan.generateTime)
+              }}</span>
             </div>
           </div>
         </div>
@@ -496,10 +572,14 @@ export default {
     filteredTestResults() {
       let results = this.testResults
       if (this.resultFilter.equipmentId) {
-        results = results.filter(r => r.EQUIPMENT_ID === this.resultFilter.equipmentId)
+        results = results.filter(
+          r => r.EQUIPMENT_ID === this.resultFilter.equipmentId
+        )
       }
       if (this.resultFilter.testResult) {
-        results = results.filter(r => r.TEST_RESULT === this.resultFilter.testResult)
+        results = results.filter(
+          r => r.TEST_RESULT === this.resultFilter.testResult
+        )
       }
       return results
     }
@@ -693,7 +773,9 @@ export default {
           this.$message.info('正在生成维护方案...')
           setTimeout(() => {
             this.selectedEquipments.forEach(equipId => {
-              const equip = this.equipmentList.find(e => e.EQUIPMENT_ID === equipId)
+              const equip = this.equipmentList.find(
+                e => e.EQUIPMENT_ID === equipId
+              )
               this.generatedPlans.push({
                 planName: `${equip.EQUIPMENT_NAME}维护方案`,
                 equipmentName: equip.EQUIPMENT_NAME,
@@ -710,9 +792,9 @@ export default {
                   '综合测试验证'
                 ],
                 resources: [
-                  { name: '万用表', quantity: '1台' },
-                  { name: '示波器', quantity: '1台' },
-                  { name: '测试线缆', quantity: '若干' }
+                  {name: '万用表', quantity: '1台'},
+                  {name: '示波器', quantity: '1台'},
+                  {name: '测试线缆', quantity: '若干'}
                 ]
               })
             })
@@ -723,7 +805,9 @@ export default {
         .catch(() => {})
     },
     handleSendToParallel() {
-      const pendingPlans = this.generatedPlans.filter(p => p.status === 'pending')
+      const pendingPlans = this.generatedPlans.filter(
+        p => p.status === 'pending'
+      )
 
       this.$confirm(
         `确定将 ${pendingPlans.length} 个维护方案下发至平行系统？`,
@@ -736,20 +820,29 @@ export default {
       )
         .then(() => {
           this.activeTab = 'planDispatch'
-          this.addDispatchLog('info', `开始下发 ${pendingPlans.length} 个维护方案...`)
+          this.addDispatchLog(
+            'info',
+            `开始下发 ${pendingPlans.length} 个维护方案...`
+          )
 
           let completed = 0
           pendingPlans.forEach((plan, index) => {
-            setTimeout(() => {
-              plan.status = 'sent'
-              completed++
-              this.addDispatchLog('success', `方案「${plan.planName}」下发成功`)
+            setTimeout(
+              () => {
+                plan.status = 'sent'
+                completed++
+                this.addDispatchLog(
+                  'success',
+                  `方案「${plan.planName}」下发成功`
+                )
 
-              if (completed === pendingPlans.length) {
-                this.updateDispatchStats()
-                this.$message.success('所有方案已成功下发至平行系统')
-              }
-            }, (index + 1) * 1000)
+                if (completed === pendingPlans.length) {
+                  this.updateDispatchStats()
+                  this.$message.success('所有方案已成功下发至平行系统')
+                }
+              },
+              (index + 1) * 1000
+            )
           })
         })
         .catch(() => {})
@@ -778,7 +871,8 @@ export default {
 
       this.$nextTick(() => {
         if (this.$refs.dispatchLogContainer) {
-          this.$refs.dispatchLogContainer.scrollTop = this.$refs.dispatchLogContainer.scrollHeight
+          this.$refs.dispatchLogContainer.scrollTop =
+            this.$refs.dispatchLogContainer.scrollHeight
         }
       })
     },
@@ -786,10 +880,16 @@ export default {
       this.dispatchLogs = []
     },
     updateDispatchStats() {
-      this.dispatchStats.pending = this.generatedPlans.filter(p => p.status === 'pending').length
+      this.dispatchStats.pending = this.generatedPlans.filter(
+        p => p.status === 'pending'
+      ).length
       this.dispatchStats.sending = 0
-      this.dispatchStats.completed = this.generatedPlans.filter(p => p.status === 'sent').length
-      this.dispatchStats.failed = this.generatedPlans.filter(p => p.status === 'failed').length
+      this.dispatchStats.completed = this.generatedPlans.filter(
+        p => p.status === 'sent'
+      ).length
+      this.dispatchStats.failed = this.generatedPlans.filter(
+        p => p.status === 'failed'
+      ).length
     }
   }
 }
@@ -841,16 +941,6 @@ export default {
 .search-item label {
   font-size: 11px;
   color: #52637a;
-}
-
-.global-input {
-  background: #0d1522;
-  border: 1px solid #1e3557;
-  color: #fff;
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 11px;
-  outline: none;
 }
 
 .action-btn {

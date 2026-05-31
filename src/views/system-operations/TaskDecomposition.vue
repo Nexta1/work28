@@ -996,8 +996,8 @@ import {sslrw} from '@/api/killchain'
 import {getYXJMap} from '@/api/map'
 import {buildTree} from '@/utils'
 import * as echarts from 'echarts'
-import ZzrwWlManager from '../components/ZzrwWlManager.vue' // 引入外部保障需求管理组件
-import MbxxManager from '../components/MbxxManager.vue' // 引入外部保障需求管理组件
+import ZzrwWlManager from './components/ZzrwWlManager.vue' // 引入外部保障需求管理组件
+import MbxxManager from './components/MbxxManager.vue' // 引入外部保障需求管理组件
 
 export default {
   name: 'ZzrwOrchestrationDashboard',

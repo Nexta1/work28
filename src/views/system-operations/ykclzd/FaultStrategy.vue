@@ -16,12 +16,11 @@
 
         <div class="search-item">
           <label>全局故障搜索</label>
-          <input
-            type="text"
+          <el-input
             v-model="filterText"
             @input="handleSearch"
             placeholder="输入故障名称过滤树..."
-            class="global-input"
+            size="small"
           />
         </div>
       </div>
@@ -304,30 +303,29 @@
         <div class="dialog-detail-matrix">
           <div class="detail-row span-2">
             <span class="lbl">故障名称</span>
-            <input
-              type="text"
+            <el-input
               v-model="typeForm.faultName"
-              class="inner-input"
               placeholder="输入故障节点名称..."
+              size="small"
             />
           </div>
           <div class="detail-row span-2">
             <span class="lbl">父级故障特征标识</span>
-            <input
-              type="number"
+            <el-input
               v-model.number="typeForm.parentTypeId"
-              class="inner-input"
               disabled
+              size="small"
             />
           </div>
           <div class="detail-row span-2">
             <span class="lbl">故障描述与诊断特征指引</span>
-            <textarea
+            <el-input
               v-model="typeForm.faultMemo"
-              rows="3"
-              class="inner-input"
+              type="textarea"
+              :rows="3"
               style="height: 60px; resize: none"
-            ></textarea>
+              size="small"
+            />
           </div>
         </div>
       </el-form>
@@ -359,20 +357,18 @@
         <div class="dialog-detail-matrix">
           <div class="detail-row span-2">
             <span class="lbl">处置策略控制名称</span>
-            <input
-              type="text"
+            <el-input
               v-model="strategyForm.strategyName"
-              class="inner-input"
               placeholder="输入处理策略命名..."
+              size="small"
             />
           </div>
           <div class="detail-row">
             <span class="lbl">当前绑定故障 ID</span>
-            <input
-              type="number"
+            <el-input
               v-model.number="strategyForm.faultTypeId"
-              class="inner-input"
               disabled
+              size="small"
             />
           </div>
 
@@ -391,21 +387,23 @@
 
           <div class="detail-row span-2">
             <span class="lbl">故障深度诊断机理</span>
-            <textarea
+            <el-input
               v-model="strategyForm.faultDiagnosis"
-              rows="2"
-              class="inner-input"
+              type="textarea"
+              :rows="2"
               style="height: 45px; resize: none"
-            ></textarea>
+              size="small"
+            />
           </div>
           <div class="detail-row span-2">
             <span class="lbl">自动化应急处置预案手段</span>
-            <textarea
+            <el-input
               v-model="strategyForm.dealMethod"
-              rows="2"
-              class="inner-input"
+              type="textarea"
+              :rows="2"
               style="height: 45px; resize: none"
-            ></textarea>
+              size="small"
+            />
           </div>
         </div>
       </el-form>
@@ -756,16 +754,6 @@ export default {
   font-size: 11px;
   color: #52637a;
 }
-.global-input {
-  background: #0d1522;
-  border: 1px solid #1e3557;
-  color: #fff;
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 11px;
-  outline: none;
-  width: 160px;
-}
 .action-btn {
   background: #101b2e;
   border: 1px solid #1e3557;
@@ -998,19 +986,6 @@ export default {
 
 .inner-cascader {
   width: 100%;
-}
-
-.inner-input,
-.inner-select {
-  background: #0d1522;
-  border: 1px solid #1a293d;
-  color: #fff;
-  padding: 5px;
-  border-radius: 3px;
-  font-size: 11px;
-  outline: none;
-  width: 100%;
-  box-sizing: border-box;
 }
 .dark-btn {
   background: #172438;

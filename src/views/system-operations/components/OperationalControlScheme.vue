@@ -4,11 +4,11 @@
       <div class="search-flex">
         <div class="search-item">
           <label>网络检索</label>
-          <input
-            type="text"
+          <el-input
             v-model="searchQuery.WLMC"
             @input="handleSearch"
             placeholder="输入网络名称检索..."
+            size="small"
           />
         </div>
       </div>
@@ -1188,8 +1188,7 @@ export default {
 .text-green {
   color: #10b981;
 }
-.font-num {
-}
+/* font-num */
 
 /* 动态表单分界样式 */
 .dynamic-attr-divider {

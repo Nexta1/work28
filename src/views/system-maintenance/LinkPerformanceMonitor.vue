@@ -2,9 +2,7 @@
   <div class="screen-container">
     <div class="top-search-header">
       <div class="search-flex">
-        <span class="hub-title"
-          ><Icon icon="lucide:satellite" /> 性能监视处理</span
-        >
+        <span class="hub-title">🛰️ 战术平台检索调度系统</span>
 
         <div class="search-item">
           <label>平台名称</label>
@@ -47,9 +45,7 @@
 
     <div class="top-dashboard-layout">
       <div class="stats-panel-box">
-        <div class="panel-inner-title">
-          <Icon icon="lucide:bar-chart-3" /> 战术遥测数据统计中心
-        </div>
+        <div class="panel-inner-title">📊 战术遥测数据统计中心</div>
         <div class="stats-grid-matrix">
           <div class="stats-card">
             <span class="lbl">监控网络总数</span>
@@ -81,10 +77,7 @@
 
       <div class="platform-horizontal-panel bg-center-radar">
         <div class="panel-inner-title">
-          <span
-            ><Icon icon="lucide:compass" /> 检索平台时空航迹态势
-            (横向平铺)</span
-          >
+          <span>🧭 检索平台时空航迹态势 (横向平铺)</span>
           <span class="badge font-num text-orange animate-flash"
             >LIVE SYNC</span
           >
@@ -103,10 +96,7 @@
             @click="activePlatformId = pt.PTBSH"
           >
             <div class="track-header-meta">
-              <span class="pt-title"
-                ><Icon icon="lucide:map-pin" />
-                {{ pt.PTMC || '未知测控节点' }}</span
-              >
+              <span class="pt-title">📍 {{ pt.PTMC || '未知测控节点' }}</span>
               <span class="pt-bsh font-num">{{
                 platformTypeMap[pt.PTLX] || '常规平台'
               }}</span>
@@ -140,9 +130,7 @@
     <div class="main-body-layout">
       <div class="monitor-column-panel width-28">
         <div class="panel-header-summary">
-          <span class="title"
-            ><Icon icon="lucide:settings" /> 物理外设硬件集群监视</span
-          >
+          <span class="title">⚙️ 物理外设硬件集群监视</span>
           <span class="badge">数量: {{ deviceList.length }}</span>
         </div>
 
@@ -196,9 +184,9 @@
             </div>
 
             <div class="card-footer-info">
-              <span><Icon icon="lucide:badge-info" /> ID: #{{ sb.SBID }}</span>
+              <span>🆔 ID: #{{ sb.SBID }}</span>
               <span :class="sb.TEMP > 75 ? 'text-red' : 'text-cyan'"
-                ><Icon icon="lucide:thermometer" /> {{ sb.TEMP || 0 }}℃</span
+                >🌡️ {{ sb.TEMP || 0 }}℃</span
               >
             </div>
           </div>
@@ -207,9 +195,7 @@
 
       <div class="monitor-column-panel width-34">
         <div class="panel-header-summary">
-          <span class="title"
-            ><Icon icon="lucide:bar-chart-3" /> 激活设备特征性能谱系</span
-          >
+          <span class="title">📊 激活设备特征性能谱系</span>
           <span class="badge font-num text-cyan" v-if="activeDeviceId"
             >ID: #{{ activeDeviceId }}</span
           >
@@ -221,9 +207,7 @@
 
       <div class="monitor-column-panel width-38">
         <div class="panel-header-summary">
-          <span class="title"
-            ><Icon icon="lucide:satellite" /> 链网状态高级遥测网络监控</span
-          >
+          <span class="title">📡 链网状态高级遥测网络监控</span>
           <span class="badge font-num text-blue"
             >总计: {{ totalLinks }} 条</span
           >
@@ -243,8 +227,8 @@
               size="small"
             >
               <el-option label="全部状态" :value="''"></el-option>
-              <el-option label="正常" :value="'0'"></el-option>
-              <el-option label="告警" :value="'1'"></el-option>
+              <el-option label="🟢 正常" :value="'0'"></el-option>
+              <el-option label="🔴 告警" :value="'1'"></el-option>
             </el-select>
             <el-select
               v-model="networkQueryParams.WLLX"
@@ -288,9 +272,7 @@
 
             <div class="link-card-top">
               <div class="wl-meta">
-                <span class="wl-name"
-                  ><Icon icon="lucide:globe" /> {{ link.WLMC }}</span
-                >
+                <span class="wl-name">🌐 {{ link.WLMC }}</span>
                 <span class="wl-code font-num"
                   >网络号 (WLH): {{ link.WLH || '-' }}</span
                 >
@@ -299,32 +281,21 @@
                 class="health-score-badge"
                 :class="Number(link.JKZT) === 1 ? 'score-bad' : 'score-good'"
               >
-                <span class="score-val">
-                  <Icon
-                    :icon="
-                      Number(link.JKZT) === 1
-                        ? 'lucide:alert-triangle'
-                        : 'lucide:check-circle'
-                    "
-                  />
-                  {{ Number(link.JKZT) === 1 ? '故障告警' : '稳健运行' }}
-                </span>
+                <span class="score-val">{{
+                  Number(link.JKZT) === 1 ? '⚠️ 故障告警' : '✔ 稳健运行'
+                }}</span>
               </div>
             </div>
 
             <div class="freq-range-bar">
-              <span class="freq-label"
-                ><Icon icon="lucide:satellite" /> 载波工作频段:</span
-              >
+              <span class="freq-label">📡 载波工作频段:</span>
               <span class="freq-value font-num text-cyan"
                 >{{ link.PDXX || 0 }} ~ {{ link.PDSX || 0 }} MHz</span
               >
             </div>
 
             <div class="link-tech-spec">
-              <span class="spec-label"
-                ><Icon icon="lucide:settings" /> 组网体制组件:</span
-              >
+              <span class="spec-label">⚙️ 组网体制组件:</span>
               <span class="spec-highlight text-blue">{{
                 networkTypeMap[link.WLLX] || '未知体制方案'
               }}</span>
@@ -371,9 +342,7 @@
 
             <div class="link-card-bottom-bar">
               <span class="time font-num"
-                ><Icon icon="lucide:clock" /> 传输索引号: #{{
-                  link.WLZTID
-                }}</span
+                >⏳ 传输索引号: #{{ link.WLZTID }}</span
               >
               <el-button
                 type="text"
@@ -388,7 +357,7 @@
     </div>
 
     <el-dialog
-      title="网络运行状态遥测详情"
+      title="📡 网络运行状态遥测详情"
       :visible.sync="detailDialogVisible"
       width="520px"
       custom-class="dark-custom-dialog"

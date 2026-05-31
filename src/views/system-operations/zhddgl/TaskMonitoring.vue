@@ -7,13 +7,12 @@
 
         <div class="search-item">
           <label>任务名称</label>
-          <input
-            type="text"
+          <el-input
             v-model="queryParam.RWMC"
             @input="loadTaskList"
             placeholder="输入任务名称搜索..."
-            class="global-input"
             style="width: 200px"
+            size="small"
           />
         </div>
 
@@ -145,7 +144,11 @@
           height="100%"
           v-loading="loading"
         >
-          <el-table-column type="index" label="序号" width="60"></el-table-column>
+          <el-table-column
+            type="index"
+            label="序号"
+            width="60"
+          ></el-table-column>
           <el-table-column prop="RWMC" label="任务名称" min-width="180">
             <template slot-scope="scope">
               <span class="text-blue ellipsis-text" :title="scope.row.RWMC">
@@ -160,10 +163,7 @@
           </el-table-column>
           <el-table-column prop="STATE" label="任务状态" width="100">
             <template slot-scope="scope">
-              <el-tag
-                :type="getTaskStateType(scope.row.STATE)"
-                size="mini"
-              >
+              <el-tag :type="getTaskStateType(scope.row.STATE)" size="mini">
                 {{ getTaskStateText(scope.row.STATE) }}
               </el-tag>
             </template>
@@ -190,7 +190,11 @@
               </span>
             </template>
           </el-table-column>
-          <el-table-column prop="SSBZ" label="所属部队" width="120"></el-table-column>
+          <el-table-column
+            prop="SSBZ"
+            label="所属部队"
+            width="120"
+          ></el-table-column>
           <el-table-column label="操作" width="150" fixed="right">
             <template slot-scope="scope">
               <el-button
@@ -253,10 +257,7 @@
             </div>
             <div class="detail-item">
               <span class="detail-label">任务状态:</span>
-              <el-tag
-                :type="getTaskStateType(currentTask.STATE)"
-                size="small"
-              >
+              <el-tag :type="getTaskStateType(currentTask.STATE)" size="small">
                 {{ getTaskStateText(currentTask.STATE) }}
               </el-tag>
             </div>
@@ -317,8 +318,8 @@
 </template>
 
 <script>
-import { taskGetPage } from '@/api/task'
-import { getYXJMap } from '@/api/map'
+import {taskGetPage} from '@/api/task'
+import {getYXJMap} from '@/api/map'
 
 export default {
   name: 'TaskMonitoring',
@@ -335,7 +336,7 @@ export default {
         pageSize: 10,
         total: 0
       },
-      yxjMap: getYXJMap ? getYXJMap() : { 1: '低', 2: '重要', 3: '高' },
+      yxjMap: getYXJMap ? getYXJMap() : {1: '低', 2: '重要', 3: '高'},
       stats: {
         total: 0,
         active: 0,
@@ -424,25 +425,25 @@ export default {
     },
     getTaskStateType(state) {
       const typeMap = {
-        '1': 'success',
-        '2': 'warning',
-        '3': 'danger'
+        1: 'success',
+        2: 'warning',
+        3: 'danger'
       }
       return typeMap[state] || 'info'
     },
     getTaskStateText(state) {
       const textMap = {
-        '1': '启动',
-        '2': '调整',
-        '3': '终止'
+        1: '启动',
+        2: '调整',
+        3: '终止'
       }
       return textMap[state] || '未知'
     },
     getPriorityClass(priority) {
       const classMap = {
-        '1': 'text-green',
-        '2': 'text-orange',
-        '3': 'text-red'
+        1: 'text-green',
+        2: 'text-orange',
+        3: 'text-red'
       }
       return classMap[priority] || 'text-gray'
     },
@@ -515,16 +516,6 @@ export default {
 .search-item label {
   font-size: 11px;
   color: #52637a;
-}
-
-.global-input {
-  background: #0d1522;
-  border: 1px solid #1e3557;
-  color: #fff;
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 11px;
-  outline: none;
 }
 
 .action-btn {

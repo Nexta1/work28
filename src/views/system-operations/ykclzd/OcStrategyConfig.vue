@@ -6,27 +6,29 @@
 
         <div class="search-item">
           <label>策略大类</label>
-          <select
+          <el-select
             v-model="listQuery.strategyType"
             @change="handleTypeSearch"
-            class="global-input"
             style="width: 140px"
+            size="small"
           >
-            <option value="">全部策略大类</option>
-            <option v-for="type in strategyTypes" :key="type" :value="type">
-              {{ type }}
-            </option>
-          </select>
+            <el-option label="全部策略大类" :value="''"></el-option>
+            <el-option
+              v-for="type in strategyTypes"
+              :key="type"
+              :label="type"
+              :value="type"
+            />
+          </el-select>
         </div>
 
         <div class="search-item">
           <label>属性检索</label>
-          <input
-            type="text"
+          <el-input
             v-model="listQuery.attrName"
             @input="filterStrategyTree"
             placeholder="输入属性名称搜索..."
-            class="global-input"
+            size="small"
           />
         </div>
       </div>
@@ -351,39 +353,43 @@
         <div class="dialog-detail-matrix">
           <div class="detail-row span-2">
             <span class="lbl">策略属性名称</span>
-            <input
-              type="text"
+            <el-input
               v-model="attrForm.attrName"
-              class="inner-input"
               placeholder="请输入属性名称（可参考标准映射集）..."
+              size="small"
             />
           </div>
 
           <div class="detail-row">
             <span class="lbl">策略归属大类</span>
-            <select v-model="attrForm.strategyType" class="inner-select">
-              <option v-for="t in strategyTypes" :key="t" :value="t">
-                {{ t }}
-              </option>
-            </select>
+            <el-select v-model="attrForm.strategyType" size="small">
+              <el-option
+                v-for="t in strategyTypes"
+                :key="t"
+                :label="t"
+                :value="t"
+              />
+            </el-select>
           </div>
 
           <div class="detail-row">
             <span class="lbl">参数数据格式类型</span>
-            <select v-model="attrForm.attrType" class="inner-select">
-              <option v-for="t in attrTypes" :key="t" :value="t">
-                {{ t }}
-              </option>
-            </select>
+            <el-select v-model="attrForm.attrType" size="small">
+              <el-option
+                v-for="t in attrTypes"
+                :key="t"
+                :label="t"
+                :value="t"
+              />
+            </el-select>
           </div>
 
           <div class="detail-row span-2">
             <span class="lbl">属性配置默认缺省值</span>
-            <input
-              type="text"
+            <el-input
               v-model="attrForm.defaultValue"
-              class="inner-input"
               placeholder="输入默认值..."
+              size="small"
             />
           </div>
 
@@ -435,22 +441,22 @@
         <div class="dialog-detail-matrix">
           <div class="detail-row span-2">
             <span class="lbl">运控配置项名称</span>
-            <input
-              type="text"
+            <el-input
               v-model="opForm.operatorName"
-              class="inner-input"
               placeholder="如：强行倒换主节点、自动重置链路等..."
+              size="small"
             />
           </div>
           <div class="detail-row span-2">
             <span class="lbl">操控动作执行机理说明</span>
-            <textarea
+            <el-input
               v-model="opForm.operatorMemo"
-              rows="3"
-              class="inner-input"
+              type="textarea"
+              :rows="3"
               style="height: 65px; resize: none"
               placeholder="描述此动作下发的软硬件指令行为..."
-            ></textarea>
+              size="small"
+            />
           </div>
         </div>
       </el-form>
@@ -793,16 +799,7 @@ export default {
   font-size: 11px;
   color: #52637a;
 }
-.global-input {
-  background: #0d1522;
-  border: 1px solid #1e3557;
-  color: #fff;
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 11px;
-  outline: none;
-  width: 150px;
-}
+
 .action-btn {
   background: #101b2e;
   border: 1px solid #1e3557;
@@ -1078,18 +1075,6 @@ export default {
   font-size: 10px;
   color: #52637a;
   margin-bottom: 2px;
-}
-.inner-input,
-.inner-select {
-  background: #0d1522;
-  border: 1px solid #1a293d;
-  color: #fff;
-  padding: 5px;
-  border-radius: 3px;
-  font-size: 11px;
-  outline: none;
-  width: 100%;
-  box-sizing: border-box;
 }
 
 .text-blue {

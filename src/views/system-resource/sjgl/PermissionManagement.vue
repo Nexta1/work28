@@ -78,20 +78,20 @@
               <div class="panel-filter-bar">
                 <div class="search-item">
                   <label>用户名称</label>
-                  <input
+                  <el-input
                     v-model="userQuery.userName"
-                    class="global-input"
                     placeholder="搜索用户..."
                     @input="fetchUsers"
+                    size="small"
                   />
                 </div>
                 <div class="search-item">
                   <label>登录账号</label>
-                  <input
+                  <el-input
                     v-model="userQuery.userCode"
-                    class="global-input"
                     placeholder="账号..."
                     @input="fetchUsers"
+                    size="small"
                   />
                 </div>
                 <el-button
@@ -261,11 +261,11 @@
               <div class="panel-filter-bar">
                 <div class="search-item flex-search">
                   <label>角色名称</label>
-                  <input
+                  <el-input
                     v-model="roleQuery.roleName"
-                    class="global-input"
                     placeholder="过滤角色..."
                     @input="fetchRoles"
+                    size="small"
                   />
                 </div>
                 <el-button
@@ -1036,22 +1036,6 @@ export default {
   flex: 1;
 }
 
-.global-input {
-  background: #0d1522;
-  border: 1px solid #1e3557;
-  color: #fff;
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 11px;
-  outline: none;
-  width: 120px;
-}
-
-.flex-search .global-input {
-  flex: 1;
-  width: auto;
-}
-
 .action-btn {
   background: #101b2e;
   border: 1px solid #1e3557;
@@ -1303,8 +1287,7 @@ export default {
   font-size: 11px;
 }
 
-.font-num {
-}
+/* font-num */
 
 .text-blue {
   color: #38bdf8 !important;

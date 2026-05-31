@@ -7,13 +7,12 @@
 
         <div class="search-item">
           <label>群组名称</label>
-          <input
-            type="text"
+          <el-input
             v-model="queryParam.QZMC"
             @input="loadGroupList"
             placeholder="输入群组名称搜索..."
-            class="global-input"
             style="width: 200px"
+            size="small"
           />
         </div>
 
@@ -589,16 +588,6 @@ export default {
 .search-item label {
   font-size: 11px;
   color: #52637a;
-}
-
-.global-input {
-  background: #0d1522;
-  border: 1px solid #1e3557;
-  color: #fff;
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 11px;
-  outline: none;
 }
 
 .action-btn {
