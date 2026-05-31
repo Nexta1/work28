@@ -123,6 +123,7 @@
 <script>
 import {Graph, Shape} from '@antv/x6'
 import {wlzt} from '@/api/network'
+import {wllxMap} from '@/api/map'
 
 export default {
   name: 'TopologyCanvas',
@@ -138,6 +139,7 @@ export default {
       detailVisible: false,
       selectedNode: {},
       loading: false,
+      networkTypeMap: {},
       theme: {
         background: '#070c14',
         network: '#00d8ff',
@@ -169,6 +171,7 @@ export default {
   },
   mounted() {
     this.initGraph()
+    this.fetchNetworkTypeMap()
     window.addEventListener('resize', this.handleResize)
   },
   beforeDestroy() {
@@ -235,27 +238,12 @@ export default {
       wlzt(queryParams)
         .then(res => {
           const detail = (res.data.list && res.data.list[0]) || {}
-          const typeMap = {
-            1: '地基接入数据链组件',
-            2: '天基信息直接入链星弹数据链组件',
-            3: '天基侦察信息分发数据链组件',
-            4: '天基接入数据链专用组件',
-            5: '宽频段混合组网数据链组件',
-            6: '视距/超视距一体化组网数据链组件',
-            7: '全向低时延数据链组件',
-            8: '定向低时延数据链组件',
-            9: '低成本短距离导弹控制数据链组件',
-            10: '高频段高带宽数据链组件',
-            11: '激光频射一体化数据链组件',
-            12: '波形动态调整体制组件',
-            13: '波形在线定义体制组件'
-          }
 
           this.selectedNode = {
             ...originalData,
             ...detail,
             isNetwork: true,
-            typeName: typeMap[detail.WLLX] || '未知组件',
+            typeName: this.networkTypeMap[detail.WLLX] || '未知组件',
             DK: detail.DK || 100,
             SYDK: detail.SYDK || 0,
             DBL: detail.DBL || 0,
@@ -274,6 +262,31 @@ export default {
         })
     },
 
+    async fetchNetworkTypeMap() {
+      try {
+        const res = await wllxMap()
+        if (res?.data) {
+          this.networkTypeMap = res.data
+        }
+      } catch (e) {
+        console.warn('网络类型映射获取失败，使用默认值')
+        this.networkTypeMap = {
+          1: '地基接入数据链组件',
+          2: '天基信息直接入链星弹数据链组件',
+          3: '天基侦察信息分发数据链组件',
+          4: '天基接入数据链专用组件',
+          5: '宽频段混合组网数据链组件',
+          6: '视距/超视距一体化组网数据链组件',
+          7: '全向低时延数据链组件',
+          8: '定向低时延数据链组件',
+          9: '低成本短距离导弹控制数据链组件',
+          10: '高频段高带宽数据链组件',
+          11: '激光频射一体化数据链组件',
+          12: '波形动态调整体制组件',
+          13: '波形在线定义体制组件'
+        }
+      }
+    },
     clearGraph() {
       if (this.graph) this.graph.clearCells()
     },

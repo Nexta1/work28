@@ -310,6 +310,7 @@ import TopologyCanvas from '../../components/TopologyCanvas.vue'
 import {taskGetPage} from '@/api/task'
 import {xxlltj, findTree} from '@/api/network'
 import {transformTopologyData} from '../../methods/network'
+import {wllxMap} from '@/api/map'
 
 export default {
   name: 'NetworkTopology',
@@ -329,12 +330,14 @@ export default {
       filterForm: {
         ZZRWID: ''
       },
-      currentTopology: []
+      currentTopology: [],
+      networkTypeMap: {}
     }
   },
   mounted() {
     this.startLiveMonitoring()
     this.loadTaskList()
+    this.fetchNetworkTypeMap()
   },
   beforeDestroy() {
     if (this.refreshTimer) clearInterval(this.refreshTimer)
@@ -415,22 +418,32 @@ export default {
         })
     },
     getLinkTypeName(type) {
-      const typeMap = {
-        1: '地基接入数据链组件',
-        2: '天基信息直接入链星弹数据链组件',
-        3: '天基侦察信息分发数据链组件',
-        4: '天基接入数据链专用组件',
-        5: '宽频段混合组网数据链组件',
-        6: '视距/超视距一体化组网数据链组件',
-        7: '全向低时延数据链组件',
-        8: '定向低时延数据链组件',
-        9: '低成本短距离导弹控制数据链组件',
-        10: '高频段高带宽数据链组件',
-        11: '激光频射一体化数据链组件',
-        12: '波形动态调整体制组件',
-        13: '波形在线定义体制组件'
+      return this.networkTypeMap[type] || '通用未识别多维信息组件'
+    },
+    async fetchNetworkTypeMap() {
+      try {
+        const res = await wllxMap()
+        if (res?.data) {
+          this.networkTypeMap = res.data
+        }
+      } catch (e) {
+        console.warn('网络类型映射获取失败，使用默认值')
+        this.networkTypeMap = {
+          1: '地基接入数据链组件',
+          2: '天基信息直接入链星弹数据链组件',
+          3: '天基侦察信息分发数据链组件',
+          4: '天基接入数据链专用组件',
+          5: '宽频段混合组网数据链组件',
+          6: '视距/超视距一体化组网数据链组件',
+          7: '全向低时延数据链组件',
+          8: '定向低时延数据链组件',
+          9: '低成本短距离导弹控制数据链组件',
+          10: '高频段高带宽数据链组件',
+          11: '激光频射一体化数据链组件',
+          12: '波形动态调整体制组件',
+          13: '波形在线定义体制组件'
+        }
       }
-      return typeMap[type] || '通用未识别多维信息组件'
     },
     getJdStatusText(st) {
       const statusMap = {

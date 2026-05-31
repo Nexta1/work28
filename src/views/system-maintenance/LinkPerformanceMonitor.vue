@@ -438,8 +438,9 @@
 
 <script>
 import * as echarts from 'echarts'
-import {getsbxxPage, getPlatformPage} from '@/api/platform'
+import {getsbxxPage, getPlatformPage, getPlatformTypeMap} from '@/api/platform'
 import {wlzt} from '@/api/network'
+import {wllxMap} from '@/api/map'
 
 export default {
   name: 'LinkPerformanceMonitor',
@@ -470,27 +471,8 @@ export default {
       perfChartIns: null,
       chartHistory: {timeline: [], cpu: [], ram: [], temp: []},
 
-      platformTypeMap: {
-        1: '地基节点',
-        2: '海基舰艇',
-        3: '空基战机',
-        4: '天基卫星'
-      },
-      networkTypeMap: {
-        1: '地基接入数据链组件',
-        2: '天基信息直接入链星弹数据链组件',
-        3: '天基侦察信息分发数据链组件',
-        4: '天基接入数据链专用组件',
-        5: '宽频段混合组网数据链组件',
-        6: '视距/超视距一体化组网数据链组件',
-        7: '全向低时延数据链组件',
-        8: '定向低时延数据链组件',
-        9: '低成本短距离导弹控制数据链组件',
-        10: '高频段高带宽数据链组件',
-        11: '激光频射一体化数据链组件',
-        12: '波形动态调整体制组件',
-        13: '波形在线定义体制组件'
-      }
+      platformTypeMap: {},
+      networkTypeMap: {}
     }
   },
   computed: {
@@ -543,7 +525,9 @@ export default {
       await Promise.all([
         this.fetchPlatformPage(),
         this.fetchDevicePage(),
-        this.fetchWlztPage()
+        this.fetchWlztPage(),
+        this.fetchPlatformTypeMap(),
+        this.fetchNetworkTypeMap()
       ])
       this.loadingDevice = false
       this.loadingPlatform = false
@@ -606,6 +590,47 @@ export default {
         console.error('WLZT 调度中心遥测解析异常：', e)
       }
     },
+    async fetchPlatformTypeMap() {
+      try {
+        const res = await getPlatformTypeMap()
+        if (res?.data) {
+          this.platformTypeMap = res.data
+        }
+      } catch (e) {
+        console.warn('平台类型映射获取失败，使用默认值')
+        this.platformTypeMap = {
+          1: '地基节点',
+          2: '海基舰艇',
+          3: '空基战机',
+          4: '天基卫星'
+        }
+      }
+    },
+    async fetchNetworkTypeMap() {
+      try {
+        const res = await wllxMap()
+        if (res?.data) {
+          this.networkTypeMap = res.data
+        }
+      } catch (e) {
+        console.warn('网络类型映射获取失败，使用默认值')
+        this.networkTypeMap = {
+          1: '地基接入数据链组件',
+          2: '天基信息直接入链星弹数据链组件',
+          3: '天基侦察信息分发数据链组件',
+          4: '天基接入数据链专用组件',
+          5: '宽频段混合组网数据链组件',
+          6: '视距/超视距一体化组网数据链组件',
+          7: '全向低时延数据链组件',
+          8: '定向低时延数据链组件',
+          9: '低成本短距离导弹控制数据链组件',
+          10: '高频段高带宽数据链组件',
+          11: '激光频射一体化数据链组件',
+          12: '波形动态调整体制组件',
+          13: '波形在线定义体制组件'
+        }
+      }
+    },
     selectDevice(sb) {
       this.activeDeviceId = sb.SBID
       this.chartHistory = {timeline: [], cpu: [], ram: [], temp: []}
@@ -615,7 +640,9 @@ export default {
       await Promise.all([
         this.fetchPlatformPage(),
         this.fetchDevicePage(),
-        this.fetchWlztPage()
+        this.fetchWlztPage(),
+        this.fetchPlatformTypeMap(),
+        this.fetchNetworkTypeMap()
       ])
       if (this.activeDeviceId) {
         const curSb = this.deviceList.find(d => d.SBID === this.activeDeviceId)

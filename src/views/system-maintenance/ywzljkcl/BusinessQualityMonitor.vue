@@ -485,6 +485,7 @@ import {
   getZzrwqzPage
 } from '@/api/platform'
 import {wlllDetect} from '@/api/network'
+import {wllxMap} from '@/api/map'
 
 export default {
   name: 'BusinessQualityMonitor',
@@ -519,14 +520,7 @@ export default {
       activeLinkName: '',
       chartHistory: {timeline: [], successRate: [], delay: [], jitter: []},
 
-      linkTypeMap: {
-        1: '地基接入数据链组件',
-        2: '天基信息直接入链星弹数据链组件',
-        3: '天基侦察信息分发数据链组件',
-        4: '天基接入数据链专用组件',
-        5: '宽频段混合组网数据链组件',
-        6: '视距/超视距一体化组网数据链组件'
-      }
+      linkTypeMap: {}
     }
   },
   created() {
@@ -555,7 +549,8 @@ export default {
         this.fetchLinkDetectPage(),
         this.fetchTimeSyncPage(),
         this.fetchTaskGroupPage(),
-        this.fetchServicePage()
+        this.fetchServicePage(),
+        this.fetchLinkTypeMap()
       ])
 
       this.loadingLink = false
@@ -711,6 +706,24 @@ export default {
       }
     },
 
+    async fetchLinkTypeMap() {
+      try {
+        const res = await wllxMap()
+        if (res?.data) {
+          this.linkTypeMap = res.data
+        }
+      } catch (e) {
+        console.warn('链路类型映射获取失败，使用默认值')
+        this.linkTypeMap = {
+          1: '地基接入数据链组件',
+          2: '天基信息直接入链星弹数据链组件',
+          3: '天基侦察信息分发数据链组件',
+          4: '天基接入数据链专用组件',
+          5: '宽频段混合组网数据链组件',
+          6: '视距/超视距一体化组网数据链组件'
+        }
+      }
+    },
     async fetchServicePage() {
       try {
         const payload = {
@@ -797,7 +810,8 @@ export default {
         this.fetchLinkDetectPage(),
         this.fetchTimeSyncPage(),
         this.fetchTaskGroupPage(),
-        this.fetchServicePage()
+        this.fetchServicePage(),
+        this.fetchLinkTypeMap()
       ])
 
       if (this.activeLinkId) {
