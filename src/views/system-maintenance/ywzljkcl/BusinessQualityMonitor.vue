@@ -153,17 +153,47 @@
                     :size="12"
                     color="#818cf8"
                     style="vertical-align: middle; margin-right: 3px"
-                  />{{ item.WLMC || '模拟未命名网络' }}
-                  <small class="text-gray">({{ item.WLH || '-' }})</small>
+                  />{{ item.WLMC || '未命名网络' }}
+                  <small class="text-gray"
+                    >(网络号: {{ item.WLH || '-' }})</small
+                  >
                 </span>
                 <span class="status-badge">{{
-                  linkTypeMap[item.LLLX] || item.LLLX
+                  linkTypeMap[item.LLLX] || '类型' + item.LLLX
                 }}</span>
+              </div>
+
+              <div class="card-id-row font-num">
+                <span class="id-tag">
+                  <Icon
+                    icon="lucide:hash"
+                    :size="10"
+                    color="#64748b"
+                    style="vertical-align: middle; margin-right: 2px"
+                  />{{ item.wlllDetectId || '-' }}
+                </span>
+                <span
+                  class="health-score"
+                  :class="getHealthClass(item.healthScore)"
+                >
+                  <Icon
+                    icon="lucide:heart-pulse"
+                    :size="10"
+                    style="vertical-align: middle; margin-right: 2px"
+                  />健康分:
+                  {{ item.healthScore != null ? item.healthScore : '-' }}
+                </span>
+                <span
+                  class="anomaly-tag"
+                  :class="getAnomalyClass(item.anomalyStatus)"
+                >
+                  {{ getAnomalyText(item.anomalyStatus) }}
+                </span>
               </div>
 
               <div class="metrics-triple-grid">
                 <div class="triple-cell">
-                  <div class="lbl">成功率</div>
+                  <div class="lbl">传输成功率</div>
                   <div
                     class="val font-num"
                     :class="item.successRate < 0.95 ? 'text-red' : 'text-green'"
@@ -172,36 +202,53 @@
                   </div>
                 </div>
                 <div class="triple-cell">
-                  <div class="lbl">平均时延</div>
+                  <div class="lbl">平均时延(MS)</div>
                   <div class="val font-num text-cyan">
-                    {{ item.delayAvg || 0 }} <small>ms</small>
+                    {{ item.delayAvg != null ? item.delayAvg : 0 }}
+                    <small>ms</small>
                   </div>
                 </div>
                 <div class="triple-cell">
                   <div class="lbl">时延抖动</div>
                   <div class="val font-num text-orange">
-                    {{ item.delayJitter || 0 }} <small>ms</small>
+                    {{ item.delayJitter != null ? item.delayJitter : 0 }}
+                    <small>ms</small>
                   </div>
                 </div>
               </div>
 
               <div class="card-row-nodes font-num">
-                <span>
+                <span :title="'源平台编识号: ' + (item.PT1BSH || '-')">
                   <Icon
                     icon="lucide:log-out"
                     :size="12"
                     color="#fbbf24"
                     style="vertical-align: middle; margin-right: 3px"
-                  />源端: #{{ item.PT1MC || '-' }}
+                  />源: #{{ item.PT1BSH || '-' }}
+                  <small class="text-gray" v-if="item.PT1MC"
+                    >({{ item.PT1MC }})</small
+                  >
                 </span>
-                <span>
+                <span :title="'目的平台编识号: ' + (item.PT2BSH || '-')">
                   <Icon
                     icon="lucide:log-in"
                     :size="12"
                     color="#34d399"
                     style="vertical-align: middle; margin-right: 3px"
-                  />目的: #{{ item.PT2MC || '-' }}
+                  />目的: #{{ item.PT2BSH || '-' }}
+                  <small class="text-gray" v-if="item.PT2MC"
+                    >({{ item.PT2MC }})</small
+                  >
                 </span>
+              </div>
+
+              <div class="card-time-row font-num">
+                <Icon
+                  icon="lucide:clock"
+                  :size="10"
+                  color="#64748b"
+                  style="vertical-align: middle; margin-right: 3px"
+                />检测时间: {{ formatTime(item.TIME) }}
               </div>
             </div>
           </div>
@@ -651,51 +698,7 @@ export default {
           }
         }
         const res = await wlllDetect(payload)
-        this.linkDetectList = res?.rows || res?.data?.list || []
-
-        if (!this.linkDetectList || this.linkDetectList.length === 0) {
-          this.linkDetectList = [
-            {
-              wlllDetectId: 'DET_001',
-              WLMC: '地基高频骨干网组',
-              WLH: '101',
-              LLLX: 1,
-              successRate: 0.994,
-              delayAvg: 22,
-              delayJitter: 2,
-              healthScore: 98,
-              warnLevel: 'SAFE',
-              PT1BSH: 'PT_NODE_A',
-              PT2BSH: 'PT_NODE_B'
-            },
-            {
-              wlllDetectId: 'DET_002',
-              WLMC: '宽带混合激光通信网',
-              WLH: '105',
-              LLLX: 5,
-              successRate: 0.912,
-              delayAvg: 145,
-              delayJitter: 18,
-              healthScore: 74,
-              warnLevel: 'WARN',
-              PT1BSH: 'PT_NODE_C',
-              PT2BSH: 'PT_NODE_D'
-            },
-            {
-              wlllDetectId: 'DET_003',
-              WLMC: '视距超视距一体化网',
-              WLH: '106',
-              LLLX: 6,
-              successRate: 0.985,
-              delayAvg: 45,
-              delayJitter: 5,
-              healthScore: 94,
-              warnLevel: 'SAFE',
-              PT1BSH: 'PT_NODE_A',
-              PT2BSH: 'PT_NODE_D'
-            }
-          ]
-        }
+        this.linkDetectList = res?.data?.list || []
         this.calculateGlobalStats()
       } catch (e) {
         console.warn('链路质量接口访问阻断')
@@ -805,12 +808,19 @@ export default {
       } catch (e) {
         console.warn('链路类型映射获取失败，使用默认值')
         this.linkTypeMap = {
-          1: '地基接入数据链组件',
-          2: '天基信息直接入链星弹数据链组件',
-          3: '天基侦察信息分发数据链组件',
-          4: '天基接入数据链专用组件',
-          5: '宽频段混合组网数据链组件',
-          6: '视距/超视距一体化组网数据链组件'
+          1: '地基接入网',
+          2: '天基信息直接入链星弹网',
+          3: '天基侦察信息分发网',
+          4: '天基接入网',
+          5: '宽频段混合组网网',
+          6: '视距/超视距一体化组网网',
+          7: '全向低时延网',
+          8: '定向低时延网',
+          9: '低成本短距离导弹控制网',
+          10: '高频段高带宽网',
+          11: '激光频射一体化网',
+          12: '波形动态调整网',
+          13: '波形在线定义网'
         }
       }
     },
@@ -945,7 +955,7 @@ export default {
       this.globalStats.totalServices = this.serviceList.length
 
       const critLinks = this.linkDetectList.filter(
-        l => l.warnLevel === 'CRIT' || l.warnLevel === '3'
+        l => l.warnLevel === 3 || l.warnLevel === '3'
       ).length
       const deadServices = this.serviceList.filter(
         s => Number(s.serviceStatus) === 1
@@ -1030,9 +1040,46 @@ export default {
       if (this.chartIns) this.chartIns.resize()
     },
     getWarnClass(level) {
-      if (level === 'CRIT' || level === '3') return 'lvl-crit'
-      if (level === 'WARN' || level === '2') return 'lvl-warn'
+      if (level === 3 || level === '3') return 'lvl-crit'
+      if (level === 2 || level === '2') return 'lvl-warn'
+      if (level === 1 || level === '1') return 'lvl-warn'
       return 'lvl-safe'
+    },
+    getHealthClass(score) {
+      if (score == null) return ''
+      if (score >= 98) return 'health-excellent'
+      if (score >= 90) return 'health-warning'
+      return 'health-critical'
+    },
+    getAnomalyClass(status) {
+      if (status === 0 || status === '0') return 'anomaly-no'
+      if (status >= 1) return 'anomaly-yes'
+      return ''
+    },
+    getAnomalyText(status) {
+      if (status === 0 || status === '0') return '正常'
+      if (status === 1 || status === '1') return '轻度异常'
+      if (status === 2 || status === '2') return '中度异常'
+      if (status === 3 || status === '3') return '严重异常'
+      return '未知'
+    },
+    formatTime(timestamp) {
+      if (!timestamp) return '-'
+      const d = new Date(Number(timestamp))
+      const pad = n => String(n).padStart(2, '0')
+      return (
+        d.getFullYear() +
+        '-' +
+        pad(d.getMonth() + 1) +
+        '-' +
+        pad(d.getDate()) +
+        ' ' +
+        pad(d.getHours()) +
+        ':' +
+        pad(d.getMinutes()) +
+        ':' +
+        pad(d.getSeconds())
+      )
     },
     getTaskStateText(s) {
       return {0: '新建', 1: '在线', 2: '离线'}[s] || '未知'
@@ -1324,6 +1371,69 @@ export default {
   justify-content: space-between;
   font-size: 9px;
   color: #4e6890;
+}
+.card-id-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 4px 0;
+  font-size: 9px;
+  flex-wrap: wrap;
+}
+.card-id-row .id-tag {
+  color: #64748b;
+  background: #070c14;
+  padding: 1px 5px;
+  border-radius: 2px;
+  border: 1px solid #172438;
+}
+.health-score {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 5px;
+  border-radius: 2px;
+  font-weight: bold;
+}
+.health-excellent {
+  color: #10b981;
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+}
+.health-warning {
+  color: #f59e0b;
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.25);
+}
+.health-critical {
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.25);
+}
+.anomaly-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 5px;
+  border-radius: 2px;
+  font-weight: bold;
+  font-size: 9px;
+}
+.anomaly-yes {
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+.anomaly-no {
+  color: #10b981;
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+.card-time-row {
+  margin-top: 4px;
+  font-size: 9px;
+  color: #475569;
+  padding: 2px 4px;
+  background: #070c14;
+  border-radius: 2px;
 }
 
 /* 中央图表 */

@@ -130,7 +130,7 @@ const routes = [
       subsystem: '体系运营管理',
       category: '综合调度管理',
       icon: 'lucide:gantt-chart', // 调度、甘特图、规划时间轴
-      isModule: true,
+      isModule: false,
       requiresAuth: true
     }
   },

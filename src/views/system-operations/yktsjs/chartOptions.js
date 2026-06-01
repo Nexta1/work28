@@ -1,75 +1,5 @@
 const FONT_FAMILY = "monospace, 'Microsoft YaHei'"
 
-// 1. 作战任务保障统计（双柱状图）
-export const getTaskOnditionOption = data => ({
-  backgroundColor: 'transparent',
-  tooltip: {trigger: 'axis', axisPointer: {type: 'shadow'}},
-  legend: {textStyle: {color: '#94a3b8', fontFamily: FONT_FAMILY}, top: '0%'},
-  grid: {left: '3%', right: '3%', bottom: '5%', top: '18%', containLabel: true},
-  xAxis: {
-    type: 'category',
-    data: data.labels,
-    axisLine: {lineStyle: {color: '#16243b'}},
-    axisLabel: {color: '#94a3b8', fontFamily: FONT_FAMILY, fontSize: 10}
-  },
-  yAxis: {
-    type: 'value',
-    splitLine: {lineStyle: {color: '#111b2b'}},
-    axisLabel: {color: '#94a3b8', fontFamily: FONT_FAMILY}
-  },
-  series: [
-    {
-      name: '计划保障',
-      type: 'bar',
-      data: data.plan,
-      itemStyle: {color: '#16243b', borderColor: '#38bdf8', borderWidth: 1},
-      barWidth: 12
-    },
-    {
-      name: '实际执行',
-      type: 'bar',
-      data: data.actual,
-      itemStyle: {
-        color: 'rgba(6, 182, 212, 0.2)',
-        borderColor: '#06b6d4',
-        borderWidth: 1
-      },
-      barWidth: 12
-    }
-  ]
-})
-
-// 2. 杀伤链任务雷达图
-export const getKillChainOption = data => ({
-  backgroundColor: 'transparent',
-  tooltip: {},
-  radar: {
-    indicator: data.indicator,
-    shape: 'circle',
-    splitNumber: 4,
-    axisName: {color: '#94a3b8', fontFamily: FONT_FAMILY, fontSize: 11},
-    splitLine: {lineStyle: {color: '#111b2b'}},
-    splitArea: {
-      areaStyle: {color: ['rgba(8,14,24,0.4)', 'rgba(12,20,36,0.2)']}
-    },
-    axisLine: {lineStyle: {color: '#16243b'}}
-  },
-  series: [
-    {
-      type: 'radar',
-      data: [
-        {
-          value: data.values,
-          name: '效率指标',
-          itemStyle: {color: '#38bdf8'},
-          lineStyle: {width: 2, color: '#38bdf8'},
-          areaStyle: {color: 'rgba(56, 189, 248, 0.15)'}
-        }
-      ]
-    }
-  ]
-})
-
 // 3. 数据链网络运行统计（平滑折线图）
 export const getNetworkOption = data => ({
   backgroundColor: 'transparent',
@@ -121,13 +51,13 @@ export const getAlertPieOption = data => ({
     formatter: '{b}: {c}次 ({d}%)',
     backgroundColor: '#070c14',
     borderColor: '#172438',
-    textStyle: { color: '#cbd5e1', fontSize: 11 }
+    textStyle: {color: '#cbd5e1', fontSize: 11}
   },
   legend: {
     orient: 'vertical',
     right: '5%',
     top: 'center',
-    textStyle: { color: '#64748b', fontSize: 10 }
+    textStyle: {color: '#64748b', fontSize: 10}
   },
   series: [
     {
@@ -141,7 +71,7 @@ export const getAlertPieOption = data => ({
         borderColor: '#03060c',
         borderWidth: 2
       },
-      label: { show: false },
+      label: {show: false},
       emphasis: {
         label: {
           show: true,
@@ -150,7 +80,7 @@ export const getAlertPieOption = data => ({
           color: '#fff'
         }
       },
-      labelLine: { show: false },
+      labelLine: {show: false},
       data: data
     }
   ]
@@ -161,22 +91,28 @@ export const getFaultBarOption = data => ({
   backgroundColor: 'transparent',
   tooltip: {
     trigger: 'axis',
-    axisPointer: { type: 'shadow' },
+    axisPointer: {type: 'shadow'},
     backgroundColor: '#070c14',
     borderColor: '#172438',
-    textStyle: { color: '#cbd5e1', fontSize: 11 }
+    textStyle: {color: '#cbd5e1', fontSize: 11}
   },
-  grid: { top: '10%', bottom: '20%', left: '12%', right: '10%', containLabel: true },
+  grid: {
+    top: '10%',
+    bottom: '20%',
+    left: '12%',
+    right: '10%',
+    containLabel: true
+  },
   xAxis: {
     type: 'category',
     data: data.labels,
-    axisLine: { lineStyle: { color: '#172438' } },
-    axisLabel: { color: '#64748b', fontSize: 10 }
+    axisLine: {lineStyle: {color: '#172438'}},
+    axisLabel: {color: '#64748b', fontSize: 10}
   },
   yAxis: {
     type: 'value',
-    splitLine: { lineStyle: { color: '#111b2b' } },
-    axisLabel: { color: '#64748b', fontSize: 10 }
+    splitLine: {lineStyle: {color: '#111b2b'}},
+    axisLabel: {color: '#64748b', fontSize: 10}
   },
   series: [
     {
@@ -186,7 +122,16 @@ export const getFaultBarOption = data => ({
       data: data.values.map((v, i) => ({
         value: v,
         itemStyle: {
-          color: data.colors ? data.colors[i] : ['#f43f5e', '#f59e0b', '#8b5cf6', '#3b82f6', '#10b981', '#06b6d4'][i % 6],
+          color: data.colors
+            ? data.colors[i]
+            : [
+                '#f43f5e',
+                '#f59e0b',
+                '#8b5cf6',
+                '#3b82f6',
+                '#10b981',
+                '#06b6d4'
+              ][i % 6],
           borderRadius: [4, 4, 0, 0]
         }
       })),
@@ -209,13 +154,13 @@ export const getTargetPieOption = data => ({
     formatter: '{b}: {c}个 ({d}%)',
     backgroundColor: '#070c14',
     borderColor: '#172438',
-    textStyle: { color: '#cbd5e1', fontSize: 11 }
+    textStyle: {color: '#cbd5e1', fontSize: 11}
   },
   legend: {
     orient: 'vertical',
     right: '5%',
     top: 'center',
-    textStyle: { color: '#64748b', fontSize: 10 }
+    textStyle: {color: '#64748b', fontSize: 10}
   },
   series: [
     {
@@ -228,7 +173,7 @@ export const getTargetPieOption = data => ({
         borderColor: '#03060c',
         borderWidth: 2
       },
-      label: { show: false },
+      label: {show: false},
       emphasis: {
         label: {
           show: true,
@@ -237,7 +182,7 @@ export const getTargetPieOption = data => ({
           color: '#fff'
         }
       },
-      labelLine: { show: false },
+      labelLine: {show: false},
       data: data
     }
   ]
