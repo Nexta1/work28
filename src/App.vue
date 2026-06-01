@@ -154,12 +154,28 @@
       <!-- 登录页：全屏居中，无菜单布局 -->
       <router-view v-if="isLoginPage" />
     </template>
+    <!-- 全局新告警通知 -->
+    <new-alert-notification
+      :visible="showAlertNotification"
+      :alert-count="alertNotificationCount"
+      :latest-alert="latestAlertInfo"
+      @close="handleAlertClose"
+      @ignore="handleAlertConfirmed"
+      @snooze="handleAlertConfirmed"
+      @goto-alarm="handleAlertConfirmed"
+    />
   </div>
 </template>
 
 <script>
+import NewAlertNotification from '@/components/NewAlertNotification.vue'
+import {getLatestWarnInfo} from '@/api/warnInfo'
+
 export default {
   name: 'App',
+  components: {
+    NewAlertNotification
+  },
 
   data() {
     return {
@@ -168,7 +184,12 @@ export default {
       timer: null,
       navVisible: true,
       collapsedCategories: {},
-      collapsedSubsystems: {}
+      collapsedSubsystems: {},
+      // 新告警通知
+      showAlertNotification: false,
+      alertNotificationCount: 0,
+      latestAlertInfo: null,
+      alertCheckTimer: null
     }
   },
 
@@ -199,10 +220,22 @@ export default {
       this.updateTime()
     }, 1000)
     this.$store.dispatch('restoreSession')
+    // 启动告警检查
+    this.startAlertCheck()
+    // 监听路由变化：如果用户自行进入告警页面，关闭通知并确认
+    this.$router.afterEach(to => {
+      if (to.path === '/alarm-monitoring') {
+        if (this.showAlertNotification) {
+          this.showAlertNotification = false
+          this.handleAlertConfirmed()
+        }
+      }
+    })
   },
 
   beforeDestroy() {
     clearInterval(this.timer)
+    this.stopAlertCheck()
   },
 
   methods: {
@@ -292,7 +325,146 @@ export default {
     },
 
     logout() {
+      this.stopAlertCheck()
+      this.clearSnoozeMarkers()
+      // 清除告警确认时间，下次登录时重新初始化
+      localStorage.removeItem('alert_last_check_time')
       this.$store.dispatch('logout')
+    },
+
+    // ===================================================================
+    // 新告警通知轮询
+    // ===================================================================
+
+    /**
+     * 判断是否在免打扰期内（被忽略或被 snooze）
+     */
+    isInSnoozePeriod() {
+      const snoozeUntil = localStorage.getItem('alert_snooze_until')
+      if (snoozeUntil) {
+        const expireTime = Number(snoozeUntil)
+        if (Date.now() < expireTime) {
+          return true
+        }
+        // 已过期，清除
+        localStorage.removeItem('alert_snooze_until')
+      }
+      const ignoreUntil = localStorage.getItem('alert_ignore_until')
+      if (ignoreUntil) {
+        const expireTime = Number(ignoreUntil)
+        // 忽略标记有效期为 30 秒（避免刷新后立即再次弹出）
+        if (Date.now() - expireTime < 30000) {
+          return true
+        }
+        localStorage.removeItem('alert_ignore_until')
+      }
+      return false
+    },
+
+    /**
+     * 清除所有免打扰标记
+     */
+    clearSnoozeMarkers() {
+      localStorage.removeItem('alert_snooze_until')
+      localStorage.removeItem('alert_ignore_until')
+    },
+
+    /**
+     * 获取上次已确认的告警时间戳（用户已查看或已忽略）
+     */
+    getLastConfirmedTime() {
+      return Number(localStorage.getItem('alert_last_check_time') || 0)
+    },
+
+    /**
+     * 检查是否有新告警
+     * 只提醒 lastConfirmedTime 之后产生的新告警
+     */
+    async checkNewAlerts() {
+      if (!this.$store.getters.isAuthenticated || this.isLoginPage) {
+        return
+      }
+      // 已在告警页面时不再弹窗提醒
+      if (this.$route.path === '/alarm-monitoring') {
+        return
+      }
+      if (this.isInSnoozePeriod()) {
+        return
+      }
+      // 已弹窗时不再重复检查
+      if (this.showAlertNotification) {
+        return
+      }
+      try {
+        const res = await getLatestWarnInfo()
+        const list = res.data || res.list || []
+        if (list.length === 0) return
+
+        const lastConfirmed = this.getLastConfirmedTime()
+
+        // 首次登录：将 lastConfirmed 初始化为当前时间，不弹历史告警
+        if (!lastConfirmed && list.length > 0) {
+          localStorage.setItem('alert_last_check_time', String(Date.now()))
+          return
+        }
+
+        // 过滤出上次确认之后的新告警
+        const newAlerts = list.filter(item => {
+          const ts = Number(item.warnTimestamp) || 0
+          return ts > lastConfirmed
+        })
+
+        if (newAlerts.length > 0) {
+          this.alertNotificationCount = newAlerts.length
+          this.latestAlertInfo = newAlerts[0]
+          this.showAlertNotification = true
+        }
+      } catch (e) {
+        // 静默失败，不干扰用户
+      }
+    },
+
+    /**
+     * 启动告警轮询
+     */
+    startAlertCheck() {
+      this.stopAlertCheck()
+      // 路由就绪后首次检查
+      this.$router.onReady(() => {
+        // 延迟 3 秒，确保登录流程完成
+        setTimeout(() => {
+          this.checkNewAlerts()
+        }, 3000)
+      })
+      // 每 60 秒轮询一次
+      this.alertCheckTimer = setInterval(() => {
+        this.checkNewAlerts()
+      }, 60000)
+    },
+
+    /**
+     * 停止告警轮询
+     */
+    stopAlertCheck() {
+      if (this.alertCheckTimer) {
+        clearInterval(this.alertCheckTimer)
+        this.alertCheckTimer = null
+      }
+    },
+
+    /**
+     * 关闭通知
+     */
+    handleAlertClose() {
+      this.showAlertNotification = false
+    },
+
+    /**
+     * 用户确认（忽略/暂不提醒/查看告警）
+     * 更新 lastConfirmedTime，防止同一批告警再次弹出
+     */
+    handleAlertConfirmed() {
+      localStorage.setItem('alert_last_check_time', String(Date.now()))
     }
   }
 }
