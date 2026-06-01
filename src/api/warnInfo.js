@@ -1,4 +1,4 @@
-import request from '@/utils/request'
+import request from '@/utils/request-maintenance'
 
 /**
  * 告警信息分页查询（与 mainPage 一致的请求格式）

@@ -25,8 +25,14 @@
                 {{ currentTime }}
               </span>
 
-              <span class="user" v-if="userInfo">
-                {{ userInfo.name }}
+              <span class="user" v-if="userInfo" @click="showProfile = true">
+                <Icon icon="lucide:user-circle" :size="16" class="user-icon" />
+                <span class="user-name">{{ userInfo.name }}</span>
+                <Icon
+                  icon="lucide:chevron-down"
+                  :size="12"
+                  class="user-arrow"
+                />
               </span>
 
               <button class="logout-btn" @click="logout">退出</button>
@@ -164,17 +170,25 @@
       @snooze="handleAlertConfirmed"
       @goto-alarm="handleAlertConfirmed"
     />
+    <!-- 个人信息弹窗 -->
+    <user-profile-dialog
+      :visible="showProfile"
+      :user="userInfo || {}"
+      @close="showProfile = false"
+    />
   </div>
 </template>
 
 <script>
 import NewAlertNotification from '@/components/NewAlertNotification.vue'
+import UserProfileDialog from '@/components/UserProfileDialog.vue'
 import {getLatestWarnInfo} from '@/api/warnInfo'
 
 export default {
   name: 'App',
   components: {
-    NewAlertNotification
+    NewAlertNotification,
+    UserProfileDialog
   },
 
   data() {
@@ -185,6 +199,8 @@ export default {
       navVisible: true,
       collapsedCategories: {},
       collapsedSubsystems: {},
+      // 个人信息弹窗
+      showProfile: false,
       // 新告警通知
       showAlertNotification: false,
       alertNotificationCount: 0,
@@ -220,6 +236,8 @@ export default {
       this.updateTime()
     }, 1000)
     this.$store.dispatch('restoreSession')
+    // 刷新用户信息（从服务端获取最新数据，更新 localStorage 和 store）
+    this.$store.dispatch('fetchCurrentUser')
     // 启动告警检查
     this.startAlertCheck()
     // 监听路由变化：如果用户自行进入告警页面，关闭通知并确认
@@ -534,10 +552,43 @@ body {
   gap: 14px;
 }
 
-.time,
+.time {
+  color: #64748b;
+  font-size: 12px;
+  font-family: monospace;
+  letter-spacing: 0.5px;
+}
 .user {
-  color: #c7d2e3;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 12px 4px 10px;
+  border-radius: 6px;
+  color: #cbd5e1;
   font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+  user-select: none;
+}
+.user:hover {
+  background: rgba(56, 189, 248, 0.08);
+  border-color: rgba(56, 189, 248, 0.15);
+  color: #f1f5f9;
+}
+.user-icon {
+  color: #38bdf8;
+  flex-shrink: 0;
+}
+.user-name {
+  font-weight: 500;
+}
+.user-arrow {
+  color: #475569;
+  transition: transform 0.2s ease;
+}
+.user:hover .user-arrow {
+  color: #38bdf8;
 }
 
 .top-nav-btn,
