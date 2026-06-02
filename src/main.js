@@ -5,7 +5,9 @@ import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 Vue.config.productionTip = false
 import '@/assets/style.scss'
-import '@/assets/icons.js'
+
+// ============ 本地图标组件（替代 Iconify CDN） ============
+import '@/assets/IconLocal'
 
 // ============ DataV 炫酷大屏组件库（一键全量注册） ============
 import dataV from '@jiaminghi/data-view'
@@ -15,7 +17,6 @@ Vue.use(dataV)
 import countTo from 'vue-count-to'
 Vue.component('count-to', countTo)
 
-console.log(window.Iconify)
 import request from './utils/request'
 window.addEventListener('error', e => {
   if (

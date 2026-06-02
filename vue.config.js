@@ -37,6 +37,24 @@ module.exports = {
       }
     }
   },
+  chainWebpack: config => {
+    // 本地图标 SVG — 用 raw-loader 加载为字符串（不经过默认的 file-loader）
+    config.module
+      .rule('svg-icons')
+      .test(/\.svg$/)
+      .include.add(path.resolve(__dirname, 'src/assets/icons'))
+      .end()
+      .use('raw-loader')
+      .loader('raw-loader')
+      .options({ esModule: false })
+      .end()
+
+    // 排除 icons 目录，避免与默认的 svg 规则冲突
+    config.module
+      .rule('svg')
+      .exclude.add(path.resolve(__dirname, 'src/assets/icons'))
+      .end()
+  },
   css: {
     loaderOptions: {
       sass: {
