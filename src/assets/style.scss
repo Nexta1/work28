@@ -25,6 +25,208 @@
   --color-disabled: #334155; /* 禁用状态灰 */
 }
 
+/* ================================================================
+   🌌 全局炫酷背景：雷达网格 + 浮动光晕 + 动态粒子
+   ================================================================ */
+body {
+  position: relative;
+  background-color: #03060c;
+  margin: 0;
+}
+
+/* ---- 层1：雷达网格（微动） ---- */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.6;
+  background-image:
+    repeating-linear-gradient(0deg, transparent, transparent 39px,
+      rgba(0, 180, 255, 0.025) 39px, rgba(0, 180, 255, 0.025) 40px),
+    repeating-linear-gradient(90deg, transparent, transparent 39px,
+      rgba(0, 180, 255, 0.025) 39px, rgba(0, 180, 255, 0.025) 40px),
+    repeating-linear-gradient(0deg, transparent, transparent 199px,
+      rgba(0, 180, 255, 0.045) 199px, rgba(0, 180, 255, 0.045) 200px),
+    repeating-linear-gradient(90deg, transparent, transparent 199px,
+      rgba(0, 180, 255, 0.045) 199px, rgba(0, 180, 255, 0.045) 200px);
+  animation: gridPulse 6s ease-in-out infinite;
+}
+
+@keyframes gridPulse {
+  0%, 100% { opacity: 0.5; }
+  50%      { opacity: 0.7; }
+}
+
+/* ---- 层2：浮动光晕 ①（大范围漂移） ---- */
+body::after {
+  content: '';
+  position: fixed;
+  z-index: 0;
+  pointer-events: none;
+  top: -20%; left: -10%;
+  width: 60vw;
+  height: 60vw;
+  background: radial-gradient(circle, rgba(0, 150, 255, 0.07) 0%, transparent 70%);
+  border-radius: 50%;
+  animation: floatOrb1 20s ease-in-out infinite;
+}
+
+/* 光晕②（反向漂移） */
+#app::before {
+  content: '';
+  position: fixed;
+  z-index: 0;
+  pointer-events: none;
+  bottom: -15%; right: -10%;
+  width: 50vw;
+  height: 50vw;
+  background: radial-gradient(circle, rgba(0, 200, 180, 0.05) 0%, transparent 70%);
+  border-radius: 50%;
+  animation: floatOrb2 25s ease-in-out infinite;
+}
+
+/* 光晕③（居中小范围呼吸） via #particle-bg::after */
+#particle-bg::after {
+  content: '';
+  position: absolute;
+  z-index: 0;
+  pointer-events: none;
+  top: 30%; left: 30%;
+  width: 40vw;
+  height: 40vw;
+  background: radial-gradient(circle, rgba(100, 50, 255, 0.04) 0%, transparent 60%);
+  border-radius: 50%;
+  animation: floatOrb3 15s ease-in-out infinite;
+}
+
+@keyframes floatOrb1 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33%      { transform: translate(8vw, 5vh) scale(1.15); }
+  66%      { transform: translate(-5vw, -3vh) scale(0.9); }
+}
+@keyframes floatOrb2 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50%      { transform: translate(-10vw, -8vh) scale(1.2); }
+}
+@keyframes floatOrb3 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50%      { transform: translate(6vw, 4vh) scale(0.85); }
+}
+
+/* ---- 层3：动态粒子（CSS box-shadow 模拟上百颗星星） ---- */
+#particle-bg {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* 粒子群① 蓝色小点——向上漂移（慢） */
+#particle-bg::before {
+  content: '';
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  border-radius: 50%;
+  background: #38bdf8;
+  box-shadow:
+    45px  89px  #38bdf8, 182px 234px #38bdf8, 320px 56px  #38bdf8,
+    478px 412px #38bdf8, 123px 567px #38bdf8, 654px 89px  #38bdf8,
+    780px 345px #38bdf8, 56px  678px #38bdf8, 234px 123px #38bdf8,
+    890px 456px #38bdf8, 145px 789px #38bdf8, 567px 234px #38bdf8,
+    321px 890px #38bdf8, 678px 145px #38bdf8, 432px 567px #38bdf8,
+    987px 321px #38bdf8, 111px 444px #38bdf8, 555px 777px #38bdf8,
+    222px 888px #38bdf8, 666px 333px #38bdf8, 333px 111px #38bdf8,
+    777px 555px #38bdf8, 444px 999px #38bdf8, 888px 222px #38bdf8,
+    50px  200px #38bdf8, 400px 600px #38bdf8, 750px 100px #38bdf8,
+    600px 800px #38bdf8, 150px 300px #38bdf8, 850px 700px #38bdf8,
+    300px 500px #38bdf8, 950px 150px #38bdf8, 100px 900px #38bdf8;
+  animation: driftUp 18s linear infinite;
+}
+
+/* 粒子群② 青色小点——向上漂移（快） */
+#particle-bg::after {
+  content: '';
+  position: absolute;
+  width: 1.5px;
+  height: 1.5px;
+  border-radius: 50%;
+  background: #06b6d4;
+  box-shadow:
+    25px  50px  #06b6d4, 150px 300px #06b6d4, 280px 80px  #06b6d4,
+    420px 500px #06b6d4, 580px 150px #06b6d4, 700px 400px #06b6d4,
+    830px 250px #06b6d4, 95px  620px #06b6d4, 260px 750px #06b6d4,
+    490px 880px #06b6d4, 620px 130px #06b6d4, 350px 680px #06b6d4,
+    780px 430px #06b6d4, 140px 810px #06b6d4, 510px 290px #06b6d4,
+    860px 560px #06b6d4, 380px 940px #06b6d4, 650px 170px #06b6d4,
+    170px 450px #06b6d4, 730px 510px #06b6d4, 410px 720px #06b6d4,
+    920px 380px #06b6d4, 530px 860px #06b6d4, 290px 160px #06b6d4;
+  animation: driftUp 12s linear infinite;
+}
+
+/* 粒子群③ 暗白微光——更慢纵深漂移 */
+.particle-layer {
+  position: absolute;
+  top: 0; left: 0;
+  width: 1px;
+  height: 1px;
+  border-radius: 50%;
+  background: rgba(200, 220, 255, 0.6);
+  box-shadow:
+    38px  72px  rgba(200,220,255,0.5), 210px 180px rgba(200,220,255,0.4),
+    340px 90px  rgba(200,220,255,0.6), 500px 380px rgba(200,220,255,0.3),
+    670px 210px rgba(200,220,255,0.5), 800px 590px rgba(200,220,255,0.4),
+    920px 110px rgba(200,220,255,0.6), 160px 740px rgba(200,220,255,0.3),
+    430px 650px rgba(200,220,255,0.5), 600px 410px rgba(200,220,255,0.4),
+    760px 830px rgba(200,220,255,0.6), 280px 960px rgba(200,220,255,0.3),
+    540px 310px rgba(200,220,255,0.5), 880px 690px rgba(200,220,255,0.4),
+    120px 520px rgba(200,220,255,0.6), 460px 790px rgba(200,220,255,0.3),
+    730px 270px rgba(200,220,255,0.5), 950px 480px rgba(200,220,255,0.4),
+    310px 870px rgba(200,220,255,0.6), 640px 150px rgba(200,220,255,0.3);
+  animation: driftUp 28s linear infinite;
+}
+
+/* 粒子漂移动画——从底部钻出向上飘走 */
+@keyframes driftUp {
+  0%   { transform: translateY(100vh) scale(0); opacity: 0; }
+  5%   { opacity: 1; }
+  85%  { opacity: 1; }
+  100% { transform: translateY(-20vh) scale(1.2); opacity: 0; }
+}
+
+/* ---- 层4：扫描光带（微弱） ---- */
+#scan-beam {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    90deg,
+    transparent 0%,
+    transparent 98%,
+    rgba(0, 180, 255, 0.015) 98.5%,
+    transparent 99%,
+    transparent 100%
+  );
+  animation: scanBeam 8s linear infinite;
+}
+
+@keyframes scanBeam {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* 确保内容在背景之上 */
+#app {
+  position: relative;
+  z-index: 1;
+}
+
 /* 状态文本颜色速查类 */
 .text-blue {
   color: var(--color-primary) !important;

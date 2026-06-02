@@ -1,3 +1,5 @@
+import * as echarts from 'echarts'
+
 const FONT_FAMILY = "monospace, 'Microsoft YaHei'"
 
 // 3. 数据链网络运行统计（平滑折线图）
@@ -43,14 +45,14 @@ export const getNetworkOption = data => ({
   ]
 })
 
-// 4. 告警类型分布饼图（彩色）
+// 4. 告警类型分布饼图（增强版 - 发光+动画）
 export const getAlertPieOption = data => ({
   backgroundColor: 'transparent',
   tooltip: {
     trigger: 'item',
     formatter: '{b}: {c}次 ({d}%)',
-    backgroundColor: '#070c14',
-    borderColor: '#172438',
+    backgroundColor: 'rgba(7, 12, 20, 0.95)',
+    borderColor: '#1e3a5f',
     textStyle: {color: '#cbd5e1', fontSize: 11}
   },
   legend: {
@@ -66,18 +68,29 @@ export const getAlertPieOption = data => ({
       radius: ['35%', '60%'],
       center: ['32%', '50%'],
       avoidLabelOverlap: false,
+      animationDuration: 1500,
+      animationEasing: 'cubicInOut',
       itemStyle: {
         borderRadius: 4,
         borderColor: '#03060c',
-        borderWidth: 2
+        borderWidth: 2,
+        shadowBlur: 12,
+        shadowColor: 'rgba(0, 180, 255, 0.3)'
       },
       label: {show: false},
       emphasis: {
+        scaleSize: 12,
         label: {
           show: true,
           fontSize: 13,
           fontWeight: 'bold',
-          color: '#fff'
+          color: '#fff',
+          textShadowColor: 'rgba(0,212,255,0.6)',
+          textShadowBlur: 6
+        },
+        itemStyle: {
+          shadowBlur: 20,
+          shadowColor: 'rgba(0, 212, 255, 0.6)'
         }
       },
       labelLine: {show: false},
@@ -86,14 +99,14 @@ export const getAlertPieOption = data => ({
   ]
 })
 
-// 5. 故障统计彩色柱状图
+// 5. 故障统计增强柱状图（渐变+发光+动画）
 export const getFaultBarOption = data => ({
   backgroundColor: 'transparent',
   tooltip: {
     trigger: 'axis',
     axisPointer: {type: 'shadow'},
-    backgroundColor: '#070c14',
-    borderColor: '#172438',
+    backgroundColor: 'rgba(7, 12, 20, 0.95)',
+    borderColor: '#1e3a5f',
     textStyle: {color: '#cbd5e1', fontSize: 11}
   },
   grid: {
@@ -119,22 +132,25 @@ export const getFaultBarOption = data => ({
       name: '故障次数',
       type: 'bar',
       barWidth: '50%',
-      data: data.values.map((v, i) => ({
-        value: v,
-        itemStyle: {
-          color: data.colors
-            ? data.colors[i]
-            : [
-                '#f43f5e',
-                '#f59e0b',
-                '#8b5cf6',
-                '#3b82f6',
-                '#10b981',
-                '#06b6d4'
-              ][i % 6],
-          borderRadius: [4, 4, 0, 0]
+      animationDuration: 1600,
+      animationEasing: 'elasticOut',
+      data: data.values.map((v, i) => {
+        const baseColor = data.colors
+          ? data.colors[i]
+          : ['#f43f5e', '#f59e0b', '#8b5cf6', '#3b82f6', '#10b981', '#06b6d4'][i % 6]
+        return {
+          value: v,
+          itemStyle: {
+            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+              {offset: 0, color: baseColor},
+              {offset: 1, color: baseColor + '33'}
+            ]),
+            borderRadius: [4, 4, 0, 0],
+            shadowBlur: 10,
+            shadowColor: baseColor + '66'
+          }
         }
-      })),
+      }),
       label: {
         show: true,
         position: 'top',

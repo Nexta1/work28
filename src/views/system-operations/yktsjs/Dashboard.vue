@@ -5,18 +5,18 @@
     <!-- Row 2: 三列 - 作战任务保障统计(左) | 杀伤链态势(中) | 数据链网络运行统计(右) -->
     <div class="row-2-layout">
       <!-- 左：作战任务保障统计 -->
-      <div class="col-module" style="flex: 0.7">
+      <div class="col-module panel-glow">
+        <div class="tech-corners">
+          <span class="tc-tl"></span><span class="tc-tr"></span>
+          <span class="tc-bl"></span><span class="tc-br"></span>
+        </div>
         <div class="module-header">
           <span class="module-title">
-            <Icon
-              icon="lucide:shield"
-              :size="14"
-              style="vertical-align: middle; margin-right: 4px; color: #06b6d4"
-            />
+            <dv-decoration-5 :color="['#06b6d4', '#06b6d4']" :dur="3" style="width:20px;height:14px;display:inline-block;vertical-align:middle;margin-right:4px" />
             作战任务保障统计
-            <span class="module-badge text-blue">{{
-              stats.taskCount || 0
-            }}</span>
+            <span class="module-badge text-blue">
+              <count-to :startVal="0" :endVal="stats.taskCount || 0" :duration="1500" :decimals="0" />
+            </span>
           </span>
         </div>
         <div class="col-body">
@@ -35,15 +35,9 @@
             <div class="sub-section-title">
               任务优先级分布
               <span class="state-counts">
-                <span class="sc-tag sc-pri-high"
-                  >核心 {{ taskPriorityCount('03') }}</span
-                >
-                <span class="sc-tag sc-pri-mid"
-                  >重要 {{ taskPriorityCount('02') }}</span
-                >
-                <span class="sc-tag sc-pri-low"
-                  >一般 {{ taskPriorityCount('01') }}</span
-                >
+                <span class="sc-tag sc-pri-high">核心 {{ taskPriorityCount('03') }}</span>
+                <span class="sc-tag sc-pri-mid">重要 {{ taskPriorityCount('02') }}</span>
+                <span class="sc-tag sc-pri-low">一般 {{ taskPriorityCount('01') }}</span>
               </span>
             </div>
             <div ref="priorityChart" class="sub-chart"></div>
@@ -52,23 +46,19 @@
       </div>
 
       <!-- 中：杀伤链态势 -->
-      <div class="col-module" style="flex: 2.2">
+      <div class="col-module panel-glow" style="flex: 2.2">
+        <div class="tech-corners">
+          <span class="tc-tl"></span><span class="tc-tr"></span>
+          <span class="tc-bl"></span><span class="tc-br"></span>
+        </div>
         <div class="module-header">
           <div style="display: flex; align-items: center; gap: 11px; flex: 1">
             <span class="module-title">
-              <Icon
-                icon="lucide:target"
-                :size="14"
-                style="
-                  vertical-align: middle;
-                  margin-right: 4px;
-                  color: #f43f5e;
-                "
-              />
+              <dv-decoration-5 :color="['#f43f5e', '#f43f5e']" :dur="3" style="width:20px;height:14px;display:inline-block;vertical-align:middle;margin-right:4px" />
               杀伤链态势
-              <span class="module-badge text-cyan">{{
-                stats.kcTaskList || 0
-              }}</span>
+              <span class="module-badge text-cyan">
+                <count-to :startVal="0" :endVal="stats.kcTaskList || 0" :duration="1800" :decimals="0" />
+              </span>
             </span>
             <el-select
               v-model="selectedKcTaskId"
@@ -78,17 +68,11 @@
               @change="handleKcTaskChange"
               clearable
             >
-              <el-option
-                v-for="t in kcTaskList"
-                :key="t.SSLRWID"
-                :label="t.RWMC"
-                :value="t.SSLRWID"
-              />
+              <el-option v-for="t in kcTaskList" :key="t.SSLRWID" :label="t.RWMC" :value="t.SSLRWID" />
             </el-select>
           </div>
         </div>
         <div class="col-body killchain-body">
-          <!-- 平台分布 + 目标分类 左右并排 -->
           <div class="kc-charts-row">
             <div class="kc-chart-col">
               <div class="sub-section-title">平台分布统计</div>
@@ -103,82 +87,70 @@
       </div>
 
       <!-- 右：任务网络统计 -->
-      <div class="col-module" style="flex: 0.6">
+      <div class="col-module panel-glow" style="flex: 0.6">
+        <div class="tech-corners">
+          <span class="tc-tl"></span><span class="tc-tr"></span>
+          <span class="tc-bl"></span><span class="tc-br"></span>
+        </div>
         <div class="module-header">
           <span class="module-title">
-            <Icon
-              icon="lucide:activity"
-              :size="14"
-              style="vertical-align: middle; margin-right: 4px; color: #06b6d4"
-            />
+            <dv-decoration-5 :color="['#06b6d4', '#06b6d4']" :dur="3" style="width:20px;height:14px;display:inline-block;vertical-align:middle;margin-right:4px" />
             任务网络统计
           </span>
         </div>
         <div class="col-body">
           <div class="task-net-grid">
             <div class="task-net-card">
-              <div class="tnc-icon">
-                <Icon icon="lucide:layers" :size="18" color="#06b6d4" />
-              </div>
+              <div class="tnc-icon"><Icon icon="lucide:layers" :size="18" color="#06b6d4" /></div>
               <div class="tnc-content">
                 <div class="tnc-label">子网数量</div>
                 <div class="tnc-value text-cyan">
-                  {{ stats.subnetCount || 0 }}
+                  <count-to :startVal="0" :endVal="stats.subnetCount || 0" :duration="1200" :decimals="0" />
                 </div>
               </div>
             </div>
             <div class="task-net-card">
-              <div class="tnc-icon">
-                <Icon icon="lucide:hard-drive" :size="18" color="#10b981" />
-              </div>
+              <div class="tnc-icon"><Icon icon="lucide:hard-drive" :size="18" color="#10b981" /></div>
               <div class="tnc-content">
                 <div class="tnc-label">节点数量</div>
                 <div class="tnc-value text-green">
-                  {{ stats.memberCount || 0 }}
+                  <count-to :startVal="0" :endVal="stats.memberCount || 0" :duration="1400" :decimals="0" />
                 </div>
               </div>
             </div>
             <div class="task-net-card">
-              <div class="tnc-icon">
-                <Icon icon="lucide:share-2" :size="18" color="#8b5cf6" />
-              </div>
+              <div class="tnc-icon"><Icon icon="lucide:share-2" :size="18" color="#8b5cf6" /></div>
               <div class="tnc-content">
                 <div class="tnc-label">链路数量</div>
                 <div class="tnc-value text-purple">
-                  {{ stats.linkCount || 0 }}
+                  <count-to :startVal="0" :endVal="stats.linkCount || 0" :duration="1600" :decimals="0" />
                 </div>
               </div>
             </div>
             <div class="task-net-card">
-              <div class="tnc-icon">
-                <Icon icon="lucide:alert-triangle" :size="18" color="#f59e0b" />
-              </div>
+              <div class="tnc-icon"><Icon icon="lucide:alert-triangle" :size="18" color="#f59e0b" /></div>
               <div class="tnc-content">
                 <div class="tnc-label">告警数量</div>
                 <div class="tnc-value text-warning">
-                  {{ stats.warnCount || 0 }}
+                  <count-to :startVal="0" :endVal="stats.warnCount || 0" :duration="1800" :decimals="0" />
                 </div>
               </div>
             </div>
             <div class="task-net-card">
-              <div class="tnc-icon">
-                <Icon icon="lucide:alert-octagon" :size="18" color="#f43f5e" />
-              </div>
+              <div class="tnc-icon"><Icon icon="lucide:alert-octagon" :size="18" color="#f43f5e" /></div>
               <div class="tnc-content">
                 <div class="tnc-label">严重数量</div>
                 <div class="tnc-value text-danger">
-                  {{ stats.criticalCount || 0 }}
+                  <count-to :startVal="0" :endVal="stats.criticalCount || 0" :duration="2000" :decimals="0" />
                 </div>
               </div>
             </div>
             <div class="task-net-card">
-              <div class="tnc-icon">
-                <Icon icon="lucide:heart-pulse" :size="18" color="#14b8a6" />
-              </div>
+              <div class="tnc-icon"><Icon icon="lucide:heart-pulse" :size="18" color="#14b8a6" /></div>
               <div class="tnc-content">
                 <div class="tnc-label">健康数量</div>
                 <div class="tnc-value text-success">
-                  {{ stats.healthyCount || 0 }}
+                  <count-to :startVal="0" :endVal="stats.healthyCount || 0" :duration="2200" :decimals="0" />
                 </div>
               </div>
             </div>
@@ -187,162 +159,96 @@
       </div>
     </div>
 
-    <!-- Row 3: 平台在线统计(左) | 告警+故障(右,等宽等高) -->
+    <!-- Row 3: 平台在线统计(左) | 告警+故障(右) -->
     <div class="row-3-layout">
       <!-- 左：平台在线统计 -->
-      <div class="half-module">
+      <div class="half-module panel-glow">
+        <div class="tech-corners">
+          <span class="tc-tl"></span><span class="tc-tr"></span>
+          <span class="tc-bl"></span><span class="tc-br"></span>
+        </div>
         <div class="module-header">
           <div style="display: flex; align-items: center; gap: 8px; flex: 1">
             <span class="module-title">
-              <Icon
-                icon="lucide:server"
-                :size="14"
-                style="
-                  vertical-align: middle;
-                  margin-right: 4px;
-                  color: #10b981;
-                "
-              />
+              <dv-decoration-5 :color="['#10b981', '#10b981']" :dur="3" style="width:20px;height:14px;display:inline-block;vertical-align:middle;margin-right:4px" />
               平台在线统计
             </span>
-            <el-select
-              v-model="selectedTaskName"
-              placeholder="全部任务"
-              size="mini"
-              style="width: 150px"
-              clearable
-            >
-              <el-option
-                v-for="tn in taskNameList"
-                :key="tn"
-                :label="tn"
-                :value="tn"
-              />
+            <el-select v-model="selectedTaskName" placeholder="全部任务" size="mini" style="width: 150px" clearable>
+              <el-option v-for="tn in taskNameList" :key="tn" :label="tn" :value="tn" />
             </el-select>
           </div>
         </div>
         <div class="group-stat-body">
-          <div v-if="filteredGroupList.length === 0" class="net-empty-hint">
-            暂无匹配的群组数据
-          </div>
+          <div v-if="filteredGroupList.length === 0" class="net-empty-hint">暂无匹配的群组数据</div>
           <div v-else class="group-summary-grid">
-            <div
-              v-for="g in filteredGroupList"
-              :key="g.ZZRWQZID"
-              class="group-summary-card"
-            >
+            <div v-for="g in filteredGroupList" :key="g.ZZRWQZID" class="group-summary-card">
               <div class="gsc-title">{{ g.QZMC }}</div>
               <div class="gsc-task-name" v-if="g.RWMC">
-                <Icon
-                  icon="lucide:flag"
-                  :size="9"
-                  color="#facc15"
-                  style="vertical-align: middle; margin-right: 2px"
-                />
+                <Icon icon="lucide:flag" :size="9" color="#facc15" style="vertical-align: middle; margin-right: 2px" />
                 {{ g.RWMC }}
               </div>
               <div class="gsc-counts">
-                <span class="gsc-online text-green">{{
-                  g.onlineCount || 0
-                }}</span>
+                <span class="gsc-online text-green">{{ g.onlineCount || 0 }}</span>
                 <span class="gsc-sep">/</span>
                 <span class="gsc-total text-cyan">{{ getGroupTotal(g) }}</span>
               </div>
               <div class="gsc-label">在线 / 总数</div>
-              <div
-                class="gsc-state"
-                :class="'tag-' + getGroupStateText(g.QZSTATE)"
-              >
-                {{ getGroupStateText(g.QZSTATE) }}
-              </div>
+              <div class="gsc-state" :class="'tag-' + getGroupStateText(g.QZSTATE)">{{ getGroupStateText(g.QZSTATE) }}</div>
             </div>
           </div>
         </div>
       </div>
-      <!-- 右：上告警(两个图表左右) + 下故障 -->
+
+      <!-- 右：上告警 + 下故障 -->
       <div class="right-split">
-        <div class="half-module">
+        <div class="half-module panel-glow">
+          <div class="tech-corners">
+            <span class="tc-tl"></span><span class="tc-tr"></span>
+            <span class="tc-bl"></span><span class="tc-br"></span>
+          </div>
           <div class="module-header">
             <div style="display: flex; align-items: center; gap: 8px; flex: 1">
               <span class="module-title">
-                <Icon
-                  icon="lucide:alert-triangle"
-                  :size="14"
-                  style="
-                    vertical-align: middle;
-                    margin-right: 4px;
-                    color: #f59e0b;
-                  "
-                />
+                <dv-decoration-5 :color="['#f59e0b', '#f59e0b']" :dur="3" style="width:20px;height:14px;display:inline-block;vertical-align:middle;margin-right:4px" />
                 数据链装备告警统计
               </span>
-              <el-date-picker
-                v-model="alertTimeRange"
-                type="datetimerange"
-                range-separator="至"
-                start-placeholder="开始"
-                end-placeholder="结束"
-                size="mini"
-                style="width: 280px"
-                value-format="yyyy-MM-dd HH:mm:ss"
-                @change="handleAlertTimeChange"
-              ></el-date-picker>
+              <el-date-picker v-model="alertTimeRange" type="datetimerange" range-separator="至" start-placeholder="开始" end-placeholder="结束" size="mini" style="width: 280px" value-format="yyyy-MM-dd HH:mm:ss" @change="handleAlertTimeChange" />
             </div>
           </div>
           <div class="alert-charts-row">
             <div class="alert-chart-box">
-              <div class="alert-sub-title">
-                <Icon
-                  icon="lucide:activity"
-                  :size="11"
-                  color="#38bdf8"
-                  style="vertical-align: middle; margin-right: 3px"
-                />
-                业务指标
-              </div>
+              <div class="alert-sub-title"><Icon icon="lucide:activity" :size="11" color="#38bdf8" style="vertical-align: middle; margin-right: 3px" />业务指标</div>
               <div class="alert-big-number-sm">
-                <span class="text-warning font-num">{{ opTotal }}</span>
+                <span class="text-warning font-num"><count-to :startVal="0" :endVal="opTotal" :duration="1500" :decimals="0" /></span>
                 <span class="alert-unit-sm">次</span>
               </div>
               <div ref="operationChart" class="half-chart"></div>
             </div>
             <div class="alert-chart-divider"></div>
             <div class="alert-chart-box">
-              <div class="alert-sub-title">
-                <Icon
-                  icon="lucide:bar-chart"
-                  :size="11"
-                  color="#a78bfa"
-                  style="vertical-align: middle; margin-right: 3px"
-                />
-                性能指标
-              </div>
+              <div class="alert-sub-title"><Icon icon="lucide:bar-chart" :size="11" color="#a78bfa" style="vertical-align: middle; margin-right: 3px" />性能指标</div>
               <div class="alert-big-number-sm">
-                <span class="text-purple font-num">{{ perfTotal }}</span>
+                <span class="text-purple font-num"><count-to :startVal="0" :endVal="perfTotal" :duration="1700" :decimals="0" /></span>
                 <span class="alert-unit-sm">次</span>
               </div>
               <div ref="performanceChart" class="half-chart"></div>
             </div>
           </div>
         </div>
-        <div class="half-module">
+        <div class="half-module panel-glow">
+          <div class="tech-corners">
+            <span class="tc-tl"></span><span class="tc-tr"></span>
+            <span class="tc-bl"></span><span class="tc-br"></span>
+          </div>
           <div class="module-header">
             <span class="module-title">
-              <Icon
-                icon="lucide:tool"
-                :size="14"
-                style="
-                  vertical-align: middle;
-                  margin-right: 4px;
-                  color: #f43f5e;
-                "
-              />
+              <dv-decoration-5 :color="['#f43f5e', '#f43f5e']" :dur="3" style="width:20px;height:14px;display:inline-block;vertical-align:middle;margin-right:4px" />
               数据链装备故障统计
             </span>
           </div>
           <div class="half-module-body">
             <div class="alert-big-number">
-              <div class="alert-total text-danger">{{ faultTotal }}</div>
+              <div class="alert-total text-danger"><count-to :startVal="0" :endVal="faultTotal" :duration="2000" :decimals="0" /></div>
               <span class="alert-unit">次故障</span>
             </div>
             <div ref="faultChart" class="half-chart"></div>
@@ -418,6 +324,7 @@ export default {
         performance: null,
         fault: null
       },
+      resizeObserver: null,
       yxjMap: getYXJMap(),
       stateMap: getStateMap()
     }
@@ -450,10 +357,26 @@ export default {
   },
   mounted() {
     this.fetchAllData()
-    window.addEventListener('resize', this.handleResize)
+    // ResizeObserver 自动监听容器尺寸变化 → 图表自适应
+    let rafId = null
+    this.resizeObserver = new ResizeObserver(() => {
+      if (rafId) return
+      rafId = requestAnimationFrame(() => {
+        rafId = null
+        Object.values(this.chartInstances).forEach(ch => {
+          if (ch && !ch.isDisposed()) ch.resize()
+        })
+      })
+    })
+    this.$nextTick(() => {
+      if (this.$el) this.resizeObserver.observe(this.$el)
+    })
   },
   beforeDestroy() {
-    window.removeEventListener('resize', this.handleResize)
+    if (this.resizeObserver) {
+      this.resizeObserver.disconnect()
+      this.resizeObserver = null
+    }
     Object.values(this.chartInstances).forEach(ch => ch && ch.dispose())
   },
   methods: {
@@ -714,8 +637,8 @@ export default {
         tooltip: {
           trigger: 'item',
           formatter: '{b}: {c} ({d}%)',
-          backgroundColor: '#070c14',
-          borderColor: '#172438',
+          backgroundColor: 'rgba(7, 12, 20, 0.95)',
+          borderColor: '#1e3a5f',
           textStyle: {color: '#cbd5e1', fontSize: 11}
         },
         series: [
@@ -723,11 +646,22 @@ export default {
             type: 'pie',
             radius: ['30%', '55%'],
             center: ['50%', '50%'],
+            animationDuration: 1200,
+            animationEasing: 'cubicInOut',
             label: {color: '#94a3b8', fontSize: 10},
             itemStyle: {
               borderRadius: 4,
               borderColor: '#03060c',
-              borderWidth: 2
+              borderWidth: 2,
+              shadowBlur: 10,
+              shadowColor: 'rgba(0, 180, 255, 0.2)'
+            },
+            emphasis: {
+              scaleSize: 8,
+              itemStyle: {
+                shadowBlur: 20,
+                shadowColor: 'rgba(0, 212, 255, 0.5)'
+              }
             },
             data: data.map((d, i) => ({
               ...d,
@@ -761,8 +695,8 @@ export default {
         tooltip: {
           trigger: 'item',
           formatter: '{b}: {c} ({d}%)',
-          backgroundColor: '#070c14',
-          borderColor: '#172438',
+          backgroundColor: 'rgba(7, 12, 20, 0.95)',
+          borderColor: '#1e3a5f',
           textStyle: {color: '#cbd5e1', fontSize: 11}
         },
         series: [
@@ -770,11 +704,22 @@ export default {
             type: 'pie',
             radius: ['30%', '55%'],
             center: ['50%', '50%'],
+            animationDuration: 1200,
+            animationEasing: 'cubicInOut',
             label: {color: '#94a3b8', fontSize: 10},
             itemStyle: {
               borderRadius: 4,
               borderColor: '#03060c',
-              borderWidth: 2
+              borderWidth: 2,
+              shadowBlur: 10,
+              shadowColor: 'rgba(0, 180, 255, 0.2)'
+            },
+            emphasis: {
+              scaleSize: 8,
+              itemStyle: {
+                shadowBlur: 20,
+                shadowColor: 'rgba(0, 212, 255, 0.5)'
+              }
             },
             data: data.map((d, i) => ({
               ...d,
@@ -800,8 +745,8 @@ export default {
         tooltip: {
           trigger: 'axis',
           axisPointer: {type: 'shadow'},
-          backgroundColor: '#070c14',
-          borderColor: '#172438',
+          backgroundColor: 'rgba(7, 12, 20, 0.95)',
+          borderColor: '#1e3a5f',
           textStyle: {color: '#cbd5e1', fontSize: 11}
         },
         grid: {top: 24, bottom: 22, left: 42, right: 10, containLabel: true},
@@ -820,9 +765,19 @@ export default {
           {
             type: 'bar',
             barWidth: '50%',
+            animationDuration: 1400,
+            animationEasing: 'elasticOut',
             data: data.map(d => ({
               value: d.value,
-              itemStyle: {color: d.color, borderRadius: [4, 4, 0, 0]}
+              itemStyle: {
+                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                  {offset: 0, color: d.color},
+                  {offset: 1, color: d.color + '33'}
+                ]),
+                borderRadius: [4, 4, 0, 0],
+                shadowBlur: 8,
+                shadowColor: d.color + '66'
+              }
             })),
             label: {
               show: true,
@@ -858,8 +813,8 @@ export default {
         tooltip: {
           trigger: 'axis',
           axisPointer: {type: 'shadow'},
-          backgroundColor: '#070c14',
-          borderColor: '#172438',
+          backgroundColor: 'rgba(7, 12, 20, 0.95)',
+          borderColor: '#1e3a5f',
           textStyle: {color: '#cbd5e1', fontSize: 11}
         },
         grid: {top: 22, bottom: 20, left: 36, right: 10, containLabel: true},
@@ -878,13 +833,23 @@ export default {
           {
             type: 'bar',
             barWidth: '45%',
-            data: entries.map(([name, value]) => ({
-              value,
-              itemStyle: {
-                color: this.targetColorMap[name] || '#64748b',
-                borderRadius: [4, 4, 0, 0]
+            animationDuration: 1400,
+            animationEasing: 'elasticOut',
+            data: entries.map(([name, value]) => {
+              const c = this.targetColorMap[name] || '#64748b'
+              return {
+                value,
+                itemStyle: {
+                  color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                    {offset: 0, color: c},
+                    {offset: 1, color: c + '33'}
+                  ]),
+                  borderRadius: [4, 4, 0, 0],
+                  shadowBlur: 8,
+                  shadowColor: c + '66'
+                }
               }
-            })),
+            }),
             label: {
               show: true,
               position: 'top',
@@ -989,9 +954,6 @@ export default {
     handleRefresh() {
       this.$message.success('正在刷新数据...')
       this.fetchAllData()
-    },
-    handleResize() {
-      Object.values(this.chartInstances).forEach(ch => ch && ch.resize())
     }
   }
 }
@@ -1022,10 +984,12 @@ export default {
   background: #080e18;
   border: 1px solid #111b2b;
   border-radius: 4px;
-  padding: 11px;
+  padding: 14px;
   display: flex;
   flex-direction: column;
   min-height: 0;
+  position: relative;
+  overflow: hidden;
 }
 .module-header {
   padding-bottom: 6px;
@@ -1203,9 +1167,11 @@ export default {
   background: #080e18;
   border: 1px solid #111b2b;
   border-radius: 4px;
-  padding: 11px;
+  padding: 14px;
   display: flex;
   flex-direction: column;
+  position: relative;
+  overflow: hidden;
 }
 
 /* 右侧上下分割 */
@@ -1415,5 +1381,79 @@ export default {
   color: #ef4444;
   border: 1px solid rgba(239, 68, 68, 0.4);
   background: rgba(239, 68, 68, 0.06);
+}
+
+/* ================================================================
+   炫酷增强样式：角标装饰 / 扫描线 / 发光边框 / 卡片动效
+   ================================================================ */
+
+/* --- 面板发光边框（悬停增强） --- */
+.panel-glow {
+  position: relative;
+  overflow: hidden;
+  transition: box-shadow 0.4s ease, border-color 0.4s ease;
+}
+.panel-glow:hover {
+  border-color: rgba(0, 212, 255, 0.3) !important;
+  box-shadow: 0 0 18px rgba(0, 180, 255, 0.12), inset 0 0 12px rgba(0, 180, 255, 0.04) !important;
+}
+
+/* --- 四角科技标（渐显+自适应） --- */
+.tech-corners {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  z-index: 5;
+  pointer-events: none;
+}
+.tech-corners span {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  opacity: 0.4;
+  transition: opacity 0.4s ease;
+}
+.panel-glow:hover .tech-corners span { opacity: 1; }
+.tc-tl { top: -1px; left: -1px;  border-top: 2px solid #00d4ff; border-left: 2px solid #00d4ff; }
+.tc-tr { top: -1px; right: -1px; border-top: 2px solid #00d4ff; border-right: 2px solid #00d4ff; }
+.tc-bl { bottom: -1px; left: -1px; border-bottom: 2px solid #00d4ff; border-left: 2px solid #00d4ff; }
+.tc-br { bottom: -1px; right: -1px; border-bottom: 2px solid #00d4ff; border-right: 2px solid #00d4ff; }
+
+/* --- 卡片hover上浮+发光 --- */
+.task-net-card {
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1.2);
+}
+.task-net-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(0, 212, 255, 0.35) !important;
+  box-shadow: 0 6px 20px rgba(0, 180, 255, 0.15);
+  background: #101c30 !important;
+}
+.group-summary-card {
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1.2);
+}
+.group-summary-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(0, 212, 255, 0.3) !important;
+  box-shadow: 0 4px 14px rgba(0, 180, 255, 0.12);
+  background: #0e1828 !important;
+}
+
+/* --- 数字跳动过渡 --- */
+.tnc-value, .gsc-online, .gsc-total, .alert-total {
+  transition: color 0.3s ease;
+}
+
+/* --- 标题光晕 --- */
+.module-title {
+  text-shadow: 0 0 8px rgba(0, 180, 255, 0.15);
+}
+
+/* --- 容器背景微动（呼吸感） --- */
+.screen-container {
+  animation: bgPulse 8s ease-in-out infinite;
+}
+@keyframes bgPulse {
+  0%, 100% { background-color: #03060c; }
+  50%      { background-color: #040a14; }
 }
 </style>

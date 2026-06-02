@@ -6,6 +6,15 @@ import 'element-ui/lib/theme-chalk/index.css'
 Vue.config.productionTip = false
 import '@/assets/style.scss'
 import '@/assets/icons.js'
+
+// ============ DataV 炫酷大屏组件库（一键全量注册） ============
+import dataV from '@jiaminghi/data-view'
+Vue.use(dataV)
+
+// ============ vue-count-to 数字滚动 ============
+import countTo from 'vue-count-to'
+Vue.component('count-to', countTo)
+
 console.log(window.Iconify)
 import request from './utils/request'
 window.addEventListener('error', e => {

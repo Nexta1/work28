@@ -1,5 +1,10 @@
 <template>
   <div id="app">
+    <!-- 全屏粒子背景层 -->
+    <div id="particle-bg">
+      <div class="particle-layer"></div>
+    </div>
+    <div id="scan-beam"></div>
     <!-- 路由就绪后再渲染，防止刷新时登录页闪现菜单 -->
     <template v-if="routeReady">
       <!-- 菜单布局：仅在非登录页显示 -->
