@@ -283,7 +283,8 @@
               <div class="matrix-item">
                 <label>关联场景策略</label>
                 <span class="val text-cyan">{{
-                  getStrategyNameById(selectedNetwork.scenarioStrategyId) || '未关联'
+                  getStrategyNameById(selectedNetwork.scenarioStrategyId) ||
+                  '未关联'
                 }}</span>
               </div>
               <div class="matrix-item">
@@ -728,7 +729,9 @@ export default {
         .then(res => {
           const list = res.data || res || []
           // 兼容多种返回格式
-          this.scenarioStrategyOptions = Array.isArray(list) ? list : (list.list || [])
+          this.scenarioStrategyOptions = Array.isArray(list)
+            ? list
+            : list.list || []
         })
         .catch(() => {
           this.scenarioStrategyOptions = []
@@ -852,7 +855,10 @@ export default {
         isNaN(id) ? id : Number(id)
       )
       // 确保 scenarioStrategyId 回填时转为数字（后端 Long 兼容）
-      if (formCopy.scenarioStrategyId !== undefined && formCopy.scenarioStrategyId !== null) {
+      if (
+        formCopy.scenarioStrategyId !== undefined &&
+        formCopy.scenarioStrategyId !== null
+      ) {
         formCopy.scenarioStrategyId = Number(formCopy.scenarioStrategyId)
       }
       this.form = formCopy
