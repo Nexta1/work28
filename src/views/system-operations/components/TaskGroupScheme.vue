@@ -286,15 +286,15 @@
                     }}</span>
                   </div>
                   <div class="metric-box">
-                    <span class="met-label">路由节点标识</span>
+                    <span class="met-label">路由节点</span>
                     <span class="met-value font-num">{{
-                      net.LYJDID || '自动路由'
+                      findPlatformNameById(net.LYJDID) || '自动路由'
                     }}</span>
                   </div>
                   <div class="metric-box">
                     <span class="met-label">时间基准节点</span>
                     <span class="met-value font-num text-orange">{{
-                      net.SJJZJDID || '无'
+                      findPlatformNameById(net.SJJZJDID) || '无'
                     }}</span>
                   </div>
                   <div class="metric-boxHighlight">
@@ -561,21 +561,37 @@
 
         <el-row :gutter="10">
           <el-col :span="12">
-            <el-form-item label="路由节点ID" prop="LYJDID">
-              <el-input-number
+            <el-form-item label="路由节点" prop="LYJDID">
+              <el-select
                 v-model="linkForm.LYJDID"
+                clearable
+                placeholder="从群组成员中筛选路由节点"
                 style="width: 100%"
-                controls-position="right"
-              />
+              >
+                <el-option
+                  v-for="pt in groupMemberPlatforms"
+                  :key="pt.PTID"
+                  :label="pt.PTMC"
+                  :value="pt.PTID"
+                />
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="时间基准节点" prop="SJJZJDID">
-              <el-input-number
+              <el-select
                 v-model="linkForm.SJJZJDID"
+                clearable
+                placeholder="从群组成员中筛选时间基准节点"
                 style="width: 100%"
-                controls-position="right"
-              />
+              >
+                <el-option
+                  v-for="pt in groupMemberPlatforms"
+                  :key="pt.PTID"
+                  :label="pt.PTMC"
+                  :value="pt.PTID"
+                />
+              </el-select>
             </el-form-item>
           </el-col>
         </el-row>
@@ -679,11 +695,30 @@ export default {
             trigger: 'change'
           }
         ],
+        LYJDID: [
+          {required: true, message: '请选择路由节点', trigger: 'change'}
+        ],
+        SJJZJDID: [
+          {required: true, message: '请选择时间基准节点', trigger: 'change'}
+        ],
         SYYQ: [
           {required: true, message: '请输入明确的时延容忍值', trigger: 'blur'}
         ],
         DKYQ: [{required: true, message: '请输入带宽底线指标', trigger: 'blur'}]
       }
+    }
+  },
+  computed: {
+    // 根据当前选中的任务群组，从 platformList 中筛选出属于该群组的成员平台
+    groupMemberPlatforms() {
+      if (!this.currentGroup || !this.currentGroup.ZZRWPTIDS) return []
+      const memberIds = String(this.currentGroup.ZZRWPTIDS)
+        .split(',')
+        .filter(Boolean)
+        .map(id => String(id).trim())
+      return this.platformList.filter(item =>
+        memberIds.includes(String(item.PTID))
+      )
     }
   },
   watch: {
@@ -730,7 +765,9 @@ export default {
       if (!taskId) return
       request({url: `/rest/zzrwwl/findTree/${taskId}`, method: 'get'})
         .then(res => {
-          this.networkTreeOptions = res.data || res.list || []
+          const raw = res.data || res.list || res || []
+          // 保证始终为数组（接口可能返回单根节点对象）
+          this.networkTreeOptions = Array.isArray(raw) ? raw : [raw]
         })
         .catch(() => {
           this.networkTreeOptions = []

@@ -281,6 +281,12 @@
                 >
               </div>
               <div class="matrix-item">
+                <label>关联场景策略</label>
+                <span class="val text-cyan">{{
+                  getStrategyNameById(selectedNetwork.scenarioStrategyId) || '未关联'
+                }}</span>
+              </div>
+              <div class="matrix-item">
                 <label>指定网内簇首</label>
                 <span class="val text-cyan">{{
                   getPlatformNameById(selectedNetwork.CSZZRWPTID) || '未指派'
@@ -529,6 +535,21 @@
               />
             </el-select>
           </el-form-item>
+          <el-form-item label="场景策略">
+            <el-select
+              v-model="form.scenarioStrategyId"
+              clearable
+              placeholder="关联场景策略（来自策略配置）"
+              style="width: 100%"
+            >
+              <el-option
+                v-for="item in scenarioStrategyOptions"
+                :key="item.scenarioStrategyId"
+                :label="item.strategyName"
+                :value="item.scenarioStrategyId"
+              />
+            </el-select>
+          </el-form-item>
           <el-form-item label="时延要求 (ms)">
             <el-input-number
               v-model="form.latencyRequirement"
@@ -628,6 +649,7 @@ export default {
       selectedNetwork: null,
       tlywOptions: [], // 存储从外部函数获取的通联字典
       aqbmOptions: [], // 存储从外部函数获取的安全字典
+      scenarioStrategyOptions: [], // 场景策略列表（来自 rest/scenarioStrategy/scenarioStrategies）
       form: this.getInitForm(),
       rules: {
         WLMC: [{required: true, message: '请指定网络描述', trigger: 'blur'}],
@@ -675,6 +697,8 @@ export default {
         : ['态势', '语音', '视频', '文电', '目指', '话音', '指令', '图像']
     this.aqbmOptions =
       typeof aqbmList === 'function' ? aqbmList() : ['高', '中', '低']
+    // 加载场景策略列表
+    this.loadScenarioStrategies()
   },
   methods: {
     getInitForm() {
@@ -694,8 +718,29 @@ export default {
         ZZRWPTIDS: '',
         selectedPlatformIds: [], // 表单辅助多选绑定
         CSZZRWPTID: null, // 簇首平台 ID
-        networkingState: 0
+        networkingState: 0,
+        scenarioStrategyId: null // 关联的场景策略标识
       }
+    },
+    // 从 rest/scenarioStrategy/scenarioStrategies 加载场景策略列表
+    loadScenarioStrategies() {
+      apiGetAll('scenarioStrategy', null, 'scenarioStrategies')
+        .then(res => {
+          const list = res.data || res || []
+          // 兼容多种返回格式
+          this.scenarioStrategyOptions = Array.isArray(list) ? list : (list.list || [])
+        })
+        .catch(() => {
+          this.scenarioStrategyOptions = []
+        })
+    },
+    // 根据 scenarioStrategyId 获取策略名称
+    getStrategyNameById(id) {
+      if (!id) return ''
+      const target = this.scenarioStrategyOptions.find(
+        s => String(s.scenarioStrategyId) === String(id)
+      )
+      return target ? target.strategyName : `策略#${id}`
     },
     loadWllxDictionary() {
       apiGetAll('zzrwwl', null, 'wllxMap')
@@ -806,6 +851,10 @@ export default {
       formCopy.selectedPlatformIds = this.splitData(row.ZZRWPTIDS).map(id =>
         isNaN(id) ? id : Number(id)
       )
+      // 确保 scenarioStrategyId 回填时转为数字（后端 Long 兼容）
+      if (formCopy.scenarioStrategyId !== undefined && formCopy.scenarioStrategyId !== null) {
+        formCopy.scenarioStrategyId = Number(formCopy.scenarioStrategyId)
+      }
       this.form = formCopy
       this.dialogVisible = true
     },
