@@ -309,8 +309,7 @@ const routes = [
   {
     path: '/alarm-monitoring',
     name: 'AlarmMonitoring',
-    component: () =>
-      import('@/views/system-maintenance/gjjscl/WarnInfoDashboard.vue'),
+
     meta: {
       title: '告警监视处理',
       subsystem: '系统运维',
@@ -320,6 +319,35 @@ const routes = [
       requiresAuth: true
     }
   },
+  {
+    path: '/gj-monitoring',
+    name: 'gjMonitoring',
+    component: () =>
+      import('@/views/system-maintenance/gjjscl/WarnInfoDashboard.vue'),
+    meta: {
+      title: '告警监视处理',
+      subsystem: '系统运维',
+      category: '告警监视处理',
+      icon: 'lucide:bell-ring', // 告警
+      parentModule: '告警监视处理',
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/ai-intelligent-alert',
+    name: 'AiIntelligentAlert',
+    component: () =>
+      import('@/views/system-maintenance/gjjscl/AiIntelligentAlert.vue'),
+    meta: {
+      title: 'AI智能告警',
+      subsystem: '系统运维',
+      category: '告警监视处理',
+      icon: 'lucide:bot',
+      parentModule: '告警监视处理',
+      requiresAuth: true
+    }
+  },
+
   {
     path: '/performance-monitoring',
     name: 'PerformanceMonitoring',
