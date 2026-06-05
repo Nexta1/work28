@@ -319,7 +319,7 @@
                       style="
                         vertical-align: middle;
                         margin-right: 4px;
-                        color: #52637a;
+                        color: #6b7d99;
                       "
                     />
                     通联业务要求:

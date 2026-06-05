@@ -225,7 +225,7 @@
             >
           </div>
           <div class="action-btn-group">
-            <span style="font-size: 11px; color: #52637a; margin-right: 4px"
+            <span style="font-size: 11px; color: #6b7d99; margin-right: 4px"
               >布局方向:</span
             >
             <el-radio-group
@@ -1858,7 +1858,7 @@ export default {
 }
 .search-item label {
   font-size: 11px;
-  color: #52637a;
+  color: #6b7d99;
 }
 .action-btn {
   background: #101b2e;
@@ -1883,7 +1883,7 @@ export default {
 .stat-card span,
 .stat-card small {
   display: block;
-  color: #52637a;
+  color: #6b7d99;
   font-size: 11px;
 }
 .stat-card strong {

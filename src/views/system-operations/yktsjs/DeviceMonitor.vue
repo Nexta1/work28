@@ -771,8 +771,8 @@ export default {
 .screen-container {
   width: 100%;
   height: 100%;
-  background-color: #1a2d4a;
-  color: #cbd5e1;
+  background-color: var(--bg-base);
+  color: var(--color-text-main);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -783,8 +783,8 @@ export default {
 /* 顶部流式检索区 */
 .top-search-header {
   height: 50px;
-  background: #080e18;
-  border: 1px solid #111b2b;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-dark);
   border-radius: 4px;
   display: flex;
   align-items: center;
@@ -804,13 +804,13 @@ export default {
 }
 .search-item label {
   font-size: 11px;
-  color: #52637a;
+  color: #6b7d99;
   font-weight: bold;
 }
 .search-item input,
 .search-item select {
-  background: #0d1522;
-  border: 1px solid #1a293d;
+  background: var(--bg-input);
+  border: 1px solid var(--border-dark);
   color: #fff;
   padding: 4px 8px;
   border-radius: 4px;
@@ -828,7 +828,7 @@ export default {
   align-items: center;
   gap: 5px;
   font-size: 11px;
-  color: #7c8ba1;
+  color: var(--color-text-muted);
 }
 .legend-node .dot {
   width: 6px;
@@ -860,8 +860,8 @@ export default {
 /* LEFT: 瘦身型平台列表 */
 .left-platform-sidebar {
   width: 22%;
-  background: #080e18;
-  border: 1px solid #111b2b;
+  background: var(--bg-base);
+  border: 1px solid var(--border-dark);
   border-radius: 4px;
   display: flex;
   flex-direction: column;
@@ -879,11 +879,11 @@ export default {
 .sidebar-header-summary .title {
   font-size: 12px;
   font-weight: bold;
-  color: #38bdf8;
+  color: var(--color-primary);
 }
 .sidebar-header-summary .total-badge {
   font-size: 11px;
-  color: #06b6d4;
+  color: var(--color-cyan);
   background: rgba(6, 182, 212, 0.1);
   padding: 2px 6px;
   border-radius: 11px;
@@ -908,9 +908,9 @@ export default {
 
 /* 卡片精致化 */
 .platform-brief-card {
-  background: #0d1522;
-  border: 1px solid #172438;
-  border-left: 3px solid #172438;
+  background: var(--bg-input);
+  border: 1px solid var(--border-dark);
+  border-left: 3px solid var(--border-dark);
   border-radius: 3px;
   padding: 8px 11px;
   cursor: pointer;
@@ -918,11 +918,11 @@ export default {
   transition: all 0.2s ease;
 }
 .platform-brief-card:hover {
-  background: #131f33;
+  background: var(--bg-hover);
 }
 .platform-brief-card.is-active {
-  border-color: #38bdf8 !important;
-  background: #13233c;
+  border-color: var(--color-primary) !important;
+  background: var(--bg-panel);
 }
 
 .card-top {
@@ -946,17 +946,17 @@ export default {
   font-size: 11px;
 }
 .bsh-txt {
-  color: #415169;
+  color: var(--color-text-muted);
 }
 .pt-type-tag {
-  color: #64748b;
+  color: var(--color-text-muted);
 }
 .brief-dynamics {
   display: flex;
   gap: 11px;
   margin-top: 5px;
   font-size: 11px;
-  color: #8a99ad;
+  color: var(--color-text-muted);
 }
 
 .scroll-loading-tip {
@@ -969,8 +969,8 @@ export default {
 /* RIGHT: 宽域级联详情 */
 .right-cascade-panel {
   width: 78%;
-  background: #080e18;
-  border: 1px solid #111b2b;
+  background: var(--bg-base);
+  border: 1px solid var(--border-dark);
   border-radius: 4px;
   position: relative;
   box-sizing: border-box;
@@ -1003,7 +1003,7 @@ export default {
   gap: 6px;
 }
 .matrix-item {
-  background: #070c14;
+  background: var(--bg-input);
   padding: 5px 8px;
   border-radius: 2px;
   display: flex;
@@ -1013,7 +1013,7 @@ export default {
   font-size: 11px;
 }
 .matrix-item label {
-  color: #415169;
+  color: var(--color-text-muted);
   font-size: 11px;
 }
 .matrix-item .val {
@@ -1031,7 +1031,7 @@ export default {
   font-size: 11px;
 }
 .summary-label {
-  color: #64748b;
+  color: var(--color-text-muted);
   font-weight: bold;
 }
 .summary-indicators {
@@ -1074,10 +1074,10 @@ export default {
 }
 .column-title {
   font-size: 11px;
-  color: #52637a;
+  color: var(--color-text-muted);
   font-weight: bold;
   margin-bottom: 6px;
-  border-bottom: 1px solid #111b2b;
+  border-bottom: 1px solid var(--border-dark);
   padding-bottom: 4px;
 }
 .matrix-scroll-box {
@@ -1090,9 +1090,9 @@ export default {
 
 /* 基础节点卡片 */
 .monitor-node {
-  background: #0d1522;
-  border: 1px solid #172438;
-  border-left: 3px solid #172438;
+  background: var(--bg-input);
+  border: 1px solid var(--border-dark);
+  border-left: 3px solid var(--border-dark);
   border-radius: 4px;
   padding: 8px;
   position: relative;
@@ -1101,7 +1101,7 @@ export default {
   font-size: 11px;
   font-weight: bold;
   color: #fff;
-  border-bottom: 1px solid #111b2b;
+  border-bottom: 1px solid var(--border-dark);
   padding-bottom: 3px;
   margin-bottom: 5px;
   padding-right: 16px;
@@ -1111,10 +1111,10 @@ export default {
   grid-template-columns: 1fr 1fr;
   gap: 2px 6px;
   font-size: 11px;
-  color: #52637a;
+  color: var(--color-text-muted);
 }
 .detail-grid span {
-  color: #cbd5e1;
+  color: var(--color-text-main);
 }
 .full-col {
   grid-column: span 2;
@@ -1177,7 +1177,7 @@ export default {
 
 /* 最右侧 ECharts 垂直专属列 */
 .charts-exclusive-column {
-  background: rgba(13, 21, 34, 0.3);
+  background: rgba(13, 21, 34, 0.2);
   padding: 6px;
   border-radius: 4px;
 }
@@ -1191,7 +1191,7 @@ export default {
 .chart-item-wrapper {
   flex: 1;
   min-height: 0;
-  background: #070c14;
+  background: var(--bg-input);
   border-radius: 4px;
   padding: 4px;
 }
@@ -1235,13 +1235,13 @@ export default {
 }
 
 .status-running {
-  border-left-color: #10b981 !important;
+  border-left-color: var(--color-success) !important;
 }
 .status-busy {
-  border-left-color: #f59e0b !important;
+  border-left-color: var(--color-warning) !important;
 }
 .status-fault {
-  border-left-color: #ef4444 !important;
+  border-left-color: var(--color-danger) !important;
 }
 .status-offline {
   opacity: 0.35;
@@ -1264,9 +1264,9 @@ export default {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: #080e18;
+  background: var(--bg-base);
   z-index: 10;
-  color: #415169;
+  color: var(--color-text-muted);
   font-size: 11px;
 }
 .radar-scan-loader {
@@ -1285,40 +1285,40 @@ export default {
 .sub-empty {
   text-align: center;
   font-size: 11px;
-  color: #223147;
+  color: var(--color-disabled);
   padding: 14px;
-  border: 1px dashed #111b2b;
+  border: 1px dashed var(--border-dark);
 }
 
 .text-blue {
-  color: #38bdf8 !important;
+  color: var(--color-primary) !important;
 }
 .text-green {
-  color: #10b981 !important;
+  color: var(--color-success) !important;
 }
 .text-orange {
-  color: #f59e0b !important;
+  color: var(--color-warning) !important;
 }
 .text-cyan {
-  color: #06b6d4 !important;
+  color: var(--color-cyan) !important;
 }
 .text-red {
-  color: #ef4444 !important;
+  color: var(--color-danger) !important;
 }
 .text-gray {
-  color: #415169 !important;
+  color: var(--color-text-muted) !important;
 }
 .highlight-orange {
-  color: #f59e0b;
+  color: var(--color-warning);
   font-weight: bold;
 }
 .highlight-blue {
-  color: #38bdf8;
+  color: var(--color-primary);
   font-weight: bold;
 }
 
 ::v-deep .el-progress__text {
-  color: #52637a !important;
+  color: #6b7d99 !important;
   font-size: 9px !important;
 }
 </style>

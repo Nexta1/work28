@@ -249,7 +249,7 @@ export default {
             DBL: detail.DBL || 0,
             healthStatus:
               detail.JKZT === 0 ? '运行中 / 良好' : '异常 / 故障告警',
-            healthColor: detail.JKZT === 0 ? '#52c41a' : '#ff4d4f'
+            healthColor: detail.JKZT === 0 ? '#10b981' : '#f43f5e'
           }
           this.detailVisible = true
         })
@@ -508,10 +508,10 @@ export default {
   width: 340px;
   background: linear-gradient(
     145deg,
-    rgba(30, 35, 45, 0.95),
-    rgba(20, 25, 30, 0.98)
+    rgba(32, 56, 90, 0.95),
+    rgba(26, 45, 74, 0.98)
   );
-  border: 1px solid rgba(0, 229, 255, 0.15);
+  border: 1px solid rgba(6, 182, 212, 0.15);
   box-shadow:
     0 11px 30px rgba(0, 0, 0, 0.5),
     0 0 20px rgba(0, 229, 255, 0.05);
@@ -524,10 +524,10 @@ export default {
 
 .panel-header {
   padding: 15px;
-  border-bottom: 1px solid #333;
+  border-bottom: 1px solid var(--border-dark);
   display: flex;
   justify-content: space-between;
-  color: #177ddc;
+  color: var(--color-primary);
   font-weight: bold;
 }
 
@@ -540,20 +540,20 @@ export default {
   border-radius: 8px;
   padding: 12px;
   margin-bottom: 12px;
-  border-left: 3px solid #00e5ff;
+  border-left: 3px solid var(--color-cyan);
 }
 
 .stat-label {
   font-size: 12px;
-  color: #888;
+  color: var(--color-text-muted);
   margin-bottom: 4px;
 }
 
 .stat-value {
   font-size: 18px;
   font-family: 'Orbitron', 'Consolas', monospace;
-  color: #00e5ff;
-  text-shadow: 0 0 8px rgba(0, 229, 255, 0.3);
+  color: var(--color-cyan);
+  text-shadow: 0 0 8px rgba(6, 182, 212, 0.3);
 }
 
 .progress-container {
@@ -566,7 +566,7 @@ export default {
 
 .progress-bar {
   height: 100%;
-  background: linear-gradient(90deg, #0055ff, #00e5ff);
+  background: linear-gradient(90deg, var(--color-primary), var(--color-cyan));
   transition: width 0.6s ease;
 }
 

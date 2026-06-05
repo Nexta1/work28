@@ -716,7 +716,7 @@
                     show-overflow-tooltip
                   />
                   <template slot="empty">
-                    <span style="color: #52637a"
+                    <span style="color: #6b7d99"
                       >请在左侧选定资产表以拉取缓冲池数据进行人工校准标注</span
                     >
                   </template>
@@ -2052,7 +2052,7 @@ export default {
   color: #38bdf8;
 }
 .header-subtitle {
-  color: #52637a;
+  color: #6b7d99;
   font-size: 11px;
 }
 
@@ -2078,7 +2078,7 @@ export default {
   padding: 11px 12px;
 }
 .stat-card span {
-  color: #52637a;
+  color: #6b7d99;
   font-size: 11px;
 }
 .stat-card strong {
@@ -2088,7 +2088,7 @@ export default {
 }
 .stat-card small {
   display: block;
-  color: #52637a;
+  color: #6b7d99;
   font-size: 11px;
 }
 
@@ -2283,7 +2283,7 @@ export default {
 }
 .v-label {
   font-size: 11px;
-  color: #52637a;
+  color: #6b7d99;
 }
 .v-val {
   font-size: 13px;

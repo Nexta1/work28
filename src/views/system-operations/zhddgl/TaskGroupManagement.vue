@@ -587,7 +587,7 @@ export default {
 
 .search-item label {
   font-size: 11px;
-  color: #52637a;
+  color: #6b7d99;
 }
 
 .action-btn {

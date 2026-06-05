@@ -489,7 +489,7 @@
                   min-width="140"
                 />
                 <template slot="empty">
-                  <span style="color: #52637a"
+                  <span style="color: #6b7d99"
                     >暂无检索到相匹配的数据项或 rowData 核心指标为空</span
                   >
                 </template>
@@ -1710,7 +1710,7 @@ export default {
   color: #38bdf8;
 }
 .header-subtitle {
-  color: #52637a;
+  color: #6b7d99;
   font-size: 11px;
 }
 .action-btn {
@@ -1735,7 +1735,7 @@ export default {
   padding: 11px 12px;
 }
 .stat-card span {
-  color: #52637a;
+  color: #6b7d99;
   font-size: 11px;
 }
 .stat-card strong {
@@ -1745,7 +1745,7 @@ export default {
 }
 .stat-card small {
   display: block;
-  color: #52637a;
+  color: #6b7d99;
   font-size: 11px;
 }
 
@@ -1929,7 +1929,7 @@ export default {
 }
 .v-label {
   font-size: 11px;
-  color: #52637a;
+  color: #6b7d99;
 }
 .v-val {
   font-size: 12px;

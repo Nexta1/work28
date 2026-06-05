@@ -102,7 +102,7 @@ export default {
 .panel-kicker {
   display: block;
   font-size: 12px;
-  color: #52637a;
+  color: #6b7d99;
   margin-bottom: 6px;
 }
 
@@ -183,7 +183,7 @@ h1 {
 .module-content span {
   display: block;
   font-size: 11px;
-  color: #52637a;
+  color: #6b7d99;
   margin-bottom: 5px;
 }
 
@@ -200,6 +200,6 @@ h1 {
 }
 
 .arrow {
-  color: #52637a;
+  color: #6b7d99;
 }
 </style>

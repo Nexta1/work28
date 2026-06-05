@@ -894,7 +894,7 @@ export default {
 .search-item label,
 .stat-card span,
 .stat-card small {
-  color: #52637a;
+  color: #6b7d99;
   font-size: 11px;
 }
 
@@ -1254,7 +1254,7 @@ export default {
 
 .section-toolbar p {
   margin: 4px 0 0;
-  color: #52637a;
+  color: #6b7d99;
   font-size: 11px;
 }
 
@@ -1277,7 +1277,7 @@ export default {
 
 .center-empty-tip {
   margin: auto;
-  color: #52637a;
+  color: #6b7d99;
   font-size: 12px;
   text-align: center;
 }

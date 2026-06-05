@@ -848,7 +848,7 @@ export default {
 }
 .search-item label {
   font-size: 11px;
-  color: #52637a;
+  color: #6b7d99;
   white-space: nowrap;
 }
 
@@ -925,7 +925,7 @@ export default {
 }
 .stats-card .lbl {
   font-size: 11px;
-  color: #52637a;
+  color: #6b7d99;
   margin-bottom: 1px;
 }
 .stats-card .val {
@@ -1126,7 +1126,7 @@ export default {
   align-items: center;
   justify-content: space-between;
   font-size: 11px;
-  color: #52637a;
+  color: #6b7d99;
 }
 .progress-wrapper {
   display: flex;
@@ -1227,7 +1227,7 @@ export default {
 }
 .wl-code {
   font-size: 9px;
-  color: #52637a;
+  color: #6b7d99;
 }
 
 .health-score-badge {
