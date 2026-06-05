@@ -86,11 +86,11 @@ export default {
 
         this.graph = new Graph({
           container,
-          background: {color: '#070c14'},
+          background: {color: '#182c46'},
           grid: {
             visible: true,
             type: 'dot',
-            args: {color: '#1f2d44', thickness: 1}
+            args: {color: '#2a405e', thickness: 1}
           },
           panning: true,
           mousewheel: {enabled: true, modifiers: ['ctrl', 'meta']},
@@ -250,8 +250,8 @@ export default {
             body: {
               rx: 6,
               ry: 6,
-              fill: Number(step.stepState) === 1 ? '#0d2531' : '#1b2431',
-              stroke: Number(step.stepState) === 1 ? '#38bdf8' : '#475569',
+              fill: Number(step.stepState) === 1 ? '#182c46' : '#142438',
+              stroke: Number(step.stepState) === 1 ? '#38bdf8' : '#5d7290',
               strokeWidth: 1.4
             },
             label: {
@@ -345,14 +345,14 @@ export default {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: #070c14;
-  color: #415169;
+  background: var(--bg-input);
+  color: var(--color-text-muted);
   font-size: 11px;
 }
 .radar-scan-loader {
   width: 32px;
   height: 32px;
-  border: 2px dashed #172438;
+  border: 2px dashed var(--border-dark);
   border-radius: 50%;
   animation: spin 4s linear infinite;
   margin-bottom: 11px;

@@ -368,14 +368,14 @@ export default {
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  background: #03060c;
-  color: #cbd5e1;
+  background: var(--bg-base);
+  color: var(--color-text-main);
 }
 
 .resource-main {
   flex: 1;
-  background: #080e18;
-  border: 1px solid #111b2b;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-dark);
   border-radius: 4px;
   padding: 14px;
   overflow: hidden;
@@ -411,13 +411,13 @@ p {
 .panel-kicker {
   display: block;
   font-size: 11px;
-  color: #6b7d99;
+  color: var(--color-text-muted);
   margin-bottom: 3px;
 }
 
 .hero-strip {
   background: var(--bg-panel);
-  border: 1px solid #16243a;
+  border: 1px solid var(--border-dark);
   border-radius: 4px;
   padding: 14px 16px;
   margin-bottom: 14px;
@@ -425,11 +425,11 @@ p {
 
 .hero-strip h2 {
   font-size: 20px;
-  color: #38bdf8;
+  color: var(--color-primary);
 }
 
 .hero-strip p {
-  color: #94a3b8;
+  color: var(--color-text-muted);
   font-size: 12px;
   margin-top: 4px;
 }
@@ -441,8 +441,8 @@ p {
 
 .metric-card {
   min-width: 90px;
-  border: 1px solid #172438;
-  background: #0d1522;
+  border: 1px solid var(--border-dark);
+  background: var(--bg-input);
   border-radius: 4px;
   padding: 9px 12px;
   text-align: center;
@@ -451,12 +451,12 @@ p {
 .metric-card strong {
   display: block;
   font-size: 20px;
-  color: #10b981;
+  color: var(--color-success);
 }
 
 .metric-card span {
   font-size: 12px;
-  color: #94a3b8;
+  color: var(--color-text-muted);
 }
 
 .toolbar {
@@ -473,7 +473,7 @@ p {
 }
 
 .danger-link {
-  color: #f56c6c;
+  color: var(--color-danger);
 }
 
 /* 清理由于双列多行布局导致的内部 padding 冲突 */
@@ -483,29 +483,29 @@ p {
 
 ::v-deep .el-input__inner,
 ::v-deep .el-textarea__inner {
-  background: #0d1522;
-  border-color: #1e3557;
-  color: #fff;
+  background: var(--bg-input);
+  border-color: var(--border-light);
+  color: var(--color-text-main);
 }
 
 ::v-deep .el-table,
 ::v-deep .el-table th,
 ::v-deep .el-table tr {
-  background: #080e18;
-  color: #cbd5e1;
+  background: var(--bg-panel);
+  color: var(--color-text-main);
 }
 
 ::v-deep .el-table td,
 ::v-deep .el-table th.is-leaf {
-  border-bottom-color: #172438;
+  border-bottom-color: var(--border-dark);
 }
 
 ::v-deep .el-table--border,
 ::v-deep .el-table--group {
-  border-color: #172438;
+  border-color: var(--border-dark);
 }
 
 ::v-deep .el-table--enable-row-hover .el-table__body tr:hover > td {
-  background: #13253e;
+  background: var(--bg-hover);
 }
 </style>

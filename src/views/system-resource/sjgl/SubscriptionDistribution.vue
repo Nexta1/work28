@@ -1368,14 +1368,14 @@ export default {
   display: grid;
   grid-template-columns: 280px minmax(0, 1fr);
   gap: 12px;
-  background: #03060c;
-  color: #cbd5e1;
+  background: var(--bg-base);
+  color: var(--color-text-main);
 }
 
 .resource-aside,
 .resource-main {
-  background: #080e18;
-  border: 1px solid #111b2b;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-dark);
   border-radius: 4px;
   min-height: 0;
 }
@@ -1402,7 +1402,7 @@ export default {
   margin-bottom: 12px;
 }
 .panel-title-row h3 {
-  color: #fff;
+  color: var(--color-text-main);
   font-size: 14px;
   margin: 0;
 }
@@ -1428,18 +1428,18 @@ export default {
 
 .hero-strip {
   background: var(--bg-panel);
-  border: 1px solid #16243a;
+  border: 1px solid var(--border-dark);
   border-radius: 4px;
   padding: 14px 16px;
   margin-bottom: 11px;
 }
 .hero-strip h2 {
   font-size: 18px;
-  color: #38bdf8;
+  color: var(--color-primary);
   margin: 0;
 }
 .hero-strip p {
-  color: #94a3b8;
+  color: var(--color-text-muted);
   font-size: 12px;
   margin: 4px 0 0 0;
 }
@@ -1449,8 +1449,8 @@ export default {
 }
 .metric-card {
   min-width: 82px;
-  border: 1px solid #172438;
-  background: #0d1522;
+  border: 1px solid var(--border-dark);
+  background: var(--bg-input);
   border-radius: 4px;
   padding: 6px 12px;
   text-align: center;
@@ -1458,14 +1458,14 @@ export default {
 .metric-card strong {
   display: block;
   font-size: 18px;
-  color: #10b981;
+  color: var(--color-success);
 }
 .metric-card.warn strong {
-  color: #f59e0b;
+  color: var(--color-warning);
 }
 .metric-card span {
   font-size: 11px;
-  color: #94a3b8;
+  color: var(--color-text-muted);
 }
 .toolbar {
   margin-bottom: 11px;
@@ -1508,7 +1508,7 @@ export default {
 .card-title-text {
   font-weight: 600;
   font-size: 13px;
-  color: #e2e8f0;
+  color: var(--color-text-main);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1520,7 +1520,7 @@ export default {
   flex-direction: column;
   gap: 6px;
   font-size: 12px;
-  color: #94a3b8;
+  color: var(--color-text-muted);
 }
 
 /* 信息行 — 优化为紧凑且视觉清晰的布局 */
@@ -1538,7 +1538,7 @@ export default {
 }
 .info-label {
   font-size: 11px;
-  color: #64748b;
+  color: var(--color-text-muted);
   font-weight: 600;
   letter-spacing: 0.5px;
   white-space: nowrap;
@@ -1554,10 +1554,10 @@ export default {
   top: 4px;
   bottom: 4px;
   width: 1px;
-  background: #1e2a3a;
+  background: var(--border-dark);
 }
 .info-value {
-  color: #cbd5e1;
+  color: var(--color-text-main);
   font-size: 12px;
   display: inline;
   line-height: 1.6;
@@ -1591,29 +1591,29 @@ export default {
 .pair-model {
   font-size: 12px;
   font-weight: 600;
-  color: #e2e8f0;
+  color: var(--color-text-main);
   line-height: 1.5;
 }
 .pair-roleid {
   font-size: 11px;
   font-weight: 400;
-  color: #64748b;
+  color: var(--color-text-muted);
   font-family: 'SF Mono', 'Fira Code', monospace;
   margin-left: 2px;
 }
 .pair-attr {
   font-size: 11px;
-  color: #94a3b8;
+  color: var(--color-text-muted);
   line-height: 1.5;
   padding-left: 4px;
 }
 .pair-attr .el-icon-right {
   font-size: 11px;
-  color: #4b5563;
+  color: var(--border-light);
   margin-right: 2px;
 }
 .text-dim {
-  color: #475569;
+  color: var(--color-disabled);
   font-style: italic;
   font-size: 12px;
 }
@@ -1622,8 +1622,7 @@ export default {
 .meta-group {
   display: flex;
   align-items: center;
-  /* background: linear-gradient(135deg, #0a111f 0%, #0d1728 100%); */
-  border: 1px solid #16243a;
+  border: 1px solid var(--border-dark);
   border-radius: 4px;
   padding: 5px 6px;
   margin-top: 2px;
@@ -1645,11 +1644,11 @@ export default {
   text-shadow: 0 0 8px rgba(255, 255, 255, 0.04);
 }
 .type-badge {
-  color: #f59e0b;
+  color: var(--color-warning);
 }
 
 .rate-badge {
-  color: #38bdf8;
+  color: var(--color-primary);
   font-family: 'SF Mono', 'Fira Code', monospace;
 }
 .state-badge {
@@ -1661,7 +1660,7 @@ export default {
 }
 .meta-label {
   font-size: 11px;
-  color: #4b5563;
+  color: var(--border-light);
   white-space: nowrap;
   letter-spacing: 0.3px;
 }
@@ -1706,10 +1705,10 @@ export default {
   font-weight: bold;
 }
 .own-card {
-  border-left: 3px solid #10b981;
+  border-left: 3px solid var(--color-success);
 }
 .text-disabled {
-  color: #5c6b73;
+  color: var(--color-disabled);
   font-size: 12px;
 }
 
@@ -1718,9 +1717,9 @@ export default {
   display: flex;
   align-items: center;
   gap: 11px;
-  background: #111c2e;
+  background: var(--bg-input);
   padding: 8px 12px;
-  border: 1px solid #1c2e4a;
+  border: 1px solid var(--border-dark);
   border-radius: 4px 4px 0 0;
 }
 
@@ -1728,10 +1727,10 @@ export default {
 .matrix-table-wrapper {
   max-height: 35vh;
   overflow-y: auto;
-  border-left: 1px solid #1c2e4a;
-  border-right: 1px solid #1c2e4a;
-  border-bottom: 1px solid #1c2e4a;
-  background: #090f19;
+  border-left: 1px solid var(--border-dark);
+  border-right: 1px solid var(--border-dark);
+  border-bottom: 1px solid var(--border-dark);
+  background: var(--bg-input);
 }
 
 .pager {
@@ -1761,15 +1760,15 @@ export default {
   flex-shrink: 0;
 }
 .text-blue {
-  color: #38bdf8;
+  color: var(--color-primary);
 }
 .text-green {
-  color: #67c23a;
+  color: var(--color-success);
 }
 .text-orange {
-  color: #e6a23c;
+  color: var(--color-warning);
 }
 .text-red {
-  color: #f56c6c;
+  color: var(--color-danger);
 }
 </style>

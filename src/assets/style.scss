@@ -27,7 +27,7 @@
   --color-danger: #f43f5e; /* 危机/删除红 */
   --color-text-main: #e2e8f0; /* 高对比文字灰白 (提亮) */
   --color-text-muted: #a8b5cc; /* 中性标签灰蓝 (提亮) */
-  --color-disabled: #4a5a78; /* 禁用状态灰 (提亮) */
+  --color-disabled: #5d7290; /* 禁用状态灰 (提亮) */
 }
 
 /* ================================================================
@@ -495,7 +495,7 @@ body::after {
 .el-button.is-disabled:focus {
   background-color: #142440 !important;
   border-color: var(--border-dark) !important;
-  color: var(--color-disabled) !important;
+  color: #4a5a78 !important;
   cursor: not-allowed !important;
 }
 
@@ -531,7 +531,7 @@ body::after {
 .el-radio-button__orig-radio:disabled + .el-radio-button__inner {
   background-color: #142440 !important;
   border-color: var(--border-dark) !important;
-  color: var(--color-disabled) !important;
+  color: #4a5a78 !important;
   cursor: not-allowed !important;
 }
 .el-radio-button__orig-radio:disabled:checked + .el-radio-button__inner {
@@ -571,7 +571,7 @@ body::after {
 .el-textarea.is-disabled .el-textarea__inner {
   background-color: #142440 !important;
   border-color: var(--border-dark) !important;
-  color: var(--color-disabled) !important;
+  color: #4a5a78 !important;
   cursor: not-allowed;
 }
 
@@ -604,7 +604,7 @@ body::after {
 .el-input-number .is-disabled .el-input-number__decrease {
   background-color: #142440 !important;
   border-color: var(--border-dark) !important;
-  color: var(--color-disabled) !important;
+  color: #4a5a78 !important;
 }
 
 /* 下拉与级联选择器 */
@@ -1759,10 +1759,10 @@ body::after {
   border-color: var(--border-dark) !important;
 
   .el-range-input {
-    color: var(--color-disabled) !important;
+    color: #4a5a78 !important;
   }
   .el-range-separator {
-    color: var(--color-disabled) !important;
+    color: #4a5a78 !important;
   }
 }
 /* ===================================================================

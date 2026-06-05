@@ -1108,12 +1108,12 @@ export default {
   right: 4px;
   z-index: 10;
   font-size: 16px;
-  color: #60a5fa;
+  color: var(--color-primary);
   padding: 4px;
 }
 
 .relation-trigger-btn:hover {
-  color: #38bdf8;
+  color: var(--color-primary);
 }
 
 .filter-item {
@@ -1126,7 +1126,7 @@ export default {
   width: 100%;
 }
 .text-red {
-  color: #f56c6c !important;
+  color: var(--color-danger) !important;
 }
 
 ::v-deep .tab-workbench.el-tabs {
@@ -1149,31 +1149,31 @@ export default {
 }
 
 ::v-deep .dark-tabs .el-tabs__item.is-active {
-  color: #38bdf8 !important;
+  color: var(--color-primary) !important;
 }
 
 ::v-deep .dark-tabs .el-tabs__nav-wrap::after {
-  background-color: #17263d;
+  background-color: var(--border-dark);
 }
 </style>
 
 <style>
 /* popover 内容渲染在 body 下，需全局样式 */
 .relation-popover {
-  background: #0f1923 !important;
-  border: 1px solid #1e3a5f !important;
+  background: var(--bg-input) !important;
+  border: 1px solid var(--bg-hover) !important;
 }
 
 .relation-popover .popper__arrow {
-  border-bottom-color: #1e3a5f !important;
+  border-bottom-color: var(--bg-hover) !important;
 }
 
 .relation-popover .popper__arrow::after {
-  border-bottom-color: #0f1923 !important;
+  border-bottom-color: var(--bg-input) !important;
 }
 
 .relation-popover-body .relation-title {
-  color: #38bdf8;
+  color: var(--color-primary);
   font-size: 14px;
   font-weight: 600;
   text-align: center;
@@ -1203,28 +1203,28 @@ export default {
 
 .relation-popover-body .rel-num {
   font-size: 16px;
-  color: #60a5fa;
+  color: var(--color-primary);
   flex-shrink: 0;
   margin-right: 8px;
   line-height: 1.3;
 }
 
 .relation-popover-body .relation-item.active .rel-num {
-  color: #38bdf8;
+  color: var(--color-primary);
 }
 
 .relation-popover-body .rel-text {
-  color: #cbd5e1;
+  color: var(--color-text-main);
   font-size: 12px;
   line-height: 1.5;
 }
 
 .relation-popover-body .relation-item.active .rel-text {
-  color: #38bdf8;
+  color: var(--color-primary);
 }
 
 .relation-popover-body .rel-arrow {
-  color: #2d4a6a;
+  color: var(--border-light);
   font-size: 14px;
   line-height: 1;
   padding: 2px 0;

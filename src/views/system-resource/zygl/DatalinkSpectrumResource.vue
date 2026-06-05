@@ -335,6 +335,6 @@ export default {
   width: 100%;
 }
 .text-red {
-  color: #f56c6c !important;
+  color: var(--color-danger) !important;
 }
 </style>

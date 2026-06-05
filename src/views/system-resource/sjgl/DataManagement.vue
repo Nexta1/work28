@@ -9,7 +9,12 @@
     </div>
 
     <div class="module-grid">
-      <router-link v-for="item in modules" :key="item.path" :to="item.path" class="module-card">
+      <router-link
+        v-for="item in modules"
+        :key="item.path"
+        :to="item.path"
+        class="module-card"
+      >
         <div :class="['module-mark', item.tone]">
           <i :class="item.icon"></i>
         </div>
@@ -76,15 +81,15 @@ export default {
   min-height: 100%;
   padding: 18px;
   box-sizing: border-box;
-  background: #03060c;
-  color: #cbd5e1;
+  background: var(--bg-base);
+  color: var(--color-text-main);
 }
 
 .hub-header {
   min-height: 136px;
-  border: 1px solid #111b2b;
+  border: 1px solid var(--border-dark);
   border-radius: 4px;
-  background: #080e18;
+  background: var(--bg-panel);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -95,7 +100,7 @@ export default {
 .panel-kicker {
   display: block;
   font-size: 12px;
-  color: #6b7d99;
+  color: var(--color-text-muted);
   margin-bottom: 6px;
 }
 
@@ -107,12 +112,12 @@ p {
 
 h1 {
   font-size: 28px;
-  color: #38bdf8;
+  color: var(--color-primary);
 }
 
 .hub-header p {
   margin-top: 8px;
-  color: #94a3b8;
+  color: var(--color-text-muted);
   font-size: 13px;
 }
 
@@ -128,17 +133,20 @@ h1 {
   grid-template-columns: 52px 1fr 18px;
   gap: 12px;
   align-items: center;
-  background: #080e18;
-  border: 1px solid #111b2b;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-dark);
   border-radius: 4px;
   padding: 16px;
   color: inherit;
   text-decoration: none;
-  transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s,
+    transform 0.2s;
 }
 
 .module-card:hover {
-  border-color: #38bdf8;
+  border-color: var(--color-primary);
   box-shadow: 0 8px 20px rgba(56, 189, 248, 0.08);
   transform: translateY(-2px);
 }
@@ -154,17 +162,17 @@ h1 {
 }
 
 .module-mark.blue {
-  color: #38bdf8;
+  color: var(--color-primary);
   background: rgba(56, 189, 248, 0.12);
 }
 
 .module-mark.green {
-  color: #10b981;
+  color: var(--color-success);
   background: rgba(16, 185, 129, 0.12);
 }
 
 .module-mark.amber {
-  color: #f59e0b;
+  color: var(--color-warning);
   background: rgba(245, 158, 11, 0.12);
 }
 
@@ -176,23 +184,23 @@ h1 {
 .module-content span {
   display: block;
   font-size: 11px;
-  color: #6b7d99;
+  color: var(--color-text-muted);
   margin-bottom: 5px;
 }
 
 .module-content h3 {
-  color: #fff;
+  color: var(--color-text-main);
   font-size: 16px;
 }
 
 .module-content p {
   margin-top: 7px;
-  color: #94a3b8;
+  color: var(--color-text-muted);
   font-size: 12px;
   line-height: 1.5;
 }
 
 .arrow {
-  color: #6b7d99;
+  color: var(--color-text-muted);
 }
 </style>

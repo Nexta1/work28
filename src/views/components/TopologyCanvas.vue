@@ -141,9 +141,9 @@ export default {
       loading: false,
       networkTypeMap: {},
       theme: {
-        background: '#070c14',
-        network: '#00d8ff',
-        subnet: '#52c41a',
+        background: '#1a304d',
+        network: '#06b6d4',
+        subnet: '#10b981',
         group: 'rgba(250, 173, 20, 0.05)',
         groupBorder: '#faad14',
         edge: '#00e5ff',
@@ -186,7 +186,7 @@ export default {
         container: this.$refs.container,
         autoResize: true,
         background: {
-          color: '#070c14'
+          color: '#1a304d'
         },
         grid: {
           visible: true,

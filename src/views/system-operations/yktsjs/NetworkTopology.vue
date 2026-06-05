@@ -486,8 +486,8 @@ export default {
   left: 12px;
   right: 12px;
   height: 52px;
-  background: #080e18;
-  border: 1px solid #111b2b;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-dark);
   border-radius: 4px;
   padding: 0 16px;
   display: flex;

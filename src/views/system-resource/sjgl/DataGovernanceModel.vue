@@ -632,7 +632,7 @@
                 class="manual-selector-sidebar"
                 style="
                   width: 260px;
-                  background: #09101d;
+                  background: var(--bg-input);
                   padding: 11px;
                   border-radius: 4px;
                 "
@@ -2015,8 +2015,8 @@ export default {
 .governance-page {
   width: 100%;
   height: 100%;
-  background-color: #1a2d4a;
-  color: #cbd5e1;
+  background-color: var(--bg-base);
+  color: var(--color-text-main);
   display: flex;
   flex-direction: column;
   padding: 12px;
@@ -2026,8 +2026,8 @@ export default {
 
 .top-search-header {
   height: 46px;
-  background: #080e18;
-  border: 1px solid #111b2b;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-dark);
   border-radius: 4px;
   display: flex;
   align-items: center;
@@ -2049,18 +2049,18 @@ export default {
 .hub-title {
   font-size: 13px;
   font-weight: bold;
-  color: #38bdf8;
+  color: var(--color-primary);
 }
 .header-subtitle {
-  color: #6b7d99;
+  color: var(--color-text-muted);
   font-size: 11px;
 }
 
 .action-btn {
-  background: #101b2e;
-  border: 1px solid #1e3557;
+  background: var(--bg-input);
+  border: 1px solid var(--border-light);
   font-size: 11px;
-  color: #fff;
+  color: var(--color-text-main);
 }
 
 .stats-grid {
@@ -2071,14 +2071,14 @@ export default {
   gap: 12px;
 }
 .stat-card {
-  background: #080e18;
-  border: 1px solid #111b2b;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-dark);
   border-radius: 4px;
   min-height: 72px;
   padding: 11px 12px;
 }
 .stat-card span {
-  color: #6b7d99;
+  color: var(--color-text-muted);
   font-size: 11px;
 }
 .stat-card strong {
@@ -2088,13 +2088,13 @@ export default {
 }
 .stat-card small {
   display: block;
-  color: #6b7d99;
+  color: var(--color-text-muted);
   font-size: 11px;
 }
 
 .model-workbench {
-  background: #080e18;
-  border: 1px solid #111b2b;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-dark);
   border-radius: 4px;
   flex: 1;
   min-height: 0;
@@ -2119,24 +2119,24 @@ export default {
 }
 ::v-deep .dark-tabs .el-tabs__header {
   margin-bottom: 8px;
-  border-bottom: 1px solid #17263d !important;
+  border-bottom: 1px solid var(--border-dark) !important;
   background: transparent;
 }
 ::v-deep .dark-tabs .el-tabs__nav-wrap::after {
   display: none !important;
 }
 ::v-deep .dark-tabs .el-tabs__item {
-  color: #64748b;
+  color: var(--color-text-muted);
   font-size: 12px;
   font-weight: bold;
   height: 34px;
   line-height: 34px;
 }
 ::v-deep .dark-tabs .el-tabs__item.is-active {
-  color: #38bdf8 !important;
+  color: var(--color-primary) !important;
 }
 ::v-deep .dark-tabs .el-tabs__active-bar {
-  background-color: #38bdf8;
+  background-color: var(--color-primary);
 }
 
 .full-pane,
@@ -2153,8 +2153,8 @@ export default {
 
 .side-panel,
 .content-panel {
-  background: #080e18;
-  border: 1px solid #111b2b;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-dark);
   border-radius: 4px;
   padding: 12px;
   display: flex;
@@ -2164,14 +2164,14 @@ export default {
 .panel-header-summary {
   justify-content: space-between;
   margin-bottom: 11px;
-  border-bottom: 1px solid #111b2b;
+  border-bottom: 1px solid var(--border-dark);
   padding-bottom: 8px;
   flex-shrink: 0;
 }
 .panel-header-summary .title {
   font-size: 12px;
   font-weight: bold;
-  color: #06b6d4;
+  color: var(--color-cyan);
 }
 
 .tree-box {
@@ -2204,18 +2204,18 @@ export default {
 }
 .node-text-span {
   font-size: 12px;
-  color: #e2e8f0;
+  color: var(--color-text-main);
 }
 .icon-color-folder {
   color: #fbbf24 !important;
   text-shadow: 0 0 6px rgba(251, 191, 36, 0.4);
 }
 .icon-color-table {
-  color: #38bdf8 !important;
+  color: var(--color-primary) !important;
   text-shadow: 0 0 6px rgba(56, 189, 248, 0.4);
 }
 .icon-color-label {
-  color: #10b981 !important;
+  color: var(--color-success) !important;
   text-shadow: 0 0 6px rgba(16, 185, 129, 0.4);
 }
 
@@ -2234,7 +2234,7 @@ export default {
 
 .visual-hero-card {
   background: linear-gradient(135deg, #0e1a30 0%, #070f1e 100%);
-  border: 1px solid #1e3557;
+  border: 1px solid var(--border-light);
   border-radius: 6px;
   padding: 14px;
 }
@@ -2252,7 +2252,7 @@ export default {
 .hero-title {
   margin: 0;
   font-size: 15px;
-  color: #fff;
+  color: var(--color-text-main);
   font-weight: bold;
 }
 .tag-group {
@@ -2262,7 +2262,7 @@ export default {
 .hero-memo {
   margin: 0;
   font-size: 12px;
-  color: #94a3b8;
+  color: var(--color-text-muted);
   line-height: 1.5;
 }
 
@@ -2273,8 +2273,8 @@ export default {
   flex-shrink: 0;
 }
 .v-grid-item {
-  background: #0d1625;
-  border: 1px solid #16253d;
+  background: var(--bg-input);
+  border: 1px solid var(--border-dark);
   padding: 11px;
   border-radius: 4px;
   display: flex;
@@ -2283,7 +2283,7 @@ export default {
 }
 .v-label {
   font-size: 11px;
-  color: #6b7d99;
+  color: var(--color-text-muted);
 }
 .v-val {
   font-size: 13px;
@@ -2352,8 +2352,8 @@ export default {
 
 /* 查询过滤工具栏：固定移至上方 */
 .top-fixed-toolbar {
-  background: #09101d;
-  border: 1px solid #15233c;
+  background: var(--bg-input);
+  border: 1px solid var(--border-dark);
   padding: 11px 12px 2px 12px;
   border-radius: 4px;
   margin-bottom: 11px;
@@ -2375,7 +2375,7 @@ export default {
 }
 .label-instance-card {
   background: var(--bg-panel);
-  border: 1px solid #1a2a44;
+  border: 1px solid var(--border-dark);
   border-radius: 6px;
   padding: 12px;
   display: flex;
@@ -2387,7 +2387,7 @@ export default {
   cursor: pointer;
 }
 .interactive-label-card:hover {
-  border-color: #10b981;
+  border-color: var(--color-success);
   background: #0f221f;
   box-shadow: 0 0 8px rgba(16, 185, 129, 0.2);
 }
@@ -2399,8 +2399,8 @@ export default {
 }
 .card-badge {
   font-size: 9px;
-  background: #1e293b;
-  color: #94a3b8;
+  background: var(--bg-input);
+  color: var(--color-text-muted);
   padding: 1px 4px;
   border-radius: 2px;
   font-weight: bold;
@@ -2416,12 +2416,12 @@ export default {
 .card-model-name {
   margin: 0;
   font-size: 13px;
-  color: #f8fafc;
+  color: var(--color-text-main);
 }
 .card-model-memo {
   margin: 0;
   font-size: 11px;
-  color: #64748b;
+  color: var(--color-text-muted);
   line-height: 1.5;
   height: 32px;
   display: -webkit-box;
@@ -2433,8 +2433,8 @@ export default {
   display: flex;
   justify-content: space-between;
   font-size: 11px;
-  color: #475569;
-  border-top: 1px solid #132035;
+  color: var(--color-disabled);
+  border-top: 1px solid var(--border-dark);
   padding-top: 6px;
   margin-top: 2px;
 }
@@ -2447,16 +2447,16 @@ export default {
   min-height: 420px;
 }
 ::v-deep .dark-drilldown-dialog .el-dialog__body {
-  background-color: #040810;
+  background-color: var(--bg-base);
   padding: 15px 20px;
 }
 ::v-deep .dark-drilldown-dialog .el-dialog__header {
-  background-color: #09101d;
-  border-bottom: 1px solid #192a47;
+  background-color: var(--bg-input);
+  border-bottom: 1px solid var(--border-dark);
   padding: 12px 20px;
 }
 ::v-deep .dark-drilldown-dialog .el-dialog__title {
-  color: #38bdf8;
+  color: var(--color-primary);
   font-size: 13px;
   font-weight: bold;
 }
@@ -2466,7 +2466,7 @@ export default {
   padding: 24px;
   text-align: center;
   font-size: 12px;
-  color: #475569;
+  color: var(--color-disabled);
 }
 .empty-visual-placeholder {
   flex: 1;
@@ -2475,7 +2475,7 @@ export default {
   align-items: center;
   justify-content: center;
   gap: 12px;
-  color: #475569;
+  color: var(--color-disabled);
 }
 .empty-visual-placeholder i {
   font-size: 44px;
@@ -2492,19 +2492,19 @@ export default {
 .font-num {
 }
 .text-blue {
-  color: #38bdf8 !important;
+  color: var(--color-primary) !important;
 }
 .text-green {
-  color: #10b981 !important;
+  color: var(--color-success) !important;
 }
 .text-cyan {
-  color: #06b6d4 !important;
+  color: var(--color-cyan) !important;
 }
 .text-orange {
-  color: #f59e0b !important;
+  color: var(--color-warning) !important;
 }
 .text-red {
-  color: #f56c6c !important;
+  color: var(--color-danger) !important;
 }
 .full-width {
   width: 100%;
@@ -2512,35 +2512,35 @@ export default {
 
 ::v-deep .el-tree {
   background: transparent;
-  color: #cbd5e1;
+  color: var(--color-text-main);
 }
 ::v-deep .el-tree-node__content:hover,
 ::v-deep .el-tree-node.is-current > .el-tree-node__content {
-  background: #13253e;
+  background: var(--bg-hover);
 }
 ::v-deep .el-input__inner,
 ::v-deep .el-textarea__inner {
-  background: #0d1522;
-  border-color: #1e3557;
-  color: #fff;
+  background: var(--bg-input);
+  border-color: var(--border-light);
+  color: var(--color-text-main);
 }
 
 ::v-deep .dark-table.el-table {
-  background: #080e18;
-  color: #cbd5e1;
-  border-color: #172438;
+  background: var(--bg-panel);
+  color: var(--color-text-main);
+  border-color: var(--border-dark);
 }
 ::v-deep .dark-table.el-table th {
-  background: #0d1726 !important;
-  color: #38bdf8;
-  border-bottom: 1px solid #172438;
+  background: var(--bg-panel) !important;
+  color: var(--color-primary);
+  border-bottom: 1px solid var(--border-dark);
 }
 ::v-deep .dark-table.el-table td {
-  border-bottom: 1px solid #121e30;
-  background: #080e18;
+  border-bottom: 1px solid var(--border-dark);
+  background: var(--bg-panel);
 }
 ::v-deep .dark-table.el-table--enable-row-hover .el-table__body tr:hover > td {
-  background: #112035 !important;
+  background: var(--bg-hover) !important;
 }
 /* 弹窗内部动态过滤栏样式 */
 .drilldown-filter-bar {
@@ -2553,19 +2553,19 @@ export default {
 
 /* 确保暗黑表单内的文字和间距体验舒适 */
 ::v-deep .dark-form-inline .el-form-item__label {
-  color: #94a3b8 !important;
+  color: var(--color-text-muted) !important;
   font-size: 11px;
 }
 
 ::v-deep .dark-form-inline .el-input__inner {
-  background: #050a12 !important;
-  border-color: #1a2f4c !important;
-  color: #fff !important;
+  background: var(--bg-base) !important;
+  border-color: var(--border-light) !important;
+  color: var(--color-text-main) !important;
 }
 
 ::v-deep .dark-form-inline .el-input.is-disabled .el-input__inner {
-  background: #0c121c !important;
-  border-color: #122035 !important;
-  color: #475569 !important;
+  background: var(--bg-input) !important;
+  border-color: var(--border-dark) !important;
+  color: var(--color-disabled) !important;
 }
 </style>

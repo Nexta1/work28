@@ -851,8 +851,8 @@ export default {
 .permission-page {
   width: 100%;
   height: 100%;
-  background-color: #1a2d4a;
-  color: #cbd5e1;
+  background-color: var(--bg-base);
+  color: var(--color-text-main);
   display: flex;
   flex-direction: column;
   padding: 12px;
@@ -862,8 +862,8 @@ export default {
 
 .top-search-header {
   height: 46px;
-  background: #080e18;
-  border: 1px solid #111b2b;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-dark);
   border-radius: 4px;
   display: flex;
   align-items: center;
@@ -887,14 +887,14 @@ export default {
 .hub-title {
   font-size: 13px;
   font-weight: bold;
-  color: #38bdf8;
+  color: var(--color-primary);
 }
 
 .header-subtitle,
 .search-item label,
 .stat-card span,
 .stat-card small {
-  color: #6b7d99;
+  color: var(--color-text-muted);
   font-size: 11px;
 }
 
@@ -909,8 +909,8 @@ export default {
 .domain-panel,
 .detail-panel,
 .tree-sub-card {
-  background: #080e18;
-  border: 1px solid #111b2b;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-dark);
   border-radius: 4px;
 }
 
@@ -967,7 +967,7 @@ export default {
   display: flex;
   flex-direction: column;
   min-height: 0;
-  background: #050b14;
+  background: var(--bg-base);
 }
 
 /* 需求点：用户区域内，卡片排列升级为 3 列 Grid 弹性排布 */
@@ -1004,7 +1004,7 @@ export default {
 
 .panel-header-summary {
   margin-bottom: 11px;
-  border-bottom: 1px solid #111b2b;
+  border-bottom: 1px solid var(--border-dark);
   padding-bottom: 8px;
   flex-shrink: 0;
 }
@@ -1012,7 +1012,7 @@ export default {
 .panel-header-summary .title {
   font-size: 12px;
   font-weight: bold;
-  color: #06b6d4;
+  color: var(--color-cyan);
 }
 
 .panel-header-summary .badge {
@@ -1037,10 +1037,10 @@ export default {
 }
 
 .action-btn {
-  background: #101b2e;
-  border: 1px solid #1e3557;
+  background: var(--bg-input);
+  border: 1px solid var(--border-light);
   font-size: 11px;
-  color: #fff;
+  color: var(--color-text-main);
 }
 
 .card-scroll-box,
@@ -1057,8 +1057,8 @@ export default {
 }
 
 .user-card {
-  background: #0d1522;
-  border: 1px solid #172438;
+  background: var(--bg-input);
+  border: 1px solid var(--border-dark);
   border-radius: 4px;
   padding: 11px 12px;
   cursor: pointer;
@@ -1069,8 +1069,8 @@ export default {
 }
 
 .role-card {
-  background: #0d1522;
-  border: 1px solid #172438;
+  background: var(--bg-input);
+  border: 1px solid var(--border-dark);
   border-radius: 4px;
   padding: 8px 12px;
   cursor: pointer;
@@ -1081,8 +1081,8 @@ export default {
 
 .user-card.is-active,
 .role-card.is-active {
-  border-color: #38bdf8;
-  background: #13253e;
+  border-color: var(--color-primary);
+  background: var(--bg-hover);
 }
 
 .card-main-line {
@@ -1094,7 +1094,7 @@ export default {
 .card-title {
   font-size: 12px;
   font-weight: bold;
-  color: #fff;
+  color: var(--color-text-main);
 }
 
 .status-tag {
@@ -1120,7 +1120,7 @@ export default {
   gap: 4px;
   margin-top: 8px;
   font-size: 11px;
-  color: #94a3b8;
+  color: var(--color-text-muted);
 }
 
 .meta-grid .wide {
@@ -1133,7 +1133,7 @@ export default {
   justify-content: flex-end;
   gap: 12px;
   margin-top: 8px;
-  border-top: 1px solid #172438;
+  border-top: 1px solid var(--border-dark);
   padding-top: 4px;
 }
 
@@ -1142,7 +1142,7 @@ export default {
   height: 28px;
   border-radius: 50%;
   background: rgba(56, 189, 248, 0.12);
-  color: #38bdf8;
+  color: var(--color-primary);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1162,12 +1162,12 @@ export default {
 }
 
 .role-info strong {
-  color: #fff;
+  color: var(--color-text-main);
   font-size: 13px;
 }
 
 .role-info span {
-  color: #94a3b8;
+  color: var(--color-text-muted);
   font-size: 12px;
   margin-top: 2px;
 }
@@ -1201,7 +1201,7 @@ export default {
 
 ::v-deep .dark-tabs .el-tabs__header {
   margin-bottom: 12px;
-  border-bottom: 1px solid #17263d !important;
+  border-bottom: 1px solid var(--border-dark) !important;
   background: transparent;
 }
 
@@ -1210,7 +1210,7 @@ export default {
 }
 
 ::v-deep .dark-tabs .el-tabs__item {
-  color: #64748b;
+  color: var(--color-text-muted);
   font-size: 13px;
   font-weight: bold;
   height: 38px;
@@ -1218,11 +1218,11 @@ export default {
 }
 
 ::v-deep .dark-tabs .el-tabs__item.is-active {
-  color: #38bdf8 !important;
+  color: var(--color-primary) !important;
 }
 
 ::v-deep .dark-tabs .el-tabs__active-bar {
-  background-color: #38bdf8;
+  background-color: var(--color-primary);
 }
 
 .pane-content-box {
@@ -1238,7 +1238,7 @@ export default {
   align-items: center;
   justify-content: space-between;
   background: var(--bg-panel);
-  border: 1px solid #16243a;
+  border: 1px solid var(--border-dark);
   border-radius: 4px;
   padding: 11px 12px;
   margin-bottom: 11px;
@@ -1247,14 +1247,14 @@ export default {
 
 .section-title {
   display: block;
-  color: #fff;
+  color: var(--color-text-main);
   font-size: 13px;
   font-weight: bold;
 }
 
 .section-toolbar p {
   margin: 4px 0 0;
-  color: #6b7d99;
+  color: var(--color-text-muted);
   font-size: 11px;
 }
 
@@ -1266,7 +1266,7 @@ export default {
 
 .dark-tree {
   background: transparent;
-  color: #cbd5e1;
+  color: var(--color-text-main);
 }
 
 .dark-pager {
@@ -1277,33 +1277,33 @@ export default {
 
 .center-empty-tip {
   margin: auto;
-  color: #6b7d99;
+  color: var(--color-text-muted);
   font-size: 12px;
   text-align: center;
 }
 
 .muted {
-  color: #64748b;
+  color: var(--color-text-muted);
   font-size: 11px;
 }
 
 /* font-num */
 
 .text-blue {
-  color: #38bdf8 !important;
+  color: var(--color-primary) !important;
 }
 .text-green {
-  color: #10b981 !important;
+  color: var(--color-success) !important;
 }
 .text-cyan {
-  color: #06b6d4 !important;
+  color: var(--color-cyan) !important;
 }
 .text-orange {
-  color: #f59e0b !important;
+  color: var(--color-warning) !important;
 }
 .text-red,
 .danger-link {
-  color: #f56c6c !important;
+  color: var(--color-danger) !important;
 }
 
 .ellipsis-text {

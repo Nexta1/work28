@@ -225,7 +225,12 @@
             >
           </div>
           <div class="action-btn-group">
-            <span style="font-size: 11px; color: #6b7d99; margin-right: 4px"
+            <span
+              style="
+                font-size: 11px;
+                color: var(--color-text-muted);
+                margin-right: 4px;
+              "
               >布局方向:</span
             >
             <el-radio-group
@@ -932,7 +937,7 @@
             <span v-if="selectedFile" style="color: #10b981; font-size: 12px">
               <i class="el-icon-document"></i> {{ selectedFile.name }}
             </span>
-            <span v-else style="color: #64748b; font-size: 11px"
+            <span v-else style="color: var(--color-text-muted); font-size: 11px"
               >未选择文件</span
             >
           </div>
@@ -943,7 +948,13 @@
             style="display: none"
             @change="handleFileSelect"
           />
-          <div style="color: #94a3b8; font-size: 11px; margin-top: 6px">
+          <div
+            style="
+              color: var(--color-text-muted);
+              font-size: 11px;
+              margin-top: 6px;
+            "
+          >
             支持 .csv 或 .zip 格式文件
           </div>
         </el-form-item>
@@ -1817,8 +1828,8 @@ export default {
 .screen-container {
   width: 100%;
   height: 100%;
-  background-color: #1a2d4a;
-  color: #cbd5e1;
+  background-color: var(--bg-base);
+  color: var(--color-text-main);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -1827,8 +1838,8 @@ export default {
 }
 .top-search-header {
   height: 46px;
-  background: #080e18;
-  border: 1px solid #111b2b;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-dark);
   border-radius: 4px;
   display: flex;
   align-items: center;
@@ -1840,7 +1851,7 @@ export default {
 .hub-title {
   font-size: 13px;
   font-weight: bold;
-  color: #38bdf8;
+  color: var(--color-primary);
 }
 .search-flex,
 .monitor-legend,
@@ -1858,13 +1869,13 @@ export default {
 }
 .search-item label {
   font-size: 11px;
-  color: #6b7d99;
+  color: var(--color-text-muted);
 }
 .action-btn {
-  background: #101b2e;
-  border: 1px solid #1e3557;
+  background: var(--bg-input);
+  border: 1px solid var(--border-light);
   font-size: 11px;
-  color: #fff;
+  color: var(--color-text-main);
 }
 .stats-grid {
   display: grid;
@@ -1874,8 +1885,8 @@ export default {
   flex-shrink: 0;
 }
 .stat-card {
-  background: #080e18;
-  border: 1px solid #111b2b;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-dark);
   border-radius: 4px;
   padding: 11px 12px;
   min-height: 68px;
@@ -1883,7 +1894,7 @@ export default {
 .stat-card span,
 .stat-card small {
   display: block;
-  color: #6b7d99;
+  color: var(--color-text-muted);
   font-size: 11px;
 }
 .stat-card strong {
@@ -1900,8 +1911,8 @@ export default {
 .left-tree-panel {
   width: 380px;
   flex-shrink: 0;
-  background: #080e18;
-  border: 1px solid #111b2b;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-dark);
   border-radius: 4px;
   padding: 11px;
   display: flex;
@@ -1913,8 +1924,8 @@ export default {
   display: flex;
   flex-direction: column;
   height: 100%;
-  background: #080e18;
-  border: 1px solid #111b2b;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-dark);
   border-radius: 4px;
   padding: 12px;
   box-sizing: border-box;
@@ -1928,25 +1939,25 @@ export default {
   font-size: 11px;
   border-radius: 4px;
   margin-bottom: 11px;
-  color: #94a3b8;
+  color: var(--color-text-muted);
   display: flex;
   align-items: center;
   gap: 6px;
 }
 .action-tip-banner b {
-  color: #38bdf8;
+  color: var(--color-primary);
 }
 
 .panel-header-summary {
   margin-bottom: 12px;
-  border-bottom: 1px solid #111b2b;
+  border-bottom: 1px solid var(--border-dark);
   padding-bottom: 8px;
   flex-shrink: 0;
 }
 .panel-header-summary .title {
   font-size: 12px;
   font-weight: bold;
-  color: #06b6d4;
+  color: var(--color-cyan);
 }
 .panel-header-summary .badge {
   font-size: 11px;
@@ -1963,15 +1974,15 @@ export default {
   gap: 6px;
 }
 .task-item-card {
-  background: #0d1522;
-  border: 1px solid #172438;
+  background: var(--bg-input);
+  border: 1px solid var(--border-dark);
   border-radius: 4px;
   padding: 8px 12px;
   cursor: pointer;
 }
 .task-active {
-  border-color: #38bdf8 !important;
-  background: #13253e !important;
+  border-color: var(--color-primary) !important;
+  background: var(--bg-hover) !important;
 }
 .task-card-header {
   display: flex;
@@ -1981,7 +1992,7 @@ export default {
 .rw-title {
   font-size: 12px;
   font-weight: bold;
-  color: #fff;
+  color: var(--color-text-main);
 }
 .status-tag {
   font-size: 9px;
@@ -1990,15 +2001,15 @@ export default {
 }
 .tag-active {
   background: rgba(16, 185, 129, 0.15);
-  color: #10b981;
+  color: var(--color-success);
 }
 .tag-pending {
   background: rgba(245, 158, 11, 0.15);
-  color: #f59e0b;
+  color: var(--color-warning);
 }
 .task-card-body {
   font-size: 11px;
-  color: #94a3b8;
+  color: var(--color-text-muted);
   margin-top: 6px;
 }
 .meta-grid {
@@ -2018,7 +2029,7 @@ export default {
   padding: 8px 12px;
   border-radius: 3px;
   margin-bottom: 11px;
-  border: 1px solid #16243a;
+  border: 1px solid var(--border-dark);
   flex-shrink: 0;
 }
 .active-tip {
@@ -2028,14 +2039,14 @@ export default {
   gap: 8px;
 }
 .active-flow-name {
-  color: #10b981;
+  color: var(--color-success);
   font-weight: bold;
 }
 .flow-state-tag {
-  background: #1e293b;
+  background: var(--bg-input);
   padding: 2px 6px;
   border-radius: 3px;
-  color: #94a3b8;
+  color: var(--color-text-muted);
   font-size: 11px;
 }
 
@@ -2048,9 +2059,9 @@ export default {
 .canvas-container {
   width: 100%;
   height: 100%;
-  border: 1px solid #16243a;
+  border: 1px solid var(--border-dark);
   border-radius: 3px;
-  background: #070c14;
+  background: var(--bg-input);
 }
 
 .step-table-panel-absolute {
@@ -2059,8 +2070,8 @@ export default {
   right: 0;
   bottom: 0;
   height: 260px;
-  background: rgba(7, 12, 20, 0.98);
-  border-top: 2px solid #1e3557;
+  background: var(--bg-base);
+  border-top: 2px solid var(--border-light);
   box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.8);
   padding: 11px;
   z-index: 10;
@@ -2075,7 +2086,7 @@ export default {
 .close-table-icon {
   cursor: pointer;
   font-size: 14px;
-  color: #64748b;
+  color: var(--color-text-muted);
 }
 .close-table-icon:hover {
   color: #f56c6c;
@@ -2093,20 +2104,20 @@ export default {
 }
 /* font-num */
 .text-blue {
-  color: #38bdf8 !important;
+  color: var(--color-primary) !important;
 }
 .text-green {
-  color: #10b981 !important;
+  color: var(--color-success) !important;
 }
 .text-cyan {
-  color: #06b6d4 !important;
+  color: var(--color-cyan) !important;
 }
 .text-orange {
-  color: #f59e0b !important;
+  color: var(--color-warning) !important;
 }
 .danger-link,
 .text-red {
-  color: #f56c6c !important;
+  color: var(--color-danger) !important;
 }
 .ellipsis-text {
   white-space: nowrap;
@@ -2119,7 +2130,7 @@ export default {
 
 .form-divider {
   border: 0;
-  border-top: 1px solid #172438;
+  border-top: 1px solid var(--border-dark);
   margin: 8px 0 16px 0;
 }
 .table-op-bar {
@@ -2129,14 +2140,14 @@ export default {
 .inner-table-max-holder {
   max-height: 240px;
   overflow-y: auto;
-  border: 1px solid #172438;
+  border: 1px solid var(--border-dark);
   border-radius: 3px;
 }
 
 /* 需求 3：优化“是否去重”过滤界面的小微样式，收缩字体、对齐表单行高 */
 .deduplicate-box-mini {
-  background: #0a101d;
-  border: 1px solid #1e3557;
+  background: var(--bg-input);
+  border: 1px solid var(--border-light);
   padding: 8px 12px;
   border-radius: 4px;
   display: flex;
@@ -2146,7 +2157,7 @@ export default {
   margin-right: 12px;
   font-size: 12px;
   font-weight: 500;
-  color: #94a3b8;
+  color: var(--color-text-muted);
 }
 .deduplicate-box-mini ::v-deep .el-radio__label {
   font-size: 12px !important;
@@ -2156,34 +2167,34 @@ export default {
   margin-bottom: 6px;
 }
 .inner-edit-table {
-  background-color: #0a101d !important;
+  background-color: var(--bg-input) !important;
 }
 .inner-edit-table ::v-deep th {
-  background-color: #0f192a !important;
-  color: #94a3b8 !important;
+  background-color: var(--bg-panel) !important;
+  color: var(--color-text-muted) !important;
   padding: 4px 0;
 }
 .inner-edit-table ::v-deep td {
   padding: 2px 0;
-  background-color: #0a101d !important;
+  background-color: var(--bg-input) !important;
 }
 .table-output-box {
-  background: #0d1522;
-  border: 1px solid #1e3557;
+  background: var(--bg-input);
+  border: 1px solid var(--border-light);
   padding: 11px;
   border-radius: 4px;
 }
 
 ::v-deep .el-input-group__prepend {
-  background-color: #111c30 !important;
-  border-color: #1e3557 !important;
-  color: #38bdf8 !important;
+  background-color: var(--bg-input) !important;
+  border-color: var(--border-light) !important;
+  color: var(--color-primary) !important;
 }
 
 /* 日志查询 */
 .log-query-filter {
   background: var(--bg-panel);
-  border: 1px solid #16243a;
+  border: 1px solid var(--border-dark);
   border-radius: 4px;
   padding: 10px 12px;
   margin-bottom: 10px;
@@ -2192,7 +2203,7 @@ export default {
   margin-bottom: 0;
 }
 .log-query-filter ::v-deep .el-form-item__label {
-  color: #94a3b8;
+  color: var(--color-text-muted);
   font-size: 11px;
 }
 .log-pagination {
@@ -2201,16 +2212,16 @@ export default {
   margin-top: 10px;
 }
 .log-pagination ::v-deep .el-pagination {
-  color: #94a3b8;
+  color: var(--color-text-muted);
 }
 .log-pagination ::v-deep .el-pagination button,
 .log-pagination ::v-deep .el-pager li {
   background-color: var(--bg-panel);
-  color: #94a3b8;
-  border: 1px solid #1e3557;
+  color: var(--color-text-muted);
+  border: 1px solid var(--border-light);
 }
 .log-pagination ::v-deep .el-pager li.active {
-  background-color: #1e3a5f;
-  color: #38bdf8;
+  background-color: var(--bg-hover);
+  color: var(--color-primary);
 }
 </style>
