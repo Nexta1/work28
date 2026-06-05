@@ -767,7 +767,7 @@ export default {
 .screen-container {
   width: 100%;
   height: 100%;
-  background-color: #03060c;
+  background-color: #1a2d4a;
   color: #cbd5e1;
   display: flex;
   flex-direction: column;
@@ -917,8 +917,8 @@ export default {
 
 .radar-track-horizontal-card {
   flex: 0 0 230px;
-  background: #0c1424;
-  border: 1px solid #172438;
+  background: var(--bg-panel);
+  border: 1px solid #2a405e;
   border-radius: 4px;
   padding: 8px;
   cursor: pointer;
@@ -1356,8 +1356,8 @@ export default {
 
 /* 弹出框深度覆写 */
 ::v-deep .dark-custom-dialog {
-  background: #0c1424 !important;
-  border: 1px solid #1a293d !important;
+  background: var(--bg-panel) !important;
+  border: 1px solid var(--border-light) !important;
 }
 ::v-deep .dark-custom-dialog .el-dialog__title {
   color: #38bdf8 !important;

@@ -1051,8 +1051,8 @@ export default {
 .screen-container {
   width: 100%;
   height: 100%;
-  background-color: #03060c;
-  color: #cbd5e1;
+  background-color: var(--bg-base);
+  color: var(--color-text-main);
   display: flex;
   flex-direction: column;
   padding: 12px;
@@ -1061,8 +1061,8 @@ export default {
 
 .top-search-header {
   height: 46px;
-  background: #080e18;
-  border: 1px solid #111b2b;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-dark);
   border-radius: 4px;
   display: flex;
   align-items: center;
@@ -1075,7 +1075,7 @@ export default {
 .hub-title {
   font-size: 13px;
   font-weight: bold;
-  color: #38bdf8;
+  color: var(--color-primary);
 }
 
 .search-flex {
@@ -1092,12 +1092,12 @@ export default {
 
 .search-item label {
   font-size: 11px;
-  color: #52637a;
+  color: var(--color-text-muted);
 }
 
 .action-btn {
-  background: #101b2e;
-  border: 1px solid #1e3557;
+  background: var(--bg-input);
+  border: 1px solid var(--border-dark);
   font-size: 11px;
   color: #fff;
 }
@@ -1113,8 +1113,8 @@ export default {
 .left-tree-panel {
   width: 380px;
   flex-shrink: 0;
-  background: #080e18;
-  border: 1px solid #111b2b;
+  background: var(--bg-base);
+  border: 1px solid var(--border-dark);
   border-radius: 4px;
   padding: 11px;
   display: flex;
@@ -1156,7 +1156,7 @@ export default {
 
 ::v-deep .dark-tabs .el-tabs__header {
   margin-bottom: 4px;
-  border-bottom: 1px solid #17263d !important;
+  border-bottom: 1px solid var(--border-dark) !important;
   background: transparent;
 }
 
@@ -1165,7 +1165,7 @@ export default {
 }
 
 ::v-deep .dark-tabs .el-tabs__item {
-  color: #64748b;
+  color: var(--color-disabled);
   font-size: 12px;
   font-weight: bold;
   height: 34px;
@@ -1173,11 +1173,11 @@ export default {
 }
 
 ::v-deep .dark-tabs .el-tabs__item.is-active {
-  color: #38bdf8 !important;
+  color: var(--color-primary) !important;
 }
 
 ::v-deep .dark-tabs .el-tabs__active-bar {
-  background-color: #38bdf8;
+  background-color: var(--color-primary);
 }
 
 .full-pane {
@@ -1198,16 +1198,16 @@ export default {
 
 /* 任务卡片样式 */
 .task-item-card {
-  background: #0d1522;
-  border: 1px solid #172438;
+  background: var(--bg-input);
+  border: 1px solid var(--border-dark);
   border-radius: 4px;
   padding: 8px 12px;
   cursor: pointer;
 }
 
 .task-active {
-  border-color: #38bdf8 !important;
-  background: #13253e !important;
+  border-color: var(--color-primary) !important;
+  background: var(--bg-panel) !important;
 }
 
 .task-card-header {
@@ -1230,17 +1230,17 @@ export default {
 
 .tag-active {
   background: rgba(16, 185, 129, 0.15);
-  color: #10b981;
+  color: var(--color-success);
 }
 
 .tag-pending {
   background: rgba(245, 158, 11, 0.15);
-  color: #f59e0b;
+  color: var(--color-warning);
 }
 
 .task-card-body {
   font-size: 11px;
-  color: #94a3b8;
+  color: var(--color-text-muted);
 }
 
 .meta-grid {
@@ -1253,7 +1253,7 @@ export default {
   display: flex;
   align-items: center;
   margin-bottom: 12px;
-  border-bottom: 1px solid #111b2b;
+  border-bottom: 1px solid var(--border-dark);
   padding-bottom: 8px;
   flex-shrink: 0;
 }
@@ -1275,27 +1275,27 @@ export default {
 /* font-num */
 
 .text-blue {
-  color: #38bdf8 !important;
+  color: var(--color-primary) !important;
 }
 
 .text-green {
-  color: #10b981 !important;
+  color: var(--color-success) !important;
 }
 
 .text-cyan {
-  color: #06b6d4 !important;
+  color: var(--color-cyan) !important;
 }
 
 .text-orange {
-  color: #f59e0b !important;
+  color: var(--color-warning) !important;
 }
 
 .text-red {
-  color: #f43f5e !important;
+  color: var(--color-danger) !important;
 }
 
 .text-gray {
-  color: #475569 !important;
+  color: var(--color-disabled) !important;
 }
 
 .ellipsis-text {
@@ -1314,8 +1314,8 @@ export default {
 }
 
 .plan-section {
-  background: #0d1522;
-  border: 1px solid #172438;
+  background: var(--bg-input);
+  border: 1px solid var(--border-dark);
   border-radius: 4px;
   padding: 12px;
 }
@@ -1326,7 +1326,7 @@ export default {
   align-items: center;
   margin-bottom: 12px;
   padding-bottom: 8px;
-  border-bottom: 1px solid #17263d;
+  border-bottom: 1px solid var(--border-dark);
 }
 
 .section-title {
@@ -1352,7 +1352,7 @@ export default {
 }
 
 .info-label {
-  color: #64748b;
+  color: var(--color-disabled);
   width: 80px;
   flex-shrink: 0;
 }
@@ -1368,7 +1368,7 @@ export default {
   align-items: center;
   justify-content: center;
   height: 120px;
-  color: #475569;
+  color: var(--color-disabled);
   gap: 8px;
 }
 
@@ -1396,8 +1396,8 @@ export default {
   display: flex;
   gap: 24px;
   padding: 12px;
-  background: #0d1522;
-  border: 1px solid #172438;
+  background: var(--bg-input);
+  border: 1px solid var(--border-dark);
   border-radius: 4px;
 }
 
@@ -1409,7 +1409,7 @@ export default {
 }
 
 .status-label {
-  color: #64748b;
+  color: var(--color-disabled);
 }
 
 .status-value {
@@ -1417,15 +1417,15 @@ export default {
 }
 
 .status-idle {
-  color: #64748b;
+  color: var(--color-disabled);
 }
 
 .status-running {
-  color: #06b6d4;
+  color: var(--color-cyan);
 }
 
 .status-completed {
-  color: #10b981;
+  color: var(--color-success);
 }
 
 .progress-section {
@@ -1436,8 +1436,8 @@ export default {
   flex: 1;
   display: flex;
   flex-direction: column;
-  background: #0d1522;
-  border: 1px solid #172438;
+  background: var(--bg-input);
+  border: 1px solid var(--border-dark);
   border-radius: 4px;
   overflow: hidden;
 }
@@ -1447,7 +1447,7 @@ export default {
   justify-content: space-between;
   align-items: center;
   padding: 8px 12px;
-  border-bottom: 1px solid #17263d;
+  border-bottom: 1px solid var(--border-dark);
 }
 
 .log-title {
@@ -1472,29 +1472,29 @@ export default {
 }
 
 .log-time {
-  color: #475569;
+  color: var(--color-disabled);
   flex-shrink: 0;
 }
 
 .log-message {
-  color: #94a3b8;
+  color: var(--color-text-muted);
   flex: 1;
 }
 
 .log-item.info .log-message {
-  color: #94a3b8;
+  color: var(--color-text-muted);
 }
 
 .log-item.success .log-message {
-  color: #10b981;
+  color: var(--color-success);
 }
 
 .log-item.warning .log-message {
-  color: #f59e0b;
+  color: var(--color-warning);
 }
 
 .log-item.error .log-message {
-  color: #f43f5e;
+  color: var(--color-danger);
 }
 
 /* 结果展示容器 */
@@ -1511,14 +1511,14 @@ export default {
 }
 
 .overview-card {
-  background: #0d1522;
-  border: 1px solid #172438;
+  background: var(--bg-input);
+  border: 1px solid var(--border-dark);
   border-radius: 4px;
 }
 
 .card-header {
   padding: 11px 12px;
-  border-bottom: 1px solid #17263d;
+  border-bottom: 1px solid var(--border-dark);
 }
 
 .card-title {
@@ -1543,7 +1543,7 @@ export default {
 
 .stat-label {
   font-size: 11px;
-  color: #64748b;
+  color: var(--color-disabled);
   margin-bottom: 4px;
 }
 
@@ -1583,8 +1583,8 @@ export default {
 }
 
 .suggestion-item {
-  background: #0d1522;
-  border: 1px solid #172438;
+  background: var(--bg-input);
+  border: 1px solid var(--border-dark);
   border-radius: 4px;
   padding: 12px;
 }
@@ -1599,7 +1599,7 @@ export default {
 .suggestion-index {
   width: 20px;
   height: 20px;
-  background: #38bdf8;
+  background: var(--color-primary);
   color: #03060c;
   border-radius: 50%;
   display: flex;
@@ -1618,7 +1618,7 @@ export default {
 
 .suggestion-content {
   font-size: 11px;
-  color: #94a3b8;
+  color: var(--color-text-muted);
   line-height: 1.6;
 }
 

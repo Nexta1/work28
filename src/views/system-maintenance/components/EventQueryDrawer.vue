@@ -240,9 +240,9 @@ export default {
   bottom: 0;
   height: calc(100% - 120px);
   min-height: 340px;
-  background: #0c1424;
-  border-top: 1px solid #1e293b;
-  box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.7);
+  background: #20385a;
+  border-top: 1px solid #2f4a6e;
+  box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.4);
   z-index: 2001;
   display: flex;
   flex-direction: column;
@@ -256,8 +256,8 @@ export default {
   justify-content: space-between;
   height: 38px;
   padding: 0 16px;
-  background: #0a101e;
-  border-bottom: 1px solid #111b2b;
+  background: #1a2d48;
+  border-bottom: 1px solid #2a405e;
   flex-shrink: 0;
 }
 .drawer-header-left {

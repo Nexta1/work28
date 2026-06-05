@@ -474,7 +474,7 @@ export default {
 .screen-container {
   width: 100%;
   height: 100%;
-  background-color: #03060c;
+  background-color: #1a2d4a;
   color: #cbd5e1;
   display: flex;
   flex-direction: column;

@@ -509,12 +509,12 @@ export default {
       this.graph = new Graph({
         container: container,
         autoResize: true,
-        background: {color: '#070c14'},
+        background: {color: '#1a304d'},
         grid: {
           size: 10,
           visible: true,
           type: 'mesh',
-          args: {color: '#111c2e', thickness: 1}
+          args: {color: '#2a405e', thickness: 1}
         },
         connecting: {
           router: 'manhattan',
@@ -578,8 +578,8 @@ export default {
         height: 40,
         label: typeLabel,
         attrs: {
-          body: {fill: '#0f172a', stroke: '#38bdf8', strokeWidth: 1.5, rx: 3},
-          label: {fill: '#ffffff', fontSize: 12}
+          body: {fill: '#20385a', stroke: '#06b6d4', strokeWidth: 1.5, rx: 3},
+          label: {fill: '#e2e8f0', fontSize: 12}
         },
         ports: {
           groups: {absolute: {position: 'absolute'}},
@@ -588,13 +588,13 @@ export default {
               id: 'port-top',
               group: 'absolute',
               args: {x: '50%', y: 0},
-              attrs: {circle: {r: 4, magnet: true, fill: '#38bdf8'}}
+              attrs: {circle: {r: 4, magnet: true, fill: '#06b6d4'}}
             },
             {
               id: 'port-bottom',
               group: 'absolute',
               args: {x: '50%', y: '100%'},
-              attrs: {circle: {r: 4, magnet: true, fill: '#38bdf8'}}
+              attrs: {circle: {r: 4, magnet: true, fill: '#06b6d4'}}
             }
           ]
         },
@@ -963,8 +963,8 @@ export default {
 .screen-container {
   width: 100%;
   height: 100%;
-  background-color: #03060c;
-  color: #cbd5e1;
+  background-color: var(--bg-base);
+  color: var(--color-text-main);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -980,8 +980,8 @@ export default {
 }
 .panel-wing-left {
   width: 30%;
-  background: #080e18;
-  border: 1px solid #111b2b;
+  background: var(--bg-base);
+  border: 1px solid var(--border-dark);
   border-radius: 4px;
   display: flex;
   flex-direction: column;
@@ -1016,8 +1016,8 @@ export default {
 
 .panel-wing-right {
   width: 75%;
-  background: #080e18;
-  border: 1px solid #111b2b;
+  background: var(--bg-base);
+  border: 1px solid var(--border-dark);
   border-radius: 4px;
   position: relative;
   box-sizing: border-box;
@@ -1033,11 +1033,11 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: #0c1424;
+  background: var(--bg-panel);
   padding: 8px 12px;
   border-radius: 3px;
   margin-bottom: 11px;
-  border: 1px solid #16243a;
+  border: 1px solid var(--border-dark);
 }
 .canvas-top-bar .active-tip {
   font-size: 12px;
@@ -1046,14 +1046,14 @@ export default {
   gap: 6px;
 }
 .active-flow-name {
-  color: #10b981;
+  color: var(--color-success);
   font-weight: bold;
 }
 .flow-state-tag {
-  background: #1e293b;
+  background: var(--bg-input);
   padding: 2px 6px;
   border-radius: 3px;
-  color: #94a3b8;
+  color: var(--color-text-muted);
   font-size: 11px;
 }
 
@@ -1066,8 +1066,8 @@ export default {
 
 .dnd-sidebar {
   width: 180px;
-  background: #0a101a;
-  border: 1px solid #16243a;
+  background: var(--bg-input);
+  border: 1px solid var(--border-dark);
   border-radius: 3px;
   padding: 11px;
   display: flex;
@@ -1076,10 +1076,10 @@ export default {
 }
 .dnd-sidebar .sidebar-title {
   font-size: 11px;
-  color: #52637a;
+  color: var(--color-text-muted);
   font-weight: bold;
   margin-bottom: 11px;
-  border-bottom: 1px solid #16243a;
+  border-bottom: 1px solid var(--border-dark);
   padding-bottom: 4px;
 }
 .dnd-pool {
@@ -1090,36 +1090,36 @@ export default {
 }
 .dnd-item {
   padding: 8px;
-  background: #0f172a;
-  border: 1px solid #1e293b;
+  background: var(--bg-input);
+  border: 1px solid var(--border-dark);
   border-radius: 3px;
   font-size: 11px;
   text-align: center;
   cursor: grab;
   user-select: none;
-  color: #ffffff;
+  color: var(--color-text-main);
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 4px;
 }
 .dnd-item:hover {
-  border-color: #38bdf8;
-  color: #38bdf8;
+  border-color: var(--color-primary);
+  color: var(--color-primary);
 }
 
 .dnd-tip-box {
-  background: #070c14;
-  border: 1px dashed #1e293b;
+  background: var(--bg-input);
+  border: 1px dashed var(--border-dark);
   border-radius: 3px;
   padding: 8px;
   font-size: 11px;
-  color: #516580;
+  color: var(--color-disabled);
   line-height: 1.5;
   margin-top: auto;
 }
 .dnd-tip-box .tip-title {
-  color: #38bdf8;
+  color: var(--color-primary);
   font-weight: bold;
   margin: 0 0 6px 0;
 }
@@ -1129,11 +1129,11 @@ export default {
 
 .canvas-container {
   flex: 1;
-  border: 1px solid #16243a;
+  border: 1px solid var(--border-dark);
   border-radius: 3px;
   position: relative;
   overflow: hidden;
-  background: #070c14;
+  background: var(--bg-input);
 }
 .x6-graph-instance {
   width: 100%;
@@ -1149,7 +1149,7 @@ export default {
   align-items: center;
   font-size: 14px;
   font-weight: bold;
-  color: #cbd5e1;
+  color: var(--color-text-main);
 }
 
 .dialog-footer-layout {
@@ -1165,13 +1165,13 @@ export default {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 8px;
-  border-bottom: 1px solid #111b2b;
+  border-bottom: 1px solid var(--border-dark);
   padding-bottom: 6px;
 }
 .panel-header-summary .title {
   font-size: 12px;
   font-weight: bold;
-  color: #06b6d4;
+  color: var(--color-cyan);
   display: flex;
   align-items: center;
 }
@@ -1189,14 +1189,14 @@ export default {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: #080e18;
-  color: #415169;
+  background: var(--bg-input);
+  color: var(--color-text-muted);
   font-size: 11px;
 }
 .radar-scan-loader {
   width: 32px;
   height: 32px;
-  border: 2px dashed #172438;
+  border: 2px dashed var(--border-dark);
   border-radius: 50%;
   animation: spin 4s linear infinite;
   margin-bottom: 11px;
@@ -1208,9 +1208,9 @@ export default {
 }
 
 .text-green {
-  color: #10b981;
+  color: var(--color-success);
 }
 .text-red {
-  color: #ef4444;
+  color: var(--color-danger);
 }
 </style>

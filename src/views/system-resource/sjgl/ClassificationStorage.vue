@@ -416,7 +416,7 @@ p {
 }
 
 .hero-strip {
-  background: #0c1424;
+  background: var(--bg-panel);
   border: 1px solid #16243a;
   border-radius: 4px;
   padding: 14px 16px;

@@ -808,7 +808,7 @@ export default {
 .screen-container {
   width: 100%;
   height: 100%;
-  background-color: #03060c;
+  background-color: #1a2d4a;
   color: #cbd5e1;
   display: flex;
   flex-direction: column;
@@ -820,8 +820,8 @@ export default {
 /* 顶层战略条件检索面板 */
 .top-search-header {
   height: 48px;
-  background: #080e18;
-  border: 1px solid #111b2b;
+  background: #1a2d4a;
+  border: 1px solid #2a405e;
   border-radius: 4px;
   display: flex;
   align-items: center;
@@ -903,8 +903,8 @@ export default {
 /* 统计数据区样式 */
 .stats-panel-box {
   width: 28%;
-  background: #080e18;
-  border: 1px solid #111b2b;
+  background: #1a2d4a;
+  border: 1px solid #2a405e;
   border-radius: 4px;
   padding: 11px;
   box-sizing: border-box;
@@ -939,8 +939,8 @@ export default {
 /* 平台实体横向滚动区 */
 .platform-horizontal-panel {
   width: 72%;
-  background: #080e18;
-  border: 1px solid #111b2b;
+  background: #1a2d4a;
+  border: 1px solid #2a405e;
   border-radius: 4px;
   padding: 11px;
   box-sizing: border-box;
@@ -962,7 +962,7 @@ export default {
 
 .radar-track-horizontal-card {
   flex: 0 0 230px;
-  background: #0c1424;
+  background: var(--bg-panel);
   border: 1px solid #172438;
   border-radius: 4px;
   padding: 8px;
@@ -1029,8 +1029,8 @@ export default {
   min-height: 0;
 }
 .monitor-column-panel {
-  background: #080e18;
-  border: 1px solid #111b2b;
+  background: #1a2d4a;
+  border: 1px solid #2a405e;
   border-radius: 4px;
   display: flex;
   flex-direction: column;
@@ -1401,7 +1401,7 @@ export default {
 
 /* 弹出框深度覆写 */
 ::v-deep .dark-custom-dialog {
-  background: #0c1424 !important;
+  background: var(--bg-panel) !important;
   border: 1px solid #1a293d !important;
 }
 ::v-deep .dark-custom-dialog .el-dialog__title {

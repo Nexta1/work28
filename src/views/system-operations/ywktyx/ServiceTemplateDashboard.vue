@@ -180,69 +180,92 @@
             <div
               v-for="card in infoCardList"
               :key="card.serviceId"
-              class="tactical-card"
+              class="info-card-new"
             >
-              <div class="card-row-top">
-                <span class="card-title text-white font-bold">{{
-                  card.serviceName
-                }}</span>
-                <el-tag size="mini" type="info" effect="dark">{{
-                  translateMethod(card.requestMethod)
-                }}</el-tag>
-              </div>
+              <div class="info-card-accent"></div>
 
-              <div class="card-meta-grid">
-                <div class="meta-item">
-                  <span class="label">服务序列号:</span>
-                  <span class="val font-num">{{ card.serviceId }}</span>
+              <div class="info-card-body">
+                <div class="info-card-header">
+                  <div class="info-card-title-row">
+                    <Icon
+                      icon="lucide:activity"
+                      :size="12"
+                      style="color: var(--color-cyan); flex-shrink: 0"
+                    />
+                    <span class="info-card-title">{{ card.serviceName }}</span>
+                  </div>
+                  <el-tag size="mini" class="method-tag">{{
+                    translateMethod(card.requestMethod)
+                  }}</el-tag>
                 </div>
-                <div class="meta-item">
-                  <span class="label">受控平台(PTMC):</span>
-                  <span class="val text-cyan font-bold">{{
-                    card.PTMC || '未指派平台'
-                  }}</span>
+
+                <div class="info-card-divider"></div>
+
+                <div class="info-card-grid">
+                  <div class="info-card-field">
+                    <span class="field-dot"></span>
+                    <span class="field-label">服务序号</span>
+                    <span class="field-value font-num">{{
+                      card.serviceId
+                    }}</span>
+                  </div>
+                  <div class="info-card-field">
+                    <span class="field-dot dot-cyan"></span>
+                    <span class="field-label">受控平台</span>
+                    <span class="field-value text-cyan">{{
+                      card.PTMC || '未指派'
+                    }}</span>
+                  </div>
+                  <div class="info-card-field">
+                    <span class="field-dot dot-orange"></span>
+                    <span class="field-label">网络端点</span>
+                    <span class="field-value text-orange font-num"
+                      >{{ card.serviceIp }}:{{ card.servicePort }}</span
+                    >
+                  </div>
+                  <div class="info-card-field">
+                    <span class="field-dot dot-green"></span>
+                    <span class="field-label">传输协议</span>
+                    <span class="field-value">{{ card.requestProtocol }}</span>
+                  </div>
+                  <div class="info-card-field full-width">
+                    <span class="field-dot dot-purple"></span>
+                    <span class="field-label">资源定位符</span>
+                    <span
+                      class="field-value font-num ellipsis-text"
+                      :title="card.serviceURL"
+                      >{{ card.serviceURL }}</span
+                    >
+                  </div>
+                  <div class="info-card-field full-width">
+                    <span class="field-dot dot-gray"></span>
+                    <span class="field-label">战术时间戳</span>
+                    <span class="field-value font-num">{{
+                      formatDate(card.opTime)
+                    }}</span>
+                  </div>
                 </div>
-                <div class="meta-item">
-                  <span class="label">网络端点(地址/端口):</span>
-                  <span class="val text-orange font-num"
-                    >{{ card.serviceIp }}:{{ card.servicePort }}</span
+
+                <div class="info-card-divider"></div>
+
+                <div class="info-card-actions">
+                  <el-button
+                    type="text"
+                    size="mini"
+                    class="action-btn-modify"
+                    icon="el-icon-edit"
+                    @click.stop="openInfoDialog(true, card)"
+                    >修正参数</el-button
+                  >
+                  <el-button
+                    type="text"
+                    size="mini"
+                    class="action-btn-delete"
+                    icon="el-icon-delete"
+                    @click.stop="handleDeleteInfo(card)"
+                    >安全下线</el-button
                   >
                 </div>
-                <div class="meta-item">
-                  <span class="label">传输层协议:</span>
-                  <span class="val font-bold">{{ card.requestProtocol }}</span>
-                </div>
-                <div class="meta-item col-span-2">
-                  <span class="label">服务资源定位符(URL):</span>
-                  <span
-                    class="val font-num show-overflow-tooltip"
-                    :title="card.serviceURL"
-                    >{{ card.serviceURL }}</span
-                  >
-                </div>
-                <div class="meta-item col-span-2">
-                  <span class="label">战术时间戳:</span>
-                  <span class="val font-num">{{
-                    formatDate(card.opTime)
-                  }}</span>
-                </div>
-              </div>
-
-              <div class="card-action-overlay">
-                <el-button
-                  type="text"
-                  size="mini"
-                  class="text-blue"
-                  @click.stop="openInfoDialog(true, card)"
-                  >修正参数</el-button
-                >
-                <el-button
-                  type="text"
-                  size="mini"
-                  class="text-red"
-                  @click.stop="handleDeleteInfo(card)"
-                  >安全下线</el-button
-                >
               </div>
             </div>
           </div>
@@ -851,7 +874,7 @@ export default {
 .screen-container {
   width: 100%;
   height: 100%;
-  background-color: #03060c;
+  background-color: #1a2d4a;
   color: #cbd5e1;
   display: flex;
   flex-direction: column;
@@ -871,8 +894,8 @@ export default {
 /* 左翼栏置换为核心主控表格轴 */
 .panel-wing-left-main {
   width: 60%;
-  background: #080e18;
-  border: 1px solid #111b2b;
+  background: #1a2d4a;
+  border: 1px solid #2a405e;
   border-radius: 4px;
   display: flex;
   flex-direction: column;
@@ -883,8 +906,8 @@ export default {
 /* 右翼栏置换为服务副卡片流舱 */
 .panel-wing-right-sub {
   width: 40%;
-  background: #080e18;
-  border: 1px solid #111b2b;
+  background: #1a2d4a;
+  border: 1px solid #2a405e;
   border-radius: 4px;
   position: relative;
   box-sizing: border-box;
@@ -904,62 +927,154 @@ export default {
   padding-right: 4px;
   display: flex;
   flex-direction: column;
-  gap: 11px;
+  gap: 10px;
   margin-top: 4px;
 }
 
-.tactical-card {
-  background: #0c1424;
-  border: 1px solid #1e293b;
-  border-radius: 3px;
-  padding: 11px 12px;
-  position: relative;
-  box-shadow: none !important;
+/* ===================================================================
+   服务信息卡片 - 全新立体化设计
+   =================================================================== */
+.info-card-new {
+  display: flex;
+  background: var(--bg-base);
+  border: 1px solid var(--border-dark);
+  border-radius: 5px;
+  overflow: hidden;
+  transition: all 0.25s ease;
+  cursor: default;
+}
+.info-card-new:hover {
+  border-color: var(--color-cyan);
+  box-shadow: 0 2px 12px rgba(6, 182, 212, 0.1);
 }
 
-.card-row-top {
+/* 左侧彩色装饰条 */
+.info-card-accent {
+  width: 4px;
+  flex-shrink: 0;
+  background: linear-gradient(180deg, var(--color-cyan), var(--color-primary));
+}
+
+/* 卡片主体 */
+.info-card-body {
+  flex: 1;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* 头部：标题 + 方法标签 */
+.info-card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 8px;
-  border-bottom: 1px dashed #16243a;
-  padding-bottom: 4px;
 }
-.card-title {
-  font-size: 12px;
-  color: #ffffff;
+.info-card-title-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  flex: 1;
+}
+.info-card-title {
+  font-size: 13px;
+  font-weight: bold;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.card-meta-grid {
+.method-tag {
+  flex-shrink: 0;
+  background: rgba(6, 182, 212, 0.12) !important;
+  border: 1px solid rgba(6, 182, 212, 0.3) !important;
+  color: var(--color-cyan) !important;
+  font-size: 11px !important;
+  font-weight: bold !important;
+  border-radius: 3px !important;
+  height: 22px !important;
+  line-height: 20px !important;
+}
+
+/* 分割线 */
+.info-card-divider {
+  height: 1px;
+  background: linear-gradient(90deg, var(--border-dark) 0%, transparent 100%);
+}
+
+/* 数据网格 */
+.info-card-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 5px 11px;
-  font-size: 11px;
+  gap: 4px 16px;
 }
-.meta-item {
+.info-card-field {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  min-height: 22px;
 }
-.meta-item.col-span-2 {
+.info-card-field.full-width {
   grid-column: span 2;
 }
-.meta-item .label {
-  color: #475569;
-  margin-right: 6px;
-  white-space: nowrap;
+
+/* 字段指示圆点 */
+.field-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  flex-shrink: 0;
 }
-.meta-item .val {
-  color: #cbd5e1;
-  word-break: break-all;
+.field-dot.dot-cyan {
+  background: var(--color-cyan);
+}
+.field-dot.dot-orange {
+  background: var(--color-warning);
+}
+.field-dot.dot-green {
+  background: var(--color-success);
+}
+.field-dot.dot-purple {
+  background: #a855f7;
+}
+.field-dot.dot-gray {
+  background: var(--color-disabled);
 }
 
-.card-action-overlay {
+.field-label {
+  color: var(--color-text-muted);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.field-value {
+  color: var(--color-text-main);
+  min-width: 0;
+  flex: 1;
+}
+
+/* 操作按钮区 */
+.info-card-actions {
   display: flex;
   justify-content: flex-end;
   gap: 12px;
-  margin-top: 8px;
-  border-top: 1px solid #111b2b;
-  padding-top: 6px;
+}
+.action-btn-modify {
+  font-size: 11px !important;
+  color: var(--color-primary) !important;
+}
+.action-btn-modify:hover {
+  color: #7dd3fc !important;
+}
+.action-btn-delete {
+  font-size: 11px !important;
+  color: var(--color-danger) !important;
+}
+.action-btn-delete:hover {
+  color: #fda4af !important;
 }
 
 .hand-pointer-table /deep/ .el-table__row {
@@ -1079,9 +1194,9 @@ export default {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: #080e18;
+  background: #1a2d4a;
   z-index: 10;
-  color: #415169;
+  color: #5a6b85;
   font-size: 11px;
   padding: 0 20px;
   text-align: center;

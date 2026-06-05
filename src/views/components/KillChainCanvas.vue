@@ -35,12 +35,12 @@ export default {
         5: '评估'
       },
       phaseColors: {
-        0: {bg: '#161d2b', border: '#3b82f6'},
-        1: {bg: '#1a1b2e', border: '#8b5cf6'},
-        2: {bg: '#142421', border: '#10b981'},
-        3: {bg: '#2a221a', border: '#f59e0b'},
-        4: {bg: '#281a1a', border: '#ef4444'},
-        5: {bg: '#1a221e', border: '#14b8a6'}
+        0: {bg: '#1a2d4a', border: '#38bdf8'},
+        1: {bg: '#1a2d4a', border: '#8b5cf6'},
+        2: {bg: '#1a2d4a', border: '#10b981'},
+        3: {bg: '#1a2d4a', border: '#f59e0b'},
+        4: {bg: '#1a2d4a', border: '#f43f5e'},
+        5: {bg: '#1a2d4a', border: '#06b6d4'}
       }
     }
   },
@@ -75,7 +75,7 @@ export default {
 
       this.graph = new Graph({
         container: container,
-        background: {color: '#070c14'}, // 对齐主控台深色底色
+        background: {color: '#1a304d'}, // 对齐主控台深色底色
         grid: {
           size: 10,
           visible: true,
@@ -293,7 +293,7 @@ export default {
   min-height: 0; /* 核心 */
   position: absolute; /* 使用绝对定位使其完全附着于 .canvas-wrapper 这个安全外壳上 */
   inset: 0; /* 四周拉满 0px */
-  background-color: #070c14;
+  background-color: #142440;
 }
 
 /* =================================================================== */

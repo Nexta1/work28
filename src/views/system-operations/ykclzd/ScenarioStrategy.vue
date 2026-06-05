@@ -305,7 +305,7 @@
         </div>
         <div class="detail-row span-2">
           <span class="lbl">安全认证保障</span>
-          <span class="val" style="color: #94a3b8">{{
+          <span class="val" style="color: var(--color-text-muted)">{{
             selectedDetail.safeRequirement || '未设定特殊限制'
           }}</span>
         </div>
@@ -321,10 +321,7 @@
         <el-button type="danger" size="mini" @click="handleDeleteFromDetail"
           >删 除</el-button
         >
-        <el-button
-          @click="detailVisible = false"
-          size="mini"
-          style="background: #172438; border: 1px solid #1e3557; color: #cbd5e1"
+        <el-button @click="detailVisible = false" size="mini" class="dark-btn"
           >关 闭</el-button
         >
       </div>
@@ -473,10 +470,7 @@
       </el-form>
 
       <div slot="footer" class="dialog-footer">
-        <el-button
-          @click="dialogVisible = false"
-          size="mini"
-          style="background: #172438; border: 1px solid #1e3557; color: #cbd5e1"
+        <el-button @click="dialogVisible = false" size="mini" class="dark-btn"
           >取 消</el-button
         >
         <el-button
@@ -788,8 +782,8 @@ export default {
 .screen-container {
   width: 100%;
   height: 100%;
-  background-color: #03060c;
-  color: #cbd5e1;
+  background-color: var(--bg-base);
+  color: var(--color-text-main);
   display: flex;
   flex-direction: column;
   padding: 12px;
@@ -798,8 +792,8 @@ export default {
 
 .top-search-header {
   height: 46px;
-  background: #080e18;
-  border: 1px solid #111b2b;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-dark);
   border-radius: 4px;
   display: flex;
   align-items: center;
@@ -811,7 +805,7 @@ export default {
 .hub-title {
   font-size: 13px;
   font-weight: bold;
-  color: #38bdf8;
+  color: var(--color-primary);
 }
 .search-flex {
   display: flex;
@@ -825,7 +819,7 @@ export default {
 }
 .search-item label {
   font-size: 11px;
-  color: #52637a;
+  color: var(--color-text-muted);
 }
 
 .main-body-layout {
@@ -843,8 +837,8 @@ export default {
 }
 
 .monitor-column-panel {
-  background: #080e18;
-  border: 1px solid #111b2b;
+  background: var(--bg-base);
+  border: 1px solid var(--border-dark);
   border-radius: 4px;
   display: flex;
   flex-direction: column;
@@ -854,14 +848,14 @@ export default {
 }
 .is-active-panel {
   border-color: rgba(56, 189, 248, 0.4) !important;
-  background: #091220;
+  background: var(--bg-panel);
 }
 .panel-header-summary {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 8px;
-  border-bottom: 1px solid #111b2b;
+  border-bottom: 1px solid var(--border-dark);
   padding-bottom: 6px;
   flex-shrink: 0;
 }
@@ -888,13 +882,13 @@ export default {
   width: 4px;
 }
 .scroll-container-box::-webkit-scrollbar-thumb {
-  background: #172438;
+  background: var(--bg-input);
   border-radius: 2px;
 }
 
 .link-status-card.compact-card {
-  background: #0d1522;
-  border: 1px solid #172438;
+  background: var(--bg-input);
+  border: 1px solid var(--border-dark);
   border-radius: 3px;
   padding: 6px 8px;
   position: relative;
@@ -907,12 +901,12 @@ export default {
   justify-content: center;
 }
 .link-status-card:hover {
-  background: #121e30;
-  border-color: #38bdf8;
+  background: var(--bg-hover);
+  border-color: var(--color-primary);
 }
 .link-status-card.is-active {
-  background: #15253d;
-  border-color: #06b6d4;
+  background: var(--bg-panel);
+  border-color: var(--color-cyan);
 }
 
 .alarm-strip {
@@ -923,10 +917,10 @@ export default {
   width: 3px;
 }
 .strip-level-safe {
-  background: #10b981;
+  background: var(--color-success);
 }
 .strip-level-crit {
-  background: #eab308;
+  background: var(--color-warning);
 }
 
 .card-line {
@@ -942,7 +936,7 @@ export default {
 .metric-line {
   /* justify-content: flex-start; */
   gap: 11px;
-  color: #64748b;
+  color: var(--color-disabled);
   font-size: 11px;
   margin-top: 1px;
 }
@@ -950,7 +944,7 @@ export default {
 .sub-empty {
   text-align: center;
   font-size: 11px;
-  color: #334155;
+  color: var(--color-disabled);
   padding-top: 25px;
 }
 
@@ -962,7 +956,7 @@ export default {
 
 /* 🎛️ 核心修复：完美融合同步 el-form-item 彻底降噪防撑开 */
 .detail-row {
-  background: #070c14;
+  background: var(--bg-input);
   padding: 5px 11px;
   border-radius: 3px;
   display: flex;
@@ -975,16 +969,16 @@ export default {
 }
 .detail-row .lbl {
   font-size: 11px;
-  color: #52637a;
+  color: var(--color-text-muted);
   margin-bottom: 2px;
 }
 .required-lbl::after {
   content: ' *';
-  color: #ef4444;
+  color: var(--color-danger);
 }
 .detail-row .val {
   font-size: 11px;
-  color: #f8fafc;
+  color: var(--color-text-main);
 }
 .font-platform-list {
   font-size: 11px !important;
@@ -1001,18 +995,18 @@ export default {
 /* 针对大屏幕单选/多选组件深色化重置 */
 ::v-deep .el-checkbox__label,
 ::v-deep .el-radio__label {
-  color: #cbd5e1 !important;
+  color: var(--color-text-main) !important;
   font-size: 11px;
 }
 ::v-deep .el-checkbox__inner,
 ::v-deep .el-radio__inner {
-  background-color: #0d1522 !important;
-  border-color: #1a293d !important;
+  background-color: var(--bg-input) !important;
+  border-color: var(--border-dark) !important;
 }
 ::v-deep .el-checkbox__input.is-checked .el-checkbox__inner,
 ::v-deep .el-radio__input.is-checked .el-radio__inner {
-  background-color: #38bdf8 !important;
-  border-color: #38bdf8 !important;
+  background-color: var(--color-primary) !important;
+  border-color: var(--color-primary) !important;
 }
 
 /* 保密定制化样式 */
@@ -1021,7 +1015,7 @@ export default {
   flex-direction: column;
 }
 ::v-deep .secret-form-item .el-form-item__label {
-  color: #52637a !important;
+  color: var(--color-text-muted) !important;
   font-size: 11px;
   line-height: 14px;
   text-align: left;
@@ -1055,7 +1049,7 @@ export default {
 
 /* 气泡弹窗深色扁平化重写 */
 .el-popover.dark-popover-tech {
-  background: #0c1424 !important;
+  background: var(--bg-panel) !important;
   border: 1px solid #1e293b !important;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
   padding: 12px;
@@ -1068,28 +1062,33 @@ export default {
 
   /* 气泡小三角颜色修正 */
   .popper__arrow::after {
-    border-top-color: #0c1424 !important;
-    border-bottom-color: #0c1424 !important;
+    border-top-color: var(--bg-panel) !important;
+    border-bottom-color: var(--bg-panel) !important;
   }
 }
 .text-blue {
-  color: #38bdf8 !important;
+  color: var(--color-primary) !important;
 }
 .text-green {
-  color: #10b981 !important;
+  color: var(--color-success) !important;
 }
 .text-orange {
-  color: #f59e0b !important;
+  color: var(--color-warning) !important;
 }
 .text-cyan {
-  color: #06b6d4 !important;
+  color: var(--color-cyan) !important;
 }
 .text-gray {
-  color: #64748b !important;
+  color: var(--color-disabled) !important;
 }
 .ellipsis-text {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+.dark-btn {
+  background: var(--bg-input);
+  border: 1px solid var(--border-dark);
+  color: var(--color-text-main);
 }
 </style>

@@ -14,11 +14,11 @@ export default {
 <style scoped>
 .page-container {
   padding: 20px;
-  color: #e0e0e0;
+  color: var(--color-text-main);
 }
 
 h1 {
   margin-bottom: 20px;
-  color: #00f3ff;
+  color: var(--color-primary);
 }
 </style>

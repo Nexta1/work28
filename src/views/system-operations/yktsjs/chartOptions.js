@@ -11,12 +11,12 @@ export const getNetworkOption = data => ({
     type: 'category',
     boundaryGap: false,
     data: data.times,
-    axisLine: {lineStyle: {color: '#16243b'}},
+    axisLine: {show: false},
     axisLabel: {color: '#94a3b8', fontFamily: FONT_FAMILY}
   },
   yAxis: {
     type: 'value',
-    splitLine: {lineStyle: {color: '#111b2b'}},
+    splitLine: {show: false},
     axisLabel: {color: '#94a3b8', fontFamily: FONT_FAMILY}
   },
   series: [
@@ -52,7 +52,7 @@ export const getAlertPieOption = data => ({
     trigger: 'item',
     formatter: '{b}: {c}次 ({d}%)',
     backgroundColor: 'rgba(7, 12, 20, 0.95)',
-    borderColor: '#1e3a5f',
+    borderColor: 'transparent',
     textStyle: {color: '#cbd5e1', fontSize: 11}
   },
   legend: {
@@ -72,8 +72,8 @@ export const getAlertPieOption = data => ({
       animationEasing: 'cubicInOut',
       itemStyle: {
         borderRadius: 4,
-        borderColor: '#03060c',
-        borderWidth: 2,
+        borderColor: 'transparent',
+        borderWidth: 0,
         shadowBlur: 12,
         shadowColor: 'rgba(0, 180, 255, 0.3)'
       },
@@ -106,7 +106,7 @@ export const getFaultBarOption = data => ({
     trigger: 'axis',
     axisPointer: {type: 'shadow'},
     backgroundColor: 'rgba(7, 12, 20, 0.95)',
-    borderColor: '#1e3a5f',
+    borderColor: 'transparent',
     textStyle: {color: '#cbd5e1', fontSize: 11}
   },
   grid: {
@@ -119,12 +119,12 @@ export const getFaultBarOption = data => ({
   xAxis: {
     type: 'category',
     data: data.labels,
-    axisLine: {lineStyle: {color: '#172438'}},
+    axisLine: {show: false},
     axisLabel: {color: '#64748b', fontSize: 10}
   },
   yAxis: {
     type: 'value',
-    splitLine: {lineStyle: {color: '#111b2b'}},
+    splitLine: {show: false},
     axisLabel: {color: '#64748b', fontSize: 10}
   },
   series: [
@@ -169,7 +169,7 @@ export const getTargetPieOption = data => ({
     trigger: 'item',
     formatter: '{b}: {c}个 ({d}%)',
     backgroundColor: '#070c14',
-    borderColor: '#172438',
+    borderColor: 'transparent',
     textStyle: {color: '#cbd5e1', fontSize: 11}
   },
   legend: {
@@ -186,7 +186,7 @@ export const getTargetPieOption = data => ({
       avoidLabelOverlap: false,
       itemStyle: {
         borderRadius: 4,
-        borderColor: '#03060c',
+        borderColor: 'transparent',
         borderWidth: 2
       },
       label: {show: false},

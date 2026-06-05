@@ -78,13 +78,13 @@ export default {
   top: 0;
   width: 320px;
   height: 100%;
-  background: rgba(13, 25, 41, 0.95);
+  background: rgba(26, 45, 74, 0.95);
   backdrop-filter: blur(11px);
   z-index: 1000;
   box-shadow: 20px 0 30px rgba(0, 0, 0, 0.5);
   display: flex;
   flex-direction: column;
-  border-right: 1px solid rgba(59, 130, 246, 0.2);
+  border-right: 1px solid rgba(56, 189, 248, 0.2);
 }
 
 .panel-mask {
@@ -98,7 +98,7 @@ export default {
   padding: 20px;
   background: linear-gradient(
     90deg,
-    rgba(59, 130, 246, 0.1) 0%,
+    rgba(56, 189, 248, 0.1) 0%,
     transparent 100%
   );
   border-left: 4px solid #3b82f6;
@@ -115,17 +115,17 @@ export default {
 }
 .sub-count {
   font-size: 12px;
-  color: #64748b;
+  color: var(--color-text-muted);
   margin-top: 4px;
   display: block;
 }
 .close-icon {
-  color: #94a3b8;
+  color: var(--color-text-muted);
   cursor: pointer;
   font-size: 20px;
 }
 .close-icon:hover {
-  color: #fff;
+  color: var(--color-text-main);
 }
 
 .panel-body {
@@ -136,7 +136,7 @@ export default {
 
 /* 列表项样式 - 保持与弹窗风格一致 */
 .pt-list-item {
-  background: rgba(30, 41, 59, 0.4);
+  background: rgba(32, 56, 90, 0.4);
   border: 1px solid rgba(255, 255, 255, 0.05);
   border-radius: 4px;
   margin-bottom: 12px;
@@ -149,8 +149,8 @@ export default {
 }
 
 .pt-list-item:hover {
-  background: rgba(59, 130, 246, 0.15);
-  border-color: rgba(59, 130, 246, 0.4);
+  background: var(--bg-hover);
+  border-color: var(--color-primary);
   transform: translateX(4px);
 }
 
@@ -168,14 +168,14 @@ export default {
   padding-left: 8px;
 }
 .pt-name {
-  color: #e2e8f0;
+  color: var(--color-text-main);
   font-size: 14px;
   font-weight: 500;
   margin-bottom: 6px;
 }
 .pt-info {
   font-size: 11px;
-  color: #64748b;
+  color: var(--color-text-muted);
   display: flex;
   gap: 11px;
 }

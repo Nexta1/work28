@@ -395,7 +395,10 @@
                     class="upper-detail-dashboard"
                     style="border-left: 3px solid #f59e0b"
                   >
-                    <div class="dash-inner-header" style="color: #f59e0b">
+                    <div
+                      class="dash-inner-header"
+                      style="color: var(--color-warning)"
+                    >
                       <span>
                         <Icon
                           icon="lucide:map-pin"
@@ -1328,7 +1331,7 @@ export default {
 .screen-container {
   width: 100%;
   height: 100%;
-  color: #cbd5e1;
+  color: var(--color-text-main);
   display: flex;
   flex-direction: column;
   padding: 12px;
@@ -1336,8 +1339,8 @@ export default {
 }
 .top-search-header {
   height: 46px;
-  background: #080e18;
-  border: 1px solid #111b2b;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-dark);
   border-radius: 4px;
   display: flex;
   align-items: center;
@@ -1349,7 +1352,7 @@ export default {
 .hub-title {
   font-size: 13px;
   font-weight: bold;
-  color: #38bdf8;
+  color: var(--color-primary);
 }
 .search-flex {
   display: flex;
@@ -1363,11 +1366,11 @@ export default {
 }
 .search-item label {
   font-size: 11px;
-  color: #52637a;
+  color: var(--color-text-muted);
 }
 .action-btn {
-  background: #101b2e;
-  border: 1px solid #1e3557;
+  background: var(--bg-input);
+  border: 1px solid var(--border-dark);
   font-size: 11px;
   color: #fff;
 }
@@ -1382,8 +1385,8 @@ export default {
 .left-tree-panel {
   width: 370px;
   flex-shrink: 0;
-  background: #080e18;
-  border: 1px solid #111b2b;
+  background: var(--bg-base);
+  border: 1px solid var(--border-dark);
   border-radius: 4px;
   padding: 11px;
   display: flex;
@@ -1405,8 +1408,8 @@ export default {
   height: 100%;
 }
 .right-bottom-strategy-zone {
-  background: #080e18;
-  border: 1px solid #111b2b;
+  background: var(--bg-base);
+  border: 1px solid var(--border-dark);
   border-radius: 4px;
   padding: 12px;
   display: flex;
@@ -1431,9 +1434,9 @@ export default {
   min-height: 0;
 }
 .upper-detail-dashboard {
-  background: #0d1624;
-  border: 1px solid #1d3557;
-  border-left: 3px solid #38bdf8;
+  background: var(--bg-input);
+  border: 1px solid var(--border-dark);
+  border-left: 3px solid var(--color-primary);
   border-radius: 4px;
   padding: 12px;
   flex-shrink: 0;
@@ -1441,7 +1444,7 @@ export default {
 .dash-inner-header {
   font-size: 12px;
   font-weight: bold;
-  color: #38bdf8;
+  color: var(--color-primary);
   margin-bottom: 8px;
   display: flex;
   align-items: center;
@@ -1452,26 +1455,26 @@ export default {
   grid-template-columns: repeat(3, 1fr);
   gap: 6px 16px;
   font-size: 11px;
-  color: #94a3b8;
+  color: var(--color-text-muted);
 }
 .dash-grid-content .full-row {
   grid-column: span 3;
-  border-top: 1px dashed #1e293b;
+  border-top: 1px dashed var(--border-dark);
   padding-top: 6px;
   margin-top: 2px;
 }
 .dash-empty-tip {
   text-align: center;
   font-size: 11px;
-  color: #475569;
+  color: var(--color-disabled);
   padding: 20px 0;
 }
 
 .parse-box {
-  background: #090e17;
+  background: var(--bg-input);
   padding: 6px 11px;
   border-radius: 3px;
-  border: 1px solid #142238;
+  border: 1px solid var(--border-dark);
   margin-top: 4px;
 }
 .points-flex-wrap {
@@ -1481,8 +1484,8 @@ export default {
   margin-top: 4px;
 }
 .coord-tag {
-  background: #162a45;
-  color: #22d3ee;
+  background: var(--bg-input);
+  color: var(--color-cyan);
   padding: 2px 6px;
   border-radius: 2px;
   font-size: 11px;
@@ -1490,7 +1493,7 @@ export default {
 }
 .coord-tag.org-tag {
   background: #2d2215;
-  color: #f59e0b;
+  color: var(--color-warning);
 }
 
 .lower-scroll-list-container.fill-remaining-space {
@@ -1498,7 +1501,7 @@ export default {
   min-height: 0;
   overflow-y: auto;
   background: rgba(13, 21, 34, 0.2);
-  border: 1px solid #111e30;
+  border: 1px solid var(--border-dark);
   border-radius: 4px;
   padding: 8px;
 }
@@ -1516,22 +1519,22 @@ export default {
   margin-top: 4px;
 }
 .kc-node-block {
-  background: #0a101a;
+  background: var(--bg-input);
   border-left: 3px solid #fff;
   padding: 6px 11px;
   border-radius: 2px;
 }
 .kc-node-block.border-red {
-  border-color: #ef4444;
+  border-color: var(--color-danger);
 }
 .kc-node-block.border-cyan {
-  border-color: #06b6d4;
+  border-color: var(--color-cyan);
 }
 .kc-node-block.border-orange {
-  border-color: #f59e0b;
+  border-color: var(--color-warning);
 }
 .kc-node-block.border-green {
-  border-color: #10b981;
+  border-color: var(--color-success);
 }
 .kc-label {
   font-size: 11px;
@@ -1548,25 +1551,25 @@ export default {
   cursor: pointer;
 }
 .interactive-row:hover {
-  border-color: #38bdf8;
-  background: #111e32;
+  border-color: var(--color-primary);
+  background: var(--bg-hover);
 }
 .row-selected {
-  border-color: #38bdf8 !important;
-  background: #142844 !important;
+  border-color: var(--color-primary) !important;
+  background: var(--bg-panel) !important;
 }
 .row-selected-orange {
-  border-color: #f59e0b !important;
+  border-color: var(--color-warning) !important;
   background: #241e17 !important;
 }
 .row-selected-green {
-  border-color: #10b981 !important;
+  border-color: var(--color-success) !important;
   background: #0f2b20 !important;
 }
 
 .link-status-card.compact-card {
-  background: #0d1522;
-  border: 1px solid #172438;
+  background: var(--bg-input);
+  border: 1px solid var(--border-dark);
   border-radius: 3px;
   padding: 11px 12px;
   position: relative;
@@ -1590,15 +1593,15 @@ export default {
 }
 
 .task-item-card {
-  background: #0d1522;
-  border: 1px solid #172438;
+  background: var(--bg-input);
+  border: 1px solid var(--border-dark);
   border-radius: 4px;
   padding: 8px 12px;
   cursor: pointer;
 }
 .task-active {
-  border-color: #38bdf8 !important;
-  background: #13253e !important;
+  border-color: var(--color-primary) !important;
+  background: var(--bg-panel) !important;
 }
 .task-card-header {
   display: flex;
@@ -1618,15 +1621,15 @@ export default {
 }
 .tag-active {
   background: rgba(16, 185, 129, 0.15);
-  color: #10b981;
+  color: var(--color-success);
 }
 .tag-pending {
   background: rgba(245, 158, 11, 0.15);
-  color: #f59e0b;
+  color: var(--color-warning);
 }
 .task-card-body {
   font-size: 11px;
-  color: #94a3b8;
+  color: var(--color-text-muted);
 }
 .meta-grid {
   display: grid;
@@ -1653,13 +1656,13 @@ export default {
   height: 100%;
   background: rgba(13, 21, 34, 0.3);
   border-radius: 4px;
-  border: 1px solid #101c2e;
+  border: 1px solid var(--border-dark);
 }
 .tree-directory-panel {
   width: 280px;
   flex-shrink: 0;
-  background: #0c1424;
-  border: 1px solid #1a2e4c;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-dark);
   border-radius: 4px;
   padding: 12px;
   display: flex;
@@ -1672,15 +1675,15 @@ export default {
 
 .dark-el-tree {
   background: transparent;
-  color: #cbd5e1;
+  color: var(--color-text-main);
 }
 ::v-deep .dark-el-tree .el-tree-node__content {
   height: 28px;
   background: transparent;
 }
 ::v-deep .dark-el-tree .el-tree-node.is-current > .el-tree-node__content {
-  background-color: #132a3a !important;
-  color: #22d3ee !important;
+  background-color: var(--bg-hover) !important;
+  color: var(--color-cyan) !important;
 }
 .custom-tree-node {
   display: flex;
@@ -1695,7 +1698,7 @@ export default {
   display: flex;
   align-items: center;
   margin-bottom: 12px;
-  border-bottom: 1px solid #111b2b;
+  border-bottom: 1px solid var(--border-dark);
   padding-bottom: 8px;
   flex-shrink: 0;
 }
@@ -1714,18 +1717,18 @@ export default {
 .sub-empty {
   text-align: center;
   font-size: 11px;
-  color: #334155;
+  color: var(--color-disabled);
   width: 100%;
 }
 
 /* 全量大弹窗专属暗黑 */
 ::v-deep .dark-dialog-clean {
-  background: #060b14 !important;
-  border: 1px solid #1c355e;
+  background: var(--bg-input) !important;
+  border: 1px solid var(--border-dark);
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.8) !important;
 }
 ::v-deep .dark-dialog-clean .el-dialog__title {
-  color: #38bdf8;
+  color: var(--color-primary);
   font-size: 13px;
   font-weight: bold;
 }
@@ -1740,8 +1743,8 @@ export default {
   overflow-y: auto;
 }
 .detail-block {
-  background: #0c1322;
-  border: 1px solid #16263f;
+  background: var(--bg-input);
+  border: 1px solid var(--border-dark);
   border-radius: 4px;
   padding: 12px;
 }
@@ -1752,16 +1755,16 @@ export default {
 .db-title {
   font-size: 11px;
   font-weight: bold;
-  color: #06b6d4;
+  color: var(--color-cyan);
   margin-bottom: 8px;
-  border-left: 2px solid #06b6d4;
+  border-left: 2px solid var(--color-cyan);
   padding-left: 6px;
 }
 .db-grid {
   display: grid;
   gap: 6px 12px;
   font-size: 11px;
-  color: #94a3b8;
+  color: var(--color-text-muted);
 }
 .db-grid.col-3 {
   grid-template-columns: repeat(3, 1fr);
@@ -1783,16 +1786,16 @@ export default {
   color: #fff !important;
 }
 .text-blue {
-  color: #38bdf8 !important;
+  color: var(--color-primary) !important;
 }
 .text-green {
-  color: #10b981 !important;
+  color: var(--color-success) !important;
 }
 .text-cyan {
-  color: #06b6d4 !important;
+  color: var(--color-cyan) !important;
 }
 .text-orange {
-  color: #f59e0b !important;
+  color: var(--color-warning) !important;
 }
 .text-purple {
   color: #a855f7 !important;
@@ -1801,10 +1804,10 @@ export default {
   color: #eab308 !important;
 }
 .text-red {
-  color: #ef4444 !important;
+  color: var(--color-danger) !important;
 }
 .text-gray {
-  color: #475569 !important;
+  color: var(--color-disabled) !important;
 }
 .ellipsis-text {
   white-space: nowrap;
@@ -1833,8 +1836,8 @@ export default {
 
 /* 核心两列卡片骨架 */
 .killchain-two-col-card {
-  background: linear-gradient(135deg, #09101d 0%, #060b13 100%);
-  border: 1px solid #14253e;
+  background: linear-gradient(135deg, var(--bg-input) 0%, var(--bg-base) 100%);
+  border: 1px solid var(--border-dark);
   border-radius: 6px;
   display: grid;
   grid-template-columns: 240px 1fr; /* 左列固定要素，右列宽度自适应撑满 */
@@ -1845,14 +1848,14 @@ export default {
 }
 
 .killchain-two-col-card:hover {
-  border-color: #10b981;
+  border-color: var(--color-success);
   box-shadow: 0 4px 16px rgba(16, 185, 129, 0.15);
 }
 
 /* 左侧列样式：基本概述舱 */
 .kc-left-summary-col {
-  background: rgba(16, 27, 45, 0.4);
-  border-right: 1px dashed #172a47;
+  background: var(--bg-input);
+  border-right: 1px dashed var(--border-dark);
   padding: 14px;
   display: flex;
   flex-direction: column;
@@ -1868,7 +1871,7 @@ export default {
   padding: 2px 8px;
   border-radius: 12px;
   font-size: 11px;
-  color: #10b981;
+  color: var(--color-success);
   font-weight: bold;
   width: max-content;
 }
@@ -1877,9 +1880,9 @@ export default {
 .pulse-dot {
   width: 6px;
   height: 6px;
-  background-color: #10b981;
+  background-color: var(--color-success);
   border-radius: 50%;
-  box-shadow: 0 0 6px #10b981;
+  box-shadow: 0 0 6px var(--color-success);
   animation: kcpulse 1.8s infinite;
 }
 
@@ -1919,7 +1922,7 @@ export default {
 }
 
 .kv-row .k {
-  color: #4b5d78;
+  color: var(--color-text-muted);
 }
 
 .kv-row .v {
@@ -1935,8 +1938,8 @@ export default {
 }
 
 .ooda-cell {
-  background: rgba(13, 21, 34, 0.6);
-  border: 1px solid #14233a;
+  background: var(--bg-input);
+  border: 1px solid var(--border-dark);
   border-left: 3px solid #fff;
   border-radius: 4px;
   padding: 8px 11px;
@@ -1947,34 +1950,34 @@ export default {
 
 /* 四色战术回路渲染 */
 .ooda-cell.border-red {
-  border-left-color: #ef4444;
+  border-left-color: var(--color-danger);
   background: linear-gradient(
     90deg,
-    rgba(239, 68, 68, 0.03) 0%,
+    rgba(239, 68, 68, 0.08) 0%,
     rgba(0, 0, 0, 0) 100%
   );
 }
 .ooda-cell.border-cyan {
-  border-left-color: #06b6d4;
+  border-left-color: var(--color-cyan);
   background: linear-gradient(
     90deg,
-    rgba(6, 182, 212, 0.03) 0%,
+    rgba(6, 182, 212, 0.08) 0%,
     rgba(0, 0, 0, 0) 100%
   );
 }
 .ooda-cell.border-orange {
-  border-left-color: #f59e0b;
+  border-left-color: var(--color-warning);
   background: linear-gradient(
     90deg,
-    rgba(245, 158, 11, 0.03) 0%,
+    rgba(245, 158, 11, 0.08) 0%,
     rgba(0, 0, 0, 0) 100%
   );
 }
 .ooda-cell.border-green {
-  border-left-color: #10b981;
+  border-left-color: var(--color-success);
   background: linear-gradient(
     90deg,
-    rgba(16, 185, 129, 0.03) 0%,
+    rgba(16, 185, 129, 0.08) 0%,
     rgba(0, 0, 0, 0) 100%
   );
 }
@@ -1992,17 +1995,17 @@ export default {
 }
 
 .cell-top .ids {
-  color: #4b5d78;
+  color: var(--color-text-muted);
   margin-left: auto;
   font-size: 11px;
 }
 
 .cell-bottom {
   font-size: 11px;
-  color: #e2e8f0;
+  color: var(--color-text-main);
   line-height: 1.4;
   word-break: break-all;
-  background: rgba(0, 0, 0, 0.2);
+  background: rgba(0, 0, 0, 0.15);
   padding: 4px 6px;
   border-radius: 2px;
   min-height: 24px;

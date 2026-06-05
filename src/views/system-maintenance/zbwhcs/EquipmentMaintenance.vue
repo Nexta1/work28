@@ -899,7 +899,7 @@ export default {
 .screen-container {
   width: 100%;
   height: 100%;
-  background-color: #03060c;
+  background-color: #1a2d4a;
   color: #cbd5e1;
   display: flex;
   flex-direction: column;
@@ -909,8 +909,8 @@ export default {
 
 .top-search-header {
   height: 46px;
-  background: #080e18;
-  border: 1px solid #111b2b;
+  background: #1a2d4a;
+  border: 1px solid #2a405e;
   border-radius: 4px;
   display: flex;
   align-items: center;
@@ -961,8 +961,8 @@ export default {
 .left-equipment-panel {
   width: 380px;
   flex-shrink: 0;
-  background: #080e18;
-  border: 1px solid #111b2b;
+  background: #1a2d4a;
+  border: 1px solid #2a405e;
   border-radius: 4px;
   padding: 11px;
   display: flex;
@@ -1067,8 +1067,8 @@ export default {
 }
 
 .equipment-item-card {
-  background: #0d1522;
-  border: 1px solid #172438;
+  background: #1f3250;
+  border: 1px solid #2a405e;
   border-radius: 4px;
   padding: 8px 12px;
   cursor: pointer;
@@ -1113,8 +1113,8 @@ export default {
   flex: 1;
   display: flex;
   flex-direction: column;
-  background: #0d1522;
-  border: 1px solid #172438;
+  background: #1f3250;
+  border: 1px solid #2a405e;
   border-radius: 4px;
   overflow: hidden;
 }
@@ -1124,7 +1124,7 @@ export default {
   justify-content: space-between;
   align-items: center;
   padding: 11px 12px;
-  border-bottom: 1px solid #17263d;
+  border-bottom: 1px solid #2a405e;
 }
 
 .list-title {
@@ -1230,8 +1230,8 @@ export default {
 }
 
 .status-card {
-  background: #0d1522;
-  border: 1px solid #172438;
+  background: #1f3250;
+  border: 1px solid #2a405e;
   border-radius: 4px;
   padding: 12px;
   text-align: center;
@@ -1252,8 +1252,8 @@ export default {
   flex: 1;
   display: flex;
   flex-direction: column;
-  background: #0d1522;
-  border: 1px solid #172438;
+  background: #1f3250;
+  border: 1px solid #2a405e;
   border-radius: 4px;
   overflow: hidden;
 }
@@ -1263,7 +1263,7 @@ export default {
   justify-content: space-between;
   align-items: center;
   padding: 8px 12px;
-  border-bottom: 1px solid #17263d;
+  border-bottom: 1px solid #2a405e;
 }
 
 .log-title {
@@ -1325,8 +1325,8 @@ export default {
   display: flex;
   gap: 12px;
   padding: 8px;
-  background: #0d1522;
-  border: 1px solid #172438;
+  background: #1f3250;
+  border: 1px solid #2a405e;
   border-radius: 4px;
 }
 
@@ -1349,8 +1349,8 @@ export default {
 }
 
 .detail-section {
-  background: #0d1522;
-  border: 1px solid #172438;
+  background: #1f3250;
+  border: 1px solid #2a405e;
   border-radius: 4px;
   padding: 12px;
 }
@@ -1431,8 +1431,8 @@ export default {
   justify-content: space-between;
   align-items: center;
   padding: 6px 8px;
-  background: #080e18;
-  border: 1px solid #172438;
+  background: #1a2d4a;
+  border: 1px solid #2a405e;
   border-radius: 4px;
   font-size: 11px;
 }

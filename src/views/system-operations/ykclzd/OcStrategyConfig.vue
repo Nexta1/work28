@@ -393,7 +393,7 @@
             />
           </div>
 
-          <div class="detail-row span-2" style="background: #05090f">
+          <div class="detail-row span-2">
             <span class="lbl" style="margin-bottom: 6px"
               >联动授权候选操作算子 (可多选)</span
             >
@@ -760,8 +760,8 @@ export default {
 .screen-container {
   width: 100%;
   height: 100%;
-  background-color: #03060c;
-  color: #cbd5e1;
+  background-color: var(--bg-base);
+  color: var(--color-text-main);
   display: flex;
   flex-direction: column;
   padding: 12px;
@@ -770,8 +770,8 @@ export default {
 
 .top-search-header {
   height: 46px;
-  background: #080e18;
-  border: 1px solid #111b2b;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-dark);
   border-radius: 4px;
   display: flex;
   align-items: center;
@@ -783,7 +783,7 @@ export default {
 .hub-title {
   font-size: 13px;
   font-weight: bold;
-  color: #38bdf8;
+  color: var(--color-primary);
 }
 .search-flex {
   display: flex;
@@ -797,12 +797,12 @@ export default {
 }
 .search-item label {
   font-size: 11px;
-  color: #52637a;
+  color: var(--color-text-muted);
 }
 
 .action-btn {
-  background: #101b2e;
-  border: 1px solid #1e3557;
+  background: var(--bg-input);
+  border: 1px solid var(--border-dark);
   font-size: 11px;
 }
 
@@ -816,8 +816,8 @@ export default {
 
 .left-tree-panel {
   flex: 3;
-  background: #080e18;
-  border: 1px solid #111b2b;
+  background: var(--bg-base);
+  border: 1px solid var(--border-dark);
   border-radius: 4px;
   padding: 11px;
   display: flex;
@@ -855,8 +855,8 @@ export default {
 }
 
 .right-top-detail-zone {
-  background: #080e18;
-  border: 1px solid #111b2b;
+  background: var(--bg-base);
+  border: 1px solid var(--border-dark);
   border-radius: 4px;
   padding: 12px;
   display: flex;
@@ -872,7 +872,7 @@ export default {
   flex: 1;
 }
 .detail-cell {
-  background: #070c14;
+  background: var(--bg-input);
   padding: 8px 12px;
   border-radius: 3px;
   display: flex;
@@ -884,18 +884,18 @@ export default {
 }
 .detail-cell .lbl {
   font-size: 11px;
-  color: #52637a;
+  color: var(--color-text-muted);
   margin-bottom: 4px;
 }
 .detail-cell .val {
   font-size: 12px;
-  color: #f8fafc;
+  color: var(--color-text-main);
 }
 
 /* 右下配置区容器 */
 .right-bottom-strategy-zone {
-  background: #080e18;
-  border: 1px solid #111b2b;
+  background: var(--bg-base);
+  border: 1px solid var(--border-dark);
   border-radius: 4px;
   padding: 0 12px 12px 12px;
   display: flex;
@@ -924,24 +924,24 @@ export default {
 }
 .dark-custom-tabs /deep/ .el-tabs__header {
   margin: 0 0 11px 0;
-  border-bottom: 1px solid #111b2b;
+  border-bottom: 1px solid var(--border-dark);
   padding-right: 111px; /* 🌟 预留右侧空间，防止 Tab 头标签过多时与新增按钮重叠 */
 }
 .dark-custom-tabs /deep/ .el-tabs__nav-wrap::after {
   background-color: transparent;
 }
 .dark-custom-tabs /deep/ .el-tabs__item {
-  color: #64748b;
+  color: var(--color-disabled);
   font-size: 12px;
   font-weight: bold;
   height: 40px;
   line-height: 40px;
 }
 .dark-custom-tabs /deep/ .el-tabs__item.is-active {
-  color: #38bdf8;
+  color: var(--color-primary);
 }
 .dark-custom-tabs /deep/ .el-tabs__active-bar {
-  background-color: #38bdf8;
+  background-color: var(--color-primary);
 }
 .dark-custom-tabs /deep/ .el-tabs__content {
   flex: 1;
@@ -977,8 +977,8 @@ export default {
 }
 
 .link-status-card.compact-card {
-  background: #0d1522;
-  border: 1px solid #172438;
+  background: var(--bg-input);
+  border: 1px solid var(--border-dark);
   border-radius: 3px;
   padding: 6px 11px;
   position: relative;
@@ -996,10 +996,10 @@ export default {
   width: 3px;
 }
 .strip-level-safe {
-  background: #10b981;
+  background: var(--color-success);
 }
 .strip-level-crit {
-  background: #1e293b;
+  background: var(--border-dark);
 }
 .card-line {
   display: flex;
@@ -1019,7 +1019,7 @@ export default {
 .metric-line {
   justify-content: flex-start;
   gap: 16px;
-  color: #64748b;
+  color: var(--color-disabled);
   font-size: 11px;
 }
 
@@ -1028,7 +1028,7 @@ export default {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 8px;
-  border-bottom: 1px solid #111b2b;
+  border-bottom: 1px solid var(--border-dark);
   padding-bottom: 6px;
   flex-shrink: 0;
 }
@@ -1046,14 +1046,14 @@ export default {
 .sub-empty {
   text-align: center;
   font-size: 11px;
-  color: #475569;
+  color: var(--color-disabled);
   padding-top: 30px;
   grid-column: span 2;
 }
 .sub-empty-info {
   text-align: center;
   font-size: 11px;
-  color: #475569;
+  color: var(--color-disabled);
   padding-top: 45px;
   flex: 1;
 }
@@ -1064,7 +1064,7 @@ export default {
   gap: 6px;
 }
 .detail-row {
-  background: #070c14;
+  background: var(--bg-input);
   padding: 6px 11px;
   border-radius: 3px;
   display: flex;
@@ -1073,31 +1073,35 @@ export default {
 }
 .detail-row .lbl {
   font-size: 11px;
-  color: #52637a;
+  color: var(--color-text-muted);
   margin-bottom: 2px;
 }
 
 .text-blue {
-  color: #38bdf8 !important;
+  color: var(--color-primary) !important;
 }
 .text-green {
-  color: #10b981 !important;
+  color: var(--color-success) !important;
 }
 .text-orange {
-  color: #f59e0b !important;
+  color: var(--color-warning) !important;
 }
 .text-cyan {
-  color: #06b6d4 !important;
+  color: var(--color-cyan) !important;
 }
 .text-red {
-  color: #ef4444 !important;
+  color: var(--color-danger) !important;
 }
 .text-gray {
-  color: #52637a !important;
+  color: var(--color-text-muted) !important;
 }
 .ellipsis-text {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+.search-item label {
+  white-space: nowrap; /* 告诉浏览器：就算空间不够，我的字也绝对不能换行 */
+  margin-right: 8px; /* 右边距 */
 }
 </style>

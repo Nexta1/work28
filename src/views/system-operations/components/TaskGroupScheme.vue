@@ -988,8 +988,8 @@ export default {
 .screen-container {
   width: 100%;
   height: 100%;
-  background-color: #03060c;
-  color: #cbd5e1;
+  background-color: var(--bg-base);
+  color: var(--color-text-main);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -998,8 +998,8 @@ export default {
 }
 .top-search-header {
   height: 46px;
-  background: #080e18;
-  border: 1px solid #111b2b;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-dark);
   border-radius: 4px;
   display: flex;
   align-items: center;
@@ -1020,12 +1020,12 @@ export default {
 }
 .search-item label {
   font-size: 11px;
-  color: #52637a;
+  color: var(--color-text-muted);
   font-weight: bold;
 }
 .search-item input {
-  background: #0d1522;
-  border: 1px solid #1a293d;
+  background: var(--bg-input);
+  border: 1px solid var(--border-dark);
   color: #fff;
   padding: 4px 8px;
   border-radius: 4px;
@@ -1039,7 +1039,7 @@ export default {
 }
 .context-tip {
   font-size: 11px;
-  color: #7c8ba1;
+  color: var(--color-text-muted);
 }
 .main-body-layout {
   display: flex;
@@ -1052,8 +1052,8 @@ export default {
 /* LEFT 侧边栏 */
 .left-platform-sidebar {
   width: 24%;
-  background: #080e18;
-  border: 1px solid #111b2b;
+  background: var(--bg-base);
+  border: 1px solid var(--border-dark);
   border-radius: 4px;
   display: flex;
   flex-direction: column;
@@ -1065,18 +1065,18 @@ export default {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 11px;
-  border-bottom: 1px solid #111b2b;
+  border-bottom: 1px solid var(--border-dark);
   padding-bottom: 6px;
 }
 .sidebar-header-summary .title {
   font-size: 12px;
   font-weight: bold;
-  color: #38bdf8;
+  color: var(--color-primary);
 }
 .count-badge {
   font-size: 11px;
-  color: #64748b;
-  background: #0d1522;
+  color: var(--color-text-muted);
+  background: var(--bg-panel);
   padding: 2px 6px;
   border-radius: 11px;
 }
@@ -1090,30 +1090,30 @@ export default {
 
 /* 🌟【完美修复】采用左右 Flex 双列结构隔离文字层与状态按钮层，杜绝位置冲突 */
 .platform-brief-card {
-  background: #0d1522;
-  border: 1px solid #172438;
-  border-left: 3px solid #64748b;
+  background: var(--bg-input);
+  border: 1px solid var(--border-dark);
+  border-left: 3px solid var(--color-text-muted);
   border-radius: 3px;
   padding: 11px;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 .platform-brief-card:hover {
-  background: #131f33;
+  background: var(--bg-hover);
 }
 .platform-brief-card.is-active {
-  border-color: #38bdf8 !important;
-  background: #13233c;
+  border-color: var(--color-primary) !important;
+  background: var(--bg-panel);
 }
 
 .platform-brief-card.status-running {
-  border-left-color: #10b981;
+  border-left-color: var(--color-success);
 }
 .platform-brief-card.status-offline {
-  border-left-color: #f43f5e;
+  border-left-color: var(--color-danger);
 }
 .platform-brief-card.status-new {
-  border-left-color: #38bdf8;
+  border-left-color: var(--color-primary);
 }
 
 .card-flex-wrapper {
@@ -1148,11 +1148,11 @@ export default {
   font-size: 11px;
 }
 .bsh-txt {
-  color: #475569;
+  color: var(--color-disabled);
 }
 .card-count-row {
   font-size: 11px;
-  color: #64748b;
+  color: var(--color-disabled);
 }
 
 /* 右列：统一操作及状态对齐舱门 */
@@ -1169,20 +1169,20 @@ export default {
   padding: 1px 5px;
   border-radius: 2px;
   background: rgba(255, 255, 255, 0.05);
-  color: #94a3b8;
+  color: var(--color-text-muted);
   text-align: center;
   display: inline-block;
 }
 .status-running .state-txt-tag {
-  color: #10b981;
+  color: var(--color-success);
   background: rgba(16, 185, 129, 0.1);
 }
 .status-offline .state-txt-tag {
-  color: #f43f5e;
+  color: var(--color-danger);
   background: rgba(244, 63, 94, 0.1);
 }
 .status-new .state-txt-tag {
-  color: #38bdf8;
+  color: var(--color-primary);
   background: rgba(56, 189, 248, 0.1);
 }
 
@@ -1197,13 +1197,13 @@ export default {
   margin: 0 !important;
 }
 .btn-edit {
-  color: #38bdf8;
+  color: var(--color-primary);
 }
 .btn-edit:hover {
   color: #7dd3fc;
 }
 .btn-delete {
-  color: #f43f5e;
+  color: var(--color-danger);
 }
 .btn-delete:hover {
   color: #fda4af;
@@ -1212,8 +1212,8 @@ export default {
 /* RIGHT 看板区 */
 .right-cascade-panel {
   width: 76%;
-  background: #080e18;
-  border: 1px solid #111b2b;
+  background: var(--bg-base);
+  border: 1px solid var(--border-dark);
   border-radius: 4px;
   position: relative;
 }
@@ -1227,16 +1227,16 @@ export default {
   overflow-y: auto;
 }
 .detail-param-dashboard {
-  background: #0c1424;
+  background: var(--bg-panel);
   border-radius: 4px;
   padding: 14px;
-  border: 1px solid #16233b;
+  border: 1px solid var(--border-dark);
 }
 .border-cyan {
-  border-left: 3px solid #38bdf8;
+  border-left: 3px solid var(--color-primary);
 }
 .border-emerald {
-  border-left: 3px solid #10b981;
+  border-left: 3px solid var(--color-success);
 }
 
 .panel-section-title {
@@ -1256,7 +1256,7 @@ export default {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 11px 20px;
-  background: #060b14;
+  background: var(--bg-input);
   padding: 12px;
   border-radius: 4px;
 }
@@ -1266,17 +1266,17 @@ export default {
   align-items: center;
 }
 .m-label {
-  color: #52637a;
+  color: var(--color-text-muted);
   margin-right: 8px;
   font-size: 11px;
 }
 .m-value {
-  color: #e2e8f0;
+  color: var(--color-text-main);
 }
 
 .platform-ids-box {
   margin-top: 11px;
-  background: #060b14;
+  background: var(--bg-input);
   padding: 8px 12px;
   border-radius: 4px;
   font-size: 11px;
@@ -1288,9 +1288,9 @@ export default {
   margin-top: 6px;
 }
 .mini-tag {
-  background: #111e30;
-  border: 1px solid #1d3554;
-  color: #38bdf8;
+  background: var(--bg-input);
+  border: 1px solid var(--border-dark);
+  color: var(--color-primary);
   padding: 1px 6px;
   border-radius: 2px;
   font-size: 11px;
@@ -1302,26 +1302,26 @@ export default {
   gap: 11px;
 }
 .net-link-sub-card {
-  background: #070c14;
-  border: 1px solid #1a293d;
+  background: var(--bg-input);
+  border: 1px solid var(--border-dark);
   border-radius: 4px;
   padding: 12px;
 }
 .net-link-sub-card:hover {
-  border-color: #10b981;
+  border-color: var(--color-success);
 }
 
 .sub-card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px dashed #142030;
+  border-bottom: 1px dashed var(--border-dark);
   padding-bottom: 6px;
   margin-bottom: 11px;
 }
 .net-id-badge {
   font-size: 11px;
-  color: #10b981;
+  color: var(--color-success);
   background: rgba(16, 185, 129, 0.08);
   padding: 2px 6px;
   border-radius: 3px;
@@ -1332,10 +1332,10 @@ export default {
   padding: 0 4px;
 }
 .btn-modify {
-  color: #38bdf8;
+  color: var(--color-primary);
 }
 .btn-release {
-  color: #f43f5e;
+  color: var(--color-danger);
 }
 
 .sub-card-body-metrics {
@@ -1347,7 +1347,7 @@ export default {
 }
 .metric-box,
 .metric-boxHighlight {
-  background: #0c1424;
+  background: var(--bg-panel);
   border-radius: 3px;
   padding: 6px 4px;
   display: flex;
@@ -1360,7 +1360,7 @@ export default {
 }
 .met-label {
   font-size: 11px;
-  color: #475569;
+  color: var(--color-disabled);
 }
 .met-value {
   font-size: 12px;
@@ -1370,11 +1370,11 @@ export default {
 .met-value small {
   font-size: 9px;
   font-weight: normal;
-  color: #475569;
+  color: var(--color-disabled);
 }
 
 .sub-card-footer-business {
-  background: #09101a;
+  background: var(--bg-input);
   border-radius: 2px;
   padding: 6px 11px;
   font-size: 11px;
@@ -1383,7 +1383,7 @@ export default {
   align-items: center;
 }
 .biz-title {
-  color: #52637a;
+  color: var(--color-text-muted);
   font-weight: bold;
   flex-shrink: 0;
 }
@@ -1395,7 +1395,7 @@ export default {
 .biz-mini-bubble {
   background: rgba(16, 185, 129, 0.15);
   border: 1px solid rgba(16, 185, 129, 0.3);
-  color: #10b981;
+  color: var(--color-success);
   padding: 0 5px;
   border-radius: 2px;
   font-size: 11px;
@@ -1408,14 +1408,14 @@ export default {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: #080e18;
-  color: #52637a;
+  background: var(--bg-base);
+  color: var(--color-text-muted);
   font-size: 11px;
 }
 .radar-scan-loader {
   width: 24px;
   height: 24px;
-  border: 2px dashed #1e293b;
+  border: 2px dashed var(--border-dark);
   border-radius: 50%;
   animation: spin 4s linear infinite;
   margin-bottom: 8px;
@@ -1429,35 +1429,35 @@ export default {
 .sub-empty {
   text-align: center;
   font-size: 11px;
-  color: #334155;
+  color: var(--color-disabled);
   padding: 20px;
   width: 100%;
 }
 .model-empty-text-large {
   font-size: 11px;
-  color: #475569;
+  color: var(--color-disabled);
   text-align: center;
   padding: 30px 0;
   font-style: italic;
 }
 
 .text-blue {
-  color: #38bdf8;
+  color: var(--color-primary);
 }
 .text-green {
-  color: #10b981;
+  color: var(--color-success);
 }
 .text-orange {
-  color: #f59e0b;
+  color: var(--color-warning);
 }
 .text-cyan {
-  color: #06b6d4;
+  color: var(--color-cyan);
 }
 .text-white {
   color: #fff;
 }
 .text-gray {
-  color: #334155;
+  color: var(--color-disabled);
 }
 /* font-num */
 
@@ -1466,13 +1466,13 @@ export default {
   align-items: center;
   font-size: 12px;
   font-weight: bold;
-  color: #fff;
+  color: var(--color-text-main);
 }
 
 /* 深色表单弹窗及组件级联样式穿透 */
 ::v-deep .dark-dialog-clean {
-  background-color: #090f1c !important;
-  border: 1px solid #1e293b;
+  background-color: var(--bg-input) !important;
+  border: 1px solid var(--border-dark);
 }
 ::v-deep .dark-dialog-clean .el-dialog__title {
   color: #fff;
@@ -1488,9 +1488,13 @@ export default {
 ::v-deep .dark-form .el-textarea__inner,
 ::v-deep .dark-form .el-input-number__increase,
 ::v-deep .dark-form .el-input-number__decrease {
-  background-color: #050b14 !important;
+  background-color: #12233e !important;
   border-color: #1e293b !important;
   color: #fff !important;
   font-size: 11px;
+}
+.search-item label {
+  white-space: nowrap; /* 告诉浏览器：就算空间不够，我的字也绝对不能换行 */
+  margin-right: 8px; /* 右边距 */
 }
 </style>

@@ -159,12 +159,12 @@ export default {
 .new-alert-dialog {
   position: relative;
   width: 420px;
-  background: #0a1220;
-  border: 1px solid #1e2d4a;
+  background: #1a2d48;
+  border: 1px solid #2f4a6e;
   border-radius: 8px;
   box-shadow:
-    0 0 30px rgba(244, 63, 94, 0.15),
-    0 8px 32px rgba(0, 0, 0, 0.5);
+    0 0 30px rgba(244, 63, 94, 0.2),
+    0 8px 32px rgba(0, 0, 0, 0.35);
   overflow: hidden;
 }
 

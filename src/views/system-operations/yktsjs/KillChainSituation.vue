@@ -720,8 +720,8 @@ export default {
   height: 100%;
   display: flex;
   flex-direction: column;
-  background: #0f172a;
-  color: #f8fafc;
+  background: var(--bg-base);
+  color: var(--color-text-main);
   overflow: hidden;
 }
 
@@ -730,8 +730,8 @@ export default {
    ========================================================================== */
 .status-workspace-header {
   height: 54px;
-  background: #111827;
-  border-bottom: 1px solid #1f2937;
+  background: var(--bg-panel);
+  border-bottom: 1px solid var(--border-dark);
   padding: 0 20px;
   display: flex;
   align-items: center;
@@ -754,12 +754,12 @@ export default {
 }
 .task-info .label {
   font-size: 11px;
-  color: #64748b;
+  color: var(--color-text-muted);
   font-weight: bold;
 }
 .dark-select ::v-deep .el-input__inner {
-  background-color: #1f2937 !important;
-  border: 1px solid #374151 !important;
+  background-color: var(--bg-input) !important;
+  border: 1px solid var(--border-dark) !important;
   color: #fff !important;
   width: 240px;
 }
@@ -770,7 +770,7 @@ export default {
 }
 .state-legend-inline .legend-title {
   font-size: 11px;
-  color: #64748b;
+  color: var(--color-text-muted);
   font-weight: bold;
 }
 .legend-items {
@@ -790,7 +790,7 @@ export default {
 }
 .legend-label {
   font-size: 11px;
-  color: #cbd5e1;
+  color: var(--color-text-main);
 }
 
 /* 适配屏幕按钮样式 */
@@ -798,13 +798,13 @@ export default {
   margin-left: 8px;
 }
 .fit-screen-btn ::v-deep {
-  background-color: #1f2937 !important;
-  border-color: #374151 !important;
-  color: #14b8a6 !important;
+  background-color: var(--bg-input) !important;
+  border-color: var(--border-dark) !important;
+  color: var(--color-cyan) !important;
 }
 .fit-screen-btn:hover ::v-deep {
-  background-color: #374151 !important;
-  border-color: #14b8a6 !important;
+  background-color: var(--bg-hover) !important;
+  border-color: var(--color-cyan) !important;
   color: #fff !important;
 }
 
@@ -830,9 +830,9 @@ export default {
   left: 12px;
   bottom: 12px;
   width: 290px;
-  background: rgba(17, 24, 39, 0.9);
+  background: rgba(26, 45, 74, 0.9);
   backdrop-filter: blur(6px);
-  border: 1px solid #1f2937;
+  border: 1px solid var(--border-dark);
   border-radius: 4px;
   box-shadow: 4px 0 24px rgba(0, 0, 0, 0.6);
   z-index: 1000;
@@ -850,8 +850,8 @@ export default {
   top: 40%;
   width: 22px;
   padding: 12px 0;
-  background: #111827;
-  border: 1px solid #1f2937;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-dark);
   border-left: none;
   border-radius: 0 4px 4px 0;
   cursor: pointer;
@@ -883,16 +883,16 @@ export default {
   display: flex;
   align-items: center;
   gap: 8px;
-  border-bottom: 1px solid #1f2937;
+  border-bottom: 1px solid var(--border-dark);
   margin-bottom: 11px;
   font-size: 12px;
   font-weight: bold;
-  color: #14b8a6;
+  color: var(--color-cyan);
 }
 .pulse-indicator {
   width: 6px;
   height: 6px;
-  background: #14b8a6;
+  background: var(--color-cyan);
   border-radius: 50%;
   animation: simple-pulse 2s infinite;
 }
@@ -925,8 +925,8 @@ export default {
 
 /* 卡片原子元素 */
 .status-card {
-  background: #1f2937;
-  border: 1px solid #374151;
+  background: var(--bg-input);
+  border: 1px solid var(--border-dark);
   border-radius: 4px;
   padding: 11px;
   position: relative;
@@ -934,13 +934,13 @@ export default {
   transition: all 0.2s;
 }
 .status-card.is-active {
-  border-color: #14b8a6;
-  background: #111827;
+  border-color: var(--color-cyan);
+  background: var(--bg-panel);
   box-shadow: inset 0 0 6px rgba(20, 184, 166, 0.2);
 }
 .card-tag {
   font-size: 11px;
-  color: #4b5563;
+  color: var(--color-disabled);
 }
 .target-info {
   display: flex;
@@ -955,24 +955,24 @@ export default {
 }
 .mbid {
   font-size: 11px;
-  color: #64748b;
+  color: var(--color-text-muted);
 }
 .property {
   font-size: 11px;
-  color: #94a3b8;
+  color: var(--color-text-muted);
 }
 .card-status {
   display: flex;
   justify-content: space-between;
   margin-top: 6px;
-  border-top: 1px solid #2d3748;
+  border-top: 1px solid var(--border-dark);
   padding-top: 5px;
   align-items: center;
 }
 .phase {
   font-size: 11px;
-  color: #14b8a6;
-  background: rgba(20, 184, 166, 0.1);
+  color: var(--color-cyan);
+  background: rgba(6, 182, 212, 0.1);
   padding: 1px 5px;
   border-radius: 2px;
 }
@@ -983,17 +983,17 @@ export default {
 }
 
 .is-normal {
-  border-left: 3px solid #10b981;
+  border-left: 3px solid var(--color-success);
 }
 .is-error {
-  border-left: 3px solid #ef4444;
+  border-left: 3px solid var(--color-danger);
 }
 .is-done {
-  border-left: 3px solid #64748b;
+  border-left: 3px solid var(--color-disabled);
   opacity: 0.6;
 }
 .is-stop {
-  border-left: 3px solid #f59e0b;
+  border-left: 3px solid var(--color-warning);
 }
 
 .alarm-light {
@@ -1020,19 +1020,19 @@ export default {
 /* 群组底部锚定区 */
 .group-info-footer-box {
   margin-top: 11px;
-  background: #1f2937;
+  background: var(--bg-input);
   padding: 11px;
   border-radius: 4px;
-  border: 1px solid #374151;
+  border: 1px solid var(--border-dark);
 }
 .group-info-footer-box .lbl {
   font-size: 11px;
-  color: #64748b;
+  color: var(--color-text-muted);
   margin-bottom: 2px;
 }
 .group-info-footer-box .val {
   font-weight: bold;
-  color: #14b8a6;
+  color: var(--color-cyan);
   font-size: 12px;
 }
 .group-flash {
@@ -1162,7 +1162,7 @@ export default {
 }
 
 .device-item-card {
-  background: rgba(30, 41, 59, 0.6);
+  background: rgba(32, 56, 90, 0.6);
   border: 1px solid rgba(255, 255, 255, 0.05);
   border-radius: 4px;
   padding: 11px;
@@ -1243,13 +1243,13 @@ export default {
   display: flex;
   gap: 10px;
   font-size: 10px;
-  color: #475569;
+  color: var(--color-disabled);
   padding-left: 18px;
   margin-top: 2px;
 }
 .wl-empty-hint {
   text-align: center;
-  color: #4b5563;
+  color: var(--color-disabled);
   font-size: 11px;
   padding: 10px 0;
 }
@@ -1281,11 +1281,11 @@ export default {
   font-weight: bold;
 }
 .warn-time {
-  color: #475569;
+  color: var(--color-disabled);
 }
 .warn-msg {
   font-size: 12px;
-  color: #cbd5e1;
+  color: var(--color-text-main);
   line-height: 1.5;
   margin-bottom: 6px;
 }
@@ -1293,12 +1293,12 @@ export default {
   display: flex;
   justify-content: space-between;
   font-size: 11px;
-  color: #64748b;
+  color: var(--color-text-muted);
 }
 .empty-warn {
   text-align: center;
   padding: 40px 0;
-  color: #475569;
+  color: var(--color-disabled);
   font-size: 12px;
 }
 
@@ -1313,11 +1313,9 @@ export default {
   opacity: 0;
 }
 
-.font-mono {
-}
 .empty-data-hint {
   text-align: center;
-  color: #4b5563;
+  color: var(--color-disabled);
   font-size: 11px;
   padding: 40px 0;
 }
@@ -1329,13 +1327,13 @@ export default {
   margin-left: 6px;
 }
 .help-btn ::v-deep {
-  background-color: #1f2937 !important;
-  border-color: #374151 !important;
-  color: #60a5fa !important;
+  background-color: var(--bg-input) !important;
+  border-color: var(--border-dark) !important;
+  color: var(--color-primary) !important;
 }
 .help-btn:hover ::v-deep {
-  background-color: #374151 !important;
-  border-color: #60a5fa !important;
+  background-color: var(--bg-hover) !important;
+  border-color: var(--color-primary) !important;
   color: #fff !important;
 }
 
@@ -1358,8 +1356,8 @@ export default {
 .guide-dialog {
   width: 640px;
   max-height: 80vh;
-  background: #111827;
-  border: 1px solid #1f2937;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-dark);
   border-radius: 6px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
   display: flex;
@@ -1371,15 +1369,15 @@ export default {
   display: flex;
   align-items: center;
   gap: 8px;
-  border-bottom: 1px solid #1f2937;
-  color: #14b8a6;
+  border-bottom: 1px solid var(--border-dark);
+  color: var(--color-cyan);
   font-weight: bold;
   font-size: 14px;
 }
 .guide-header .close-btn {
   margin-left: auto;
   cursor: pointer;
-  color: #64748b;
+  color: var(--color-text-muted);
   font-size: 16px;
 }
 .guide-header .close-btn:hover {
@@ -1397,22 +1395,22 @@ export default {
   width: 4px;
 }
 .guide-body::-webkit-scrollbar-thumb {
-  background: #374151;
+  background: var(--border-dark);
   border-radius: 2px;
 }
 .guide-section {
   display: flex;
   gap: 12px;
   padding: 12px;
-  background: rgba(255, 255, 255, 0.02);
+  background: rgba(32, 56, 90, 0.3);
   border: 1px solid rgba(255, 255, 255, 0.04);
   border-radius: 4px;
 }
 .guide-step {
   width: 28px;
   height: 28px;
-  background: #14b8a6;
-  color: #0f172a;
+  background: var(--color-cyan);
+  color: #03060c;
   font-weight: bold;
   font-size: 13px;
   border-radius: 50%;
@@ -1425,18 +1423,18 @@ export default {
   flex: 1;
 }
 .guide-title {
-  color: #f1f5f9;
+  color: var(--color-text-main);
   font-weight: bold;
   font-size: 13px;
   margin-bottom: 4px;
 }
 .guide-desc {
-  color: #94a3b8;
+  color: var(--color-text-muted);
   font-size: 12px;
   line-height: 1.8;
 }
 .guide-desc strong {
-  color: #e2e8f0;
+  color: var(--color-text-main);
 }
 .tag-warn-l1 {
   color: #e6a23c;
@@ -1458,11 +1456,11 @@ export default {
 }
 .guide-footer {
   padding: 12px 20px;
-  border-top: 1px solid #1f2937;
+  border-top: 1px solid var(--border-dark);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  color: #64748b;
+  color: var(--color-text-muted);
   font-size: 11px;
 }
 </style>

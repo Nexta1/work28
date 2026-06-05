@@ -513,7 +513,7 @@ body {
     -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: #050508;
+  background: #0f1f36;
   color: #e0e0e0;
   font-size: 13px;
 }
@@ -531,8 +531,8 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: rgba(10, 15, 30, 0.96);
-  border-bottom: 1px solid rgba(0, 243, 255, 0.18);
+  background: rgba(20, 38, 64, 0.95);
+  border-bottom: 1px solid rgba(0, 243, 255, 0.25);
   flex-shrink: 0;
 }
 
@@ -657,15 +657,15 @@ body {
 .left-menu {
   width: 280px;
   flex-shrink: 0;
-  background: linear-gradient(180deg, #0b1220 0%, #070b14 100%);
-  border-right: 1px solid rgba(120, 210, 255, 0.12);
+  background: linear-gradient(180deg, #162842 0%, #0f1f36 100%);
+  border-right: 1px solid rgba(120, 210, 255, 0.2);
   transition:
     width 0.28s ease,
     border 0.28s ease;
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  box-shadow: inset -1px 0 0 rgba(255, 255, 255, 0.02);
+  box-shadow: inset -1px 0 0 rgba(255, 255, 255, 0.04);
 }
 
 .left-menu.hidden {
@@ -832,7 +832,7 @@ body {
 .content-area {
   flex: 1;
   overflow: auto;
-  background: radial-gradient(circle at top, #0c1529 0%, #050508 60%);
+  background: radial-gradient(circle at top, #1a2d4a 0%, #0f1f36 80%);
 }
 
 .menu-expand-enter-active,

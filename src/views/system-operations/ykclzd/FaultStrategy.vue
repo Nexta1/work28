@@ -715,8 +715,8 @@ export default {
 .screen-container {
   width: 100%;
   height: 100%;
-  background-color: #03060c;
-  color: #cbd5e1;
+  background-color: var(--bg-base);
+  color: var(--color-text-main);
   display: flex;
   flex-direction: column;
   padding: 12px;
@@ -725,8 +725,8 @@ export default {
 
 .top-search-header {
   height: 46px;
-  background: #080e18;
-  border: 1px solid #111b2b;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-dark);
   border-radius: 4px;
   display: flex;
   align-items: center;
@@ -738,7 +738,7 @@ export default {
 .hub-title {
   font-size: 13px;
   font-weight: bold;
-  color: #38bdf8;
+  color: var(--color-primary);
 }
 .search-flex {
   display: flex;
@@ -752,11 +752,11 @@ export default {
 }
 .search-item label {
   font-size: 11px;
-  color: #52637a;
+  color: var(--color-text-muted);
 }
 .action-btn {
-  background: #101b2e;
-  border: 1px solid #1e3557;
+  background: var(--bg-input);
+  border: 1px solid var(--border-dark);
   font-size: 11px;
 }
 
@@ -770,8 +770,8 @@ export default {
 
 .left-tree-panel {
   flex: 3;
-  background: #080e18;
-  border: 1px solid #111b2b;
+  background: var(--bg-base);
+  border: 1px solid var(--border-dark);
   border-radius: 4px;
   padding: 11px;
   display: flex;
@@ -785,7 +785,7 @@ export default {
 
 .dark-custom-tree {
   background: transparent;
-  color: #cbd5e1;
+  color: var(--color-text-main);
 }
 
 .custom-tree-node {
@@ -814,8 +814,8 @@ export default {
 }
 
 .right-top-detail-zone {
-  background: #080e18;
-  border: 1px solid #111b2b;
+  background: var(--bg-base);
+  border: 1px solid var(--border-dark);
   border-radius: 4px;
   padding: 12px;
   display: flex;
@@ -831,7 +831,7 @@ export default {
   flex: 1;
 }
 .detail-cell {
-  background: #070c14;
+  background: var(--bg-input);
   padding: 8px 12px;
   border-radius: 3px;
   display: flex;
@@ -843,23 +843,23 @@ export default {
 }
 .detail-cell .lbl {
   font-size: 11px;
-  color: #52637a;
+  color: var(--color-text-muted);
   margin-bottom: 4px;
 }
 .detail-cell .val {
   font-size: 12px;
-  color: #f8fafc;
+  color: var(--color-text-main);
 }
 .font-platform-list {
   line-height: 16px;
-  color: #94a3b8;
+  color: var(--color-text-muted);
   text-align: justify;
   font-size: 11px;
 }
 
 .right-bottom-strategy-zone {
-  background: #080e18;
-  border: 1px solid #111b2b;
+  background: var(--bg-base);
+  border: 1px solid var(--border-dark);
   border-radius: 4px;
   padding: 12px;
   display: flex;
@@ -871,7 +871,7 @@ export default {
   height: 22px;
   padding: 0 8px;
   font-size: 11px;
-  background: #0284c7;
+  background: var(--color-primary);
   border: none;
 }
 .strategy-scroll-box {
@@ -884,8 +884,8 @@ export default {
 }
 
 .link-status-card.compact-card {
-  background: #0d1522;
-  border: 1px solid #172438;
+  background: var(--bg-input);
+  border: 1px solid var(--border-dark);
   border-radius: 3px;
   padding: 6px 11px;
   position: relative;
@@ -903,10 +903,10 @@ export default {
   width: 3px;
 }
 .strip-level-safe {
-  background: #10b981;
+  background: var(--color-success);
 }
 .strip-level-crit {
-  background: #f59e0b;
+  background: var(--color-warning);
 }
 .card-line {
   display: flex;
@@ -926,7 +926,7 @@ export default {
 .metric-line {
   justify-content: flex-start;
   gap: 16px;
-  color: #64748b;
+  color: var(--color-disabled);
   font-size: 11px;
 }
 
@@ -935,7 +935,7 @@ export default {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 8px;
-  border-bottom: 1px solid #111b2b;
+  border-bottom: 1px solid var(--border-dark);
   padding-bottom: 6px;
   flex-shrink: 0;
 }
@@ -953,14 +953,14 @@ export default {
 .sub-empty {
   text-align: center;
   font-size: 11px;
-  color: #334155;
+  color: var(--color-disabled);
   padding-top: 30px;
   grid-column: span 2;
 }
 .sub-empty-info {
   text-align: center;
   font-size: 11px;
-  color: #475569;
+  color: var(--color-disabled);
   padding-top: 45px;
   flex: 1;
 }
@@ -971,7 +971,7 @@ export default {
   gap: 6px;
 }
 .detail-row {
-  background: #070c14;
+  background: var(--bg-input);
   padding: 6px 11px;
   border-radius: 3px;
   display: flex;
@@ -980,7 +980,7 @@ export default {
 }
 .detail-row .lbl {
   font-size: 11px;
-  color: #52637a;
+  color: var(--color-text-muted);
   margin-bottom: 2px;
 }
 
@@ -988,28 +988,28 @@ export default {
   width: 100%;
 }
 .dark-btn {
-  background: #172438;
-  border: 1px solid #1e3557;
-  color: #cbd5e1;
+  background: var(--bg-input);
+  border: 1px solid var(--border-dark);
+  color: var(--color-text-main);
 }
 
 .text-blue {
-  color: #38bdf8;
+  color: var(--color-primary);
 }
 .text-green {
-  color: #10b981;
+  color: var(--color-success);
 }
 .text-orange {
-  color: #f59e0b;
+  color: var(--color-warning);
 }
 .text-cyan {
-  color: #06b6d4;
+  color: var(--color-cyan);
 }
 .text-red {
-  color: #ef4444;
+  color: var(--color-danger);
 }
 .text-gray {
-  color: #52637a;
+  color: var(--color-text-muted);
 }
 .ellipsis-text {
   white-space: nowrap;

@@ -58,7 +58,7 @@
               style="
                 vertical-align: middle;
                 margin-right: 4px;
-                color: #f59e0b;
+                color: var(--color-warning);
                 filter: drop-shadow(0 0 4px rgba(245, 158, 11, 0.4));
               "
             />
@@ -94,7 +94,7 @@
                 <Icon
                   icon="lucide:git-commit"
                   :size="12"
-                  style="color: #06b6d4; margin-right: 4px"
+                  style="color: var(--color-cyan); margin-right: 4px"
                 />
                 {{ net.WLMC }}
               </span>
@@ -111,7 +111,7 @@
                   style="
                     vertical-align: middle;
                     margin-right: 2px;
-                    color: #10b981;
+                    color: var(--color-success);
                   "
                 />
                 {{ net.bandwidthRequirement || 0 }} Mbps
@@ -175,7 +175,7 @@
                   :style="{
                     color:
                       data.children && data.children.length > 0
-                        ? '#38bdf8'
+                        ? 'var(--color-primary)'
                         : '#a855f7',
                     filter:
                       data.children && data.children.length > 0
@@ -378,7 +378,7 @@
                   class="combined-item"
                   style="
                     margin-top: 8px;
-                    border-top: 1px solid #111b2b;
+                    border-top: 1px solid var(--border-dark);
                     padding-top: 8px;
                   "
                 >
@@ -908,7 +908,7 @@ export default {
 .screen-container {
   width: 100%;
   height: 100%;
-  color: #cbd5e1;
+  color: var(--color-text-main);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -918,8 +918,8 @@ export default {
 
 .top-search-header {
   height: 46px;
-  background: #080e18;
-  border: 1px solid #111b2b;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-dark);
   border-radius: 4px;
   display: flex;
   align-items: center;
@@ -932,20 +932,24 @@ export default {
   display: flex;
   align-items: center;
   gap: 14px;
+  flex-wrap: nowrap;
+  min-width: 0;
 }
 .search-item {
   display: flex;
   align-items: center;
   gap: 8px;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 .search-item label {
   font-size: 11px;
-  color: #52637a;
+  color: var(--color-text-muted);
   font-weight: bold;
 }
 .search-item input {
-  background: #0d1522;
-  border: 1px solid #1a293d;
+  background: var(--bg-input);
+  border: 1px solid var(--border-dark);
   color: #fff;
   padding: 4px 8px;
   border-radius: 4px;
@@ -959,7 +963,7 @@ export default {
 }
 .context-tip {
   font-size: 11px;
-  color: #7c8ba1;
+  color: var(--color-text-muted);
 }
 .monitor-legend {
   display: flex;
@@ -970,7 +974,7 @@ export default {
   align-items: center;
   gap: 5px;
   font-size: 11px;
-  color: #7c8ba1;
+  color: var(--color-text-muted);
 }
 .legend-node .dot {
   width: 6px;
@@ -978,10 +982,10 @@ export default {
   border-radius: 50%;
 }
 .bg-running {
-  background: #10b981;
+  background: var(--color-success);
 }
 .bg-offline {
-  background: #475569;
+  background: var(--color-disabled);
 }
 
 /* 主体分栏 */
@@ -996,8 +1000,8 @@ export default {
 /* LEFT: 侧边栏（卡片和树形公用） */
 .left-platform-sidebar {
   width: 24%;
-  background: #080e18;
-  border: 1px solid #111b2b;
+  background: var(--bg-base);
+  border: 1px solid var(--border-dark);
   border-radius: 4px;
   display: flex;
   flex-direction: column;
@@ -1009,18 +1013,18 @@ export default {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 11px;
-  border-bottom: 1px solid #111b2b;
+  border-bottom: 1px solid var(--border-dark);
   padding-bottom: 6px;
 }
 .sidebar-header-summary .title {
   font-size: 12px;
   font-weight: bold;
-  color: #38bdf8;
+  color: var(--color-primary);
 }
 ::v-deep .mode-switcher .el-radio-button__inner {
-  background: #0d1522;
-  border-color: #1a293d;
-  color: #64748b;
+  background: var(--bg-input);
+  border-color: var(--border-dark);
+  color: var(--color-disabled);
   padding: 4px 11px;
   font-size: 11px;
 }
@@ -1028,8 +1032,8 @@ export default {
   .mode-switcher
   .el-radio-button__orig-radio:checked
   + .el-radio-button__inner {
-  background: #1e293b;
-  color: #38bdf8;
+  background: var(--bg-panel);
+  color: var(--color-primary);
   box-shadow: none;
 }
 
@@ -1043,27 +1047,28 @@ export default {
 .platform-tree-box {
   flex: 1;
   overflow-y: auto;
-  background: #070c14;
+  background: var(--bg-input);
   border-radius: 4px;
   padding: 6px;
 }
 
 /* 战术需求卡片 */
 .platform-brief-card {
-  background: #0d1522;
-  border: 1px solid #172438;
-  border-left: 3px solid #172438;
+  background: var(--bg-input);
+  border: 1px solid var(--border-dark);
+  border-left: 3px solid var(--border-dark);
   border-radius: 3px;
   padding: 8px 11px;
   cursor: pointer;
   position: relative;
 }
 .platform-brief-card:hover {
-  background: #131f33;
+  background: var(--bg-hover);
 }
 .platform-brief-card.is-active {
-  border-color: #38bdf8 !important;
-  background: #13233c;
+  border-color: var(--color-primary) !important;
+  background: var(--bg-panel);
+  border-left-color: var(--color-primary);
 }
 .card-top {
   display: flex;
@@ -1074,27 +1079,35 @@ export default {
   font-size: 11px;
   font-weight: bold;
   color: #ffffff;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .card-sub-info {
   display: flex;
   justify-content: space-between;
   margin-top: 4px;
   font-size: 11px;
+  white-space: nowrap;
 }
 .bsh-txt {
-  color: #415169;
+  color: var(--color-text-muted);
   font-family: monospace;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .pt-type-tag {
-  color: #64748b;
+  color: var(--color-disabled);
+  flex-shrink: 0;
 }
 .brief-dynamics {
   display: flex;
   gap: 12px;
   margin-top: 4px;
   font-size: 11px;
-  color: #8a99ad;
+  color: var(--color-text-muted);
   font-family: monospace;
+  white-space: nowrap;
 }
 .card-status-dot {
   position: absolute;
@@ -1105,24 +1118,24 @@ export default {
   border-radius: 50%;
 }
 .dot-running {
-  background-color: #10b981;
-  box-shadow: 0 0 6px #10b981;
+  background-color: var(--color-success);
+  box-shadow: 0 0 6px var(--color-success);
 }
 .dot-offline {
-  background-color: #475569;
+  background-color: var(--color-disabled);
 }
 
 .pagination-row-mini {
   margin-top: 6px;
   text-align: right;
-  background: #070c14;
+  background: var(--bg-input);
 }
 
 /* RIGHT: 看板面板 */
 .right-cascade-panel {
   width: 76%;
-  background: #080e18;
-  border: 1px solid #111b2b;
+  background: var(--bg-base);
+  border: 1px solid var(--border-dark);
   border-radius: 4px;
   position: relative;
 }
@@ -1136,11 +1149,11 @@ export default {
 
 /* 姿态核心参数视窗 */
 .detail-param-dashboard {
-  background: #0c1424;
+  background: var(--bg-panel);
   border-radius: 4px;
   padding: 11px;
   margin-bottom: 12px;
-  border-left: 3px solid #38bdf8;
+  border-left: 3px solid var(--color-primary);
 }
 .panel-inner-title-flex {
   display: flex;
@@ -1157,13 +1170,13 @@ export default {
   padding: 2px 4px;
 }
 .btn-modify {
-  color: #38bdf8;
+  color: var(--color-primary);
 }
 .btn-modify:hover {
   color: #7dd3fc;
 }
 .btn-release {
-  color: #f43f5e;
+  color: var(--color-danger);
 }
 .btn-release:hover {
   color: #fda4af;
@@ -1176,7 +1189,7 @@ export default {
   margin-top: 8px;
 }
 .matrix-item {
-  background: #070c14;
+  background: var(--bg-input);
   padding: 6px;
   border-radius: 2px;
   display: flex;
@@ -1185,7 +1198,7 @@ export default {
   font-size: 11px;
 }
 .matrix-item label {
-  color: #475569;
+  color: var(--color-disabled);
   font-size: 11px;
   font-weight: bold;
 }
@@ -1212,11 +1225,11 @@ export default {
 }
 .column-title {
   font-size: 11px;
-  color: #475569;
+  color: var(--color-text-muted);
   font-weight: bold;
   margin-bottom: 6px;
   padding-bottom: 4px;
-  border-bottom: 1px solid #111b2b;
+  border-bottom: 1px solid var(--border-dark);
 }
 
 .performance-flex-box {
@@ -1229,8 +1242,8 @@ export default {
 
 /* 4. 优化合并后的通联和保密紧凑小卡片 */
 .node-combined-block {
-  background: #0d1522;
-  border: 1px solid #172438;
+  background: var(--bg-input);
+  border: 1px solid var(--border-dark);
   border-radius: 4px;
   padding: 11px;
   margin-top: 4px;
@@ -1242,7 +1255,7 @@ export default {
   font-size: 11px;
 }
 .combined-item .label-tag {
-  color: #64748b;
+  color: var(--color-disabled);
   font-weight: bold;
   flex-shrink: 0;
 }
@@ -1254,7 +1267,7 @@ export default {
 .mini-text-badge {
   background: rgba(6, 182, 212, 0.1);
   border: 1px solid rgba(6, 182, 212, 0.2);
-  color: #06b6d4;
+  color: var(--color-cyan);
   padding: 1px 4px;
   border-radius: 2px;
   font-size: 11px;
@@ -1272,8 +1285,8 @@ export default {
   align-content: flex-start;
 }
 .pt-status-card {
-  background: #0a101a;
-  border: 1px solid #162235;
+  background: var(--bg-input);
+  border: 1px solid var(--border-dark);
   border-radius: 4px;
   padding: 6px 8px;
   display: flex;
@@ -1298,38 +1311,38 @@ export default {
   display: flex;
   justify-content: space-between;
   font-size: 9px;
-  color: #475569;
+  color: var(--color-disabled);
 }
 
 /* 根据组网计算的动态样式切换 */
 .pt-in-net {
-  border-top: 2px solid #10b981;
+  border-top: 2px solid var(--color-success);
   background: rgba(16, 185, 129, 0.02);
 }
 .pt-in-net .status-indicator-tag {
-  color: #10b981;
+  color: var(--color-success);
 }
 .pt-out-net {
-  border-top: 2px solid #334155;
+  border-top: 2px solid var(--border-dark);
   opacity: 0.5;
 }
 .pt-out-net .status-indicator-tag {
-  color: #64748b;
+  color: var(--color-disabled);
 }
 
 /* 基础原子节点 */
 .monitor-node {
-  background: #0d1522;
-  border: 1px solid #172438;
+  background: var(--bg-input);
+  border: 1px solid var(--border-dark);
   border-radius: 4px;
   padding: 8px;
 }
 .node-performance {
-  border-left: 2px solid #06b6d4;
+  border-left: 2px solid var(--color-cyan);
 }
 .node-name-bar {
   font-size: 11px;
-  color: #64748b;
+  color: var(--color-disabled);
   padding-bottom: 2px;
   margin-bottom: 4px;
 }
@@ -1340,7 +1353,7 @@ export default {
 }
 .metric-huge .unit {
   font-size: 11px;
-  color: #475569;
+  color: var(--color-disabled);
 }
 
 /* 空状态和加载 */
@@ -1351,14 +1364,14 @@ export default {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: #080e18;
-  color: #415169;
+  background: var(--bg-base);
+  color: var(--color-text-muted);
   font-size: 11px;
 }
 .radar-scan-loader {
   width: 24px;
   height: 24px;
-  border: 2px dashed #172438;
+  border: 2px dashed var(--border-dark);
   border-radius: 50%;
   animation: spin 4s linear infinite;
   margin-bottom: 6px;
@@ -1371,26 +1384,26 @@ export default {
 .sub-empty {
   text-align: center;
   font-size: 11px;
-  color: #223147;
+  color: var(--color-disabled);
   padding: 12px;
   width: 100%;
   box-sizing: border-box;
 }
 
 .text-blue {
-  color: #38bdf8;
+  color: var(--color-primary);
 }
 .text-green {
-  color: #10b981;
+  color: var(--color-success);
 }
 .text-orange {
-  color: #f59e0b;
+  color: var(--color-warning);
 }
 .text-cyan {
-  color: #06b6d4;
+  color: var(--color-cyan);
 }
 .text-gray {
-  color: #475569;
+  color: var(--color-disabled);
 }
 .font-bold {
   font-weight: bold;

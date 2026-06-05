@@ -26,19 +26,7 @@
     <div class="main-body-layout">
       <div class="left-platform-sidebar">
         <div class="sidebar-header-summary">
-          <span class="title">
-            <Icon
-              icon="lucide:shield-alert"
-              :size="14"
-              style="
-                vertical-align: middle;
-                margin-right: 4px;
-                color: #f59e0b;
-                filter: drop-shadow(0 0 4px rgba(245, 158, 11, 0.4));
-              "
-            />
-            网络需求
-          </span>
+          <span class="title"> 网络需求 </span>
           <el-radio-group
             v-model="layoutMode"
             size="mini"
@@ -69,7 +57,7 @@
                 <Icon
                   icon="lucide:git-commit"
                   :size="12"
-                  style="color: #06b6d4; margin-right: 4px"
+                  style="color: var(--color-cyan); margin-right: 4px"
                 />
                 {{ net.WLMC }}
               </span>
@@ -86,7 +74,7 @@
                   style="
                     vertical-align: middle;
                     margin-right: 2px;
-                    color: #10b981;
+                    color: var(--color-success);
                   "
                 />
                 {{ net.bandwidthRequirement || 0 }} Mbps
@@ -150,7 +138,7 @@
                   :style="{
                     color:
                       data.children && data.children.length > 0
-                        ? '#38bdf8'
+                        ? 'var(--color-primary)'
                         : '#a855f7',
                     filter:
                       data.children && data.children.length > 0
@@ -253,7 +241,7 @@
                     style="
                       vertical-align: middle;
                       margin-right: 4px;
-                      color: #38bdf8;
+                      color: var(--color-primary);
                       filter: drop-shadow(0 0 4px rgba(56, 189, 248, 0.4));
                     "
                   />
@@ -318,7 +306,7 @@
         </el-form-item>
 
         <div class="dynamic-attr-divider" v-if="dynamicAttributes.length > 0">
-          <span class="divider-text">模型动态属性填充</span>
+          <span>模型动态属性填充</span>
         </div>
 
         <div class="dynamic-fields-wrapper" v-loading="attrLoading">
@@ -794,8 +782,8 @@ export default {
 .screen-container {
   width: 100%;
   height: 100%;
-  background-color: #03060c;
-  color: #cbd5e1;
+  background-color: var(--bg-base);
+  color: var(--color-text-main);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -805,8 +793,8 @@ export default {
 
 .top-search-header {
   height: 46px;
-  background: #080e18;
-  border: 1px solid #111b2b;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-dark);
   border-radius: 4px;
   display: flex;
   align-items: center;
@@ -827,12 +815,12 @@ export default {
 }
 .search-item label {
   font-size: 11px;
-  color: #52637a;
+  color: var(--color-text-muted);
   font-weight: bold;
 }
 .search-item input {
-  background: #0d1522;
-  border: 1px solid #1a293d;
+  background: var(--bg-input);
+  border: 1px solid var(--border-dark);
   color: #fff;
   padding: 4px 8px;
   border-radius: 4px;
@@ -846,7 +834,7 @@ export default {
 }
 .context-tip {
   font-size: 11px;
-  color: #7c8ba1;
+  color: var(--color-text-muted);
 }
 
 .main-body-layout {
@@ -860,8 +848,8 @@ export default {
 /* LEFT 侧边栏 */
 .left-platform-sidebar {
   width: 24%;
-  background: #080e18;
-  border: 1px solid #111b2b;
+  background: var(--bg-base);
+  border: 1px solid var(--border-dark);
   border-radius: 4px;
   display: flex;
   flex-direction: column;
@@ -873,18 +861,18 @@ export default {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 11px;
-  border-bottom: 1px solid #111b2b;
+  border-bottom: 1px solid var(--border-dark);
   padding-bottom: 6px;
 }
 .sidebar-header-summary .title {
   font-size: 12px;
   font-weight: bold;
-  color: #38bdf8;
+  color: var(--color-primary);
 }
 ::v-deep .mode-switcher .el-radio-button__inner {
-  background: #0d1522;
-  border-color: #1a293d;
-  color: #64748b;
+  background: var(--bg-input);
+  border-color: var(--border-dark);
+  color: var(--color-disabled);
   padding: 4px 11px;
   font-size: 11px;
 }
@@ -892,8 +880,8 @@ export default {
   .mode-switcher
   .el-radio-button__orig-radio:checked
   + .el-radio-button__inner {
-  background: #1e293b;
-  color: #38bdf8;
+  background: var(--bg-panel);
+  color: var(--color-primary);
   box-shadow: none;
 }
 
@@ -907,20 +895,20 @@ export default {
 .platform-tree-box {
   flex: 1;
   overflow-y: auto;
-  background: #070c14;
+  background: var(--bg-input);
   border-radius: 4px;
   padding: 6px;
 }
 
 ::v-deep .dark-custom-tree {
   background: transparent;
-  color: #cbd5e1;
+  color: var(--color-text-main);
 }
 ::v-deep .dark-custom-tree .el-tree-node__content:hover {
-  background-color: #111b2b;
+  background-color: var(--border-dark);
 }
 ::v-deep .dark-custom-tree .el-tree-node:focus > .el-tree-node__content {
-  background-color: #13233c;
+  background-color: var(--bg-input);
 }
 .custom-tree-node {
   display: flex;
@@ -934,28 +922,28 @@ export default {
   border-radius: 50%;
 }
 .tree-label-txt {
-  color: #94a3b8;
+  color: var(--color-text-muted);
 }
 .text-active {
-  color: #38bdf8 !important;
+  color: var(--color-primary) !important;
   font-weight: bold;
 }
 
 .platform-brief-card {
-  background: #0d1522;
-  border: 1px solid #172438;
-  border-left: 3px solid #172438;
+  background: var(--bg-input);
+  border: 1px solid var(--border-dark);
+  border-left: 3px solid var(--border-dark);
   border-radius: 3px;
   padding: 11px;
   cursor: pointer;
   position: relative;
 }
 .platform-brief-card:hover {
-  background: #131f33;
+  background: var(--bg-hover);
 }
 .platform-brief-card.is-active {
-  border-color: #38bdf8 !important;
-  background: #13233c;
+  border-color: var(--color-primary) !important;
+  background: var(--bg-panel);
 }
 .card-top {
   display: flex;
@@ -974,10 +962,10 @@ export default {
   font-size: 11px;
 }
 .bsh-txt {
-  color: #52637a;
+  color: var(--color-text-muted);
 }
 .pt-type-tag {
-  color: #64748b;
+  color: var(--color-disabled);
 }
 .card-status-dot {
   position: absolute;
@@ -988,24 +976,24 @@ export default {
   border-radius: 50%;
 }
 .dot-running {
-  background-color: #10b981;
-  box-shadow: 0 0 6px #10b981;
+  background-color: var(--color-success);
+  box-shadow: 0 0 6px var(--color-success);
 }
 .dot-offline {
-  background-color: #475569;
+  background-color: var(--color-disabled);
 }
 .bg-running {
-  background: #10b981;
+  background: var(--color-success);
 }
 .bg-offline {
-  background: #475569;
+  background: var(--color-disabled);
 }
 
 /* RIGHT: 运控策略卡片流容器 (核心修改样式) */
 .right-cascade-panel {
   width: 76%;
-  background: #080e18;
-  border: 1px solid #111b2b;
+  background: var(--bg-base);
+  border: 1px solid var(--border-dark);
   border-radius: 4px;
   position: relative;
 }
@@ -1017,11 +1005,11 @@ export default {
   box-sizing: border-box;
 }
 .detail-param-dashboard {
-  background: #0c1424;
+  background: var(--bg-panel);
   border-radius: 4px;
   padding: 12px;
   margin-bottom: 12px;
-  border-left: 3px solid #10b981;
+  border-left: 3px solid var(--color-success);
 }
 .panel-inner-title-flex {
   display: flex;
@@ -1039,29 +1027,29 @@ export default {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  background: #050a12;
-  border: 1px solid #111b2b;
+  background: var(--bg-input);
+  border: 1px solid var(--border-dark);
   border-radius: 4px;
   padding: 12px;
 }
 
 /* 独立策略卡片设计 */
 .strategy-item-card {
-  background: #0d1522;
-  border: 1px solid #1c2b42;
+  background: var(--bg-input);
+  border: 1px solid var(--border-dark);
   border-radius: 4px;
   padding: 12px;
   transition: all 0.2s ease;
 }
 .strategy-item-card:hover {
-  border-color: #38bdf8;
-  background: #111c2e;
+  border-color: var(--color-primary);
+  background: var(--bg-hover);
 }
 .strategy-card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px dashed #1c2b42;
+  border-bottom: 1px dashed var(--border-dark);
   padding-bottom: 8px;
   margin-bottom: 11px;
 }
@@ -1072,8 +1060,8 @@ export default {
 }
 .strategy-badge {
   background: rgba(56, 189, 248, 0.15);
-  border: 1px solid #38bdf8;
-  color: #38bdf8;
+  border: 1px solid var(--color-primary);
+  color: var(--color-primary);
   font-size: 11px;
   padding: 1px 6px;
   border-radius: 3px;
@@ -1086,7 +1074,7 @@ export default {
 }
 .strategy-id-tag {
   font-size: 11px;
-  color: #475569;
+  color: var(--color-disabled);
 }
 .header-right-actions {
   display: flex;
@@ -1097,7 +1085,7 @@ export default {
   gap: 12px;
   margin-top: 4px;
   font-size: 11px;
-  color: #8a99ad;
+  color: var(--color-text-muted);
   font-family: monospace;
 }
 .action-btn {
@@ -1105,13 +1093,13 @@ export default {
   padding: 0;
 }
 .btn-edit {
-  color: #38bdf8;
+  color: var(--color-primary);
 }
 .btn-edit:hover {
   color: #7dd3fc;
 }
 .btn-delete {
-  color: #f43f5e;
+  color: var(--color-danger);
 }
 .btn-delete:hover {
   color: #fda4af;
@@ -1119,13 +1107,13 @@ export default {
 
 /* 策略卡片内部的动态 KV 格栅 */
 .strategy-card-body {
-  background: #060b14;
+  background: var(--bg-input);
   border-radius: 4px;
   padding: 11px;
 }
 .model-json-title {
   font-size: 11px;
-  color: #52637a;
+  color: var(--color-text-muted);
   margin-bottom: 8px;
   font-weight: bold;
 }
@@ -1140,16 +1128,16 @@ export default {
   font-size: 11px;
 }
 .kv-label {
-  color: #64748b;
+  color: var(--color-disabled);
   margin-right: 6px;
 }
 .kv-value {
-  color: #10b981;
+  color: var(--color-success);
   font-weight: bold;
 }
 .model-empty-text {
   font-size: 11px;
-  color: #334155;
+  color: var(--color-disabled);
   font-style: italic;
 }
 
@@ -1161,14 +1149,14 @@ export default {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: #080e18;
-  color: #52637a;
+  background: var(--bg-base);
+  color: var(--color-text-muted);
   font-size: 11px;
 }
 .radar-scan-loader {
   width: 24px;
   height: 24px;
-  border: 2px dashed #1e293b;
+  border: 2px dashed var(--border-dark);
   border-radius: 50%;
   animation: spin 4s linear infinite;
   margin-bottom: 8px;
@@ -1186,7 +1174,7 @@ export default {
   width: 100%;
 }
 .text-green {
-  color: #10b981;
+  color: var(--color-success);
 }
 /* font-num */
 
@@ -1238,5 +1226,8 @@ export default {
 ::v-deep .dark-form .el-input-number__increase,
 ::v-deep .dark-form .el-input-number__decrease {
   border-left: 1px solid #1e293b;
+}
+.search-item label {
+  white-space: nowrap; /* 核心：强制文字不换行 */
 }
 </style>

@@ -90,12 +90,12 @@ export default {
 
 <style scoped>
 .profile-dialog >>> .el-dialog {
-  background: #0a1220;
-  border: 1px solid #1e2d4a;
+  background: #1a2d48;
+  border: 1px solid #2f4a6e;
   border-radius: 8px;
   box-shadow:
-    0 0 30px rgba(56, 189, 248, 0.08),
-    0 8px 32px rgba(0, 0, 0, 0.5);
+    0 0 30px rgba(56, 189, 248, 0.12),
+    0 8px 32px rgba(0, 0, 0, 0.35);
 }
 .profile-dialog >>> .el-dialog__header {
   padding: 16px 20px 12px;

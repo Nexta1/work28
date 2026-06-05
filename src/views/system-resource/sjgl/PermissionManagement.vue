@@ -851,7 +851,7 @@ export default {
 .permission-page {
   width: 100%;
   height: 100%;
-  background-color: #03060c;
+  background-color: #1a2d4a;
   color: #cbd5e1;
   display: flex;
   flex-direction: column;
@@ -1237,7 +1237,7 @@ export default {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: #0c1424;
+  background: var(--bg-panel);
   border: 1px solid #16243a;
   border-radius: 4px;
   padding: 11px 12px;

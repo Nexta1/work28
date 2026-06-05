@@ -1817,7 +1817,7 @@ export default {
 .screen-container {
   width: 100%;
   height: 100%;
-  background-color: #03060c;
+  background-color: #1a2d4a;
   color: #cbd5e1;
   display: flex;
   flex-direction: column;
@@ -2014,7 +2014,7 @@ export default {
 }
 .canvas-top-bar {
   justify-content: space-between;
-  background: #0c1424;
+  background: var(--bg-panel);
   padding: 8px 12px;
   border-radius: 3px;
   margin-bottom: 11px;
@@ -2182,7 +2182,7 @@ export default {
 
 /* 日志查询 */
 .log-query-filter {
-  background: #0c1424;
+  background: var(--bg-panel);
   border: 1px solid #16243a;
   border-radius: 4px;
   padding: 10px 12px;
@@ -2205,7 +2205,7 @@ export default {
 }
 .log-pagination ::v-deep .el-pagination button,
 .log-pagination ::v-deep .el-pager li {
-  background-color: #0c1424;
+  background-color: var(--bg-panel);
   color: #94a3b8;
   border: 1px solid #1e3557;
 }

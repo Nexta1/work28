@@ -2015,7 +2015,7 @@ export default {
 .governance-page {
   width: 100%;
   height: 100%;
-  background-color: #03060c;
+  background-color: #1a2d4a;
   color: #cbd5e1;
   display: flex;
   flex-direction: column;
@@ -2374,7 +2374,7 @@ export default {
   align-content: flex-start;
 }
 .label-instance-card {
-  background: #0c1424;
+  background: var(--bg-panel);
   border: 1px solid #1a2a44;
   border-radius: 6px;
   padding: 12px;

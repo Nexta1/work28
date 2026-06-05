@@ -1106,7 +1106,7 @@ export default {
 .business-screen-container {
   width: 100%;
   height: 100%;
-  background-color: #03060c;
+  background-color: #1a2d4a;
   color: #cbd5e1;
   display: flex;
   flex-direction: column;
@@ -1678,7 +1678,7 @@ export default {
 
 /* 时空步进组件 */
 .sync-compact-row {
-  background: #0c1424;
+  background: var(--bg-panel);
   border: 1px solid #16233a;
   padding: 5px 8px;
   border-radius: 2px;

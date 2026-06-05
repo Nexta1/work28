@@ -145,7 +145,7 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #050508;
+  background: #0f1f36;
   position: relative;
   overflow: hidden;
 }
@@ -166,10 +166,10 @@ export default {
 .login-box {
   background: linear-gradient(
     135deg,
-    rgba(10, 15, 30, 0.97),
-    rgba(5, 8, 18, 0.97)
+    rgba(20, 38, 64, 0.97),
+    rgba(15, 28, 50, 0.97)
   );
-  border: 1px solid rgba(0, 243, 255, 0.25);
+  border: 1px solid rgba(0, 243, 255, 0.35);
   border-radius: 8px;
   padding: 44px 40px 36px;
   width: 400px;

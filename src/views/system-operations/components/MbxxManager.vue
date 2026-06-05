@@ -471,7 +471,7 @@ export default {
 /* 关联提示区 */
 .context-tip {
   font-size: 11px;
-  color: #64748b;
+  color: var(--color-text-muted);
 }
 
 /* 表格柔性包裹体 */
@@ -505,21 +505,21 @@ export default {
   color: #ffffff;
 }
 .text-blue {
-  color: #38bdf8;
+  color: var(--color-primary);
 }
 .text-orange {
-  color: #f59e0b;
+  color: var(--color-warning);
 }
 .text-green {
-  color: #10b981;
+  color: var(--color-success);
 }
 .text-cyan {
-  color: #06b6d4;
+  color: var(--color-cyan);
 }
 
 .split-line {
   margin: 0 6px;
-  color: #16243a;
+  color: var(--border-dark);
   user-select: none;
 }
 
@@ -532,21 +532,21 @@ export default {
 }
 .badge-high {
   background-color: rgba(239, 68, 68, 0.15);
-  border: 1px solid #ef4444;
-  color: #ef4444;
+  border: 1px solid var(--color-danger);
+  color: var(--color-danger);
 }
 .badge-normal {
   background-color: rgba(245, 158, 11, 0.15);
-  border: 1px solid #f59e0b;
-  color: #f59e0b;
+  border: 1px solid var(--color-warning);
+  color: var(--color-warning);
 }
 
 /* 微细缩控制文字按钮 */
 .btn-modify {
-  color: #38bdf8;
+  color: var(--color-primary);
 }
 .btn-release {
-  color: #f43f5e;
+  color: var(--color-danger);
 }
 
 /* 弹出表单双列栅格 */
