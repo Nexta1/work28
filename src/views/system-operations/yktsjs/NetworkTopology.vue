@@ -7,7 +7,7 @@
     <div class="top-search-header-refined">
       <div class="search-flex-zone">
         <span class="hub-title-refined">
-          <Icon icon="mdi:satellite" size="14px" /> 战术拓扑网络资源调度
+          <Icon icon="mdi:satellite" size="14px" /> 网络资源拓扑
         </span>
 
         <div class="search-item-refined">
@@ -60,7 +60,7 @@
         <div class="bus-panel-header">
           <div class="bus-title">
             <div class="animate-pulse-dot"></div>
-            <span>多维网络遥测要素态势舱</span>
+            <span>网络要素态势</span>
           </div>
           <div class="bus-timer font-mono">{{ lastRefreshTime }}</div>
         </div>
