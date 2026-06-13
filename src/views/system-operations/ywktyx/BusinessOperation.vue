@@ -115,7 +115,7 @@
                   <Icon
                     icon="lucide:swords"
                     :size="12"
-                    color="#64748b"
+                    color="#94a3b8"
                     style="vertical-align: middle; margin-right: 4px"
                   />流程节点算子
                 </div>
@@ -1076,7 +1076,7 @@ export default {
 }
 .dnd-sidebar .sidebar-title {
   font-size: 11px;
-  color: #52637a;
+  color: #94a3b8;
   font-weight: bold;
   margin-bottom: 11px;
   border-bottom: 1px solid #16243a;

@@ -697,7 +697,7 @@ export default {
           xAxis: {
             type: 'category',
             data: this.sensorList.slice(0, 6).map(s => s.CGQMC || '感知'),
-            axisLabel: {fontSize: 9, color: '#475569'}
+            axisLabel: {fontSize: 9, color: '#94a3b8'}
           },
           yAxis: {
             type: 'value',
@@ -804,7 +804,7 @@ export default {
 }
 .search-item label {
   font-size: 11px;
-  color: #52637a;
+  color: #94a3b8;
   font-weight: bold;
 }
 .search-item input,
@@ -845,7 +845,7 @@ export default {
   background: #ef4444;
 }
 .bg-offline {
-  background: #475569;
+  background: #94a3b8;
 }
 
 /* 主体分栏骨架 */
@@ -949,7 +949,7 @@ export default {
   color: #415169;
 }
 .pt-type-tag {
-  color: #64748b;
+  color: #94a3b8;
 }
 .brief-dynamics {
   display: flex;
@@ -1031,7 +1031,7 @@ export default {
   font-size: 11px;
 }
 .summary-label {
-  color: #64748b;
+  color: #94a3b8;
   font-weight: bold;
 }
 .summary-indicators {
@@ -1074,7 +1074,7 @@ export default {
 }
 .column-title {
   font-size: 11px;
-  color: #52637a;
+  color: #94a3b8;
   font-weight: bold;
   margin-bottom: 6px;
   border-bottom: 1px solid #111b2b;
@@ -1111,7 +1111,7 @@ export default {
   grid-template-columns: 1fr 1fr;
   gap: 2px 6px;
   font-size: 11px;
-  color: #52637a;
+  color: #94a3b8;
 }
 .detail-grid span {
   color: #cbd5e1;
@@ -1170,7 +1170,7 @@ export default {
   animation: dot-pulsate 0.8s infinite ease-in-out;
 }
 .dot-offline {
-  background-color: #475569;
+  background-color: #94a3b8;
   animation: none;
   opacity: 0.4;
 }
@@ -1318,7 +1318,7 @@ export default {
 }
 
 ::v-deep .el-progress__text {
-  color: #52637a !important;
+  color: #94a3b8 !important;
   font-size: 9px !important;
 }
 </style>

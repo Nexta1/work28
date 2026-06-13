@@ -940,7 +940,7 @@ export default {
 }
 .search-item label {
   font-size: 11px;
-  color: #52637a;
+  color: #94a3b8;
   font-weight: bold;
 }
 .search-item input {
@@ -981,7 +981,7 @@ export default {
   background: #10b981;
 }
 .bg-offline {
-  background: #475569;
+  background: #94a3b8;
 }
 
 /* 主体分栏 */
@@ -1020,7 +1020,7 @@ export default {
 ::v-deep .mode-switcher .el-radio-button__inner {
   background: #0d1522;
   border-color: #1a293d;
-  color: #64748b;
+  color: #94a3b8;
   padding: 4px 11px;
   font-size: 11px;
 }
@@ -1086,7 +1086,7 @@ export default {
   font-family: monospace;
 }
 .pt-type-tag {
-  color: #64748b;
+  color: #94a3b8;
 }
 .brief-dynamics {
   display: flex;
@@ -1109,7 +1109,7 @@ export default {
   box-shadow: 0 0 6px #10b981;
 }
 .dot-offline {
-  background-color: #475569;
+  background-color: #94a3b8;
 }
 
 .pagination-row-mini {
@@ -1185,7 +1185,7 @@ export default {
   font-size: 11px;
 }
 .matrix-item label {
-  color: #475569;
+  color: #94a3b8;
   font-size: 11px;
   font-weight: bold;
 }
@@ -1212,7 +1212,7 @@ export default {
 }
 .column-title {
   font-size: 11px;
-  color: #475569;
+  color: #94a3b8;
   font-weight: bold;
   margin-bottom: 6px;
   padding-bottom: 4px;
@@ -1242,7 +1242,7 @@ export default {
   font-size: 11px;
 }
 .combined-item .label-tag {
-  color: #64748b;
+  color: #94a3b8;
   font-weight: bold;
   flex-shrink: 0;
 }
@@ -1298,7 +1298,7 @@ export default {
   display: flex;
   justify-content: space-between;
   font-size: 9px;
-  color: #475569;
+  color: #94a3b8;
 }
 
 /* 根据组网计算的动态样式切换 */
@@ -1314,7 +1314,7 @@ export default {
   opacity: 0.5;
 }
 .pt-out-net .status-indicator-tag {
-  color: #64748b;
+  color: #94a3b8;
 }
 
 /* 基础原子节点 */
@@ -1329,7 +1329,7 @@ export default {
 }
 .node-name-bar {
   font-size: 11px;
-  color: #64748b;
+  color: #94a3b8;
   padding-bottom: 2px;
   margin-bottom: 4px;
 }
@@ -1340,7 +1340,7 @@ export default {
 }
 .metric-huge .unit {
   font-size: 11px;
-  color: #475569;
+  color: #94a3b8;
 }
 
 /* 空状态和加载 */
@@ -1390,7 +1390,7 @@ export default {
   color: #06b6d4;
 }
 .text-gray {
-  color: #475569;
+  color: #94a3b8;
 }
 .font-bold {
   font-weight: bold;

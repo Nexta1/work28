@@ -827,7 +827,7 @@ export default {
 }
 .search-item label {
   font-size: 11px;
-  color: #52637a;
+  color: #94a3b8;
   font-weight: bold;
 }
 .search-item input {
@@ -884,7 +884,7 @@ export default {
 ::v-deep .mode-switcher .el-radio-button__inner {
   background: #0d1522;
   border-color: #1a293d;
-  color: #64748b;
+  color: #94a3b8;
   padding: 4px 11px;
   font-size: 11px;
 }
@@ -974,10 +974,10 @@ export default {
   font-size: 11px;
 }
 .bsh-txt {
-  color: #52637a;
+  color: #94a3b8;
 }
 .pt-type-tag {
-  color: #64748b;
+  color: #94a3b8;
 }
 .card-status-dot {
   position: absolute;
@@ -992,13 +992,13 @@ export default {
   box-shadow: 0 0 6px #10b981;
 }
 .dot-offline {
-  background-color: #475569;
+  background-color: #94a3b8;
 }
 .bg-running {
   background: #10b981;
 }
 .bg-offline {
-  background: #475569;
+  background: #94a3b8;
 }
 
 /* RIGHT: 运控策略卡片流容器 (核心修改样式) */
@@ -1086,7 +1086,7 @@ export default {
 }
 .strategy-id-tag {
   font-size: 11px;
-  color: #475569;
+  color: #94a3b8;
 }
 .header-right-actions {
   display: flex;
@@ -1125,7 +1125,7 @@ export default {
 }
 .model-json-title {
   font-size: 11px;
-  color: #52637a;
+  color: #94a3b8;
   margin-bottom: 8px;
   font-weight: bold;
 }
@@ -1140,7 +1140,7 @@ export default {
   font-size: 11px;
 }
 .kv-label {
-  color: #64748b;
+  color: #94a3b8;
   margin-right: 6px;
 }
 .kv-value {
@@ -1162,7 +1162,7 @@ export default {
   align-items: center;
   justify-content: center;
   background: #080e18;
-  color: #52637a;
+  color: #94a3b8;
   font-size: 11px;
 }
 .radar-scan-loader {

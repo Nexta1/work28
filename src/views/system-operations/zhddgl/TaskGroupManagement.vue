@@ -588,7 +588,7 @@ export default {
 
 .search-item label {
   font-size: 11px;
-  color: #52637a;
+  color: #94a3b8;
 }
 
 .action-btn {
@@ -688,7 +688,7 @@ export default {
 }
 
 .task-id {
-  color: #64748b;
+  color: #94a3b8;
   font-family: monospace;
 }
 
@@ -732,14 +732,14 @@ export default {
 
 .status-offline {
   background: rgba(100, 116, 139, 0.2);
-  color: #64748b;
+  color: #94a3b8;
 }
 
 .platform-info {
   display: flex;
   gap: 12px;
   font-size: 9px;
-  color: #64748b;
+  color: #94a3b8;
 }
 
 .right-table-panel {

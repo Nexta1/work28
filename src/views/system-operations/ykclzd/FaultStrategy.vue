@@ -752,7 +752,7 @@ export default {
 }
 .search-item label {
   font-size: 11px;
-  color: #52637a;
+  color: #94a3b8;
 }
 .action-btn {
   background: #101b2e;
@@ -843,7 +843,7 @@ export default {
 }
 .detail-cell .lbl {
   font-size: 11px;
-  color: #52637a;
+  color: #94a3b8;
   margin-bottom: 4px;
 }
 .detail-cell .val {
@@ -926,7 +926,7 @@ export default {
 .metric-line {
   justify-content: flex-start;
   gap: 16px;
-  color: #64748b;
+  color: #94a3b8;
   font-size: 11px;
 }
 
@@ -960,7 +960,7 @@ export default {
 .sub-empty-info {
   text-align: center;
   font-size: 11px;
-  color: #475569;
+  color: #94a3b8;
   padding-top: 45px;
   flex: 1;
 }
@@ -980,7 +980,7 @@ export default {
 }
 .detail-row .lbl {
   font-size: 11px;
-  color: #52637a;
+  color: #94a3b8;
   margin-bottom: 2px;
 }
 
@@ -1009,7 +1009,7 @@ export default {
   color: #ef4444;
 }
 .text-gray {
-  color: #52637a;
+  color: #94a3b8;
 }
 .ellipsis-text {
   white-space: nowrap;

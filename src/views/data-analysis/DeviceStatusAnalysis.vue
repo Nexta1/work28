@@ -214,7 +214,6 @@
 
 <script>
 import * as echarts from 'echarts'
-import gsap from 'gsap'
 import CountTo from 'vue-count-to'
 import {
   getDeviceList,
@@ -291,7 +290,6 @@ export default {
   },
   mounted() {
     this.$nextTick(() => {
-      this.enterAnim()
       this.initCharts()
       setTimeout(() => this.handleResize(), 100)
     })
@@ -600,24 +598,6 @@ export default {
     onDeviceChange() {
       this.$message.success(`已切换至设备，数据加载中...`)
       this.fetchAllData()
-    },
-
-    enterAnim() {
-      const cards = [
-        this.$refs.card1,
-        this.$refs.card2,
-        this.$refs.card3,
-        this.$refs.card4
-      ].filter(Boolean)
-      const bottoms = [this.$refs.card5, this.$refs.card6].filter(Boolean)
-
-      gsap.set(cards, {opacity: 0, y: 30})
-      gsap.set(bottoms, {opacity: 0, y: 20})
-
-      this._animTimeline = gsap
-        .timeline({defaults: {ease: 'power3.out'}})
-        .to(cards, {opacity: 1, y: 0, duration: 0.55, stagger: 0.08})
-        .to(bottoms, {opacity: 1, y: 0, duration: 0.45, stagger: 0.1}, '-=0.2')
     },
 
     initCharts() {

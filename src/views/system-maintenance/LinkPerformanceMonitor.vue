@@ -688,7 +688,7 @@ export default {
           },
           legend: {
             data: ['内核算力 (CPU)', '内存吞吐 (RAM)', '芯片热能 (TEMP)'],
-            textStyle: {color: '#64748b', fontSize: 10},
+            textStyle: {color: '#94a3b8', fontSize: 10},
             bottom: 0,
             icon: 'rect'
           },
@@ -697,7 +697,7 @@ export default {
             type: 'category',
             data: this.chartHistory.timeline,
             axisLine: {lineStyle: {color: '#111b2b'}},
-            axisLabel: {fontSize: 9, color: '#475569'}
+            axisLabel: {fontSize: 9, color: '#94a3b8'}
           },
           yAxis: {
             type: 'value',
@@ -807,7 +807,7 @@ export default {
 }
 .search-item label {
   font-size: 11px;
-  color: #52637a;
+  color: #94a3b8;
   white-space: nowrap;
 }
 
@@ -880,7 +880,7 @@ export default {
 }
 .stats-card .lbl {
   font-size: 11px;
-  color: #52637a;
+  color: #94a3b8;
   margin-bottom: 1px;
 }
 .stats-card .val {
@@ -1042,7 +1042,7 @@ export default {
 .brief-glass-card {
   background: #0d1522;
   border: 1px solid #172438;
-  border-left: 3px solid #475569;
+  border-left: 3px solid #94a3b8;
   padding: 6px 8px;
   border-radius: 3px;
   cursor: pointer;
@@ -1068,7 +1068,7 @@ export default {
 }
 .card-title-bar .type-tag {
   font-size: 9px;
-  color: #475569;
+  color: #94a3b8;
   background: #070c14;
   padding: 0 4px;
   border-radius: 2px;
@@ -1081,7 +1081,7 @@ export default {
   align-items: center;
   justify-content: space-between;
   font-size: 11px;
-  color: #52637a;
+  color: #94a3b8;
 }
 .progress-wrapper {
   display: flex;
@@ -1182,7 +1182,7 @@ export default {
 }
 .wl-code {
   font-size: 9px;
-  color: #52637a;
+  color: #94a3b8;
 }
 
 .health-score-badge {

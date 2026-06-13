@@ -476,7 +476,7 @@ export default {
       stateConfigs: {
         1: {color: '#10b981', label: '正常执行'},
         2: {color: '#ef4444', label: '态势异常'},
-        3: {color: '#64748b', label: '流程完成'},
+        3: {color: '#94a3b8', label: '流程完成'},
         4: {color: '#f59e0b', label: '指挥中止'}
       },
       taskList: [],
@@ -754,7 +754,7 @@ export default {
 }
 .task-info .label {
   font-size: 11px;
-  color: #64748b;
+  color: #94a3b8;
   font-weight: bold;
 }
 .dark-select ::v-deep .el-input__inner {
@@ -770,7 +770,7 @@ export default {
 }
 .state-legend-inline .legend-title {
   font-size: 11px;
-  color: #64748b;
+  color: #94a3b8;
   font-weight: bold;
 }
 .legend-items {
@@ -955,7 +955,7 @@ export default {
 }
 .mbid {
   font-size: 11px;
-  color: #64748b;
+  color: #94a3b8;
 }
 .property {
   font-size: 11px;
@@ -989,7 +989,7 @@ export default {
   border-left: 3px solid #ef4444;
 }
 .is-done {
-  border-left: 3px solid #64748b;
+  border-left: 3px solid #94a3b8;
   opacity: 0.6;
 }
 .is-stop {
@@ -1027,7 +1027,7 @@ export default {
 }
 .group-info-footer-box .lbl {
   font-size: 11px;
-  color: #64748b;
+  color: #94a3b8;
   margin-bottom: 2px;
 }
 .group-info-footer-box .val {
@@ -1236,14 +1236,14 @@ export default {
   display: flex;
   gap: 12px;
   font-size: 10px;
-  color: #64748b;
+  color: #94a3b8;
   padding-left: 18px;
 }
 .wl-sub-metrics {
   display: flex;
   gap: 10px;
   font-size: 10px;
-  color: #475569;
+  color: #94a3b8;
   padding-left: 18px;
   margin-top: 2px;
 }
@@ -1281,7 +1281,7 @@ export default {
   font-weight: bold;
 }
 .warn-time {
-  color: #475569;
+  color: #94a3b8;
 }
 .warn-msg {
   font-size: 12px;
@@ -1293,12 +1293,12 @@ export default {
   display: flex;
   justify-content: space-between;
   font-size: 11px;
-  color: #64748b;
+  color: #94a3b8;
 }
 .empty-warn {
   text-align: center;
   padding: 40px 0;
-  color: #475569;
+  color: #94a3b8;
   font-size: 12px;
 }
 
@@ -1379,7 +1379,7 @@ export default {
 .guide-header .close-btn {
   margin-left: auto;
   cursor: pointer;
-  color: #64748b;
+  color: #94a3b8;
   font-size: 16px;
 }
 .guide-header .close-btn:hover {
@@ -1462,7 +1462,7 @@ export default {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  color: #64748b;
+  color: #94a3b8;
   font-size: 11px;
 }
 </style>

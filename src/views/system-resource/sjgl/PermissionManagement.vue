@@ -894,7 +894,7 @@ export default {
 .search-item label,
 .stat-card span,
 .stat-card small {
-  color: #52637a;
+  color: #94a3b8;
   font-size: 11px;
 }
 
@@ -1210,7 +1210,7 @@ export default {
 }
 
 ::v-deep .dark-tabs .el-tabs__item {
-  color: #64748b;
+  color: #94a3b8;
   font-size: 13px;
   font-weight: bold;
   height: 38px;
@@ -1254,7 +1254,7 @@ export default {
 
 .section-toolbar p {
   margin: 4px 0 0;
-  color: #52637a;
+  color: #94a3b8;
   font-size: 11px;
 }
 
@@ -1277,13 +1277,13 @@ export default {
 
 .center-empty-tip {
   margin: auto;
-  color: #52637a;
+  color: #94a3b8;
   font-size: 12px;
   text-align: center;
 }
 
 .muted {
-  color: #64748b;
+  color: #94a3b8;
   font-size: 11px;
 }
 

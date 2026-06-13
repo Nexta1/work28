@@ -825,7 +825,7 @@ export default {
 }
 .search-item label {
   font-size: 11px;
-  color: #52637a;
+  color: #94a3b8;
 }
 
 .main-body-layout {
@@ -942,7 +942,7 @@ export default {
 .metric-line {
   /* justify-content: flex-start; */
   gap: 11px;
-  color: #64748b;
+  color: #94a3b8;
   font-size: 11px;
   margin-top: 1px;
 }
@@ -975,7 +975,7 @@ export default {
 }
 .detail-row .lbl {
   font-size: 11px;
-  color: #52637a;
+  color: #94a3b8;
   margin-bottom: 2px;
 }
 .required-lbl::after {
@@ -1021,7 +1021,7 @@ export default {
   flex-direction: column;
 }
 ::v-deep .secret-form-item .el-form-item__label {
-  color: #52637a !important;
+  color: #94a3b8 !important;
   font-size: 11px;
   line-height: 14px;
   text-align: left;
@@ -1085,7 +1085,7 @@ export default {
   color: #06b6d4 !important;
 }
 .text-gray {
-  color: #64748b !important;
+  color: #94a3b8 !important;
 }
 .ellipsis-text {
   white-space: nowrap;

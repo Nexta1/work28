@@ -411,7 +411,7 @@ p {
 .panel-kicker {
   display: block;
   font-size: 11px;
-  color: #52637a;
+  color: #94a3b8;
   margin-bottom: 3px;
 }
 

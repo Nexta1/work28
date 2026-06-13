@@ -212,7 +212,7 @@ export default {
 
 .more-tag {
   font-size: 11px;
-  color: #64748b;
+  color: #94a3b8;
   margin-top: 4px;
   padding-left: 2px;
   border-top: 1px dashed #334155;
@@ -225,7 +225,7 @@ export default {
   padding-top: 6px;
   display: flex;
   align-items: center;
-  color: #64748b;
+  color: #94a3b8;
   /* margin-top: auto; */
 }
 .net-tag {

@@ -1047,7 +1047,7 @@ export default {
   border-bottom: none;
 }
 .left-panel .left-tabs >>> .el-tabs__item {
-  color: #64748b;
+  color: #94a3b8;
   font-size: 11px;
   height: 30px;
   line-height: 30px;
@@ -1124,7 +1124,7 @@ export default {
   border-bottom: none;
 }
 .right-panel .right-tabs >>> .el-tabs__item {
-  color: #64748b;
+  color: #94a3b8;
   font-size: 11px;
   height: 30px;
   line-height: 30px;

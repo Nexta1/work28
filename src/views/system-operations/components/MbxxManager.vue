@@ -471,7 +471,7 @@ export default {
 /* 关联提示区 */
 .context-tip {
   font-size: 11px;
-  color: #64748b;
+  color: #94a3b8;
 }
 
 /* 表格柔性包裹体 */

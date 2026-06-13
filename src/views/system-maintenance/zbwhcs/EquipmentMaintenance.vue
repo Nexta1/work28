@@ -230,7 +230,7 @@
                       <Icon
                         icon="lucide:file-x"
                         :size="48"
-                        style="color: #475569"
+                        style="color: #94a3b8"
                       />
                       <p>暂无生成的维护方案</p>
                       <p class="empty-hint">请先选择装备并点击"生成维护方案"</p>
@@ -941,7 +941,7 @@ export default {
 
 .search-item label {
   font-size: 11px;
-  color: #52637a;
+  color: #94a3b8;
 }
 
 .action-btn {
@@ -1013,7 +1013,7 @@ export default {
 }
 
 ::v-deep .dark-tabs .el-tabs__item {
-  color: #64748b;
+  color: #94a3b8;
   font-size: 12px;
   font-weight: bold;
   height: 34px;
@@ -1136,7 +1136,7 @@ export default {
 
 .list-count {
   font-size: 11px;
-  color: #64748b;
+  color: #94a3b8;
 }
 
 .plans-scroll-box {
@@ -1180,7 +1180,7 @@ export default {
 }
 
 .info-label {
-  color: #64748b;
+  color: #94a3b8;
   width: 80px;
   flex-shrink: 0;
 }
@@ -1202,7 +1202,7 @@ export default {
   align-items: center;
   justify-content: center;
   height: 300px;
-  color: #475569;
+  color: #94a3b8;
   gap: 8px;
 }
 
@@ -1213,7 +1213,7 @@ export default {
 
 .empty-hint {
   font-size: 11px !important;
-  color: #64748b !important;
+  color: #94a3b8 !important;
 }
 
 /* 下发监控容器 */
@@ -1240,7 +1240,7 @@ export default {
 
 .status-label {
   font-size: 11px;
-  color: #64748b;
+  color: #94a3b8;
   margin-bottom: 4px;
 }
 
@@ -1289,7 +1289,7 @@ export default {
 }
 
 .log-time {
-  color: #475569;
+  color: #94a3b8;
   flex-shrink: 0;
 }
 
@@ -1339,7 +1339,7 @@ export default {
 
 .filter-item label {
   font-size: 11px;
-  color: #64748b;
+  color: #94a3b8;
 }
 
 /* 方案详情对话框 */
@@ -1378,7 +1378,7 @@ export default {
 }
 
 .detail-label {
-  color: #64748b;
+  color: #94a3b8;
   width: 90px;
   flex-shrink: 0;
 }

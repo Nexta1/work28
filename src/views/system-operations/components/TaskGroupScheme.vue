@@ -91,7 +91,7 @@
                       style="
                         vertical-align: middle;
                         margin-right: 3px;
-                        color: #64748b;
+                        color: #94a3b8;
                       "
                     />
                     关联平台数: {{ parsePlatformCount(qz.ZZRWPTIDS) }}
@@ -319,7 +319,7 @@
                       style="
                         vertical-align: middle;
                         margin-right: 4px;
-                        color: #52637a;
+                        color: #94a3b8;
                       "
                     />
                     通联业务要求:
@@ -483,7 +483,7 @@
           <el-col
             class="line"
             :span="2"
-            style="text-align: center; color: #64748b"
+            style="text-align: center; color: #94a3b8"
             >至</el-col
           >
           <el-col :span="11">
@@ -1020,7 +1020,7 @@ export default {
 }
 .search-item label {
   font-size: 11px;
-  color: #52637a;
+  color: #94a3b8;
   font-weight: bold;
 }
 .search-item input {
@@ -1075,7 +1075,7 @@ export default {
 }
 .count-badge {
   font-size: 11px;
-  color: #64748b;
+  color: #94a3b8;
   background: #0d1522;
   padding: 2px 6px;
   border-radius: 11px;
@@ -1092,7 +1092,7 @@ export default {
 .platform-brief-card {
   background: #0d1522;
   border: 1px solid #172438;
-  border-left: 3px solid #64748b;
+  border-left: 3px solid #94a3b8;
   border-radius: 3px;
   padding: 11px;
   cursor: pointer;
@@ -1148,11 +1148,11 @@ export default {
   font-size: 11px;
 }
 .bsh-txt {
-  color: #475569;
+  color: #94a3b8;
 }
 .card-count-row {
   font-size: 11px;
-  color: #64748b;
+  color: #94a3b8;
 }
 
 /* 右列：统一操作及状态对齐舱门 */
@@ -1266,7 +1266,7 @@ export default {
   align-items: center;
 }
 .m-label {
-  color: #52637a;
+  color: #94a3b8;
   margin-right: 8px;
   font-size: 11px;
 }
@@ -1360,7 +1360,7 @@ export default {
 }
 .met-label {
   font-size: 11px;
-  color: #475569;
+  color: #94a3b8;
 }
 .met-value {
   font-size: 12px;
@@ -1370,7 +1370,7 @@ export default {
 .met-value small {
   font-size: 9px;
   font-weight: normal;
-  color: #475569;
+  color: #94a3b8;
 }
 
 .sub-card-footer-business {
@@ -1383,7 +1383,7 @@ export default {
   align-items: center;
 }
 .biz-title {
-  color: #52637a;
+  color: #94a3b8;
   font-weight: bold;
   flex-shrink: 0;
 }
@@ -1409,7 +1409,7 @@ export default {
   align-items: center;
   justify-content: center;
   background: #080e18;
-  color: #52637a;
+  color: #94a3b8;
   font-size: 11px;
 }
 .radar-scan-loader {
@@ -1435,7 +1435,7 @@ export default {
 }
 .model-empty-text-large {
   font-size: 11px;
-  color: #475569;
+  color: #94a3b8;
   text-align: center;
   padding: 30px 0;
   font-style: italic;

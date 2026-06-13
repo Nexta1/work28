@@ -1363,7 +1363,7 @@ export default {
 }
 .search-item label {
   font-size: 11px;
-  color: #52637a;
+  color: #94a3b8;
 }
 .action-btn {
   background: #101b2e;
@@ -1463,7 +1463,7 @@ export default {
 .dash-empty-tip {
   text-align: center;
   font-size: 11px;
-  color: #475569;
+  color: #94a3b8;
   padding: 20px 0;
 }
 
@@ -1804,7 +1804,7 @@ export default {
   color: #ef4444 !important;
 }
 .text-gray {
-  color: #475569 !important;
+  color: #94a3b8 !important;
 }
 .ellipsis-text {
   white-space: nowrap;

@@ -309,7 +309,7 @@ export default {
 }
 .search-item label {
   font-size: 11px;
-  color: #52637a;
+  color: #94a3b8;
 }
 .action-btn {
   background: #101b2e;
@@ -385,7 +385,7 @@ export default {
   display: none !important;
 }
 ::v-deep .dark-tabs .el-tabs__item {
-  color: #64748b;
+  color: #94a3b8;
   font-size: 12px;
   font-weight: bold;
   height: 34px;

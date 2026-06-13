@@ -225,7 +225,7 @@
             >
           </div>
           <div class="action-btn-group">
-            <span style="font-size: 11px; color: #52637a; margin-right: 4px"
+            <span style="font-size: 11px; color: #94a3b8; margin-right: 4px"
               >布局方向:</span
             >
             <el-radio-group
@@ -932,7 +932,7 @@
             <span v-if="selectedFile" style="color: #10b981; font-size: 12px">
               <i class="el-icon-document"></i> {{ selectedFile.name }}
             </span>
-            <span v-else style="color: #64748b; font-size: 11px"
+            <span v-else style="color: #94a3b8; font-size: 11px"
               >未选择文件</span
             >
           </div>
@@ -1858,7 +1858,7 @@ export default {
 }
 .search-item label {
   font-size: 11px;
-  color: #52637a;
+  color: #94a3b8;
 }
 .action-btn {
   background: #101b2e;
@@ -1883,7 +1883,7 @@ export default {
 .stat-card span,
 .stat-card small {
   display: block;
-  color: #52637a;
+  color: #94a3b8;
   font-size: 11px;
 }
 .stat-card strong {
@@ -2075,7 +2075,7 @@ export default {
 .close-table-icon {
   cursor: pointer;
   font-size: 14px;
-  color: #64748b;
+  color: #94a3b8;
 }
 .close-table-icon:hover {
   color: #f56c6c;

@@ -280,7 +280,7 @@ export default {
 .drawer-close-btn {
   background: none;
   border: none;
-  color: #64748b;
+  color: #94a3b8;
   font-size: 16px;
   cursor: pointer;
   padding: 4px;
@@ -329,7 +329,7 @@ export default {
   align-items: center;
 }
 .no-data-text {
-  color: #475569;
+  color: #94a3b8;
   font-size: 11px;
 }
 

@@ -30,7 +30,7 @@
           <Icon
             icon="lucide:hash"
             :size="13"
-            style="color: #64748b; vertical-align: middle; margin-right: 4px"
+            style="color: #94a3b8; vertical-align: middle; margin-right: 4px"
           />
           用户编号
         </span>
@@ -41,7 +41,7 @@
           <Icon
             icon="lucide:id-card"
             :size="13"
-            style="color: #64748b; vertical-align: middle; margin-right: 4px"
+            style="color: #94a3b8; vertical-align: middle; margin-right: 4px"
           />
           用户ID
         </span>
@@ -52,7 +52,7 @@
           <Icon
             icon="lucide:smartphone"
             :size="13"
-            style="color: #64748b; vertical-align: middle; margin-right: 4px"
+            style="color: #94a3b8; vertical-align: middle; margin-right: 4px"
           />
           手机号码
         </span>
@@ -150,7 +150,7 @@ export default {
 }
 .avatar-role {
   font-size: 11px;
-  color: #64748b;
+  color: #94a3b8;
   display: inline-block;
   padding: 2px 10px;
   border-radius: 10px;
@@ -174,7 +174,7 @@ export default {
 }
 .info-label {
   font-size: 12px;
-  color: #64748b;
+  color: #94a3b8;
 }
 .info-value {
   font-size: 13px;

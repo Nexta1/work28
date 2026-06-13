@@ -716,7 +716,7 @@
                     show-overflow-tooltip
                   />
                   <template slot="empty">
-                    <span style="color: #52637a"
+                    <span style="color: #94a3b8"
                       >请在左侧选定资产表以拉取缓冲池数据进行人工校准标注</span
                     >
                   </template>
@@ -2052,7 +2052,7 @@ export default {
   color: #38bdf8;
 }
 .header-subtitle {
-  color: #52637a;
+  color: #94a3b8;
   font-size: 11px;
 }
 
@@ -2078,7 +2078,7 @@ export default {
   padding: 11px 12px;
 }
 .stat-card span {
-  color: #52637a;
+  color: #94a3b8;
   font-size: 11px;
 }
 .stat-card strong {
@@ -2088,7 +2088,7 @@ export default {
 }
 .stat-card small {
   display: block;
-  color: #52637a;
+  color: #94a3b8;
   font-size: 11px;
 }
 
@@ -2126,7 +2126,7 @@ export default {
   display: none !important;
 }
 ::v-deep .dark-tabs .el-tabs__item {
-  color: #64748b;
+  color: #94a3b8;
   font-size: 12px;
   font-weight: bold;
   height: 34px;
@@ -2283,7 +2283,7 @@ export default {
 }
 .v-label {
   font-size: 11px;
-  color: #52637a;
+  color: #94a3b8;
 }
 .v-val {
   font-size: 13px;
@@ -2421,7 +2421,7 @@ export default {
 .card-model-memo {
   margin: 0;
   font-size: 11px;
-  color: #64748b;
+  color: #94a3b8;
   line-height: 1.5;
   height: 32px;
   display: -webkit-box;
@@ -2433,7 +2433,7 @@ export default {
   display: flex;
   justify-content: space-between;
   font-size: 11px;
-  color: #475569;
+  color: #94a3b8;
   border-top: 1px solid #132035;
   padding-top: 6px;
   margin-top: 2px;
@@ -2466,7 +2466,7 @@ export default {
   padding: 24px;
   text-align: center;
   font-size: 12px;
-  color: #475569;
+  color: #94a3b8;
 }
 .empty-visual-placeholder {
   flex: 1;
@@ -2475,7 +2475,7 @@ export default {
   align-items: center;
   justify-content: center;
   gap: 12px;
-  color: #475569;
+  color: #94a3b8;
 }
 .empty-visual-placeholder i {
   font-size: 44px;
@@ -2566,6 +2566,6 @@ export default {
 ::v-deep .dark-form-inline .el-input.is-disabled .el-input__inner {
   background: #0c121c !important;
   border-color: #122035 !important;
-  color: #475569 !important;
+  color: #94a3b8 !important;
 }
 </style>

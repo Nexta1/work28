@@ -843,7 +843,7 @@ export default {
 
 .search-item label {
   font-size: 11px;
-  color: #52637a;
+  color: #94a3b8;
 }
 
 .action-btn {
@@ -928,7 +928,7 @@ export default {
 
 .stat-total .stat-icon {
   background: rgba(100, 116, 139, 0.15);
-  color: #64748b;
+  color: #94a3b8;
 }
 
 .stat-info {
@@ -937,7 +937,7 @@ export default {
 
 .stat-label {
   font-size: 11px;
-  color: #64748b;
+  color: #94a3b8;
   margin-bottom: 2px;
 }
 
@@ -1004,7 +1004,7 @@ export default {
 }
 
 .status-resolved {
-  background: #64748b;
+  background: #94a3b8;
 }
 
 .status-info {
@@ -1118,7 +1118,7 @@ export default {
 }
 
 .detail-label {
-  color: #64748b;
+  color: #94a3b8;
   width: 90px;
   flex-shrink: 0;
 }
@@ -1150,7 +1150,7 @@ export default {
 
 .diagnosis-label,
 .solution-label {
-  color: #64748b;
+  color: #94a3b8;
   width: 80px;
   flex-shrink: 0;
   margin-top: 2px;

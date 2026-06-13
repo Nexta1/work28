@@ -253,7 +253,7 @@ export default {
 }
 
 .form-group input::placeholder {
-  color: #475569;
+  color: #94a3b8;
 }
 
 .login-btn {

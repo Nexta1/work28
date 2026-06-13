@@ -944,7 +944,7 @@ export default {
   grid-column: span 2;
 }
 .meta-item .label {
-  color: #475569;
+  color: #94a3b8;
   margin-right: 6px;
   white-space: nowrap;
 }

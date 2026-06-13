@@ -168,7 +168,7 @@
                   <Icon
                     icon="lucide:hash"
                     :size="10"
-                    color="#64748b"
+                    color="#94a3b8"
                     style="vertical-align: middle; margin-right: 2px"
                   />{{ item.wlllDetectId || '-' }}
                 </span>
@@ -246,7 +246,7 @@
                 <Icon
                   icon="lucide:clock"
                   :size="10"
-                  color="#64748b"
+                  color="#94a3b8"
                   style="vertical-align: middle; margin-right: 3px"
                 />检测时间: {{ formatTime(item.TIME) }}
               </div>
@@ -982,14 +982,14 @@ export default {
           legend: {
             data: ['传输成功率(%)', '平均延迟(ms)', '时延抖动(ms)'],
             bottom: 0,
-            textStyle: {color: '#64748b', fontSize: 10}
+            textStyle: {color: '#94a3b8', fontSize: 10}
           },
           grid: {top: 45, bottom: 45, left: 35, right: 35},
           xAxis: {
             type: 'category',
             data: this.chartHistory.timeline,
             axisLine: {lineStyle: {color: '#111b2b'}},
-            axisLabel: {color: '#475569', fontSize: 9}
+            axisLabel: {color: '#94a3b8', fontSize: 9}
           },
           yAxis: [
             {
@@ -1146,7 +1146,7 @@ export default {
   align-items: center;
   gap: 6px;
   font-size: 11px;
-  color: #64748b;
+  color: #94a3b8;
 }
 .legend-node .dot {
   width: 6px;
@@ -1189,7 +1189,7 @@ export default {
 }
 .stat-lbl {
   font-size: 11px;
-  color: #475569;
+  color: #94a3b8;
   font-weight: bold;
   margin-bottom: 2px;
 }
@@ -1202,7 +1202,7 @@ export default {
   font-size: 11px;
   font-weight: normal;
   margin-left: 3px;
-  color: #475569;
+  color: #94a3b8;
 }
 
 /* 大屏布局 */
@@ -1315,7 +1315,7 @@ export default {
 .quality-glass-card {
   background: #0d1522;
   border: 1px solid #172438;
-  border-left: 3px solid #64748b;
+  border-left: 3px solid #94a3b8;
   padding: 8px 11px;
   border-radius: 3px;
   cursor: pointer;
@@ -1381,7 +1381,7 @@ export default {
   flex-wrap: wrap;
 }
 .card-id-row .id-tag {
-  color: #64748b;
+  color: #94a3b8;
   background: #070c14;
   padding: 1px 5px;
   border-radius: 2px;
@@ -1430,7 +1430,7 @@ export default {
 .card-time-row {
   margin-top: 4px;
   font-size: 9px;
-  color: #475569;
+  color: #94a3b8;
   padding: 2px 4px;
   background: #070c14;
   border-radius: 2px;
@@ -1615,7 +1615,7 @@ export default {
   border: 1px solid rgba(16, 185, 129, 0.2);
 }
 .tag-offline {
-  color: #64748b;
+  color: #94a3b8;
   background: rgba(100, 116, 139, 0.1);
   border: 1px solid rgba(100, 116, 139, 0.15);
 }
@@ -1630,7 +1630,7 @@ export default {
   box-shadow: 0 0 3px rgba(16, 185, 129, 0.5);
 }
 .dot-offline {
-  background: #475569;
+  background: #94a3b8;
 }
 .pl-name {
   max-width: 80px;

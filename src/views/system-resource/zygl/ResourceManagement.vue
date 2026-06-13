@@ -102,7 +102,7 @@ export default {
 .panel-kicker {
   display: block;
   font-size: 12px;
-  color: #52637a;
+  color: #94a3b8;
   margin-bottom: 6px;
 }
 
@@ -141,7 +141,10 @@ h1 {
   padding: 16px;
   color: inherit;
   text-decoration: none;
-  transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s,
+    transform 0.2s;
 }
 
 .module-card:hover {
@@ -183,7 +186,7 @@ h1 {
 .module-content span {
   display: block;
   font-size: 11px;
-  color: #52637a;
+  color: #94a3b8;
   margin-bottom: 5px;
 }
 
@@ -200,6 +203,6 @@ h1 {
 }
 
 .arrow {
-  color: #52637a;
+  color: #94a3b8;
 }
 </style>

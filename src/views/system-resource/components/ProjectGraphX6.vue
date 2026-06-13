@@ -251,7 +251,7 @@ export default {
               rx: 6,
               ry: 6,
               fill: Number(step.stepState) === 1 ? '#0d2531' : '#1b2431',
-              stroke: Number(step.stepState) === 1 ? '#38bdf8' : '#475569',
+              stroke: Number(step.stepState) === 1 ? '#38bdf8' : '#94a3b8',
               strokeWidth: 1.4
             },
             label: {

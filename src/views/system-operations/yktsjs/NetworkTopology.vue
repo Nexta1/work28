@@ -514,7 +514,7 @@ export default {
 }
 .search-item-refined label {
   font-size: 11px;
-  color: #52637a;
+  color: #94a3b8;
   font-weight: bold;
 }
 .search-item-refined ::v-deep .el-input__inner {
@@ -540,7 +540,7 @@ export default {
   padding: 4px 11px;
   border-radius: 12px;
   border: 1px solid rgba(56, 189, 248, 0.1);
-  color: #52637a;
+  color: #94a3b8;
 }
 .legend-node-refined .dot-refined {
   width: 6px;
@@ -552,7 +552,7 @@ export default {
   box-shadow: 0 0 8px #10b981;
 }
 .system-time-stamp {
-  color: #52637a;
+  color: #94a3b8;
   font-size: 11px;
   font-weight: bold;
 }
@@ -660,7 +660,7 @@ export default {
   flex: 1;
   background: transparent;
   border: none;
-  color: #52637a;
+  color: #94a3b8;
   font-size: 11px;
   padding: 6px 0;
   cursor: pointer;
@@ -816,7 +816,7 @@ export default {
   align-items: center;
 }
 .time-node {
-  color: #52637a;
+  color: #94a3b8;
 }
 .wlh-tag {
   background: rgba(56, 189, 248, 0.05);
@@ -861,7 +861,7 @@ export default {
 }
 .vector-arrow .link-lbl {
   font-size: 8px;
-  color: #52637a;
+  color: #94a3b8;
   transform: scale(0.85);
   white-space: nowrap;
   max-width: 80px;

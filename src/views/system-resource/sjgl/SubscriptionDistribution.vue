@@ -1538,7 +1538,7 @@ export default {
 }
 .info-label {
   font-size: 11px;
-  color: #64748b;
+  color: #94a3b8;
   font-weight: 600;
   letter-spacing: 0.5px;
   white-space: nowrap;
@@ -1597,7 +1597,7 @@ export default {
 .pair-roleid {
   font-size: 11px;
   font-weight: 400;
-  color: #64748b;
+  color: #94a3b8;
   font-family: 'SF Mono', 'Fira Code', monospace;
   margin-left: 2px;
 }
@@ -1613,7 +1613,7 @@ export default {
   margin-right: 2px;
 }
 .text-dim {
-  color: #475569;
+  color: #94a3b8;
   font-style: italic;
   font-size: 12px;
 }

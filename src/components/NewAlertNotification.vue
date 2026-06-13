@@ -254,7 +254,7 @@ export default {
   border: none;
   background: rgba(255, 255, 255, 0.05);
   border-radius: 4px;
-  color: #64748b;
+  color: #94a3b8;
   cursor: pointer;
   display: flex;
   align-items: center;

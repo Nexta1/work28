@@ -115,7 +115,7 @@ export default {
 }
 .sub-count {
   font-size: 12px;
-  color: #64748b;
+  color: #94a3b8;
   margin-top: 4px;
   display: block;
 }
@@ -175,7 +175,7 @@ export default {
 }
 .pt-info {
   font-size: 11px;
-  color: #64748b;
+  color: #94a3b8;
   display: flex;
   gap: 11px;
 }
@@ -183,7 +183,7 @@ export default {
   opacity: 0.3;
 }
 .arrow {
-  color: #475569;
+  color: #94a3b8;
   font-size: 14px;
 }
 

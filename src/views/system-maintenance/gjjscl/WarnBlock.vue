@@ -440,7 +440,7 @@ export default {
 
 .state-disabled {
   background-color: rgba(51, 65, 85, 0.2);
-  color: #64748b;
+  color: #94a3b8;
   border-color: rgba(51, 65, 85, 0.4);
 }
 

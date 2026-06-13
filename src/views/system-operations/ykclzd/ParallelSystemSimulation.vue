@@ -1092,7 +1092,7 @@ export default {
 
 .search-item label {
   font-size: 11px;
-  color: #52637a;
+  color: #94a3b8;
 }
 
 .action-btn {
@@ -1165,7 +1165,7 @@ export default {
 }
 
 ::v-deep .dark-tabs .el-tabs__item {
-  color: #64748b;
+  color: #94a3b8;
   font-size: 12px;
   font-weight: bold;
   height: 34px;
@@ -1295,7 +1295,7 @@ export default {
 }
 
 .text-gray {
-  color: #475569 !important;
+  color: #94a3b8 !important;
 }
 
 .ellipsis-text {
@@ -1352,7 +1352,7 @@ export default {
 }
 
 .info-label {
-  color: #64748b;
+  color: #94a3b8;
   width: 80px;
   flex-shrink: 0;
 }
@@ -1368,7 +1368,7 @@ export default {
   align-items: center;
   justify-content: center;
   height: 120px;
-  color: #475569;
+  color: #94a3b8;
   gap: 8px;
 }
 
@@ -1409,7 +1409,7 @@ export default {
 }
 
 .status-label {
-  color: #64748b;
+  color: #94a3b8;
 }
 
 .status-value {
@@ -1417,7 +1417,7 @@ export default {
 }
 
 .status-idle {
-  color: #64748b;
+  color: #94a3b8;
 }
 
 .status-running {
@@ -1472,7 +1472,7 @@ export default {
 }
 
 .log-time {
-  color: #475569;
+  color: #94a3b8;
   flex-shrink: 0;
 }
 
@@ -1543,7 +1543,7 @@ export default {
 
 .stat-label {
   font-size: 11px;
-  color: #64748b;
+  color: #94a3b8;
   margin-bottom: 4px;
 }
 

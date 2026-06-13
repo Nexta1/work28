@@ -59,7 +59,7 @@ export const getAlertPieOption = data => ({
     orient: 'vertical',
     right: '5%',
     top: 'center',
-    textStyle: {color: '#64748b', fontSize: 10}
+    textStyle: {color: '#94a3b8', fontSize: 10}
   },
   series: [
     {
@@ -120,12 +120,12 @@ export const getFaultBarOption = data => ({
     type: 'category',
     data: data.labels,
     axisLine: {lineStyle: {color: '#172438'}},
-    axisLabel: {color: '#64748b', fontSize: 10}
+    axisLabel: {color: '#94a3b8', fontSize: 10}
   },
   yAxis: {
     type: 'value',
     splitLine: {lineStyle: {color: '#111b2b'}},
-    axisLabel: {color: '#64748b', fontSize: 10}
+    axisLabel: {color: '#94a3b8', fontSize: 10}
   },
   series: [
     {
@@ -137,7 +137,9 @@ export const getFaultBarOption = data => ({
       data: data.values.map((v, i) => {
         const baseColor = data.colors
           ? data.colors[i]
-          : ['#f43f5e', '#f59e0b', '#8b5cf6', '#3b82f6', '#10b981', '#06b6d4'][i % 6]
+          : ['#f43f5e', '#f59e0b', '#8b5cf6', '#3b82f6', '#10b981', '#06b6d4'][
+              i % 6
+            ]
         return {
           value: v,
           itemStyle: {
@@ -176,7 +178,7 @@ export const getTargetPieOption = data => ({
     orient: 'vertical',
     right: '5%',
     top: 'center',
-    textStyle: {color: '#64748b', fontSize: 10}
+    textStyle: {color: '#94a3b8', fontSize: 10}
   },
   series: [
     {

@@ -516,7 +516,7 @@ export default {
 
 .search-item label {
   font-size: 11px;
-  color: #52637a;
+  color: #94a3b8;
 }
 
 .action-btn {
@@ -610,7 +610,7 @@ export default {
 
 .stat-label {
   font-size: 11px;
-  color: #64748b;
+  color: #94a3b8;
   margin-bottom: 2px;
 }
 
@@ -658,7 +658,7 @@ export default {
 
 .event-time {
   font-size: 9px;
-  color: #475569;
+  color: #94a3b8;
   margin-bottom: 2px;
 }
 
@@ -748,7 +748,7 @@ export default {
 }
 
 .detail-label {
-  color: #64748b;
+  color: #94a3b8;
   width: 100px;
   flex-shrink: 0;
 }
@@ -785,7 +785,7 @@ export default {
 }
 
 .text-gray {
-  color: #475569 !important;
+  color: #94a3b8 !important;
 }
 
 .font-num {

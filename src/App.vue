@@ -561,7 +561,7 @@ body {
 }
 
 .time {
-  color: #64748b;
+  color: #94a3b8;
   font-size: 12px;
   font-family: monospace;
   letter-spacing: 0.5px;
@@ -592,7 +592,7 @@ body {
   font-weight: 500;
 }
 .user-arrow {
-  color: #475569;
+  color: #94a3b8;
   transition: transform 0.2s ease;
 }
 .user:hover .user-arrow {
@@ -733,7 +733,7 @@ body {
 }
 
 .subsystem-arrow {
-  color: #475569;
+  color: #94a3b8;
   transition:
     transform 0.25s cubic-bezier(0.4, 0, 0.2, 1),
     color 0.15s ease;
@@ -741,7 +741,7 @@ body {
 
 .subsystem-arrow.collapsed {
   transform: rotate(180deg);
-  color: #64748b;
+  color: #94a3b8;
 }
 
 .module-item {
@@ -891,7 +891,7 @@ body {
 }
 
 .module-arrow {
-  color: #475569 !important;
+  color: #94a3b8 !important;
 }
 
 .module-arrow.expanded {
@@ -900,7 +900,7 @@ body {
 }
 
 .nav-item .nav-icon {
-  color: #64748b !important;
+  color: #94a3b8 !important;
   transition: all 0.15s ease-in-out;
 }
 
