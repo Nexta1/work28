@@ -32,6 +32,34 @@ const routes = [
       requiresAuth: true
     }
   },
+  {
+    path: '/decomposition',
+    name: 'Decomposition',
+    component: () =>
+      import('@/views/system-operations/rwxqfj/TaskDecomposition.vue'),
+    meta: {
+      title: '作战筹划信息',
+      subsystem: '体系运营管理',
+      category: '任务需求分解 ',
+      icon: 'lucide:compass', // 作战筹划
+      parentModule: '任务需求分解',
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/datalink-assurance-requirements',
+    name: 'DataLinkAssuranceRequirements',
+    component: () =>
+      import('@/views/system-operations/rwxqfj/DataLinkAssuranceRequirements.vue'),
+    meta: {
+      title: '数据链保障需求分析',
+      subsystem: '体系运营管理',
+      category: '任务需求分解',
+      icon: 'lucide:shield-check', // 保障需求
+      parentModule: '任务需求分解',
+      requiresAuth: true
+    }
+  },
 
   // 体系运营管理 - 运控策略制定
   {
