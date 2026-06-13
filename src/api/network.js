@@ -34,3 +34,53 @@ export function wlllDetect(data) {
     data
   })
 }
+
+/**
+ * 查询所有网络链路
+ * GET /rest/wlzyztyd/wllls
+ */
+export function getNetworkList() {
+  return request({
+    url: '/rest/wlzyztyd/wllls',
+    method: 'get'
+  })
+}
+
+/**
+ * 网络异常诊断信息（最新）
+ * GET /rest/wlllDetect/latest/{WLH}/{LLH}
+ * @param {number} wlh  - 网络号
+ * @param {number} llh  - 链路号
+ */
+export function getNetworkLatestDetect(wlh, llh) {
+  return request({
+    url: `/rest/wlllDetect/latest/${wlh}/${llh}`,
+    method: 'get'
+  })
+}
+
+/**
+ * 网络最近10分钟诊断信息
+ * GET /rest/wlllDetect/tenMiniutes/{WLH}/{LLH}
+ * @param {number} wlh  - 网络号
+ * @param {number} llh  - 链路号
+ */
+export function getNetworkTenMinutes(wlh, llh) {
+  return request({
+    url: `/rest/wlllDetect/tenMiniutes/${wlh}/${llh}`,
+    method: 'get'
+  })
+}
+
+/**
+ * 预测网络状态信息
+ * GET /rest/wlllDetect/predict/{WLH}/{LLH}
+ * @param {number} wlh  - 网络号
+ * @param {number} llh  - 链路号
+ */
+export function getNetworkPredict(wlh, llh) {
+  return request({
+    url: `/rest/wlllDetect/predict/${wlh}/${llh}`,
+    method: 'get'
+  })
+}

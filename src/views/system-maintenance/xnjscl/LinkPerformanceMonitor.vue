@@ -391,6 +391,7 @@
       width="520px"
       custom-class="dark-custom-dialog"
       append-to-body
+      
     >
       <div v-if="activeLinkDetail" class="dialog-detail-matrix">
         <div class="detail-row">

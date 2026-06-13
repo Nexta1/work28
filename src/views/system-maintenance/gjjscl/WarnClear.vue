@@ -159,6 +159,7 @@
       :visible.sync="dialogVisible"
       width="700px"
       :close-on-click-modal="false"
+      append-to-body
     >
       <el-form
         ref="form"

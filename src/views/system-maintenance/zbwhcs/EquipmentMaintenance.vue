@@ -458,6 +458,7 @@
       :visible.sync="planDetailDialogVisible"
       width="800px"
       custom-class="dark-dialog-clean"
+      append-to-body
     >
       <div v-if="currentPlan" class="detail-content">
         <div class="detail-section">

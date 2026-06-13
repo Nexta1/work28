@@ -6,6 +6,7 @@
     class="profile-dialog"
     :show-close="false"
     top="12vh"
+    append-to-body
   >
     <!-- 自定义头部 -->
     <div slot="title" class="profile-header">

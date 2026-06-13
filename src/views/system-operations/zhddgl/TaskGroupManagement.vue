@@ -263,6 +263,7 @@
       :visible.sync="dialogVisible"
       width="800px"
       custom-class="dark-dialog-clean"
+      append-to-body
     >
       <el-form
         ref="groupForm"

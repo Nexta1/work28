@@ -546,6 +546,46 @@ const routes = [
       requiresAuth: true
     }
   },
+  // 数据分析
+  {
+    path: '/data-analysis',
+    name: 'DataAnalysis',
+    redirect: '/device-status-analysis',
+    meta: {
+      title: '数据分析',
+      subsystem: '资源和数据管理',
+      category: '数据分析',
+      icon: 'lucide:bar-chart-3',
+      isModule: true,
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/device-status-analysis',
+    name: 'DeviceStatusAnalysis',
+    component: () => import('@/views/data-analysis/DeviceStatusAnalysis.vue'),
+    meta: {
+      title: '设备状态分析',
+      subsystem: '资源和数据管理',
+      category: '数据分析',
+      icon: 'lucide:monitor',
+      parentModule: '数据分析',
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/network-status-analysis',
+    name: 'NetworkStatusAnalysis',
+    component: () => import('@/views/data-analysis/NetworkStatusAnalysis.vue'),
+    meta: {
+      title: '网络状态分析',
+      subsystem: '资源和数据管理',
+      category: '数据分析',
+      icon: 'lucide:network',
+      parentModule: '数据分析',
+      requiresAuth: true
+    }
+  },
   // 404 兜底 - 匹配所有未定义路由，重定向到首页
   {
     path: '*',

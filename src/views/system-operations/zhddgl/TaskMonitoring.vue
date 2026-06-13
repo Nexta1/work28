@@ -240,6 +240,7 @@
       :visible.sync="detailDialogVisible"
       width="700px"
       custom-class="dark-dialog-clean"
+      append-to-body
     >
       <div v-if="currentTask" class="detail-content">
         <div class="detail-section">

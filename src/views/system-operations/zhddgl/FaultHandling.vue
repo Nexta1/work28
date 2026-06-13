@@ -351,6 +351,7 @@
       :visible.sync="detailDialogVisible"
       width="800px"
       custom-class="dark-dialog-clean"
+      append-to-body
     >
       <div v-if="currentFault" class="detail-content">
         <div class="detail-section">

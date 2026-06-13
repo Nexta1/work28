@@ -13,9 +13,8 @@
           <header class="system-header">
             <div class="header-left">
               <button
-                v-if="!navVisible"
                 class="top-nav-btn left-expand-btn"
-                @click="toggleNav"
+                @mouseenter="navVisible = true"
               >
                 <Icon icon="lucide:menu" :size="16" />
               </button>
@@ -45,10 +44,14 @@
           </header>
 
           <div class="main-layout">
-            <aside class="left-menu" :class="{hidden: !navVisible}">
+            <!-- 悬浮侧边菜单（fixed定位，不占内容空间） -->
+            <aside
+              class="left-menu"
+              :class="{visible: navVisible}"
+              @mouseleave="navVisible = false"
+            >
               <div class="menu-header">
                 <div class="menu-title">体系运营管理</div>
-
                 <button class="collapse-btn" @click="toggleNav">
                   <Icon icon="lucide:chevron-left" :size="16" />
                 </button>
@@ -201,7 +204,7 @@ export default {
       routeReady: false,
       currentTime: '',
       timer: null,
-      navVisible: true,
+      navVisible: false,
       collapsedCategories: {},
       collapsedSubsystems: {},
       // 个人信息弹窗
@@ -651,26 +654,31 @@ body {
 .main-layout {
   flex: 1;
   display: flex;
+  flex-direction: column;
+  position: relative;
   overflow: hidden;
 }
 
+/* ========== 悬浮侧边菜单 ========== */
 .left-menu {
+  position: fixed;
+  top: 0;
+  left: 0;
   width: 280px;
-  flex-shrink: 0;
+  height: 100vh;
+  z-index: 10000;
   background: linear-gradient(180deg, #0b1220 0%, #070b14 100%);
   border-right: 1px solid rgba(120, 210, 255, 0.12);
-  transition:
-    width 0.28s ease,
-    border 0.28s ease;
-  overflow: hidden;
   display: flex;
   flex-direction: column;
-  box-shadow: inset -1px 0 0 rgba(255, 255, 255, 0.02);
+  box-shadow: 4px 0 30px rgba(0, 0, 0, 0.5);
+  transform: translateX(-100%);
+  transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
 }
 
-.left-menu.hidden {
-  width: 0;
-  border-right: none;
+.left-menu.visible {
+  transform: translateX(0);
 }
 
 .left-menu * {
@@ -832,6 +840,8 @@ body {
 .content-area {
   flex: 1;
   overflow: auto;
+  width: 100%;
+  height: 100%;
   background: radial-gradient(circle at top, #0c1529 0%, #050508 60%);
 }
 
