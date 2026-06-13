@@ -1173,15 +1173,10 @@ export default {
         this.chartInstance = null
       }
       this.chartInstance = echarts.init(this.$refs.treeChartRef)
-      this.chartInstance.on('click', params => {
-        if (params.data && params.data.rawSource)
-          this.openDetailDialog(params.data.rawSource)
-      })
       const convertToChartNode = bNode => {
         if (!bNode) return null
         return {
           name: bNode.PTMC || `ID: ${bNode.PTID}`,
-          rawSource: bNode,
           children: Array.isArray(bNode.children)
             ? bNode.children.map(c => convertToChartNode(c)).filter(Boolean)
             : []
@@ -1202,26 +1197,40 @@ export default {
             {
               type: 'tree',
               data: chartData,
-              top: '8%',
-              left: '16%',
-              bottom: '8%',
-              right: '16%',
-              symbol: 'circle',
-              symbolSize: 10,
+              roam: true,
+              layout: 'orthogonal',
+              orient: 'LR',
+              top: '3%',
+              left: '8%',
+              bottom: '3%',
+              right: '20%',
+              symbol: 'emptyCircle',
+              symbolSize: 7,
               edgeShape: 'polyline',
+              edgeForkPosition: '50%',
+              initialTreeDepth: 2,
+              nodePadding: 15,
               label: {
-                position: 'left',
+                position: 'right',
                 verticalAlign: 'middle',
-                align: 'right',
+                align: 'left',
                 fontSize: 11,
-                color: '#fff',
+                color: '#e2e8f0',
                 backgroundColor: '#111c30',
-                padding: [4, 8],
-                borderRadius: 4,
-                borderWidth: 1,
-                borderColor: '#1e3557'
+                padding: [2, 6],
+                borderRadius: 3,
+                borderWidth: 0
               },
-              leaves: {label: {position: 'right', align: 'left'}}
+              leaves: {
+                label: {
+                  position: 'right',
+                  verticalAlign: 'middle',
+                  align: 'left'
+                }
+              },
+              expandAndCollapse: true,
+              animationDuration: 300,
+              animationEasing: 'cubicOut'
             }
           ]
         },

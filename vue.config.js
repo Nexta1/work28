@@ -10,10 +10,7 @@ module.exports = {
         warnings: false, // 不显示警告
         // 或者更精确地只屏蔽 ResizeObserver 相关的运行时错误
         runtimeErrors: error => {
-          return (
-            error.message !==
-            'ResizeObserver loop completed with undelivered notifications.'
-          )
+          return false
         }
       }
     },
@@ -46,7 +43,7 @@ module.exports = {
       .end()
       .use('raw-loader')
       .loader('raw-loader')
-      .options({ esModule: false })
+      .options({esModule: false})
       .end()
 
     // 排除 icons 目录，避免与默认的 svg 规则冲突

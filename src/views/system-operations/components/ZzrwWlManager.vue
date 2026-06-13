@@ -293,22 +293,6 @@
                   getPlatformNameById(selectedNetwork.CSZZRWPTID) || '未指派'
                 }}</span>
               </div>
-              <div class="matrix-item">
-                <label>开通状态评估</label>
-                <span
-                  :class="
-                    selectedNetwork.networkingState === 1
-                      ? 'text-green'
-                      : 'text-gray'
-                  "
-                >
-                  {{
-                    selectedNetwork.networkingState === 1
-                      ? '● 已部署就绪'
-                      : '○ 规划准备中'
-                  }}
-                </span>
-              </div>
             </div>
           </div>
 
@@ -326,6 +310,47 @@
                 />
                 物理链路保障要求
               </div>
+
+              <div
+                class="monitor-node"
+                style="
+                  border-left: 2px solid #38bdf8;
+                  padding: 6px 10px;
+                  margin-bottom: 6px;
+                  height: 60px;
+                "
+              >
+                <div
+                  style="
+                    display: flex;
+
+                    flex-direction: column;
+                    justify-content: space-between;
+                    font-size: 11px;
+                    height: 100%;
+                    width: 70%;
+                  "
+                >
+                  <span style="color: #94a3b8; font-weight: bold"
+                    >开通状态评估</span
+                  >
+                  <div
+                    :class="
+                      selectedNetwork.networkingState === 1
+                        ? 'text-green'
+                        : 'text-gray'
+                    "
+                    style="font-weight: bold"
+                  >
+                    {{
+                      selectedNetwork.networkingState === 1
+                        ? '● 已部署就绪'
+                        : '○ 规划准备中'
+                    }}
+                  </div>
+                </div>
+              </div>
+
               <div class="performance-flex-box">
                 <div class="monitor-node node-performance">
                   <div class="node-name-bar">时延保障上限</div>
@@ -677,6 +702,17 @@ export default {
       if (this.platformTreeNodes && this.platformTreeNodes.length > 0) {
         format(this.platformTreeNodes)
       }
+      // 已组网平台排前面
+      const netIds = this.selectedNetwork?.ZZRWPTIDS
+        ? this.selectedNetwork.ZZRWPTIDS.split(',')
+        : []
+      result.sort((a, b) => {
+        const aIn = netIds.includes(String(a.ZZRWPTID))
+        const bIn = netIds.includes(String(b.ZZRWPTID))
+        if (aIn && !bIn) return -1
+        if (!aIn && bIn) return 1
+        return 0
+      })
       return result
     }
   },
@@ -795,7 +831,7 @@ export default {
         }
       }
 
-      apiPage('zzrwwl', payload)
+      return apiPage('zzrwwl', payload)
         .then(res => {
           this.tableData = res.data?.list || res.data || []
           this.totalCount = res.data?.total || this.tableData.length
@@ -893,7 +929,15 @@ export default {
         action.then(() => {
           this.$message.success('同步成功')
           this.dialogVisible = false
-          this.fetchList()
+          this.fetchList().then(() => {
+            // 编辑后重新选中该网络以刷新右侧面板
+            if (this.isEdit && this.form.ZZRWWLID) {
+              const updated = this.tableData.find(
+                n => n.ZZRWWLID === this.form.ZZRWWLID
+              )
+              if (updated) this.selectNetwork(updated)
+            }
+          })
         })
       })
     }
@@ -942,6 +986,7 @@ export default {
   font-size: 11px;
   color: #94a3b8;
   font-weight: bold;
+  white-space: nowrap;
 }
 .search-item input {
   background: #0d1522;
