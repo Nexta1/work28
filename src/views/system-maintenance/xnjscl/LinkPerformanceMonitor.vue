@@ -1010,7 +1010,7 @@ export default {
 }
 .track-cell .label {
   font-size: 8px;
-  color: #415169;
+  color: #94a3b8;
   transform: scale(0.9);
 }
 .track-cell .value {
@@ -1146,7 +1146,7 @@ export default {
   display: flex;
   justify-content: space-between;
   font-size: 9px;
-  color: #415169;
+  color: #94a3b8;
 }
 
 /* 图表区居中舱 */
@@ -1253,7 +1253,7 @@ export default {
 }
 .freq-label {
   font-size: 9px;
-  color: #415169;
+  color: #94a3b8;
 }
 .freq-value {
   font-size: 9px;
@@ -1267,7 +1267,7 @@ export default {
   align-items: center;
 }
 .link-tech-spec .spec-label {
-  color: #415169;
+  color: #94a3b8;
 }
 
 /* 多维技术指标网格 */
@@ -1286,7 +1286,7 @@ export default {
   font-size: 9px;
 }
 .link-perf-grid .spec-cell label {
-  color: #415169;
+  color: #94a3b8;
 }
 .link-perf-grid .spec-cell .val {
   font-weight: bold;
@@ -1376,7 +1376,7 @@ export default {
   color: #ef4444 !important;
 }
 .text-gray {
-  color: #415169 !important;
+  color: #94a3b8 !important;
 }
 .ellipsis-text {
   white-space: nowrap;
@@ -1424,7 +1424,7 @@ export default {
 }
 .detail-row .lbl {
   font-size: 9px;
-  color: #415169;
+  color: #94a3b8;
 }
 .detail-row .val {
   font-size: 11px;

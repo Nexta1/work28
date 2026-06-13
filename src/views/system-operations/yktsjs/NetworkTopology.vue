@@ -627,7 +627,7 @@ export default {
 }
 .bus-timer {
   font-size: 11px;
-  color: #415169;
+  color: #94a3b8;
 }
 .animate-pulse-dot {
   width: 6px;
@@ -772,7 +772,7 @@ export default {
   gap: 1px;
 }
 .rich-result-vertical-card .time-cell .lbl {
-  color: #415169;
+  color: #94a3b8;
   font-size: 9px;
 }
 .rich-result-vertical-card .time-cell .value-time {
@@ -849,7 +849,7 @@ export default {
 }
 .vector-node .id {
   font-size: 9px;
-  color: #415169;
+  color: #94a3b8;
 }
 .vector-arrow {
   flex: 1;
@@ -904,7 +904,7 @@ export default {
 .matrix-cell .lbl,
 .single-data-line .lbl,
 .row-footer-details .lbl {
-  color: #415169;
+  color: #94a3b8;
   margin-right: 4px;
 }
 .single-data-line {
@@ -960,7 +960,7 @@ export default {
 }
 .empty-hint-dark {
   text-align: center;
-  color: #415169;
+  color: #94a3b8;
   font-size: 11px;
   padding: 60px 11px;
   border: 1px dashed #111b2b;

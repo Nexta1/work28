@@ -946,7 +946,7 @@ export default {
   font-size: 11px;
 }
 .bsh-txt {
-  color: #415169;
+  color: #94a3b8;
 }
 .pt-type-tag {
   color: #94a3b8;
@@ -1013,7 +1013,7 @@ export default {
   font-size: 11px;
 }
 .matrix-item label {
-  color: #415169;
+  color: #94a3b8;
   font-size: 11px;
 }
 .matrix-item .val {
@@ -1266,7 +1266,7 @@ export default {
   justify-content: center;
   background: #080e18;
   z-index: 10;
-  color: #415169;
+  color: #94a3b8;
   font-size: 11px;
 }
 .radar-scan-loader {
@@ -1306,7 +1306,7 @@ export default {
   color: #ef4444 !important;
 }
 .text-gray {
-  color: #415169 !important;
+  color: #94a3b8 !important;
 }
 .highlight-orange {
   color: #f59e0b;

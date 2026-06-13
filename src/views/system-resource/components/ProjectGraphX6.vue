@@ -346,7 +346,7 @@ export default {
   align-items: center;
   justify-content: center;
   background: #070c14;
-  color: #415169;
+  color: #94a3b8;
   font-size: 11px;
 }
 .radar-scan-loader {

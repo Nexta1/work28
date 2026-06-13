@@ -51,7 +51,7 @@
               @mouseleave="navVisible = false"
             >
               <div class="menu-header">
-                <div class="menu-title">体系运营管理</div>
+                <div class="menu-title">体系运控分系统</div>
                 <button class="collapse-btn" @click="toggleNav">
                   <Icon icon="lucide:chevron-left" :size="16" />
                 </button>
@@ -63,24 +63,12 @@
                   :key="subsystem"
                   class="subsystem-block"
                 >
-                  <div
-                    class="subsystem-title"
-                    @click="toggleSubsystem(subsystem)"
-                  >
+                  <div class="subsystem-title">
                     <span class="subsystem-text">{{ subsystem }}</span>
-                    <Icon
-                      icon="lucide:chevron-down"
-                      :size="14"
-                      class="subsystem-arrow"
-                      :class="{collapsed: isSubsystemCollapsed(subsystem)}"
-                    />
                   </div>
 
                   <transition name="menu-expand">
-                    <div
-                      class="modules-container"
-                      v-show="!isSubsystemCollapsed(subsystem)"
-                    >
+                    <div class="modules-container">
                       <div
                         v-for="category in getCategoriesBySubsystem(subsystem)"
                         :key="category"
@@ -136,6 +124,7 @@
                                 :to="subRoute.path"
                                 class="nav-item"
                                 :class="{active: $route.path === subRoute.path}"
+                                @click.native="navVisible = false"
                               >
                                 <Icon
                                   :icon="
@@ -278,6 +267,7 @@ export default {
         if (this.$route.path !== moduleRoute.path) {
           this.$router.push(moduleRoute.path)
         }
+        this.navVisible = false
       }
     },
 
@@ -664,7 +654,7 @@ body {
   position: fixed;
   top: 0;
   left: 0;
-  width: 280px;
+  width: 680px;
   height: 100vh;
   z-index: 10000;
   background: linear-gradient(180deg, #0b1220 0%, #070b14 100%);
@@ -691,7 +681,7 @@ body {
   padding: 0 20px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  /* justify-content: space-between; */
   border-bottom: 1px solid rgba(120, 210, 255, 0.08);
   background: rgba(255, 255, 255, 0.015);
 }
@@ -701,31 +691,36 @@ body {
   font-size: 18px;
   font-weight: 700;
   letter-spacing: 1px;
+  margin-right: 12px;
 }
 
 .menu-content {
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
-  padding: 12px 0;
+  padding: 12px 8px;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 6px;
+  align-items: start;
 }
 
 .subsystem-block {
-  margin-bottom: 14px;
+  margin-bottom: 4px;
 }
 
 .subsystem-title {
-  padding: 14px 22px 11px;
+  padding: 10px 10px 8px;
   color: #7cecff;
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 700;
-  letter-spacing: 1px;
+  letter-spacing: 0.5px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
   cursor: pointer;
   user-select: none;
   transition: background 0.2s ease;
+  gap: 6px;
 }
 
 .subsystem-title:hover {
@@ -748,12 +743,12 @@ body {
   position: relative;
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin: 6px 12px;
-  padding: 11px 14px;
-  border-radius: 12px;
+  gap: 8px;
+  margin: 4px 6px;
+  padding: 8px 10px;
+  border-radius: 8px;
   color: #aebed1;
-  font-size: 14px;
+  font-size: 12px;
   border: 1px solid transparent;
   cursor: pointer;
   user-select: none;
@@ -801,14 +796,14 @@ body {
   position: relative;
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin: 4px 12px 4px 28px;
-  padding: 11px 12px;
-  border-radius: 8px;
+  gap: 8px;
+  margin: 3px 6px 3px 18px;
+  padding: 7px 8px;
+  border-radius: 6px;
   color: #8a98ad;
   text-decoration: none;
   border: 1px solid transparent;
-  font-size: 13px;
+  font-size: 11px;
   transition: all 0.2s ease;
 }
 

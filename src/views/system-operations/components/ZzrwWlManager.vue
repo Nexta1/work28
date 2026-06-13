@@ -1082,7 +1082,7 @@ export default {
   font-size: 11px;
 }
 .bsh-txt {
-  color: #415169;
+  color: #94a3b8;
   font-family: monospace;
 }
 .pt-type-tag {
@@ -1352,7 +1352,7 @@ export default {
   align-items: center;
   justify-content: center;
   background: #080e18;
-  color: #415169;
+  color: #94a3b8;
   font-size: 11px;
 }
 .radar-scan-loader {

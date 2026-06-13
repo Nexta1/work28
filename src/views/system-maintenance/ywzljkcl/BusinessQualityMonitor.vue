@@ -1358,7 +1358,7 @@ export default {
 }
 .triple-cell .lbl {
   font-size: 9px;
-  color: #415169;
+  color: #94a3b8;
   transform: scale(0.9);
 }
 .triple-cell .val {
@@ -1577,7 +1577,7 @@ export default {
 }
 .pl-header-lbl {
   font-size: 9px;
-  color: #415169;
+  color: #94a3b8;
 }
 .online-badge {
   font-size: 9px;
@@ -1698,7 +1698,7 @@ export default {
 }
 .sync-meta .time-lbl {
   font-size: 9px;
-  color: #415169;
+  color: #94a3b8;
 }
 .deviation-badge {
   background: #070c14;
@@ -1772,7 +1772,7 @@ export default {
   align-items: center;
   justify-content: space-between;
   font-size: 9px;
-  color: #415169;
+  color: #94a3b8;
 }
 .bar-item .el-progress {
   width: 50%;
@@ -1793,7 +1793,7 @@ export default {
   display: flex;
 }
 .contract-node .c-lbl {
-  color: #415169;
+  color: #94a3b8;
   width: 42px;
 }
 .ellipsis {
@@ -1859,7 +1859,7 @@ export default {
   color: #f59e0b !important;
 }
 .text-gray {
-  color: #415169 !important;
+  color: #94a3b8 !important;
 }
 </style>
 

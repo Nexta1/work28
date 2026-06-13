@@ -1081,7 +1081,7 @@ export default {
   justify-content: center;
   background: #080e18;
   z-index: 10;
-  color: #415169;
+  color: #94a3b8;
   font-size: 11px;
   padding: 0 20px;
   text-align: center;
