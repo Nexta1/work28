@@ -142,6 +142,37 @@
             {{ currentGroupName || '等待数据链同步...' }}
           </div>
         </div>
+
+        <!-- 网络规划信息 -->
+        <div class="network-plan-box" v-if="networkLinks.length > 0">
+          <div class="np-header">
+            <span class="np-title">📡 网络规划信息 ({{ networkLinks.length }})</span>
+            <span class="np-toggle" @click="networkPlanExpanded = !networkPlanExpanded">
+              {{ networkPlanExpanded ? '收起' : '展开' }}
+            </span>
+          </div>
+          <div class="np-body" v-show="networkPlanExpanded">
+            <div
+              v-for="(plan, idx) in networkLinks"
+              :key="idx"
+              class="np-card"
+              @click="selectedNetworkPlan = plan; networkDetailVisible = true"
+            >
+              <div class="np-card-top">
+                <span class="np-idx">#{{ idx + 1 }}</span>
+                <span class="np-type">{{ plan.XXLX === 1 ? '指控' : plan.XXLX === 2 ? '协同' : '情报' }}</span>
+              </div>
+              <div class="np-card-info">
+                <div>源: {{ plan.YPTMC || '平台#' + plan.YPTID }}</div>
+                <div>目: {{ plan.MDPTMC || '平台#' + plan.MDPTID }}</div>
+              </div>
+              <div class="np-card-meta">
+                <span>时延{{ plan.SY || 0 }}ms</span>
+                <span>带宽{{ plan.DK || 0 }}M</span>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -351,6 +382,37 @@
       @select="setCurrentSelectedPt"
     />
 
+    <!-- 网络规划详情弹窗 -->
+    <el-dialog
+      title="📡 链路网络规划详情"
+      :visible.sync="networkDetailVisible"
+      width="600px"
+      append-to-body
+      custom-class="dark-dialog"
+    >
+      <div v-if="selectedNetworkPlan" class="np-detail-grid">
+        <div class="np-detail-item"><label>杀伤链群组</label><span>{{ selectedNetworkPlan.SSLQZID || '-' }}</span></div>
+        <div class="np-detail-item"><label>网络规划编号</label><span class="font-mono">{{ selectedNetworkPlan.SSLWLGHID || '-' }}</span></div>
+        <div class="np-detail-item"><label>源平台ID</label><span class="font-mono">{{ selectedNetworkPlan.YPTID || '-' }}</span></div>
+        <div class="np-detail-item"><label>源平台角色</label><span>{{ selectedNetworkPlan.YPTJS || '-' }}</span></div>
+        <div class="np-detail-item"><label>目标平台ID</label><span class="font-mono">{{ selectedNetworkPlan.MDPTID || '-' }}</span></div>
+        <div class="np-detail-item"><label>目标平台角色</label><span>{{ selectedNetworkPlan.MDPTJS || '-' }}</span></div>
+        <div class="np-detail-item"><label>信息类型</label><span>{{ {1:'指控',2:'协同',3:'情报'}[selectedNetworkPlan.XXLX] || selectedNetworkPlan.XXLX || '-' }}</span></div>
+        <div class="np-detail-item"><label>发送方式</label><span>{{ selectedNetworkPlan.FSFS || '-' }}</span></div>
+        <div class="np-detail-item"><label>带宽</label><span class="font-mono text-orange">{{ selectedNetworkPlan.DK || 0 }} Mbps</span></div>
+        <div class="np-detail-item"><label>时延</label><span class="font-mono text-cyan">{{ selectedNetworkPlan.SY || 0 }} ms</span></div>
+        <div class="np-detail-item"><label>时延抖动下限</label><span class="font-mono">{{ selectedNetworkPlan.SYDDXX || '-' }}</span></div>
+        <div class="np-detail-item"><label>时延抖动上限</label><span class="font-mono">{{ selectedNetworkPlan.SYDDSX || '-' }}</span></div>
+        <div class="np-detail-item"><label>更新率</label><span class="font-mono">{{ selectedNetworkPlan.GXL || '-' }}</span></div>
+        <div class="np-detail-item"><label>更新周期</label><span class="font-mono">{{ selectedNetworkPlan.GXZQ || '-' }}</span></div>
+        <div class="np-detail-item"><label>生存期</label><span class="font-mono">{{ selectedNetworkPlan.SCQ || '-' }}</span></div>
+        <div class="np-detail-item"><label>抗干扰需求</label><span>{{ selectedNetworkPlan.KGRXQ ? '是' : '否' }}</span></div>
+        <div class="np-detail-item"><label>优先级</label><span>{{ {1:'低',2:'中',3:'高'}[selectedNetworkPlan.YXJ] || selectedNetworkPlan.YXJ || '-' }}</span></div>
+        <div class="np-detail-item"><label>前驱任务</label><span>{{ selectedNetworkPlan.QZZRW || '-' }}</span></div>
+        <div class="np-detail-item"><label>更新时间</label><span class="font-mono">{{ selectedNetworkPlan.opTime || '-' }}</span></div>
+      </div>
+    </el-dialog>
+
     <!-- ============================================================
          界面使用引导弹窗
          ============================================================ -->
@@ -490,6 +552,9 @@ export default {
       graphMembers: [], // 传递给画布组件的精简成员属性
       activeKillChainObject: null, // 传递给画布的当前高亮杀伤链快照
       networkLinks: [], // 当前群组的杀伤链网络规划列表 (sslWLGHs)
+      networkPlanExpanded: false, // 网络规划面板展开状态
+      networkDetailVisible: false, // 网络规划详情弹窗
+      selectedNetworkPlan: null, // 当前选中的网络规划条目
       phraseMap: {
         0: '发现',
         1: '定位',
@@ -538,58 +603,79 @@ export default {
         this.isPolling = false
       }, 15000)
     },
+    /**
+     * 核心控制台同步工作流
+     * 作用：根据当前任务，轮询或被动触发更新杀伤链状态、捕捉最新群组变更并加载其成员拓扑数据
+     */
     async runSyncWorkflow() {
       try {
+        // 1. 根据当前任务名称，获取关联的杀伤链数据列表
         const resXX = await getSslxxPage({RWMC: this.currentTaskName})
         this.xxList = resXX.data?.list || resXX.data?.records || []
+
+        // 如果没有杀伤链数据，则清空图谱成员和激活对象，直接中断后续逻辑
         if (this.xxList.length === 0) {
           this.graphMembers = []
           this.activeKillChainObject = null
           return
         }
 
+        // 2. 确定当前需要激活的杀伤链节点
+        // 优先匹配历史记录中的 currentKillChainId，若无（如首次加载）则默认取列表第一条
         const activeItem =
           this.xxList.find(i => i.KILLCHAIN_ID === this.currentKillChainId) ||
           this.xxList[0]
         this.activeKillChainObject = activeItem
 
+        // 如果激活的杀伤链 ID 发生了切换，同步更新并重置上一次的数据指纹
         if (this.currentKillChainId !== activeItem.KILLCHAIN_ID) {
           this.currentKillChainId = activeItem.KILLCHAIN_ID
-          this.lastFingerprint = null
+          this.lastFingerprint = null // 切换链路时，强制重置指纹以重新拉取后续群组
         }
 
+        // 3. 根据确定的杀伤链 ID，获取关联的群组列表
         const resQZ = await getSslqzPage({
           KILLCHAIN_ID: this.currentKillChainId
         })
         const groups = resQZ.data?.list || resQZ.data?.records || []
 
+        // 4. 处理群组数据
         if (groups.length > 0) {
-          const firstGroup = groups[groups.length - 1]
-          const currentGroupId = firstGroup.SSLQZID
+          //【语义化重构】：数组最后一条数据代表当前最新生成或执行到的群组
+          // 使用 ES2022 标准的 .at(-1) 语法获取最后一位，如需兼容老环境可写为：groups[groups.length - 1]
+          const latestGroup = groups[groups.length - 1]
+          const currentGroupId = latestGroup.SSLQZID
+
+          // 5. 生成当前状态的唯一“数据指纹”（群组ID + 杀伤链执行阶段 + 杀伤链状态）
           const currentFingerprint = `${currentGroupId}_${activeItem.KILLCHAIN_EXECUTEPHASE}_${activeItem.KILLCHAIN_STATE}`
 
+          //【防抖节流机制】：如果指纹完全一致，说明数据资产未发生任何实质性变更，直接拦截，避免重复渲染
           if (this.lastFingerprint === currentFingerprint) {
             return
           }
 
+          // 6. 检测当前群组是否发生变更。如果群组 ID 变了，触发前端 UI 的“群组切换”提示动画
           if (this.lastGroupId && this.lastGroupId !== currentGroupId) {
             this.groupNameChanged = true
             setTimeout(() => {
               this.groupNameChanged = false
-            }, 2000)
+            }, 2000) // 2秒后自动重置状态提示
           }
 
+          // 7. 缓存最新的状态数据，供下一次比对使用
           this.lastFingerprint = currentFingerprint
           this.lastGroupId = currentGroupId
-          this.currentGroupName = currentGroupId
+          this.currentGroupName = currentGroupId // 标记当前展示的群组标识
 
-          // 保存当前群组的杀伤链网络规划列表
-          this.networkLinks = firstGroup.sslWLGHs || []
+          // 8. 提取并保存当前最新群组的杀伤链网络规划列表（链路连接关系）
+          this.networkLinks = latestGroup.sslWLGHs || []
+          console.log('当前最新群组的网络连接列表:', latestGroup)
 
-          // 核心拉取动作
+          // 9. 核心动作：传入最新的群组 ID，异步拉取该群组下的具体成员数据（通常用于拓扑图渲染）
           await this.loadMembersData(currentGroupId)
         }
       } catch (e) {
+        // 捕获异步过程中的任何异常，防止阻塞整个控制台主线程
         console.error('控制台同步核心错误:', e)
       }
     },
@@ -628,6 +714,7 @@ export default {
             const ptId = m.Killchain_Group_Member_PltID
             // 附加网络连接信息
             const connections = linkMap[ptId] || []
+            console.log(`平台 ${ptId} 的网络连接:`, linkMap)
             return {
               ...m,
               ptDetail: resPT.data || resPT || {},
@@ -1043,6 +1130,130 @@ export default {
     background: #14b8a6;
     color: #fff;
   }
+}
+
+/* 网络规划信息面板 */
+.network-plan-box {
+  margin-top: 8px;
+  background: #1a2332;
+  border: 1px solid #2a3a52;
+  border-radius: 4px;
+  overflow: hidden;
+}
+.np-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 10px;
+  background: #1e293b;
+  border-bottom: 1px solid #2a3a52;
+}
+.np-title {
+  font-size: 11px;
+  font-weight: bold;
+  color: #38bdf8;
+}
+.np-toggle {
+  font-size: 10px;
+  color: #94a3b8;
+  cursor: pointer;
+  padding: 1px 6px;
+  border: 1px solid #374151;
+  border-radius: 3px;
+}
+.np-toggle:hover {
+  color: #38bdf8;
+  border-color: #38bdf8;
+}
+.np-body {
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 260px;
+  overflow-y: auto;
+}
+.np-card {
+  background: #0f1729;
+  border: 1px solid #243049;
+  border-radius: 4px;
+  padding: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.np-card:hover {
+  border-color: #38bdf8;
+  background: #162438;
+}
+.np-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+.np-idx {
+  font-family: monospace;
+  font-size: 10px;
+  color: #64748b;
+}
+.np-type {
+  font-size: 10px;
+  padding: 1px 6px;
+  border-radius: 3px;
+  background: rgba(56, 189, 248, 0.1);
+  color: #38bdf8;
+  border: 1px solid rgba(56, 189, 248, 0.2);
+}
+.np-card-info {
+  font-size: 11px;
+  color: #cbd5e1;
+  line-height: 1.6;
+}
+.np-card-meta {
+  display: flex;
+  gap: 10px;
+  margin-top: 4px;
+  font-size: 10px;
+  color: #94a3b8;
+  font-family: monospace;
+}
+
+/* 网络规划详情弹窗网格 */
+.np-detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.np-detail-item {
+  background: #0f1729;
+  border: 1px solid #1e293b;
+  border-radius: 4px;
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.np-detail-item label {
+  font-size: 10px;
+  color: #94a3b8;
+  font-weight: bold;
+}
+.np-detail-item span {
+  font-size: 12px;
+  color: #e2e8f0;
+}
+
+/* 暗色弹窗 */
+::v-deep .dark-dialog {
+  background: #0b1321 !important;
+  border: 1px solid #1e3a5f !important;
+}
+::v-deep .dark-dialog .el-dialog__title {
+  color: #38bdf8;
+  font-size: 13px;
+}
+::v-deep .dark-dialog .el-dialog__body {
+  padding: 16px 20px;
 }
 
 /* ==========================================================================

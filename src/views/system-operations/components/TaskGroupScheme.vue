@@ -651,7 +651,7 @@
 import {apiPage, apiAdd, apiUpdate, apiDelete} from '@/api/common.js'
 import {tlywList} from '@/api/map.js'
 import request from '@/utils/request'
-
+import {buildTree} from '@/utils' // 或是相对应的工程路径
 export default {
   name: 'TaskGroupScheme',
   props: {
@@ -763,15 +763,19 @@ export default {
     loadNetworkTreeStructure() {
       const taskId = this.selectedTask?.ZZRWID
       if (!taskId) return
-      request({url: `/rest/zzrwwl/findTree/${taskId}`, method: 'get'})
+      apiPage('zzrwwl', {pageNum: 1, pageSize: 9999, params: {ZZRWID: taskId}})
         .then(res => {
-          const raw = res.data || res.list || res || []
-          // 保证始终为数组（接口可能返回单根节点对象）
-          this.networkTreeOptions = Array.isArray(raw) ? raw : [raw]
-        })
-        .catch(() => {
-          this.networkTreeOptions = []
-        })
+          this.tableData = res.data?.list || res.data || []
+          this.totalCount = res.data?.total || this.tableData.length
+
+          // 运行引入的树合并工具函数，动态计算并转化为级联层次树
+          this.networkTreeOptions = buildTree(
+            this.tableData,
+            'ZZRWWLID',
+            'parentWLID',
+            null
+          )})
+    
     },
     fetchGroupList() {
       this.groupLoading = true

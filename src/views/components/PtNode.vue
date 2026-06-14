@@ -35,7 +35,7 @@
       </div>
       <div v-else class="no-res-placeholder">暂无传感器/武器</div>
       <!-- 网络信息：从 sslWLGHs 杀伤链网络规划获取实际连接 -->
-      <div class="net-info">
+      <!-- <div class="net-info">
         <i class="el-icon-connection"></i>
         <span
           v-if="displayNetConnections.length > 0"
@@ -48,7 +48,7 @@
         </span>
         <span v-else-if="data.netName" class="net-tag">{{ data.netName }}</span>
         <span v-else class="net-tag net-none">未加入网络</span>
-      </div>
+      </div> -->
     </div>
   </div>
 </template>
