@@ -39,24 +39,92 @@
     </div>
 
     <div class="main-canvas-area">
-      <topology-canvas :topology-data="currentTopology" />
+      <topology-canvas
+        :topology-data="currentTopology"
+        :layout-type.sync="layoutType"
+      />
     </div>
 
-    <div class="left-bus-drawer" :class="{'is-hidden': !leftBusVisible}">
+    <!-- 左侧：全量树结构 -->
+    <div class="left-tree-drawer">
+      <div class="tree-header">
+        <Icon icon="mdi:radar" size="13px" style="color: #38bdf8" />
+        <span>拓扑资源树</span>
+      </div>
+      <div class="tree-body">
+        <el-tree
+          :data="treeData"
+          :props="treeProps"
+          default-expand-all
+          node-key="id"
+          :highlight-current="true"
+          size="mini"
+          class="dark-tree"
+        >
+          <span class="custom-tree-node" slot-scope="{node, data}">
+            <span
+              class="tree-dot"
+              :class="data.online ? 'bg-running' : 'bg-offline'"
+            ></span>
+            <span
+              class="tree-icon-wrapper"
+              style="
+                margin-right: 6px;
+                display: inline-flex;
+                align-items: center;
+              "
+            >
+              <Icon
+                :icon="
+                  data.isLeaf
+                    ? 'lucide:monitor'
+                    : data.isMember
+                      ? 'lucide:layers'
+                      : data.isGroup
+                        ? 'lucide:git-fork'
+                        : 'lucide:network'
+                "
+                :size="12"
+                :style="{
+                  color: data.isLeaf
+                    ? '#a855f7'
+                    : data.isMember
+                      ? '#06b6d4'
+                      : data.isGroup
+                        ? '#f59e0b'
+                        : '#38bdf8',
+                  filter: data.isLeaf
+                    ? 'drop-shadow(0 0 3px rgba(168,85,247,0.5))'
+                    : data.isMember
+                      ? 'drop-shadow(0 0 3px rgba(6,182,212,0.5))'
+                      : data.isGroup
+                        ? 'drop-shadow(0 0 3px rgba(245,158,11,0.5))'
+                        : 'drop-shadow(0 0 3px rgba(56,189,248,0.5))'
+                }"
+              />
+            </span>
+            <span class="tree-label-txt">{{ node.label }}</span>
+          </span>
+        </el-tree>
+      </div>
+    </div>
+
+    <!-- 右侧：网络要素态势（默认收缩） -->
+    <div class="right-bus-drawer" :class="{'is-hidden': !rightBusVisible}">
       <div
-        class="drawer-left-trigger"
-        @click="leftBusVisible = !leftBusVisible"
-        :title="leftBusVisible ? '隐藏综合监测舱' : '展开综合监测舱'"
+        class="drawer-right-trigger"
+        @click="rightBusVisible = !rightBusVisible"
+        :title="rightBusVisible ? '隐藏网络要素态势' : '展开网络要素态势'"
       >
         <i
-          :class="leftBusVisible ? 'el-icon-arrow-left' : 'el-icon-arrow-right'"
+          :class="
+            rightBusVisible ? 'el-icon-arrow-right' : 'el-icon-arrow-left'
+          "
         ></i>
-        <span class="trigger-txt">{{
-          leftBusVisible ? '收起面板' : '展开面板'
-        }}</span>
+        <span class="trigger-txt">{{ rightBusVisible ? '收起' : '要素' }}</span>
       </div>
 
-      <div class="drawer-left-body" v-if="leftBusVisible">
+      <div class="drawer-right-body" v-if="rightBusVisible">
         <div class="bus-panel-header">
           <div class="bus-title">
             <div class="animate-pulse-dot"></div>
@@ -95,8 +163,8 @@
               当前周期无流量快照
             </div>
             <div
-              v-for="item in trafficList"
-              :key="'lltj-' + item.XXLLTJID"
+              v-for="(item, tIdx) in trafficList"
+              :key="'lltj-' + tIdx + '-' + item.XXLLTJID"
               class="refined-tactical-row border-ok"
             >
               <div class="row-top-meta font-mono">
@@ -321,7 +389,7 @@ export default {
     return {
       globalLoading: false,
       lastRefreshTime: '',
-      leftBusVisible: true,
+      rightBusVisible: false,
       activeLeftTab: 'xxlltj',
       trafficList: [],
       wlllztDataList: [],
@@ -331,7 +399,34 @@ export default {
         ZZRWID: ''
       },
       currentTopology: [],
-      networkTypeMap: {}
+      networkTypeMap: {},
+      layoutType: 'circular'
+    }
+  },
+  computed: {
+    treeProps() {
+      return {children: 'children', label: 'name'}
+    },
+    treeData() {
+      if (!this.currentTopology || this.currentTopology.length === 0) return []
+      const buildTree = nodes =>
+        nodes.map(n => ({
+          id: n.id,
+          name: n.wlmc || n.name || n.label || n.id,
+          isMember: !!n.nodes,
+          isGroup: !!n.groups,
+          isLeaf: !n.children && !n.groups && !n.nodes,
+          showIcon: !!n.groups || (n.children && !n.groups && !n.nodes),
+          online: !n.nodes,
+          children: n.children
+            ? buildTree(n.children)
+            : n.groups
+              ? buildTree(n.groups)
+              : n.nodes
+                ? buildTree(n.nodes)
+                : undefined
+        }))
+      return buildTree(this.currentTopology)
     }
   },
   mounted() {
@@ -411,7 +506,7 @@ export default {
           }
         })
         .catch(() => {
-          this.currentTopology = []
+          this.currentTopology = transformTopologyData(this.getMockTopology())
         })
         .finally(() => {
           this.globalLoading = false
@@ -454,6 +549,54 @@ export default {
         4: '脱网'
       }
       return statusMap[st] || '未知'
+    },
+    getMockTopology() {
+      return [
+        {
+          ZZRWWLID: 'NET_001',
+          WLMC: '战术核心网',
+          WLLX: '核心网',
+          WLH: '1001',
+          children: [
+            {
+              ZZRWWLID: 'SUB_001',
+              WLMC: '区域接入子网A',
+              WLLX: '子网',
+              zzrwqzwls: [
+                {
+                  ZZRWQZID: 'QZ_881',
+                  QZMC: '海面火力打击群',
+                  zzrwpts: [
+                    {PTID: 'PT_01', PTMC: '辽宁舰指挥中心'},
+                    {PTID: 'PT_02', PTMC: '052D型导弹驱逐舰-1'},
+                    {PTID: 'PT_03', PTMC: '歼-15舰载机-1'},
+                    {PTID: 'PT_04', PTMC: '歼-15舰载机-2'},
+                    {PTID: 'PT_05', PTMC: '预警直升机-1'}
+                  ]
+                }
+              ]
+            },
+            {
+              ZZRWWLID: 'SUB_002',
+              WLMC: '天基接入子网B',
+              WLLX: '子网',
+              zzrwqzwls: [
+                {
+                  ZZRWQZID: 'QZ_882',
+                  QZMC: '多维协同深空侦察编群',
+                  zzrwpts: [
+                    {PTID: 'PT_06', PTMC: '高分侦察卫星-2'},
+                    {PTID: 'PT_07', PTMC: '空警-500预警机'},
+                    {PTID: 'PT_08', PTMC: '地面接收站-3'},
+                    {PTID: 'PT_09', PTMC: '无人机-7'},
+                    {PTID: 'PT_10', PTMC: '预警雷达站-1'}
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
     }
   }
 }
@@ -471,7 +614,7 @@ export default {
 .main-canvas-area {
   position: absolute;
   top: 76px;
-  left: 12px;
+  left: 272px;
   right: 12px;
   bottom: 12px;
   background: #040810;
@@ -556,53 +699,140 @@ export default {
   font-size: 11px;
   font-weight: bold;
 }
-.left-bus-drawer {
+.left-tree-drawer {
   position: absolute;
   top: 76px;
   left: 12px;
+  bottom: 12px;
+  width: 250px;
+  background: rgba(8, 14, 24, 0.92);
+  backdrop-filter: blur(4px);
+  border: 1px solid #111b2b;
+  border-radius: 4px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.tree-header {
+  height: 34px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 12px;
+  font-size: 11px;
+  font-weight: bold;
+  color: #38bdf8;
+  border-bottom: 1px solid #111b2b;
+  flex-shrink: 0;
+}
+.tree-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 6px 0;
+}
+.tree-body ::v-deep .el-tree {
+  background: transparent;
+  border: none;
+  color: #cbd5e1;
+}
+.tree-body ::v-deep .el-tree-node__content {
+  height: 28px;
+  font-size: 11px;
+  color: #94a3b8;
+}
+.tree-body ::v-deep .el-tree-node__content:hover {
+  background: rgba(56, 189, 248, 0.06);
+}
+.tree-body ::v-deep .el-tree-node.is-current > .el-tree-node__content {
+  color: #38bdf8;
+  background: rgba(56, 189, 248, 0.1);
+}
+.tree-body ::v-deep .el-tree-node__expand-icon {
+  color: #64748b;
+  font-size: 10px;
+}
+.tree-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  margin-right: 6px;
+  flex-shrink: 0;
+}
+.tree-dot.bg-running {
+  background: #10b981;
+  box-shadow: 0 0 5px rgba(16, 185, 129, 0.5);
+}
+.tree-dot.bg-offline {
+  background: #64748b;
+}
+.tree-icon-wrapper {
+  margin-right: 6px;
+  display: inline-flex;
+  align-items: center;
+}
+.tree-label-txt {
+  font-size: 11px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.custom-tree-node {
+  display: flex;
+  align-items: center;
+  font-size: 11px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.right-bus-drawer {
+  position: absolute;
+  top: 76px;
+  right: 12px;
   bottom: 12px;
   width: 360px;
   background: rgba(8, 14, 24, 0.9);
   backdrop-filter: blur(4px);
   border: 1px solid #111b2b;
-  box-shadow: 5px 0 25px rgba(0, 0, 0, 0.8);
+  box-shadow: -5px 0 25px rgba(0, 0, 0, 0.8);
   border-radius: 4px;
   z-index: 1000;
   transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
   display: flex;
 }
-.left-bus-drawer.is-hidden {
-  transform: translateX(-372px);
+.right-bus-drawer.is-hidden {
+  transform: translateX(372px);
 }
-.drawer-left-trigger {
+.drawer-right-trigger {
   position: absolute;
-  right: -24px;
+  left: -24px;
   top: 42%;
   width: 24px;
   padding: 14px 0;
   background: #080e18;
   border: 1px solid #111b2b;
-  border-left: none;
-  border-radius: 0 4px 4px 0;
+  border-right: none;
+  border-radius: 4px 0 0 4px;
   cursor: pointer;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 4px;
   color: #38bdf8;
-  box-shadow: 4px 2px 11px rgba(0, 0, 0, 0.4);
+  box-shadow: -4px 2px 11px rgba(0, 0, 0, 0.4);
 }
-.drawer-left-trigger:hover {
+.drawer-right-trigger:hover {
   background: #121f35;
   color: #fff;
 }
-.drawer-left-trigger .trigger-txt {
+.drawer-right-trigger .trigger-txt {
   font-size: 9px;
   writing-mode: vertical-lr;
   letter-spacing: 1px;
   font-weight: bold;
 }
-.drawer-left-body {
+.drawer-right-body {
   flex: 1;
   display: flex;
   flex-direction: column;

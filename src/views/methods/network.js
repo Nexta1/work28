@@ -1,42 +1,38 @@
 const IMAGE_MAP = {
-  // 网络类型图标
-  核心网: 'https://cdn-icons-png.flaticon.com/512/2111/2111303.png',
-  外部网: 'https://cdn-icons-png.flaticon.com/512/711/711284.png',
-  // 成员设备图标
-  手机: 'https://cdn-icons-png.flaticon.com/512/3067/3067451.png',
-  电脑: 'https://cdn-icons-png.flaticon.com/512/3067/3067260.png',
-  默认: 'https://cdn-icons-png.flaticon.com/512/633/633600.png'
+  // 网络类型图标（1-13 对应不同数据链体制）
+  1: '/static/icon-net-1.svg',
+  2: '/static/icon-net-2.svg',
+  3: '/static/icon-net-3.svg',
+  4: '/static/icon-net-4.svg',
+  5: '/static/icon-net-5.svg',
+  6: '/static/icon-net-6.svg',
+  7: '/static/icon-net-7.svg',
+  8: '/static/icon-net-8.svg',
+  9: '/static/icon-net-9.svg',
+  10: '/static/icon-net-10.svg',
+  11: '/static/icon-net-11.svg',
+  12: '/static/icon-net-12.svg',
+  13: '/static/icon-net-13.svg',
+  // 也支持中文名称查找
+  地基接入网: '/static/icon-net-1.svg',
+  天基信息直接入链星弹网: '/static/icon-net-2.svg',
+  天基侦察信息分发网: '/static/icon-net-3.svg',
+  天基接入网: '/static/icon-net-4.svg',
+  宽频段混合组网网: '/static/icon-net-5.svg',
+  视距超视距一体化组网网: '/static/icon-net-6.svg',
+  全向低时延网: '/static/icon-net-7.svg',
+  定向低时延网: '/static/icon-net-8.svg',
+  低成本短距离导弹控制网: '/static/icon-net-9.svg',
+  高频段高带宽网: '/static/icon-net-10.svg',
+  激光频射一体化网: '/static/icon-net-11.svg',
+  波形动态调整网: '/static/icon-net-12.svg',
+  波形在线定义网: '/static/icon-net-13.svg',
+  // 核心节点图标
+  核心网: '/static/icon-network.svg',
+
+  默认: '/static/icon-device.svg'
 }
-/**
- * 图标路径解析函数
- * @param {string} type - 业务类型 (如：核心网, 手机)
- * @returns {string} - 完整的静态资源路径
- */
-/**
- * 根据网络名称模糊匹配静态图标
- * @param {string} wlmc - 传入的网络名称 (例如: "核心网", "卫星设备")
- * @returns {string} - 匹配到的静态资源路径
- */
-export const getIconByWLMC = wlmc => {
-  // 1. 定义你 static 目录下的所有文件名清单
-  const iconFiles = [
-    '1-核心网波形.png',
-    '2-移动终端.png',
-    '3-固定终端.png',
-    '4-卫星链路.png',
-    '5-外部网络.png'
-  ]
 
-  // 2. 查找文件名中包含 wlmc 的项
-  const match = iconFiles.find(fileName => fileName.includes(wlmc))
-
-  // 3. 返回路径，如果没找到则返回默认图标
-  if (match) {
-    return `/static/${match}`
-  }
-
-  return '/static/default-node.png' // 兜底图标
-}
 /**
  * 格式转换函数
  * @param {Array} rawData 后端传递的原始数组
@@ -52,8 +48,8 @@ export const transformTopologyData = rawData => {
       wlmc: net.WLMC,
       wllx: net.WLLX,
       wlh: net.WLH,
-      // 根据 wllx 判断图标
-      icon: IMAGE_MAP[net.wllx] || IMAGE_MAP['默认'],
+      // 根据 WLLX 判断图标
+      icon: IMAGE_MAP[net.WLLX] || IMAGE_MAP['默认'],
 
       // 2. 处理子网层 (Subnet) - 假设后端结构中 children 对应子网
       children: (net.children || []).map(sub => ({
@@ -68,10 +64,9 @@ export const transformTopologyData = rawData => {
 
           // 4. 处理成员节点 (Nodes)
           nodes: (group.zzrwpts || []).map(node => {
+            const ptmc = node.PTMC || node.ptmc || ''
             // 根据 ptmc 字符串包含关系判断图标
             let nodeIcon = IMAGE_MAP['默认']
-            if (node.ptmc.includes('手机')) nodeIcon = IMAGE_MAP['手机']
-            else if (node.ptmc.includes('电脑')) nodeIcon = IMAGE_MAP['电脑']
 
             return {
               id: group.ZZRWQZID + 'qz' + node.PTID + 'pt',
