@@ -164,7 +164,36 @@
             </el-select>
           </el-form-item>
           <el-form-item label="平台分类">
-            <el-input v-model="form.PTFLS" placeholder="多个分类逗号分隔" />
+            <div class="ptfls-tag-wrapper">
+              <el-tag
+                v-for="(tag, idx) in ptflsTagList"
+                :key="idx"
+                closable
+                type="info"
+                size="small"
+                @close="removePtflsTag(idx)"
+              >
+                {{ tag }}
+              </el-tag>
+              <el-input
+                v-if="ptflsInputVisible"
+                ref="ptflsInputRef"
+                v-model="ptflsInputValue"
+                size="mini"
+                class="ptfls-tag-input"
+                @keyup.enter.native="addPtflsTag"
+                @blur="addPtflsTag"
+              />
+              <el-button
+                v-else
+                size="mini"
+                type="text"
+                icon="el-icon-plus"
+                @click="showPtflsInput"
+              >
+                添加分类
+              </el-button>
+            </div>
           </el-form-item>
         </template>
 
@@ -242,8 +271,20 @@
 
         <!-- 武器实例 -->
         <template v-else-if="moduleKey === 'weapon_instance'">
-          <el-form-item label="平台ID" prop="PTID">
-            <el-input-number v-model="form.PTID" :min="0" class="full-width" />
+          <el-form-item label="绑定平台" prop="PTID">
+            <el-select
+              v-model="form.PTID"
+              filterable
+              class="full-width"
+              placeholder="请选择平台"
+            >
+              <el-option
+                v-for="item in ptxxOptions"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              />
+            </el-select>
           </el-form-item>
           <el-form-item label="武器ID" prop="WQID">
             <el-input-number v-model="form.WQID" :min="0" class="full-width" />
@@ -301,8 +342,20 @@
 
         <!-- 传感器实例 -->
         <template v-else-if="moduleKey === 'sensor_instance'">
-          <el-form-item label="平台ID" prop="PTID">
-            <el-input-number v-model="form.PTID" :min="0" class="full-width" />
+          <el-form-item label="绑定平台" prop="PTID">
+            <el-select
+              v-model="form.PTID"
+              filterable
+              class="full-width"
+              placeholder="请选择平台"
+            >
+              <el-option
+                v-for="item in ptxxOptions"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              />
+            </el-select>
           </el-form-item>
           <el-form-item label="传感器ID" prop="CGQID">
             <el-input-number v-model="form.CGQID" :min="0" class="full-width" />
@@ -340,6 +393,7 @@ import {
   getCgqxhInfos,
   getPtxhInfos,
   getPtxhPtlxMap,
+  getPtxxInfos,
   getWqxhInfos,
   normalizeMapOptions
 } from '@/api/resourceManagement.js'
@@ -379,7 +433,7 @@ const MODULE_CONFIG = {
     columns: [
       {prop: 'PTXXID', label: '平台标识', width: 90},
       {prop: 'PTMC', label: '平台名称', minWidth: 130},
-      {prop: 'ptxhmc', label: '平台型号', width: 130},
+      {prop: 'PTXHMC', label: '平台型号', width: 130},
       {prop: 'PTID', label: '平台ID', width: 90},
       {prop: 'PTBSH', label: '编识号', width: 100},
       {prop: 'opTime', label: '操作时间', minWidth: 150}
@@ -438,7 +492,7 @@ const MODULE_CONFIG = {
       {prop: 'WQXXID', label: '武器标识', width: 90},
       {prop: 'WQMC', label: '武器名称', minWidth: 140},
       {prop: 'PTMC', label: '所属平台', width: 120},
-      {prop: 'wqxhmc', label: '武器型号', width: 130},
+      {prop: 'WQXHMC', label: '武器型号', width: 130},
       {prop: 'WQID', label: '武器ID', width: 90},
       {prop: 'opTime', label: '操作时间', minWidth: 150}
     ],
@@ -495,7 +549,7 @@ const MODULE_CONFIG = {
       {prop: 'CGQXXID', label: '传感器标识', width: 100},
       {prop: 'CGQMC', label: '传感器名称', minWidth: 160},
       {prop: 'PTMC', label: '所属平台', width: 120},
-      {prop: 'cgqxhmc', label: '传感器型号', width: 140},
+      {prop: 'CGQXHMC', label: '传感器型号', width: 140},
       {prop: 'CGQID', label: '传感器ID', width: 100},
       {prop: 'opTime', label: '操作时间', minWidth: 150}
     ],
@@ -539,10 +593,17 @@ export default {
       wqlxOptions: WQLX_OPTIONS,
       ptxhOptions: [],
       wqxhOptions: [],
-      cgqxhOptions: []
+      cgqxhOptions: [],
+      ptxxOptions: [],
+      ptflsInputVisible: false,
+      ptflsInputValue: ''
     }
   },
   computed: {
+    ptflsTagList() {
+      if (!this.form.PTFLS) return []
+      return this.form.PTFLS.split(',').filter(t => t.trim())
+    },
     moduleKey() {
       return `${this.domain}_${this.level}`
     },
@@ -596,6 +657,29 @@ export default {
       })
       this.query = q
     },
+
+    // ---- 平台分类标签操作 ----
+    showPtflsInput() {
+      this.ptflsInputVisible = true
+      this.$nextTick(() => {
+        if (this.$refs.ptflsInputRef) this.$refs.ptflsInputRef.focus()
+      })
+    },
+    addPtflsTag() {
+      const val = this.ptflsInputValue.trim()
+      if (val) {
+        const list = [...this.ptflsTagList, val]
+        this.form.PTFLS = list.join(',')
+      }
+      this.ptflsInputVisible = false
+      this.ptflsInputValue = ''
+    },
+    removePtflsTag(idx) {
+      const list = [...this.ptflsTagList]
+      list.splice(idx, 1)
+      this.form.PTFLS = list.join(',')
+    },
+
     handleDomainChange() {
       this.level = 'model'
       this.handleLevelChange()
@@ -607,20 +691,31 @@ export default {
     },
     loadDictionaries() {
       this.promiseAllHandled(
-        [getPtxhPtlxMap(), getPtxhInfos(), getWqxhInfos(), getCgqxhInfos()],
+        [
+          getPtxhPtlxMap(),
+          getPtxhInfos(),
+          getWqxhInfos(),
+          getCgqxhInfos(),
+          getPtxxInfos()
+        ],
         '型号字典加载失败'
       )
-        .then(([ptlxRes, ptxhRes, wqxhRes, cgqxhRes]) => {
+        .then(([ptlxRes, ptxhRes, wqxhRes, cgqxhRes, ptxxRes]) => {
           this.ptlxOptions = normalizeMapOptions(ptlxRes)
           this.ptxhOptions = this.normalizeList(ptxhRes)
           this.wqxhOptions = this.normalizeList(wqxhRes)
           this.cgqxhOptions = this.normalizeList(cgqxhRes)
+          this.ptxxOptions = this.normalizeList(ptxxRes).map(p => ({
+            value: p.PTID,
+            label: `${p.PTMC || p.ptmc || ''} [${p.PTID}]`
+          }))
         })
         .catch(() => {
           this.ptlxOptions = []
           this.ptxhOptions = []
           this.wqxhOptions = []
           this.cgqxhOptions = []
+          this.ptxxOptions = []
         })
     },
     buildQueryParams() {
@@ -730,5 +825,22 @@ export default {
 
 .full-width {
   width: 100%;
+}
+
+.ptfls-tag-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  min-height: 28px;
+}
+
+.ptfls-tag-input {
+  width: 100px;
+}
+
+.ptfls-tag-input .el-input__inner {
+  height: 24px;
+  line-height: 24px;
 }
 </style>

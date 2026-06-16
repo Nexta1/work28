@@ -85,3 +85,7 @@ export function getCgqxhInfos() {
 export function getWqxhInfos() {
   return request({url: '/rest/wqxhInfo/wqxhInfos', method: 'get'})
 }
+
+export function getPtxxInfos() {
+  return request({url: '/rest/ptxx/ptxxs', method: 'get'})
+}

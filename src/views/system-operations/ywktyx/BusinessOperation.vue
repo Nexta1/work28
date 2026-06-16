@@ -638,15 +638,11 @@ export default {
 
         action.then(res => {
           this.$message.success('节点数据同步就绪')
-          const savedData = res.data || res || this.formNode
-          if (this.currentNodeCell) {
-            this.currentNodeCell.setLabel(this.formNode.nodeName)
-            this.currentNodeCell.setData(savedData)
-            if (!isUpdateAction && savedData.businessNodeId) {
-              this.currentNodeCell.id = 'node-' + savedData.businessNodeId
-            }
-          }
           this.dialogNodeVisible = false
+          // 新增节点后端未返回 businessNodeId，重新拉取全量拓扑数据刷新画布
+          if (!isUpdateAction) {
+            this.loadTopologyData()
+          }
         })
       })
     },

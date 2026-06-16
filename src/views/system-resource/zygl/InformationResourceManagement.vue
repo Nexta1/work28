@@ -752,6 +752,14 @@ export default {
         PTXXID: [{required: true, message: '请选择平台', trigger: 'change'}],
         bshSegmentId: [
           {required: true, message: '请选择号段', trigger: 'change'}
+        ],
+        startBsh: [
+          {required: true, message: '请输入起始编识号', trigger: 'blur'},
+          {validator: this.checkPtBshStartBsh, trigger: 'blur'}
+        ],
+        endBsh: [
+          {required: true, message: '请输入终止编识号', trigger: 'blur'},
+          {validator: this.checkPtBshEndBsh, trigger: 'blur'}
         ]
       },
       allocateList: [],
@@ -773,6 +781,14 @@ export default {
         ],
         ptBSHSegmentId: [
           {required: true, message: '请选择号段分配', trigger: 'change'}
+        ],
+        startBsh: [
+          {required: true, message: '请输入起始编识号', trigger: 'blur'},
+          {validator: this.checkAllocateStartBsh, trigger: 'blur'}
+        ],
+        endBsh: [
+          {required: true, message: '请输入终止编识号', trigger: 'blur'},
+          {validator: this.checkAllocateEndBsh, trigger: 'blur'}
         ]
       }
     }
@@ -796,6 +812,82 @@ export default {
     formatPtBshLabel(item) {
       return `${item.PTMC || item.ptmc || ''} [${item.startBsh}-${item.endBsh}]`
     },
+
+    // ---- 号段范围验证 ----
+
+    getSelectedBshSegment() {
+      return this.bshSegmentOptions.find(
+        s => s.bshSegmentId === this.ptBshForm.bshSegmentId
+      )
+    },
+    getSelectedPtBshSegment() {
+      return this.ptBshSegmentOptions.find(
+        s => s.ptBSHSegmentId === this.allocateForm.ptBSHSegmentId
+      )
+    },
+
+    checkPtBshStartBsh(rule, value, callback) {
+      const seg = this.getSelectedBshSegment()
+      if (seg && value < Number(seg.startBsh)) {
+        callback(new Error(`起始号不能小于号段起始值 ${seg.startBsh}`))
+        return
+      }
+      if (
+        this.ptBshForm.endBsh != null &&
+        value > Number(this.ptBshForm.endBsh)
+      ) {
+        callback(new Error('起始号不能大于终止号'))
+        return
+      }
+      callback()
+    },
+    checkPtBshEndBsh(rule, value, callback) {
+      const seg = this.getSelectedBshSegment()
+      if (seg && value > Number(seg.endBsh)) {
+        callback(new Error(`终止号不能大于号段终止值 ${seg.endBsh}`))
+        return
+      }
+      if (
+        this.ptBshForm.startBsh != null &&
+        value < Number(this.ptBshForm.startBsh)
+      ) {
+        callback(new Error('终止号不能小于起始号'))
+        return
+      }
+      callback()
+    },
+
+    checkAllocateStartBsh(rule, value, callback) {
+      const seg = this.getSelectedPtBshSegment()
+      if (seg && value < Number(seg.startBsh)) {
+        callback(new Error(`起始号不能小于号段起始值 ${seg.startBsh}`))
+        return
+      }
+      if (
+        this.allocateForm.endBsh != null &&
+        value > Number(this.allocateForm.endBsh)
+      ) {
+        callback(new Error('起始号不能大于终止号'))
+        return
+      }
+      callback()
+    },
+    checkAllocateEndBsh(rule, value, callback) {
+      const seg = this.getSelectedPtBshSegment()
+      if (seg && value > Number(seg.endBsh)) {
+        callback(new Error(`终止号不能大于号段终止值 ${seg.endBsh}`))
+        return
+      }
+      if (
+        this.allocateForm.startBsh != null &&
+        value < Number(this.allocateForm.startBsh)
+      ) {
+        callback(new Error('终止号不能小于起始号'))
+        return
+      }
+      callback()
+    },
+
     loadMaps() {
       this.promiseAllHandled(
         [getBshSegmentTheaterMap(), getBshSegmentArmyMap()],
