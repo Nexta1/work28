@@ -508,7 +508,7 @@ export default {
             getDevicePredict(sbid),
             mainPage('warnInfo', {
               pageNum: 1,
-              pageSize: 50,
+              pageSize: 10,
               params: {deviceId: sbid}
             })
           ])

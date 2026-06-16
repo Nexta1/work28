@@ -13,14 +13,6 @@
         <div class="legend-node"><span class="dot bg-safe"></span>稳健运行</div>
         <div class="legend-node"><span class="dot bg-warn"></span>轻度越限</div>
         <div class="legend-node"><span class="dot bg-crit"></span>严重告警</div>
-        <el-button
-          size="mini"
-          icon="el-icon-document"
-          class="event-query-btn"
-          @click="eventDrawerVisible = true"
-        >
-          事件查询
-        </el-button>
         <div class="sync-countdown-badge font-num">
           <Icon
             icon="lucide:refresh-cw"
@@ -33,19 +25,6 @@
     </div>
 
     <div class="global-statistics-bar">
-      <div class="stat-card">
-        <div class="stat-lbl">
-          <Icon
-            icon="lucide:globe"
-            :size="12"
-            color="#34d399"
-            style="vertical-align: middle; margin-right: 4px"
-          />链路成功率 (均值)
-        </div>
-        <div class="stat-val text-green font-num">
-          {{ globalStats.avgSuccessRate }}<small>%</small>
-        </div>
-      </div>
       <div class="stat-card">
         <div class="stat-lbl">
           <Icon
@@ -82,7 +61,7 @@
             :size="12"
             color="#f87171"
             style="vertical-align: middle; margin-right: 4px"
-          />实时告警
+          />离线平台
         </div>
         <div
           class="stat-val font-num"
@@ -93,189 +72,9 @@
       </div>
     </div>
 
-    <div class="business-main-layout">
-      <div class="business-column width-30">
+    <div class="business-main-layout two-col-layout">
+      <div class="business-column width-60">
         <div class="sub-panel flex-100">
-          <div class="panel-title-bar">
-            <span class="title">
-              <Icon
-                icon="lucide:activity"
-                :size="12"
-                color="#38bdf8"
-                style="vertical-align: middle; margin-right: 4px"
-              />链路传输质量监测
-            </span>
-          </div>
-
-          <div class="inner-filter-bar grid-2 custom-el-form">
-            <el-input
-              v-model="linkQueryParams.WLMC"
-              @input="fetchLinkDetectPage"
-              placeholder="过滤网络名称..."
-              size="mini"
-              clearable
-            />
-            <el-select
-              v-model="linkQueryParams.LLLX"
-              @change="fetchLinkDetectPage"
-              placeholder="全链路体制类型"
-              size="mini"
-              clearable
-            >
-              <el-option
-                v-for="(val, key) in linkTypeMap"
-                :key="key"
-                :label="val"
-                :value="Number(key)"
-              />
-            </el-select>
-          </div>
-
-          <div class="scroll-wrapper" v-loading="loadingLink">
-            <div v-if="linkDetectList.length === 0" class="empty-holder">
-              未捕捉到链路传输质量遥测数据
-            </div>
-
-            <div
-              v-for="item in linkDetectList"
-              :key="item.wlllDetectId"
-              class="quality-glass-card"
-              :class="[
-                getWarnClass(item.warnLevel),
-                {'is-active': activeLinkId === item.wlllDetectId}
-              ]"
-              @click="selectLink(item)"
-            >
-              <div class="card-row-top">
-                <span class="main-code">
-                  <Icon
-                    icon="lucide:network"
-                    :size="12"
-                    color="#818cf8"
-                    style="vertical-align: middle; margin-right: 3px"
-                  />{{ item.WLMC || '未命名网络' }}
-                  <small class="text-gray"
-                    >(网络号: {{ item.WLH || '-' }})</small
-                  >
-                </span>
-                <span class="status-badge">{{
-                  linkTypeMap[item.LLLX] || '类型' + item.LLLX
-                }}</span>
-              </div>
-
-              <div class="card-id-row font-num">
-                <span class="id-tag">
-                  <Icon
-                    icon="lucide:hash"
-                    :size="10"
-                    color="#94a3b8"
-                    style="vertical-align: middle; margin-right: 2px"
-                  />{{ item.wlllDetectId || '-' }}
-                </span>
-                <span
-                  class="health-score"
-                  :class="getHealthClass(item.healthScore)"
-                >
-                  <Icon
-                    icon="lucide:heart-pulse"
-                    :size="10"
-                    style="vertical-align: middle; margin-right: 2px"
-                  />健康分:
-                  {{ item.healthScore != null ? item.healthScore : '-' }}
-                </span>
-                <span
-                  class="anomaly-tag"
-                  :class="getAnomalyClass(item.anomalyStatus)"
-                >
-                  {{ getAnomalyText(item.anomalyStatus) }}
-                </span>
-              </div>
-
-              <div class="metrics-triple-grid">
-                <div class="triple-cell">
-                  <div class="lbl">传输成功率</div>
-                  <div
-                    class="val font-num"
-                    :class="item.successRate < 0.95 ? 'text-red' : 'text-green'"
-                  >
-                    {{ (item.successRate * 100).toFixed(1) }}%
-                  </div>
-                </div>
-                <div class="triple-cell">
-                  <div class="lbl">平均时延(MS)</div>
-                  <div class="val font-num text-cyan">
-                    {{ item.delayAvg != null ? item.delayAvg : 0 }}
-                    <small>ms</small>
-                  </div>
-                </div>
-                <div class="triple-cell">
-                  <div class="lbl">时延抖动</div>
-                  <div class="val font-num text-orange">
-                    {{ item.delayJitter != null ? item.delayJitter : 0 }}
-                    <small>ms</small>
-                  </div>
-                </div>
-              </div>
-
-              <div class="card-row-nodes font-num">
-                <span :title="'源平台编识号: ' + (item.PT1BSH || '-')">
-                  <Icon
-                    icon="lucide:log-out"
-                    :size="12"
-                    color="#fbbf24"
-                    style="vertical-align: middle; margin-right: 3px"
-                  />源: #{{ item.PT1BSH || '-' }}
-                  <small class="text-gray" v-if="item.PT1MC"
-                    >({{ item.PT1MC }})</small
-                  >
-                </span>
-                <span :title="'目的平台编识号: ' + (item.PT2BSH || '-')">
-                  <Icon
-                    icon="lucide:log-in"
-                    :size="12"
-                    color="#34d399"
-                    style="vertical-align: middle; margin-right: 3px"
-                  />目的: #{{ item.PT2BSH || '-' }}
-                  <small class="text-gray" v-if="item.PT2MC"
-                    >({{ item.PT2MC }})</small
-                  >
-                </span>
-              </div>
-
-              <div class="card-time-row font-num">
-                <Icon
-                  icon="lucide:clock"
-                  :size="10"
-                  color="#94a3b8"
-                  style="vertical-align: middle; margin-right: 3px"
-                />检测时间: {{ formatTime(item.TIME) }}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="business-column width-40">
-        <div class="sub-panel flex-50 bg-chart-radar">
-          <div class="panel-title-bar">
-            <span class="title">
-              <Icon
-                icon="lucide:trending-up"
-                :size="12"
-                color="#a78bfa"
-                style="vertical-align: middle; margin-right: 4px"
-              />当前链路效能历史演进趋势
-            </span>
-            <span class="active-node-desc text-cyan" v-if="activeLinkName"
-              >当前激活: {{ activeLinkName }}</span
-            >
-          </div>
-          <div class="chart-container-box">
-            <div ref="linkTrendChart" class="echart-container"></div>
-          </div>
-        </div>
-
-        <div class="sub-panel flex-50">
           <div class="panel-title-bar">
             <span class="title">
               <Icon
@@ -427,7 +226,7 @@
         </div>
       </div>
 
-      <div class="business-column width-30">
+      <div class="business-column width-40">
         <div class="sub-panel flex-35">
           <div class="panel-title-bar">
             <span class="title">
@@ -581,62 +380,44 @@
         </div>
       </div>
     </div>
-    <EventQueryDrawer
-      :visible="eventDrawerVisible"
-      page-title="业务质量监控"
-      @close="eventDrawerVisible = false"
-    />
   </div>
 </template>
 
 <script>
 import * as echarts from 'echarts'
-import EventQueryDrawer from '../components/EventQueryDrawer.vue'
 import {
   getPlatformPage,
   getServiceInfoPage,
   getZzrwqzPage
 } from '@/api/platform'
-import {wlllDetect} from '@/api/network'
-import {wllxMap} from '@/api/map'
 
 export default {
   name: 'BusinessQualityMonitor',
-  components: {
-  },
+  components: {},
   data() {
     return {
       eventDrawerVisible: false,
-      loadingLink: false,
       loadingTimeSync: false,
       loadingTask: false,
       loadingService: false,
       globalPollingTimer: null,
 
-      linkDetectList: [],
       timeSyncList: [],
       taskGroupList: [],
       serviceList: [],
 
       globalStats: {
-        avgSuccessRate: '99.2',
         activeGroups: 0,
         totalServices: 0,
         alertCount: 0
       },
 
-      linkQueryParams: {WLMC: '', LLLX: ''},
       taskQueryParams: {QZMC: '', RWMC: ''},
       serviceQueryParams: {serviceName: '', serviceStatus: ''},
 
       pageConfig: {pageNum: 1, pageSize: 50},
 
       chartIns: null,
-      activeLinkId: null,
-      activeLinkName: '',
-      chartHistory: {timeline: [], successRate: [], delay: [], jitter: []},
-
-      linkTypeMap: {},
       platformVisibleLimit: 6
     }
   },
@@ -646,61 +427,26 @@ export default {
       this.executeSilentSyncWorkflow()
     }, 15000)
   },
-  mounted() {
-    this.$nextTick(() => {
-      this.initTrendChart()
-    })
-    window.addEventListener('resize', this.resizeChart)
-  },
+  mounted() {},
   beforeDestroy() {
     if (this.globalPollingTimer) clearInterval(this.globalPollingTimer)
-    window.removeEventListener('resize', this.resizeChart)
     if (this.chartIns) this.chartIns.dispose()
   },
   methods: {
     async initialMasterWorkflow() {
-      this.loadingLink = true
       this.loadingTimeSync = true
       this.loadingTask = true
       this.loadingService = true
 
       await Promise.all([
-        this.fetchLinkDetectPage(),
         this.fetchTimeSyncPage(),
         this.fetchTaskGroupPage(),
-        this.fetchServicePage(),
-        this.fetchLinkTypeMap()
+        this.fetchServicePage()
       ])
 
-      this.loadingLink = false
       this.loadingTimeSync = false
       this.loadingTask = false
       this.loadingService = false
-
-      if (this.linkDetectList.length > 0) {
-        this.selectLink(this.linkDetectList[0])
-      }
-    },
-
-    async fetchLinkDetectPage() {
-      try {
-        const payload = {
-          pageNum: this.pageConfig.pageNum,
-          pageSize: this.pageConfig.pageSize,
-          params: {
-            WLMC: this.linkQueryParams.WLMC || undefined,
-            LLLX:
-              this.linkQueryParams.LLLX !== ''
-                ? Number(this.linkQueryParams.LLLX)
-                : undefined
-          }
-        }
-        const res = await wlllDetect(payload)
-        this.linkDetectList = res?.data?.list || []
-        this.calculateGlobalStats()
-      } catch (e) {
-        console.warn('链路质量接口访问阻断')
-      }
     },
 
     async fetchTimeSyncPage() {
@@ -797,31 +543,6 @@ export default {
       }
     },
 
-    async fetchLinkTypeMap() {
-      try {
-        const res = await wllxMap()
-        if (res?.data) {
-          this.linkTypeMap = res.data
-        }
-      } catch (e) {
-        console.warn('链路类型映射获取失败，使用默认值')
-        this.linkTypeMap = {
-          1: '地基接入网',
-          2: '天基信息直接入链星弹网',
-          3: '天基侦察信息分发网',
-          4: '天基接入网',
-          5: '宽频段混合组网网',
-          6: '视距/超视距一体化组网网',
-          7: '全向低时延网',
-          8: '定向低时延网',
-          9: '低成本短距离导弹控制网',
-          10: '高频段高带宽网',
-          11: '激光频射一体化网',
-          12: '波形动态调整网',
-          13: '波形在线定义网'
-        }
-      }
-    },
     async fetchServicePage() {
       try {
         const payload = {
@@ -881,204 +602,26 @@ export default {
       }
     },
 
-    selectLink(item) {
-      this.activeLinkId = item.wlllDetectId
-      this.activeLinkName = item.WLMC
-      this.chartHistory = {timeline: [], successRate: [], delay: [], jitter: []}
-
-      for (let i = 5; i > 0; i--) {
-        const d = new Date(Date.now() - i * 15000)
-        const timeStr = d.toLocaleTimeString('zh-CN', {hour12: false})
-        this.chartHistory.timeline.push(timeStr)
-        this.chartHistory.successRate.push(
-          (item.successRate * 100 - Math.random() * 2).toFixed(1)
-        )
-        this.chartHistory.delay.push(
-          Math.floor(item.delayAvg + (Math.random() * 10 - 5))
-        )
-        this.chartHistory.jitter.push(
-          Math.floor(item.delayJitter + (Math.random() * 4 - 2))
-        )
-      }
-      this.renderTrendChart()
-    },
-
     async executeSilentSyncWorkflow() {
       await Promise.all([
-        this.fetchLinkDetectPage(),
         this.fetchTimeSyncPage(),
         this.fetchTaskGroupPage(),
-        this.fetchServicePage(),
-        this.fetchLinkTypeMap()
+        this.fetchServicePage()
       ])
-
-      if (this.activeLinkId) {
-        const curLink = this.linkDetectList.find(
-          l => l.wlllDetectId === this.activeLinkId
-        )
-        if (curLink) {
-          const nowStr = new Date().toLocaleTimeString('zh-CN', {hour12: false})
-          this.chartHistory.timeline.push(nowStr)
-          this.chartHistory.successRate.push(
-            (curLink.successRate * 100).toFixed(1)
-          )
-          this.chartHistory.delay.push(curLink.delayAvg)
-          this.chartHistory.jitter.push(curLink.delayJitter)
-
-          if (this.chartHistory.timeline.length > 12) {
-            this.chartHistory.timeline.shift()
-            this.chartHistory.successRate.shift()
-            this.chartHistory.delay.shift()
-            this.chartHistory.jitter.shift()
-          }
-          this.renderTrendChart()
-        }
-      }
     },
 
     calculateGlobalStats() {
-      if (this.linkDetectList.length > 0) {
-        const sum = this.linkDetectList.reduce(
-          (acc, cur) => acc + (cur.successRate || 0),
-          0
-        )
-        this.globalStats.avgSuccessRate = (
-          (sum / this.linkDetectList.length) *
-          100
-        ).toFixed(1)
-      }
       this.globalStats.activeGroups = this.taskGroupList.filter(
         t => t.QZSTATE === 1
       ).length
       this.globalStats.totalServices = this.serviceList.length
 
-      const critLinks = this.linkDetectList.filter(
-        l => l.warnLevel === 3 || l.warnLevel === '3'
-      ).length
       const deadServices = this.serviceList.filter(
         s => Number(s.serviceStatus) === 1
       ).length
-      this.globalStats.alertCount = critLinks + deadServices
+      this.globalStats.alertCount = deadServices
     },
 
-    initTrendChart() {
-      const el = this.$refs.linkTrendChart
-      if (!el || el.clientWidth === 0 || el.clientHeight === 0) return
-      this.chartIns = echarts.init(el, 'dark')
-      this.renderTrendChart()
-    },
-    renderTrendChart() {
-      if (!this.chartIns) return
-      this.chartIns.setOption(
-        {
-          backgroundColor: 'transparent',
-          tooltip: {
-            trigger: 'axis',
-            backgroundColor: '#070c14',
-            borderColor: '#172438'
-          },
-          legend: {
-            data: ['传输成功率(%)', '平均延迟(ms)', '时延抖动(ms)'],
-            bottom: 0,
-            textStyle: {color: '#94a3b8', fontSize: 10}
-          },
-          grid: {top: 45, bottom: 45, left: 35, right: 35},
-          xAxis: {
-            type: 'category',
-            data: this.chartHistory.timeline,
-            axisLine: {lineStyle: {color: '#111b2b'}},
-            axisLabel: {color: '#94a3b8', fontSize: 9}
-          },
-          yAxis: [
-            {
-              type: 'value',
-              name: '成功率',
-              min: 80,
-              max: 100,
-              splitLine: {show: false}
-            },
-            {
-              type: 'value',
-              name: '时延/ms',
-              position: 'right',
-              splitLine: {lineStyle: {color: '#111b2b'}}
-            }
-          ],
-          series: [
-            {
-              name: '传输成功率(%)',
-              type: 'line',
-              smooth: true,
-              itemStyle: {color: '#10b981'},
-              data: this.chartHistory.successRate,
-              yAxisIndex: 0
-            },
-            {
-              name: '平均延迟(ms)',
-              type: 'bar',
-              barWidth: 8,
-              itemStyle: {color: '#3b82f6', opacity: 0.7},
-              data: this.chartHistory.delay,
-              yAxisIndex: 1
-            },
-            {
-              name: '时延抖动(ms)',
-              type: 'line',
-              smooth: true,
-              itemStyle: {color: '#ef4444'},
-              data: this.chartHistory.jitter,
-              yAxisIndex: 1
-            }
-          ]
-        },
-        true
-      )
-    },
-    resizeChart() {
-      if (this.chartIns) this.chartIns.resize()
-    },
-    getWarnClass(level) {
-      if (level === 3 || level === '3') return 'lvl-crit'
-      if (level === 2 || level === '2') return 'lvl-warn'
-      if (level === 1 || level === '1') return 'lvl-warn'
-      return 'lvl-safe'
-    },
-    getHealthClass(score) {
-      if (score == null) return ''
-      if (score >= 98) return 'health-excellent'
-      if (score >= 90) return 'health-warning'
-      return 'health-critical'
-    },
-    getAnomalyClass(status) {
-      if (status === 0 || status === '0') return 'anomaly-no'
-      if (status >= 1) return 'anomaly-yes'
-      return ''
-    },
-    getAnomalyText(status) {
-      if (status === 0 || status === '0') return '正常'
-      if (status === 1 || status === '1') return '轻度异常'
-      if (status === 2 || status === '2') return '中度异常'
-      if (status === 3 || status === '3') return '严重异常'
-      return '未知'
-    },
-    formatTime(timestamp) {
-      if (!timestamp) return '-'
-      const d = new Date(Number(timestamp))
-      const pad = n => String(n).padStart(2, '0')
-      return (
-        d.getFullYear() +
-        '-' +
-        pad(d.getMonth() + 1) +
-        '-' +
-        pad(d.getDate()) +
-        ' ' +
-        pad(d.getHours()) +
-        ':' +
-        pad(d.getMinutes()) +
-        ':' +
-        pad(d.getSeconds())
-      )
-    },
     getTaskStateText(s) {
       return {0: '新建', 1: '在线', 2: '离线'}[s] || '未知'
     },
@@ -1101,10 +644,43 @@ export default {
 </script>
 
 <style scoped>
+/* ===== 全局动画关键帧 ===== */
+@keyframes fadeSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulseGlow {
+  0%,
+  100% {
+    box-shadow: 0 0 4px rgba(56, 189, 248, 0);
+  }
+  50% {
+    box-shadow: 0 0 16px rgba(56, 189, 248, 0.2);
+  }
+}
+
+@keyframes countPulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
 .business-screen-container {
   width: 100%;
   height: 100%;
   background-color: #03060c;
+  color: #cbd5e1;
   color: #cbd5e1;
   display: flex;
   flex-direction: column;
@@ -1136,10 +712,7 @@ export default {
   align-items: center;
   gap: 14px;
 }
-.global-legend .event-query-btn {
-  margin: 0 4px;
-}
-.legend-node {
+.global-legend {
   display: flex;
   align-items: center;
   gap: 6px;
@@ -1171,7 +744,7 @@ export default {
 /* 2. 数据大屏核心统计带 */
 .global-statistics-bar {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 12px;
   margin: 11px 0;
   flex-shrink: 0;
@@ -1184,7 +757,36 @@ export default {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  animation: fadeSlideUp 0.5s ease both;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
 }
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #38bdf8, transparent);
+  opacity: 0.4;
+}
+.stat-card:hover {
+  border-color: #1e3a5f;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+.stat-card:nth-child(1) {
+  animation-delay: 0s;
+}
+.stat-card:nth-child(2) {
+  animation-delay: 0.1s;
+}
+.stat-card:nth-child(3) {
+  animation-delay: 0.2s;
+}
+
 .stat-lbl {
   font-size: 11px;
   color: #94a3b8;
@@ -1195,6 +797,7 @@ export default {
   font-size: 22px;
   font-weight: bold;
   letter-spacing: -0.5px;
+  animation: pulseGlow 3s ease-in-out infinite;
 }
 .stat-val small {
   font-size: 11px;
@@ -1211,17 +814,17 @@ export default {
   height: calc(100% - 130px);
   min-height: 0;
 }
+.two-col-layout .width-60 {
+  width: 60%;
+}
+.two-col-layout .width-40 {
+  width: 40%;
+}
 .business-column {
   display: flex;
   flex-direction: column;
   gap: 12px;
   min-height: 0;
-}
-.width-30 {
-  width: 30%;
-}
-.width-40 {
-  width: 40%;
 }
 
 .sub-panel {
@@ -1461,12 +1064,31 @@ export default {
   border-left: 3px solid #3b82f6;
   border-radius: 3px;
   padding: 10px 11px;
-  transition: all 0.15s ease;
+  transition: all 0.3s ease;
+  animation: fadeSlideUp 0.5s ease both;
+  position: relative;
+}
+.task-group-dashboard:nth-child(1) {
+  animation-delay: 0s;
+}
+.task-group-dashboard:nth-child(2) {
+  animation-delay: 0.08s;
+}
+.task-group-dashboard:nth-child(3) {
+  animation-delay: 0.16s;
+}
+.task-group-dashboard:nth-child(4) {
+  animation-delay: 0.24s;
+}
+.task-group-dashboard:nth-child(5) {
+  animation-delay: 0.32s;
 }
 .task-group-dashboard:hover {
   background: #111b2f;
   border-color: #2d4a7a;
   border-left-color: #60a5fa;
+  transform: translateX(3px);
+  box-shadow: 0 2px 16px rgba(56, 189, 248, 0.08);
 }
 .task-top-meta {
   display: flex;
@@ -1683,6 +1305,21 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  animation: fadeSlideUp 0.5s ease both;
+  transition: all 0.3s ease;
+}
+.sync-compact-row:nth-child(1) {
+  animation-delay: 0s;
+}
+.sync-compact-row:nth-child(2) {
+  animation-delay: 0.08s;
+}
+.sync-compact-row:nth-child(3) {
+  animation-delay: 0.16s;
+}
+.sync-compact-row:hover {
+  border-color: #1e3a5f;
+  transform: translateX(2px);
 }
 .sync-meta {
   display: flex;
@@ -1720,6 +1357,25 @@ export default {
   border: 1px solid #172438;
   border-radius: 3px;
   padding: 8px;
+  animation: fadeSlideUp 0.5s ease both;
+  transition: all 0.3s ease;
+}
+.service-mesh-card:nth-child(1) {
+  animation-delay: 0s;
+}
+.service-mesh-card:nth-child(2) {
+  animation-delay: 0.08s;
+}
+.service-mesh-card:nth-child(3) {
+  animation-delay: 0.16s;
+}
+.service-mesh-card:nth-child(4) {
+  animation-delay: 0.24s;
+}
+.service-mesh-card:hover {
+  border-color: #2d4a7a;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
 }
 .border-alive {
   border-top: 2px solid #10b981;
