@@ -6,6 +6,14 @@
         设备状态智能监控诊断
         <span class="ai-badge">人工智能分析引擎</span>
       </div>
+      <el-button
+        size="mini"
+        type="primary"
+        :icon="dataRefreshing ? 'el-icon-loading' : 'el-icon-refresh'"
+        :disabled="dataRefreshing"
+        @click="fetchAllData"
+        >刷新数据</el-button
+      >
     </div>
 
     <div class="main-body">
@@ -78,7 +86,7 @@
             <span class="card-corner-inner"></span>
             <span class="card-corner-inner2"></span>
             <div class="card-title">设备实时运行状态</div>
-            <div class="status-wrap">
+            <div class="status-wrap" :class="{'data-pulse': dataRefreshing}">
               <div class="status-item">
                 <Icon
                   icon="lucide:cpu"
@@ -356,7 +364,8 @@ export default {
       mergedChart: null,
 
       // 轮询定时器
-      refreshTimer: null
+      refreshTimer: null,
+      dataRefreshing: false
     }
   },
   computed: {
@@ -498,6 +507,7 @@ export default {
      */
     async fetchAllData() {
       if (!this.selectedDevice) return
+      this.dataRefreshing = true
       const sbid = Number(this.selectedDevice)
 
       try {
@@ -527,6 +537,8 @@ export default {
         }
       } catch (e) {
         console.error('数据拉取失败', e)
+      } finally {
+        this.dataRefreshing = false
       }
     },
 
@@ -1565,6 +1577,23 @@ export default {
   background: rgba(5, 11, 20, 0.6);
   border-color: rgba(56, 189, 248, 0.2);
   box-shadow: 0 0 12px rgba(56, 189, 248, 0.05);
+}
+/* 数据刷新脉冲 */
+.data-pulse .status-item {
+  animation: refreshPulse 0.6s ease;
+}
+@keyframes refreshPulse {
+  0% {
+    box-shadow: 0 0 0 rgba(56, 189, 248, 0);
+  }
+  50% {
+    box-shadow:
+      inset 0 0 20px rgba(56, 189, 248, 0.08),
+      0 0 15px rgba(56, 189, 248, 0.06);
+  }
+  100% {
+    box-shadow: 0 0 0 rgba(56, 189, 248, 0);
+  }
 }
 .status-icon {
   flex-shrink: 0;

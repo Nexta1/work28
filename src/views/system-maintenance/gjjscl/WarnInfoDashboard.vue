@@ -210,7 +210,7 @@
                   <el-button
                     size="mini"
                     type="warning"
-                    icon="el-icon-connection"
+                    icon="el-icon-aim"
                     class="custom-diagnosis-btn"
                     @click="handleFaultDiagnosis(scope.row)"
                     >故障诊断</el-button

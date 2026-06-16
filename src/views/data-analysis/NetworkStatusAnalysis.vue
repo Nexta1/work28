@@ -9,7 +9,8 @@
       <el-button
         size="mini"
         type="primary"
-        icon="el-icon-refresh"
+        :icon="dataRefreshing ? 'el-icon-loading' : 'el-icon-refresh'"
+        :disabled="dataRefreshing"
         @click="refresh"
         >刷新数据</el-button
       >
@@ -40,7 +41,12 @@
                 <span class="device-name">{{ d.label }}</span>
               </div>
               <div class="device-card-metrics">
-                <span class="metric text-blue">WLH {{ d.wlh }}</span>
+                <span class="metric coord-tag"
+                  >WLH: <b>{{ d.wlh }}</b></span
+                >
+                <span class="metric coord-tag"
+                  >LLH: <b>{{ d.llh }}</b></span
+                >
               </div>
             </div>
           </div>
@@ -66,8 +72,13 @@
             <div class="card-glow"></div>
             <span class="card-corner-inner"></span>
             <span class="card-corner-inner2"></span>
-            <div class="card-title">链路实时运行指标</div>
-            <div class="status-wrap">
+            <div class="card-title">
+              链路实时运行指标
+              <span class="active-coord" v-if="selectedNetwork"
+                >WLH:{{ currentWLH }} LLH:{{ currentLLH }}</span
+              >
+            </div>
+            <div class="status-wrap" :class="{'data-pulse': dataRefreshing}">
               <div class="status-item">
                 <Icon
                   icon="lucide:shield"
@@ -334,7 +345,8 @@ export default {
       mergedChart: null,
 
       // 轮询
-      refreshTimer: null
+      refreshTimer: null,
+      dataRefreshing: false
     }
   },
   computed: {
@@ -458,6 +470,7 @@ export default {
      */
     async fetchAllData() {
       if (!this.selectedNetwork) return
+      this.dataRefreshing = true
 
       try {
         const [latestRes, tenMinRes, predictRes, warnRes] =
@@ -481,6 +494,8 @@ export default {
         if (warnRes.status === 'fulfilled') this.applyWarnData(warnRes.value)
       } catch (e) {
         console.error('数据拉取失败', e)
+      } finally {
+        this.dataRefreshing = false
       }
     },
 
@@ -787,7 +802,7 @@ export default {
           textStyle: {color: '#e2e8f0', fontSize: 10},
           bottom: 0
         },
-        grid: {left: '6%', right: '8%', top: '10%', bottom: '18%'},
+        grid: {left: '7%', right: '5%', top: '10%', bottom: '18%'},
         xAxis: {
           type: 'category',
           axisLabel: {color: '#94a3b8', fontSize: 10},
@@ -798,10 +813,9 @@ export default {
         yAxis: [
           {
             type: 'value',
-            min: 0,
             position: 'left',
-            name: '(ms)',
-            nameTextStyle: {color: '#64748b', fontSize: 9},
+            name: '时延(ms)',
+            nameTextStyle: {color: '#f59e0b', fontSize: 9},
             axisLabel: {color: '#f59e0b', fontSize: 9},
             splitLine: {lineStyle: {color: 'rgba(255,255,255,0.06)'}},
             axisLine: {show: false},
@@ -812,9 +826,20 @@ export default {
             min: 0,
             max: 100,
             position: 'right',
-            name: '(分/%)',
+            name: '分/%',
             nameTextStyle: {color: '#64748b', fontSize: 9},
             axisLabel: {color: '#94a3b8', fontSize: 9},
+            splitLine: {show: false},
+            axisLine: {show: false},
+            axisTick: {show: false}
+          },
+          {
+            type: 'value',
+            position: 'left',
+            offset: -40,
+            name: '抖动(ms)',
+            nameTextStyle: {color: '#ef4444', fontSize: 9},
+            axisLabel: {color: '#ef4444', fontSize: 9},
             splitLine: {show: false},
             axisLine: {show: false},
             axisTick: {show: false}
@@ -858,7 +883,7 @@ export default {
             name: '抖动',
             type: 'line',
             smooth: true,
-            yAxisIndex: 0,
+            yAxisIndex: 2,
             data: [],
             lineStyle: {color: '#ef4444', width: 2},
             itemStyle: {color: '#ef4444'},
@@ -1134,6 +1159,27 @@ export default {
 .device-card-metrics .metric {
   font-variant-numeric: tabular-nums;
   color: #94a3b8;
+}
+.coord-tag {
+  background: rgba(56, 189, 248, 0.08);
+  border: 1px solid rgba(56, 189, 248, 0.15);
+  padding: 1px 6px;
+  border-radius: 3px;
+  font-size: 10px;
+}
+.coord-tag b {
+  color: #38bdf8;
+}
+.active-coord {
+  font-size: 10px;
+  font-weight: normal;
+  color: #f59e0b;
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.2);
+  padding: 1px 10px;
+  border-radius: 3px;
+  margin-left: auto;
+  font-family: monospace;
 }
 .load-more-tip {
   text-align: center;
@@ -1415,6 +1461,23 @@ export default {
   background: rgba(5, 11, 20, 0.6);
   border-color: rgba(56, 189, 248, 0.2);
   box-shadow: 0 0 12px rgba(56, 189, 248, 0.05);
+}
+/* 数据刷新脉冲 */
+.data-pulse .status-item {
+  animation: refreshPulse 0.6s ease;
+}
+@keyframes refreshPulse {
+  0% {
+    box-shadow: 0 0 0 rgba(56, 189, 248, 0);
+  }
+  50% {
+    box-shadow:
+      inset 0 0 20px rgba(56, 189, 248, 0.08),
+      0 0 15px rgba(56, 189, 248, 0.06);
+  }
+  100% {
+    box-shadow: 0 0 0 rgba(56, 189, 248, 0);
+  }
 }
 .status-label {
   font-size: 11px;
