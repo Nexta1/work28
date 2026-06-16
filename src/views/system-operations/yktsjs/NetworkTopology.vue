@@ -133,241 +133,225 @@
           <div class="bus-timer font-mono">{{ lastRefreshTime }}</div>
         </div>
 
-        <div class="tactical-btn-tabs">
-          <button
-            class="tab-btn"
-            :class="{active: activeLeftTab === 'xxlltj'}"
-            @click="activeLeftTab = 'xxlltj'"
-          >
-            流量
-          </button>
-          <button
-            class="tab-btn"
-            :class="{active: activeLeftTab === 'wlllzt'}"
-            @click="activeLeftTab = 'wlllzt'"
-          >
-            链路状态
-          </button>
-          <button
-            class="tab-btn"
-            :class="{active: activeLeftTab === 'xxfsjg'}"
-            @click="activeLeftTab = 'xxfsjg'"
-          >
-            发送结果
-          </button>
-        </div>
-
-        <div class="tab-content-container">
-          <div v-if="activeLeftTab === 'xxlltj'" class="tab-scroll-pane">
-            <div v-if="trafficList.length === 0" class="empty-hint-dark">
-              当前周期无流量快照
-            </div>
-            <div
-              v-for="(item, tIdx) in trafficList"
-              :key="'lltj-' + tIdx + '-' + item.XXLLTJID"
-              class="refined-tactical-row border-ok"
-            >
-              <div class="row-top-meta font-mono">
-                <span class="time-node">
-                  <Icon icon="mdi:clock-outline" size="11px" /> 时间:
-                  {{ formatTime(item.SJ) }}
-                </span>
-                <span class="wlh-tag">网号: {{ item.WLH }}</span>
+        <el-tabs v-model="activeLeftTab" class="info-tabs" stretch>
+          <el-tab-pane label="流量" name="xxlltj">
+            <div class="tab-scroll-pane">
+              <div v-if="trafficList.length === 0" class="empty-hint-light">
+                当前周期无流量快照
               </div>
+              <div
+                v-for="(item, tIdx) in trafficList"
+                :key="'lltj-' + tIdx + '-' + item.XXLLTJID"
+                class="info-card info-card-ok"
+              >
+                <div class="row-top-meta font-mono">
+                  <span class="time-node">
+                    <Icon icon="mdi:clock-outline" size="11px" /> 时间:
+                    {{ formatTime(item.SJ) }}
+                  </span>
+                  <span class="wlh-tag">网号: {{ item.WLH }}</span>
+                </div>
 
-              <div class="vector-route-pipeline">
-                <div class="vector-node">
-                  <span class="name text-cyan">{{
-                    item.PT1MC || '源平台'
-                  }}</span>
-                  <span class="id font-mono">#{{ item.PT1BSH }}</span>
-                </div>
-                <div class="vector-arrow">
-                  <span class="link-lbl">代码: {{ item.XXDM }}</span>
-                  <div class="line-body"></div>
-                </div>
-                <div class="vector-node text-right">
-                  <span class="name text-green">{{
-                    item.PT2MC || '目的平台'
-                  }}</span>
-                  <span class="id font-mono">#{{ item.PT2BSH }}</span>
-                </div>
-              </div>
-
-              <div class="row-footer-details font-mono">
-                <div class="detail-line">
-                  <span class="lbl">链路体制:</span>
-                  <span class="text-white truncate" :title="item.LLLXMC">{{
-                    item.LLLXMC || '常规通信链路'
-                  }}</span>
-                </div>
-                <div class="data-matrix-counter">
-                  <div class="counter-box tx">
-                    <span class="lbl">发送:</span
-                    ><span class="val">{{ item.FSXXTS }}</span>
+                <div class="vector-route-pipeline">
+                  <div class="vector-node">
+                    <span class="name text-cyan">{{
+                      item.PT1MC || '源平台'
+                    }}</span>
+                    <span class="id font-mono">#{{ item.PT1BSH }}</span>
                   </div>
-                  <div class="counter-box rx">
-                    <span class="lbl">接收:</span
-                    ><span class="val">{{ item.JSXXTS }}</span>
+                  <div class="vector-arrow">
+                    <span class="link-lbl">代码: {{ item.XXDM }}</span>
+                    <div class="line-body"></div>
+                  </div>
+                  <div class="vector-node text-right">
+                    <span class="name text-green">{{
+                      item.PT2MC || '目的平台'
+                    }}</span>
+                    <span class="id font-mono">#{{ item.PT2BSH }}</span>
+                  </div>
+                </div>
+
+                <div class="row-footer-details font-mono">
+                  <div class="detail-line">
+                    <span class="lbl">链路体制:</span>
+                    <span class="text-white truncate" :title="item.LLLXMC">{{
+                      item.LLLXMC || '常规通信链路'
+                    }}</span>
+                  </div>
+                  <div class="data-matrix-counter">
+                    <div class="counter-box tx">
+                      <span class="lbl">发送:</span
+                      ><span class="val">{{ item.FSXXTS }}</span>
+                    </div>
+                    <div class="counter-box rx">
+                      <span class="lbl">接收:</span
+                      ><span class="val">{{ item.JSXXTS }}</span>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-
-          <div v-if="activeLeftTab === 'wlllzt'" class="tab-scroll-pane">
-            <div v-if="wlllztDataList.length === 0" class="empty-hint-dark">
-              暂无网络链路遥测状态上报
-            </div>
-            <div
-              v-for="link in wlllztDataList"
-              :key="link.WLLLZTID"
-              class="refined-tactical-row"
-              :class="Number(link.LLJKZT) === 1 ? 'border-err' : 'border-ok'"
-            >
-              <div class="row-title-flex">
-                <span class="net-title">
-                  <Icon
-                    icon="mdi:globe-model"
-                    size="12px"
-                    style="color: #38bdf8"
-                  />
-                  {{ link.WLMC || '未命名网络' }}
-                </span>
-                <span
-                  class="health-indicator-tag"
-                  :class="Number(link.LLJKZT) === 1 ? 'alarm' : 'healthy'"
-                >
-                  {{ Number(link.LLJKZT) === 1 ? '故障告警' : '健康运行' }}
-                </span>
+          </el-tab-pane>
+          <el-tab-pane label="链路状态" name="wlllzt">
+            <div class="tab-scroll-pane">
+              <div v-if="wlllztDataList.length === 0" class="empty-hint-light">
+                暂无网络链路遥测状态上报
               </div>
-
-              <div class="data-matrix font-mono">
-                <div><span class="lbl">网络号:</span>{{ link.WLH }}</div>
-                <div><span class="lbl">平台号:</span>#{{ link.PTBSH }}</div>
-                <div style="grid-column: span 2">
-                  <span class="lbl">网络IP:</span
-                  ><span class="text-cyan">{{ link.PTWLDZ }}</span>
-                </div>
-              </div>
-
-              <div class="single-data-line font-mono">
-                <span class="lbl">链路体制:</span>
-                <span
-                  class="text-orange truncate"
-                  :title="getLinkTypeName(link.LLLX)"
-                  >{{ getLinkTypeName(link.LLLX) }}</span
-                >
-              </div>
-
-              <div class="neighbor-sub-box font-mono">
-                <div>
-                  <span class="lbl">邻接标识:</span> #{{ link.JDBSH || '无' }}
-                </div>
-                <div>
-                  <span class="lbl">邻接状态:</span>
-                  <span class="node-st-val" :class="'st-' + link.JDZT">{{
-                    getJdStatusText(link.JDZT)
-                  }}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div v-if="activeLeftTab === 'xxfsjg'" class="tab-scroll-pane">
-            <div v-if="trafficList.length === 0" class="empty-hint-dark">
-              当前任务无发送流水明细结果
-            </div>
-
-            <div
-              v-for="detail in trafficList"
-              :key="'fsjg-' + detail.XXFSJGID"
-              class="rich-result-vertical-card"
-              :class="Number(detail.XXCSQK) === 1 ? 'border-err' : 'border-ok'"
-            >
-              <div class="result-header-flex font-mono">
-                <span class="time-node">
-                  <Icon icon="mdi:clock-outline" size="11px" /> 时标:
-                  {{ detail.TIME || '-' }}
-                </span>
-                <span
-                  class="status-indicator-tag"
-                  :class="Number(detail.XXCSQK) === 1 ? 'err' : 'ok'"
-                >
-                  {{
-                    Number(detail.XXCSQK) === 1
-                      ? '✕ 传输失败(1)'
-                      : '✓ 传输成功(0)'
-                  }}
-                </span>
-              </div>
-
-              <div class="vector-route-pipeline">
-                <div class="vector-node">
-                  <span class="name text-cyan" :title="detail.YPTMC">{{
-                    detail.YPTMC || '源平台'
-                  }}</span>
-                  <span class="id font-mono">源:#{{ detail.YPTBSH }}</span>
-                </div>
-                <div
-                  class="vector-arrow"
-                  :class="{'is-broken': Number(detail.XXCSQK) === 1}"
-                >
-                  <span class="link-lbl" :title="detail.XXLXMC || detail.XXLX"
-                    >类型:{{ detail.XXLXMC || detail.XXLX }}</span
+              <div
+                v-for="link in wlllztDataList"
+                :key="link.WLLLZTID"
+                class="info-card"
+                :class="
+                  Number(link.LLJKZT) === 1 ? 'info-card-err' : 'info-card-ok'
+                "
+              >
+                <div class="row-title-flex">
+                  <span class="net-title">
+                    <Icon
+                      icon="mdi:globe-model"
+                      size="12px"
+                      style="color: #38bdf8"
+                    />
+                    {{ link.WLMC || '未命名网络' }}
+                  </span>
+                  <span
+                    class="health-indicator-tag"
+                    :class="Number(link.LLJKZT) === 1 ? 'alarm' : 'healthy'"
                   >
-                  <div class="line-body"></div>
+                    {{ Number(link.LLJKZT) === 1 ? '故障告警' : '健康运行' }}
+                  </span>
                 </div>
-                <div class="vector-node text-right">
-                  <span class="name text-green" :title="detail.MDPTMC">{{
-                    detail.MDPTMC || '目的机'
-                  }}</span>
-                  <span class="id font-mono">目:#{{ detail.MDPTBSH }}</span>
-                </div>
-              </div>
 
-              <div class="row-footer-details font-mono">
-                <div class="detail-line">
-                  <span class="lbl">作战任务:</span>
-                  <span class="text-white truncate">{{
-                    detail.ZZRWID || filterForm.ZZRWID
-                  }}</span>
+                <div class="data-matrix font-mono">
+                  <div><span class="lbl">网络号:</span>{{ link.WLH }}</div>
+                  <div><span class="lbl">平台号:</span>#{{ link.PTBSH }}</div>
+                  <div style="grid-column: span 2">
+                    <span class="lbl">网络IP:</span
+                    ><span class="text-cyan">{{ link.PTWLDZ }}</span>
+                  </div>
                 </div>
-                <div class="detail-line">
-                  <span class="lbl">网络归属:</span>
-                  <span class="text-cyan truncate"
-                    >[{{ detail.WLH }}] {{ detail.WLMC || '战术网' }}</span
-                  >
-                </div>
-                <div class="detail-line" style="grid-column: span 2">
+
+                <div class="single-data-line font-mono">
                   <span class="lbl">链路体制:</span>
                   <span
                     class="text-orange truncate"
-                    :title="getLinkTypeName(detail.LLLX)"
+                    :title="getLinkTypeName(link.LLLX)"
+                    >{{ getLinkTypeName(link.LLLX) }}</span
                   >
-                    [{{ detail.LLLX }}]
-                    {{ detail.LLLXMC || getLinkTypeName(detail.LLLX) }}
-                  </span>
                 </div>
-              </div>
 
-              <div class="time-stamp-matrix font-mono">
-                <div class="time-cell">
-                  <span class="lbl">发送毫秒:</span>
-                  <span class="value-time text-white">{{
-                    detail.PTFSSJ || '--:--:--'
-                  }}</span>
-                </div>
-                <div class="time-cell">
-                  <span class="lbl">接收毫秒:</span>
-                  <span class="value-time text-white">{{
-                    detail.PTJSSJ || '--:--:--'
-                  }}</span>
+                <div class="neighbor-sub-box font-mono">
+                  <div>
+                    <span class="lbl">邻接标识:</span> #{{ link.JDBSH || '无' }}
+                  </div>
+                  <div>
+                    <span class="lbl">邻接状态:</span>
+                    <span class="node-st-val" :class="'st-' + link.JDZT">{{
+                      getJdStatusText(link.JDZT)
+                    }}</span>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </div>
+          </el-tab-pane>
+          <el-tab-pane label="发送结果" name="xxfsjg">
+            <div class="tab-scroll-pane">
+              <div v-if="trafficList.length === 0" class="empty-hint-light">
+                当前任务无发送流水明细结果
+              </div>
+
+              <div
+                v-for="detail in trafficList"
+                :key="'fsjg-' + detail.XXFSJGID"
+                class="info-card info-card-vertical"
+                :class="
+                  Number(detail.XXCSQK) === 1 ? 'info-card-err' : 'info-card-ok'
+                "
+              >
+                <div class="result-header-flex font-mono">
+                  <span class="time-node">
+                    <Icon icon="mdi:clock-outline" size="11px" /> 时标:
+                    {{ detail.TIME || '-' }}
+                  </span>
+                  <span
+                    class="status-indicator-tag"
+                    :class="Number(detail.XXCSQK) === 1 ? 'err' : 'ok'"
+                  >
+                    {{
+                      Number(detail.XXCSQK) === 1
+                        ? '✕ 传输失败(1)'
+                        : '✓ 传输成功(0)'
+                    }}
+                  </span>
+                </div>
+
+                <div class="vector-route-pipeline">
+                  <div class="vector-node">
+                    <span class="name text-cyan" :title="detail.YPTMC">{{
+                      detail.YPTMC || '源平台'
+                    }}</span>
+                    <span class="id font-mono">源:#{{ detail.YPTBSH }}</span>
+                  </div>
+                  <div
+                    class="vector-arrow"
+                    :class="{'is-broken': Number(detail.XXCSQK) === 1}"
+                  >
+                    <span class="link-lbl" :title="detail.XXLXMC || detail.XXLX"
+                      >类型:{{ detail.XXLXMC || detail.XXLX }}</span
+                    >
+                    <div class="line-body"></div>
+                  </div>
+                  <div class="vector-node text-right">
+                    <span class="name text-green" :title="detail.MDPTMC">{{
+                      detail.MDPTMC || '目的机'
+                    }}</span>
+                    <span class="id font-mono">目:#{{ detail.MDPTBSH }}</span>
+                  </div>
+                </div>
+
+                <div class="row-footer-details font-mono">
+                  <div class="detail-line">
+                    <span class="lbl">作战任务:</span>
+                    <span class="text-white truncate">{{
+                      detail.ZZRWID || filterForm.ZZRWID
+                    }}</span>
+                  </div>
+                  <div class="detail-line">
+                    <span class="lbl">网络归属:</span>
+                    <span class="text-cyan truncate"
+                      >[{{ detail.WLH }}] {{ detail.WLMC || '战术网' }}</span
+                    >
+                  </div>
+                  <div class="detail-line" style="grid-column: span 2">
+                    <span class="lbl">链路体制:</span>
+                    <span
+                      class="text-orange truncate"
+                      :title="getLinkTypeName(detail.LLLX)"
+                    >
+                      [{{ detail.LLLX }}]
+                      {{ detail.LLLXMC || getLinkTypeName(detail.LLLX) }}
+                    </span>
+                  </div>
+                </div>
+
+                <div class="time-stamp-matrix font-mono">
+                  <div class="time-cell">
+                    <span class="lbl">发送毫秒:</span>
+                    <span class="value-time text-white">{{
+                      detail.PTFSSJ || '--:--:--'
+                    }}</span>
+                  </div>
+                  <div class="time-cell">
+                    <span class="lbl">接收毫秒:</span>
+                    <span class="value-time text-white">{{
+                      detail.PTJSSJ || '--:--:--'
+                    }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </el-tab-pane>
+        </el-tabs>
       </div>
     </div>
   </div>
@@ -877,43 +861,64 @@ export default {
     box-shadow: 0 0 0 0 rgba(56, 189, 248, 0);
   }
 }
-.tactical-btn-tabs {
-  display: flex;
-  background: #040810;
-  border: 1px solid #172438;
-  padding: 2px;
-  border-radius: 3px;
-  gap: 2px;
-  margin-bottom: 11px;
-}
-.tab-btn {
-  flex: 1;
+/* === el-tabs 覆盖样式 === */
+.info-tabs {
+  margin-bottom: 8px;
   background: transparent;
-  border: none;
-  color: #94a3b8;
-  font-size: 11px;
-  padding: 6px 0;
-  cursor: pointer;
-  border-radius: 2px;
-  transition: all 0.15s ease;
+}
+.info-tabs ::v-deep .el-tabs__header {
+  margin: 0;
+  border-bottom: 1px solid #1e3557;
+  background: rgba(14, 28, 48, 0.5);
+  border-radius: 4px 4px 0 0;
+}
+.info-tabs ::v-deep .el-tabs__nav-wrap::after {
+  display: none;
+}
+.info-tabs ::v-deep .el-tabs__item {
+  font-size: 12px;
   font-weight: bold;
-  outline: none;
+  height: 34px;
+  line-height: 34px;
+  color: #7ea9cc;
+  padding: 0 16px;
+  border-left: none;
 }
-.tab-btn:hover {
+.info-tabs ::v-deep .el-tabs__item.is-active {
   color: #38bdf8;
-  background: rgba(56, 189, 248, 0.05);
+  background: rgba(56, 189, 248, 0.12);
 }
-.tab-btn.active {
-  color: #38bdf8;
-  background: #111b2b;
-  box-shadow: inset 0 0 5px rgba(56, 189, 248, 0.25);
-  border: 1px solid rgba(56, 189, 248, 0.35);
+.info-tabs ::v-deep .el-tabs__content {
+  padding: 0;
 }
-.tab-content-container {
-  flex: 1;
-  overflow: hidden;
+/* === 信息卡片通用样式（浅色系）=== */
+.info-card,
+.refined-tactical-row,
+.rich-result-vertical-card {
+  background: rgba(14, 28, 48, 0.4);
+  border: 1px solid #1e3557;
+  border-radius: 6px;
+  padding: 12px;
   display: flex;
   flex-direction: column;
+  gap: 8px;
+  transition: all 0.2s;
+}
+.info-card:hover,
+.refined-tactorial-row:hover,
+.rich-result-vertical-card:hover {
+  background: rgba(20, 40, 65, 0.55);
+  border-color: #38bdf8;
+  box-shadow: 0 2px 12px rgba(56, 189, 248, 0.1);
+}
+.info-card-ok {
+  border-left: 3px solid #10b981;
+}
+.info-card-err {
+  border-left: 3px solid #ef4444;
+}
+.info-card-vertical {
+  gap: 10px;
 }
 .tab-scroll-pane {
   flex: 1;
@@ -930,32 +935,20 @@ export default {
   background: #172438;
   border-radius: 2px;
 }
-.refined-tactical-row {
-  background: #0d1522;
-  border: 1px solid #172438;
-  border-radius: 3px;
-  padding: 11px;
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
+/* === 旧卡片类名兼容（已合并到 .info-card）=== */
+
+.line-body {
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #38bdf8, transparent);
 }
-.refined-tactical-row:hover {
-  background: #121f35;
-  border-color: #38bdf8;
-}
-.rich-result-vertical-card {
-  background: #0d1522;
-  border: 1px solid #172438;
-  border-radius: 3px;
-  padding: 11px 12px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  transition: all 0.2s;
-}
-.rich-result-vertical-card:hover {
-  background: #121f35;
-  border-color: #38bdf8;
+.line-body::after {
+  content: '▶';
+  position: absolute;
+  right: 2px;
+  top: -5px;
+  font-size: 7px;
+  color: #38bdf8;
 }
 .result-header-flex {
   display: flex;
@@ -994,7 +987,7 @@ export default {
   gap: 6px;
 }
 .rich-result-vertical-card .time-cell {
-  background: #070c14;
+  background: rgba(14, 28, 48, 0.3);
   padding: 4px;
   border-radius: 2px;
   display: flex;
@@ -1032,7 +1025,7 @@ export default {
   border-radius: 2px;
 }
 .health-indicator-tag.healthy {
-  background: rgba(16, 185, 129, 0.1);
+  background: rgba(16, 185, 129, 0.15);
   color: #10b981;
 }
 .health-indicator-tag.alarm {
@@ -1060,9 +1053,10 @@ export default {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: #070c14;
-  padding: 6px;
-  border-radius: 2px;
+  background: rgba(14, 28, 48, 0.3);
+  border: 1px solid #1e3557;
+  border-radius: 4px;
+  padding: 8px;
 }
 .vector-node {
   display: flex;
@@ -1127,9 +1121,10 @@ export default {
   grid-template-columns: repeat(2, 1fr);
   gap: 4px;
   font-size: 11px;
-  background: #070c14;
-  padding: 5px;
-  border-radius: 2px;
+  background: rgba(14, 28, 48, 0.3);
+  border: 1px solid #1e3557;
+  border-radius: 4px;
+  padding: 8px;
 }
 .matrix-cell .lbl,
 .single-data-line .lbl,
@@ -1188,13 +1183,14 @@ export default {
 .node-st-val.st-4 {
   color: #ef4444;
 }
-.empty-hint-dark {
+.empty-hint-light {
   text-align: center;
-  color: #94a3b8;
-  font-size: 11px;
-  padding: 60px 11px;
-  border: 1px dashed #111b2b;
-  border-radius: 4px;
+  color: #7ea9cc;
+  font-size: 12px;
+  padding: 40px 12px;
+  border: 1px dashed #2d4a6e;
+  border-radius: 6px;
+  background: rgba(14, 28, 48, 0.2);
 }
 .text-cyan {
   color: #38bdf8 !important;
