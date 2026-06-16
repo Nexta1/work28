@@ -6,206 +6,274 @@
         设备状态智能监控诊断
         <span class="ai-badge">人工智能分析引擎</span>
       </div>
-      <div>
-        <el-select
-          v-model="selectedDevice"
-          size="medium"
-          class="device-select"
-          @change="onDeviceChange"
-        >
-          <el-option
-            v-for="d in deviceOptions"
-            :key="d.value"
-            :label="d.label"
-            :value="d.value"
-          />
-        </el-select>
-      </div>
     </div>
 
-    <!-- 上排 四大核心模块 -->
-    <div ref="rowTop" class="row-top">
-      <!-- 模块1：实时运行状态 -->
-      <div ref="card1" class="col-top card-base">
-        <div class="card-glow"></div>
-        <span class="card-corner-inner"></span>
-        <span class="card-corner-inner2"></span>
-        <div class="card-title">设备实时运行状态</div>
-        <div class="status-wrap">
-          <div class="status-item">
-            <Icon
-              icon="lucide:cpu"
-              :size="20"
-              color="#38bdf8"
-              class="status-icon"
-            />
-            <div class="status-label">CPU 平均使用率</div>
-            <div class="status-value" :style="getValueColor('cpu', cpuUsage)">
-              <vue-count-to
-                :start-val="0"
-                :end-val="cpuUsage"
-                :duration="1800"
-                :decimals="1"
-                separator=""
-              /><span class="status-unit">%</span>
-            </div>
-          </div>
-          <div class="status-item">
-            <Icon
-              icon="lucide:hard-drive"
-              :size="20"
-              color="#22c55e"
-              class="status-icon"
-            />
-            <div class="status-label">内存平均使用率</div>
-            <div class="status-value" :style="getValueColor('mem', memUsage)">
-              <vue-count-to
-                :start-val="0"
-                :end-val="memUsage"
-                :duration="1800"
-                :decimals="2"
-                separator=""
-              /><span class="status-unit">%</span>
-            </div>
-          </div>
-          <div class="status-item">
-            <Icon
-              icon="lucide:thermometer"
-              :size="20"
-              color="#f59e0b"
-              class="status-icon"
-            />
-            <div class="status-label">设备实时温度</div>
-            <div
-              class="status-value"
-              :style="getValueColor('temp', temperature)"
-            >
-              <vue-count-to
-                :start-val="0"
-                :end-val="temperature"
-                :duration="1800"
-                :decimals="1"
-                separator=""
-              /><span class="status-unit">℃</span>
-            </div>
-          </div>
+    <div class="main-body">
+      <!-- 左侧：设备列表 -->
+      <div class="device-sidebar">
+        <div class="sidebar-title">
+          <Icon icon="lucide:list" :size="14" color="#38bdf8" />
+          全部设备
+          <span class="sidebar-count">({{ allDeviceList.length }})</span>
         </div>
-        <div class="level-box">
-          <span class="level-tag" :class="'level-' + statusLevel">{{
-            statusText
-          }}</span>
-        </div>
-      </div>
-
-      <!-- 模块2：孤立森林 - AI异常诊断 -->
-      <div ref="card2" class="col-top card-base">
-        <div class="card-glow"></div>
-        <span class="card-corner-inner"></span>
-        <span class="card-corner-inner2"></span>
-        <div class="card-title">
-          设备异常诊断
-          <span class="model-tag tag-iso">孤立森林算法</span>
-        </div>
-        <p class="desc-text">
-          健康得分：
-          <vue-count-to
-            :start-val="0"
-            :end-val="healthScore"
-            :duration="2000"
-            :decimals="1"
-            separator=""
-          />
-          &nbsp;&nbsp; 检测窗口：近10分钟
-        </p>
-        <div class="chart-container">
-          <div ref="anomalyChart" class="chart-canvas"></div>
-        </div>
-      </div>
-
-      <!-- 模块3：LSTM - AI状态预测 -->
-      <div ref="card3" class="col-top card-base">
-        <div class="card-glow"></div>
-        <span class="card-corner-inner"></span>
-        <span class="card-corner-inner2"></span>
-        <div class="card-title">
-          设备状态预测
-          <span class="model-tag tag-lstm">LSTM时序网络</span>
-        </div>
-        <p class="desc-text">
-          基于连续12帧时序数据，预测下一阶段：<span
-            :style="{color: nextLevelColor}"
-            >{{ nextStatus }}</span
+        <el-scrollbar class="sidebar-scroll" style="height: 100%">
+          <div
+            v-infinite-scroll="loadMore"
+            infinite-scroll-disabled="deviceLoading"
+            infinite-scroll-distance="10"
           >
-        </p>
-        <div class="chart-container">
-          <div ref="predictChart" class="chart-canvas"></div>
-        </div>
+            <div
+              v-for="d in deviceList"
+              :key="d.SBID || d.sbid"
+              class="device-card"
+              :class="{
+                'is-active': selectedDevice === String(d.SBID || d.sbid)
+              }"
+              @click="selectDevice(d)"
+            >
+              <div class="device-card-header">
+                <span class="status-dot" :class="getMiniStatusClass(d)"></span>
+                <span class="device-name">{{
+                  d.SBXHMC || d.sbxhmc || '未知设备'
+                }}</span>
+                <span class="device-type">{{ getDeviceTypeName(d.SBLX) }}</span>
+              </div>
+              <div class="device-card-metrics">
+                <span
+                  class="metric"
+                  :class="(d.CPU || 0) > 80 ? 'text-red' : 'text-green'"
+                >
+                  CPU {{ d.CPU || 0 }}%
+                </span>
+                <span class="metric text-blue"> MEM {{ d.RAM || 0 }}% </span>
+                <span
+                  class="metric"
+                  :class="(d.TEMP || 0) > 75 ? 'text-red' : ''"
+                >
+                  {{ d.TEMP || 0 }}℃
+                </span>
+              </div>
+            </div>
+          </div>
+          <div v-if="deviceLoading" class="load-more-tip">加载更多...</div>
+          <div
+            v-if="
+              deviceList.length >= allDeviceList.length &&
+              allDeviceList.length > 0
+            "
+            class="load-more-tip"
+          >
+            — 已全部加载 —
+          </div>
+        </el-scrollbar>
       </div>
 
-      <!-- 模块4：综合指标趋势 -->
-      <div ref="card4" class="col-top card-base">
-        <div class="card-glow"></div>
-        <span class="card-corner-inner"></span>
-        <span class="card-corner-inner2"></span>
-        <div class="card-title">综合运行趋势</div>
-        <p class="desc-text">CPU/内存/温度 全局走势监控</p>
-        <div class="chart-container">
-          <div ref="totalChart" class="chart-canvas"></div>
-        </div>
-      </div>
-    </div>
+      <!-- 右侧：详细面板 -->
+      <div class="detail-panel">
+        <!-- 上排 四大核心模块 -->
+        <div ref="rowTop" class="row-top">
+          <!-- 模块1：实时运行状态 -->
+          <div ref="card1" class="col-top card-base">
+            <div class="card-glow"></div>
+            <span class="card-corner-inner"></span>
+            <span class="card-corner-inner2"></span>
+            <div class="card-title">设备实时运行状态</div>
+            <div class="status-wrap">
+              <div class="status-item">
+                <Icon
+                  icon="lucide:cpu"
+                  :size="20"
+                  color="#38bdf8"
+                  class="status-icon"
+                />
+                <div class="status-label">CPU 平均使用率</div>
+                <div
+                  class="status-value"
+                  :style="getValueColor('cpu', cpuUsage)"
+                >
+                  <vue-count-to
+                    :start-val="0"
+                    :end-val="cpuUsage"
+                    :duration="1800"
+                    :decimals="1"
+                    separator=""
+                  /><span class="status-unit">%</span>
+                </div>
+              </div>
+              <div class="status-item">
+                <Icon
+                  icon="lucide:hard-drive"
+                  :size="20"
+                  color="#22c55e"
+                  class="status-icon"
+                />
+                <div class="status-label">内存平均使用率</div>
+                <div
+                  class="status-value"
+                  :style="getValueColor('mem', memUsage)"
+                >
+                  <vue-count-to
+                    :start-val="0"
+                    :end-val="memUsage"
+                    :duration="1800"
+                    :decimals="2"
+                    separator=""
+                  /><span class="status-unit">%</span>
+                </div>
+              </div>
+              <div class="status-item">
+                <Icon
+                  icon="lucide:thermometer"
+                  :size="20"
+                  color="#f59e0b"
+                  class="status-icon"
+                />
+                <div class="status-label">设备实时温度</div>
+                <div
+                  class="status-value"
+                  :style="getValueColor('temp', temperature)"
+                >
+                  <vue-count-to
+                    :start-val="0"
+                    :end-val="temperature"
+                    :duration="1800"
+                    :decimals="1"
+                    separator=""
+                  /><span class="status-unit">℃</span>
+                </div>
+              </div>
+              <div class="status-item">
+                <Icon
+                  icon="lucide:heart-pulse"
+                  :size="20"
+                  color="#8b5cf6"
+                  class="status-icon"
+                />
+                <div class="status-label">设备健康得分</div>
+                <div class="status-value" style="color: #8b5cf6">
+                  <vue-count-to
+                    :start-val="0"
+                    :end-val="healthScore"
+                    :duration="2000"
+                    :decimals="1"
+                    separator=""
+                  /><span class="status-unit">分</span>
+                </div>
+              </div>
+            </div>
+            <div class="level-box">
+              <span class="level-tag" :class="'level-' + statusLevel">{{
+                statusText
+              }}</span>
+            </div>
+          </div>
 
-    <!-- 下排 两大综合区域 -->
-    <div ref="rowBottom" class="row-bottom">
-      <!-- 左侧：根因分析 + 影响分析 -->
-      <div ref="card5" class="col-bottom-left card-base">
-        <div class="card-glow"></div>
-        <span class="card-corner-inner"></span>
-        <span class="card-corner-inner2"></span>
-        <div class="card-title">AI根因分析 &amp; 业务影响分析</div>
-        <div class="analysis-block">
-          <div class="analysis-subtitle">一、异常根因定位</div>
-          <ul class="analysis-list">
-            <li v-for="(item, i) in rootCauseList" :key="i">{{ item }}</li>
-          </ul>
+          <!-- 模块2：全维趋势总览（过去·现在·未来） -->
+          <div ref="cardMerged" class="col-top card-base col-merg-chart">
+            <div class="card-glow"></div>
+            <span class="card-corner-inner"></span>
+            <span class="card-corner-inner2"></span>
+            <div class="card-title">
+              全维趋势总览
+              <span
+                class="model-tag"
+                style="background: linear-gradient(135deg, #f59e0b, #d97706)"
+                >孤立森林</span
+              >
+              <span
+                class="model-tag"
+                style="background: linear-gradient(135deg, #8b5cf6, #7c3aed)"
+                >LSTM时序网络</span
+              >
+            </div>
+            <div class="chart-container">
+              <div ref="mergedChart" class="chart-canvas"></div>
+            </div>
+          </div>
         </div>
-        <div class="analysis-block">
-          <div class="analysis-subtitle">二、业务影响评估</div>
-          <ul class="analysis-list">
-            <li v-for="(item, i) in impactList" :key="i">{{ item }}</li>
-          </ul>
-        </div>
-      </div>
 
-      <!-- 右侧：诊断&预测历史记录 -->
-      <div ref="card6" class="col-bottom-right card-base">
-        <div class="card-glow"></div>
-        <span class="card-corner-inner"></span>
-        <span class="card-corner-inner2"></span>
-        <div class="card-title">设备诊断与预测历史日志</div>
-        <div class="table-wrapper">
-          <table class="history-table">
-            <thead>
-              <tr>
-                <th>检测时间</th>
-                <th>CPU(%)</th>
-                <th>内存(%)</th>
-                <th>温度(℃)</th>
-                <th>AI诊断结果</th>
-                <th>AI预测结果</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="(row, i) in historyList" :key="i">
-                <td>{{ row.time }}</td>
-                <td>{{ row.cpu }}</td>
-                <td>{{ row.mem }}</td>
-                <td>{{ row.temp }}</td>
-                <td>{{ row.diagnosis }}</td>
-                <td>{{ row.predict }}</td>
-              </tr>
-            </tbody>
-          </table>
+        <!-- 下排 两大综合区域 -->
+        <div ref="rowBottom" class="row-bottom">
+          <!-- 左侧：根因分析 + 影响分析 -->
+          <div ref="card5" class="col-bottom-left card-base">
+            <div class="card-glow"></div>
+            <span class="card-corner-inner"></span>
+            <span class="card-corner-inner2"></span>
+            <div class="card-title">
+              AI根因分析 &amp; 业务影响分析
+              <span
+                v-if="deviceFaultList.length"
+                class="model-tag"
+                style="
+                  background: linear-gradient(135deg, #ef4444, #dc2626);
+                  font-size: 9px;
+                "
+              >
+                故障 {{ deviceFaultList.length }} 条
+              </span>
+            </div>
+            <div class="analysis-split-layout">
+              <div class="analysis-split-left">
+                <div class="analysis-subtitle">最近故障记录</div>
+                <ul class="analysis-list">
+                  <li v-for="(item, i) in faultRecordList" :key="i">
+                    {{ item }}
+                  </li>
+                  <li v-if="!deviceFaultList.length" style="color: #64748b">
+                    暂无故障记录
+                  </li>
+                </ul>
+              </div>
+              <div class="analysis-split-right">
+                <div class="analysis-block">
+                  <div class="analysis-subtitle">异常根因定位</div>
+                  <ul class="analysis-list">
+                    <li v-for="(item, i) in rootCauseList" :key="i">
+                      {{ item }}
+                    </li>
+                  </ul>
+                </div>
+                <div class="analysis-block">
+                  <div class="analysis-subtitle">业务影响评估</div>
+                  <ul class="analysis-list">
+                    <li v-for="(item, i) in impactList" :key="i">{{ item }}</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 右侧：诊断&预测历史记录 -->
+          <div ref="card6" class="col-bottom-right card-base">
+            <div class="card-glow"></div>
+            <span class="card-corner-inner"></span>
+            <span class="card-corner-inner2"></span>
+            <div class="card-title">设备诊断与预测历史日志</div>
+            <div class="table-wrapper">
+              <table class="history-table">
+                <thead>
+                  <tr>
+                    <th>检测时间</th>
+                    <th>CPU(%)</th>
+                    <th>内存(%)</th>
+                    <th>温度(℃)</th>
+                    <th>AI诊断结果</th>
+                    <th>AI预测结果</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="(row, i) in historyList" :key="i">
+                    <td>{{ row.time }}</td>
+                    <td>{{ row.cpu }}</td>
+                    <td>{{ row.mem }}</td>
+                    <td>{{ row.temp }}</td>
+                    <td>{{ row.diagnosis }}</td>
+                    <td>{{ row.predict }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -221,6 +289,7 @@ import {
   getDeviceTenMinutes,
   getDevicePredict
 } from '@/api/deviceStatus'
+import {mainPage} from '@/api/common'
 
 /**
  * 诊断状态映射
@@ -242,8 +311,11 @@ export default {
     return {
       // 设备选择
       selectedDevice: null,
-      deviceOptions: [],
       deviceList: [],
+      allDeviceList: [],
+      devicePage: 1,
+      pageSize: 20,
+      deviceLoading: false,
 
       // 实时状态
       cpuUsage: 0,
@@ -259,25 +331,43 @@ export default {
       // 根因 & 影响
       rootCauseList: [],
       impactList: [],
+      deviceFaultList: [],
 
       // 历史日志
       historyList: [],
 
       // 图表数据缓存
-      anomalyChartData: {cpu: [], mem: [], time: []},
-      predictChartData: {score: [], time: []},
-      totalChartData: {cpu: [], mem: [], temp: [], time: []},
+      mergedChartData: {
+        time: [],
+        cpuReal: [],
+        memReal: [],
+        tempReal: [],
+        scoreReal: [],
+        cpuPred: [],
+        memPred: [],
+        tempPred: [],
+        scorePred: [],
+        anomalyMark: []
+      },
+      cachedPast: null,
+      cachedFuture: null,
 
       // 图表实例
-      anomalyChart: null,
-      predictChart: null,
-      totalChart: null,
+      mergedChart: null,
 
       // 轮询定时器
       refreshTimer: null
     }
   },
   computed: {
+    faultRecordList() {
+      return this.deviceFaultList
+        .slice(0, 6)
+        .map(
+          f =>
+            `${this.formatFaultTime(f.warnTimestamp)} │ [${this.getLevelLabel(f.warnLevel)}] ${f.faultName || '未知'}：${f.warnContent || ''}`
+        )
+    },
     nextLevelColor() {
       const map = {
         正常: 'var(--color-success)',
@@ -290,11 +380,12 @@ export default {
   },
   mounted() {
     this.$nextTick(() => {
-      this.initCharts()
+      this.initMergedChart()
       setTimeout(() => this.handleResize(), 100)
     })
     this.fetchDeviceList().then(() => {
-      this.fetchAllData()
+      const handled = this.checkRouteQuery()
+      if (!handled) this.fetchAllData()
     })
     this.refreshTimer = setInterval(() => {
       this.fetchAllData()
@@ -302,14 +393,62 @@ export default {
     window.addEventListener('resize', this.handleResize)
   },
   beforeDestroy() {
-    if (this.anomalyChart) this.anomalyChart.dispose()
-    if (this.predictChart) this.predictChart.dispose()
-    if (this.totalChart) this.totalChart.dispose()
+    if (this.mergedChart) this.mergedChart.dispose()
     if (this._animTimeline) this._animTimeline.kill()
     if (this.refreshTimer) clearInterval(this.refreshTimer)
     window.removeEventListener('resize', this.handleResize)
   },
   methods: {
+    /* ================ 设备选择 ================ */
+
+    selectDevice(d) {
+      const id = String(d.SBID || d.sbid)
+      if (this.selectedDevice === id) return
+      this.selectedDevice = id
+      this.$message.success(
+        `已切换至 ${d.SBXHMC || d.sbxhmc || '设备'}，数据加载中...`
+      )
+      this.fetchAllData()
+    },
+
+    getDeviceTypeName(t) {
+      return (
+        {1: '计算核心', 2: '存储矩阵', 3: '通信路由', 4: '供电伺服'}[t] ||
+        '通用硬件'
+      )
+    },
+
+    getMiniStatusClass(d) {
+      if (Number(d.JKZT) === 1 || (d.CPU || 0) > 85) return 'dot-danger'
+      if ((d.CPU || 0) > 70) return 'dot-warning'
+      return 'dot-success'
+    },
+
+    checkRouteQuery() {
+      const qDeviceId = this.$route.query.deviceId
+      if (qDeviceId) {
+        const match = this.deviceList.find(
+          d => String(d.SBID || d.sbid) === qDeviceId
+        )
+        if (match) {
+          this.selectedDevice = qDeviceId
+          this.$nextTick(() => this.fetchAllData())
+          return true
+        }
+        // 可能在 allDeviceList 中
+        const matchAll = this.allDeviceList.find(
+          d => String(d.SBID || d.sbid) === qDeviceId
+        )
+        if (matchAll) {
+          this.selectedDevice = qDeviceId
+          this.deviceList = this.allDeviceList.slice(0, this.pageSize)
+          this.$nextTick(() => this.fetchAllData())
+          return true
+        }
+      }
+      return false
+    },
+
     /* ================ 数据请求 ================ */
 
     /**
@@ -318,23 +457,40 @@ export default {
     async fetchDeviceList() {
       try {
         const res = await getDeviceList()
-        const list = res.data || []
-        this.deviceList = list
-        this.deviceOptions = list.map(d => ({
-          value: String(d.SBID || d.sbid),
-          label: d.SBXHMC || d.sbxhmc || `设备 ${d.PTMC || ''}`
-        }))
-        if (!this.selectedDevice && list.length > 0) {
-          this.selectedDevice = String(list[0].SBID || list[0].sbid)
+        this.allDeviceList = res.data || []
+        this.devicePage = 1
+        this.deviceList = this.allDeviceList.slice(0, this.pageSize)
+        if (!this.selectedDevice && this.deviceList.length > 0) {
+          this.selectedDevice = String(
+            this.deviceList[0].SBID || this.deviceList[0].sbid
+          )
         }
       } catch (e) {
         console.error('获取设备列表失败', e)
-        this.deviceOptions = [
-          {value: '6', label: '服务器型号01'},
-          {value: '7', label: '路由器型号01'}
+        this.allDeviceList = [
+          {
+            SBID: 6,
+            SBXHMC: '服务器型号01',
+            SBLX: 1,
+            CPU: 32,
+            RAM: 45,
+            TEMP: 42
+          },
+          {SBID: 7, SBXHMC: '路由器型号01', SBLX: 3, CPU: 18, RAM: 35, TEMP: 38}
         ]
+        this.deviceList = this.allDeviceList.slice(0, this.pageSize)
         this.selectedDevice = '6'
       }
+    },
+
+    loadMore() {
+      if (this.deviceLoading) return
+      if (this.deviceList.length >= this.allDeviceList.length) return
+      this.deviceLoading = true
+      this.devicePage++
+      const end = this.devicePage * this.pageSize
+      this.deviceList = this.allDeviceList.slice(0, end)
+      this.deviceLoading = false
     },
 
     /**
@@ -345,11 +501,17 @@ export default {
       const sbid = Number(this.selectedDevice)
 
       try {
-        const [latestRes, tenMinRes, predictRes] = await Promise.allSettled([
-          getDeviceLatestDetect(sbid),
-          getDeviceTenMinutes(sbid),
-          getDevicePredict(sbid)
-        ])
+        const [latestRes, tenMinRes, predictRes, warnRes] =
+          await Promise.allSettled([
+            getDeviceLatestDetect(sbid),
+            getDeviceTenMinutes(sbid),
+            getDevicePredict(sbid),
+            mainPage('warnInfo', {
+              pageNum: 1,
+              pageSize: 50,
+              params: {deviceId: sbid}
+            })
+          ])
 
         if (latestRes.status === 'fulfilled') {
           this.applyLatestData(latestRes.value.data)
@@ -359,6 +521,9 @@ export default {
         }
         if (predictRes.status === 'fulfilled') {
           this.applyPredictData(predictRes.value.data || [])
+        }
+        if (warnRes.status === 'fulfilled') {
+          this.applyWarnData(warnRes.value)
         }
       } catch (e) {
         console.error('数据拉取失败', e)
@@ -393,15 +558,18 @@ export default {
       if (!list || list.length === 0) return
 
       const slice = list.slice(-6)
-      const cpuData = slice.map(d => +(d.cpuAvg ?? 0).toFixed(1))
-      const memData = slice.map(d => +(d.ramAvg ?? 0).toFixed(1))
-      const timeLabels = slice.map((d, i) => {
-        if (i < slice.length - 1) return `${(slice.length - i) * 2}分钟前`
-        return '当前'
-      })
-
-      this.anomalyChartData = {cpu: cpuData, mem: memData, time: timeLabels}
-      this.updateAnomalyChart()
+      this.cachedPast = {
+        time: slice.map((d, i) =>
+          i < slice.length - 1 ? `${(slice.length - i) * 2}分钟前` : '当前'
+        ),
+        timestamps: slice.map(d => d.opTime || d.warnTimestamp || null),
+        cpu: slice.map(d => +(d.cpuAvg ?? 0).toFixed(1)),
+        mem: slice.map(d => +(d.ramAvg ?? 0).toFixed(1)),
+        temp: slice.map(d => +(d.tempAvg ?? 0).toFixed(1)),
+        score: slice.map(d => +(d.healthScore ?? 0).toFixed(1)),
+        anomaly: slice.map(d => d.anomalyStatus ?? 0)
+      }
+      this.buildMergedChartData()
 
       const recent = list.slice(-20).reverse()
       this.historyList = recent.map(d => ({
@@ -415,37 +583,173 @@ export default {
     },
 
     /**
-     * 应用预测数据（预测图 + 综合趋势图）
+     * 应用预测数据
      */
     applyPredictData(list) {
       if (!list || list.length === 0) return
 
       const slice = list.slice(0, 6)
-      const scoreData = slice.map(d => +(d.healthScore ?? 0).toFixed(1))
-      const timeLabels = ['当前']
-      for (let i = 1; i < slice.length; i++) {
-        timeLabels.push(`+${i}分钟`)
+      this.cachedFuture = {
+        time: slice.map((d, i) => (i === 0 ? '当前' : `+${i}分钟`)),
+        cpu: slice.map(d => +(d.cpuAvg ?? 0).toFixed(1)),
+        mem: slice.map(d => +(d.ramAvg ?? 0).toFixed(1)),
+        temp: slice.map(d => +(d.tempAvg ?? 0).toFixed(1)),
+        score: slice.map(d => +(d.healthScore ?? 0).toFixed(1))
       }
-
-      this.predictChartData = {score: scoreData, time: timeLabels}
-      this.updatePredictChart()
+      this.buildMergedChartData()
 
       const last = slice[slice.length - 1]
       if (last) {
         const status = last.predictStatus ?? 0
         this.nextStatus = ANOMALY_MAP[status]?.nextText || '正常'
       }
+    },
 
-      const cpuT = slice.map(d => +(d.cpuAvg ?? 0).toFixed(1))
-      const memT = slice.map(d => +(d.ramAvg ?? 0).toFixed(1))
-      const tempT = slice.map(d => +(d.tempAvg ?? 0).toFixed(1))
-      this.totalChartData = {
-        cpu: cpuT,
-        mem: memT,
-        temp: tempT,
-        time: timeLabels
+    /**
+     * 应用告警数据：匹配当前设备的最新50条故障记录
+     */
+    applyWarnData(res) {
+      const list = res?.data?.list || res?.list || res?.data || []
+      this.deviceFaultList = list.slice(0, 50)
+
+      // 更新图表故障标记（不覆盖右侧 AI 根因分析）
+      this.buildFaultMarkers(list)
+    },
+
+    getLevelLabel(lvl) {
+      const maps = {0: '无', 1: '一般', 2: '中度', 3: '严重'}
+      return maps[lvl] !== undefined ? maps[lvl] : '未知'
+    },
+
+    formatFaultTime(ts) {
+      if (!ts) return '--'
+      const d = new Date(Number(ts))
+      const Y = d.getFullYear()
+      const M = (d.getMonth() + 1).toString().padStart(2, '0')
+      const D = d.getDate().toString().padStart(2, '0')
+      const h = d.getHours().toString().padStart(2, '0')
+      const m = d.getMinutes().toString().padStart(2, '0')
+      return `${Y}-${M}-${D} ${h}:${m}`
+    },
+
+    formatShortTime(ts) {
+      if (!ts) return ''
+      const d = new Date(Number(ts))
+      const h = d.getHours().toString().padStart(2, '0')
+      const m = d.getMinutes().toString().padStart(2, '0')
+      return `${h}:${m}`
+    },
+
+    buildFaultMarkers(list) {
+      const past = this.cachedPast
+      if (!past || !past.time) return
+
+      const len = (this.mergedChartData.time || past.time).length
+      const anomalyMark = new Array(len).fill(null)
+
+      // 取最近10分钟内的告警全部显示在图表上
+      const now = Date.now()
+      const recent = list
+        .filter(f => {
+          if ((f.warnLevel || 0) < 1) return false
+          const t = Number(f.warnTimestamp)
+          if (!t) return false
+          const ts = t < 1e12 ? t * 1000 : t
+          return now - ts < 600000 // 10分钟内
+        })
+        .slice(0, 8)
+
+      // 按告警时间与当前时间的差值，映射到时间轴对应槽位
+      const sorted = recent
+        .filter(f => {
+          const t = Number(f.warnTimestamp)
+          if (!t) return false
+          const ft = t < 1e12 ? t * 1000 : t
+          const minAgo = (now - ft) / 60000
+          return minAgo >= -1 && minAgo <= 10
+        })
+        .sort((a, b) => {
+          const ta = Number(a.warnTimestamp) || 0
+          const tb = Number(b.warnTimestamp) || 0
+          return ta - tb
+        })
+      sorted.forEach(f => {
+        const t = Number(f.warnTimestamp)
+        const ft = t < 1e12 ? t * 1000 : t
+        const minAgo = (now - ft) / 60000
+        // 将分钟差值映射到11个槽位（10分钟前=0，当前=5，+5分钟=10）
+        const slot = Math.min(Math.max(Math.floor((10 - minAgo) / 2), 0), 10)
+        const content = f.warnContent || f.faultName || '故障'
+        if (anomalyMark[slot]) {
+          anomalyMark[slot].warnContent += ` | ${content}`
+          anomalyMark[slot].count = (anomalyMark[slot].count || 1) + 1
+        } else {
+          anomalyMark[slot] = {
+            value: 95,
+            warnContent: content,
+            faultTime: this.formatShortTime(ft),
+            count: 1
+          }
+        }
+      })
+
+      this.mergedChartData.anomalyMark = anomalyMark
+      this.updateMergedChart()
+    },
+
+    buildMergedChartData() {
+      const past = this.cachedPast
+      const future = this.cachedFuture
+      if (!past || !future) return
+
+      // 合并时间轴：过去去掉重复"当前"
+      const time = [...past.time.slice(0, -1), ...future.time]
+      const cpuReal = [...past.cpu.slice(0, -1), past.cpu[past.cpu.length - 1]]
+      const memReal = [...past.mem.slice(0, -1), past.mem[past.mem.length - 1]]
+      const tempReal = [
+        ...past.temp.slice(0, -1),
+        past.temp[past.temp.length - 1]
+      ]
+      const scoreReal = [
+        ...past.score.slice(0, -1),
+        past.score[past.score.length - 1]
+      ]
+      // 预测从"当前"后开始（当前值用实测值），其余填 null
+      const pad = (arr, len) => {
+        const result = new Array(len).fill(null)
+        for (let i = 1; i < arr.length; i++)
+          result[len - arr.length + i] = arr[i]
+        return result
       }
-      this.updateTotalChart()
+      const cpuPred = pad(future.cpu, time.length)
+      const memPred = pad(future.mem, time.length)
+      const tempPred = pad(future.temp, time.length)
+      const scorePred = pad(future.score, time.length)
+      // 在"当前"位置填入实测值以便连续
+      const curIdx = time.length - future.time.length
+      cpuPred[curIdx] = past.cpu[past.cpu.length - 1]
+      memPred[curIdx] = past.mem[past.mem.length - 1]
+      tempPred[curIdx] = past.temp[past.temp.length - 1]
+      scorePred[curIdx] = past.score[past.score.length - 1]
+
+      // 故障标记由 applyWarnData/buildFaultMarkers 独立更新
+      const anomalyMark = this.mergedChartData.anomalyMark?.length
+        ? this.mergedChartData.anomalyMark
+        : new Array(time.length).fill(null)
+
+      this.mergedChartData = {
+        time,
+        cpuReal,
+        memReal,
+        tempReal,
+        scoreReal,
+        cpuPred,
+        memPred,
+        tempPred,
+        scorePred,
+        anomalyMark
+      }
+      this.updateMergedChart()
     },
 
     /**
@@ -552,33 +856,22 @@ export default {
 
     /* ================ 图表更新 ================ */
 
-    updateAnomalyChart() {
-      if (!this.anomalyChart) return
-      this.anomalyChart.setOption({
-        xAxis: {data: this.anomalyChartData.time},
+    updateMergedChart() {
+      if (!this.mergedChart) return
+      const d = this.mergedChartData
+      if (!d.time.length) return
+      this.mergedChart.setOption({
+        xAxis: {data: d.time},
         series: [
-          {data: this.anomalyChartData.cpu},
-          {data: this.anomalyChartData.mem}
-        ]
-      })
-    },
-
-    updatePredictChart() {
-      if (!this.predictChart) return
-      this.predictChart.setOption({
-        xAxis: {data: this.predictChartData.time},
-        series: [{data: this.predictChartData.score}]
-      })
-    },
-
-    updateTotalChart() {
-      if (!this.totalChart) return
-      this.totalChart.setOption({
-        xAxis: {data: this.totalChartData.time},
-        series: [
-          {data: this.totalChartData.cpu},
-          {data: this.totalChartData.mem},
-          {data: this.totalChartData.temp}
+          {data: d.cpuReal},
+          {data: d.memReal},
+          {data: d.tempReal},
+          {data: d.scoreReal},
+          {data: d.cpuPred},
+          {data: d.memPred},
+          {data: d.tempPred},
+          {data: d.scorePred},
+          {data: d.anomalyMark}
         ]
       })
     },
@@ -587,30 +880,17 @@ export default {
 
     handleResize() {
       setTimeout(() => {
-        if (this.anomalyChart) this.anomalyChart.resize()
-        if (this.predictChart) this.predictChart.resize()
-        if (this.totalChart) this.totalChart.resize()
+        if (this.mergedChart) this.mergedChart.resize()
       }, 50)
     },
 
     /* ================ 生命周期辅助 ================ */
 
-    onDeviceChange() {
-      this.$message.success(`已切换至设备，数据加载中...`)
-      this.fetchAllData()
-    },
-
-    initCharts() {
-      this.initAnomalyChart()
-      this.initPredictChart()
-      this.initTotalChart()
-    },
-
-    initAnomalyChart() {
-      const el = this.$refs.anomalyChart
+    initMergedChart() {
+      const el = this.$refs.mergedChart
       if (!el) return
-      this.anomalyChart = echarts.init(el, null, {renderer: 'canvas'})
-      this.anomalyChart.setOption({
+      this.mergedChart = echarts.init(el, null, {renderer: 'canvas'})
+      this.mergedChart.setOption({
         animation: true,
         animationDuration: 1200,
         animationEasing: 'cubicOut',
@@ -624,217 +904,182 @@ export default {
           formatter(params) {
             let html = `<div style="font-size:13px;font-weight:bold;color:#38bdf8;margin-bottom:6px;border-bottom:1px solid rgba(56,189,248,0.15);padding-bottom:4px;">${params[0].axisValue}</div>`
             params.forEach(p => {
-              const color =
-                p.color || p.seriesName === 'CPU使用率' ? '#38bdf8' : '#22c55e'
-              html += `<div style="display:flex;justify-content:space-between;gap:20px;padding:2px 0;">`
-              html += `<span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${p.color};margin-right:6px;"></span>${p.seriesName}</span>`
-              html += `<span style="font-weight:bold;color:#fff;">${p.value}%</span>`
-              html += `</div>`
-            })
-            return html
-          }
-        },
-        legend: {
-          data: ['CPU使用率', '内存使用率'],
-          textStyle: {color: '#e2e8f0', fontSize: 12}
-        },
-        grid: {left: '8%', right: '5%', top: '15%', bottom: '10%'},
-        xAxis: {
-          type: 'category',
-          data: this.anomalyChartData.time,
-          axisLabel: {color: '#94a3b8'},
-          axisLine: {show: false},
-          axisTick: {show: false}
-        },
-        yAxis: {
-          type: 'value',
-          min: 0,
-          max: 100,
-          axisLabel: {color: '#94a3b8', formatter: '{value}%'},
-          splitLine: {lineStyle: {color: 'rgba(255,255,255,0.08)'}},
-          axisLine: {show: false},
-          axisTick: {show: false}
-        },
-        series: [
-          {
-            name: 'CPU使用率',
-            type: 'line',
-            smooth: true,
-            data: this.anomalyChartData.cpu,
-            lineStyle: {color: '#38bdf8', width: 3},
-            itemStyle: {color: '#38bdf8'},
-            symbol: 'circle',
-            symbolSize: 6
-          },
-          {
-            name: '内存使用率',
-            type: 'line',
-            smooth: true,
-            data: this.anomalyChartData.mem,
-            lineStyle: {color: '#22c55e', width: 3},
-            itemStyle: {color: '#22c55e'},
-            symbol: 'circle',
-            symbolSize: 6
-          }
-        ]
-      })
-    },
-
-    initPredictChart() {
-      const el = this.$refs.predictChart
-      if (!el) return
-      this.predictChart = echarts.init(el, null, {renderer: 'canvas'})
-      this.predictChart.setOption({
-        animation: true,
-        animationDuration: 1500,
-        animationEasing: 'cubicOut',
-        tooltip: {
-          trigger: 'axis',
-          backgroundColor: 'rgba(8, 14, 24, 0.92)',
-          borderColor: 'rgba(139, 92, 246, 0.3)',
-          borderWidth: 1,
-          padding: [10, 14],
-          textStyle: {color: '#e2e8f0', fontSize: 12},
-          formatter(params) {
-            const p = params[0]
-            return (
-              `<div style="font-size:13px;font-weight:bold;color:#8b5cf6;margin-bottom:6px;border-bottom:1px solid rgba(139,92,246,0.15);padding-bottom:4px;">${p.axisValue}</div>` +
-              `<div style="display:flex;justify-content:space-between;gap:20px;padding:2px 0;">` +
-              `<span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#8b5cf6;margin-right:6px;"></span>综合状态值</span>` +
-              `<span style="font-weight:bold;color:#fff;">${p.value}</span>` +
-              `</div>`
-            )
-          }
-        },
-        legend: {
-          data: ['设备综合状态值'],
-          textStyle: {color: '#e2e8f0', fontSize: 12}
-        },
-        grid: {left: '8%', right: '5%', top: '15%', bottom: '10%'},
-        xAxis: {
-          type: 'category',
-          data: this.predictChartData.time,
-          axisLabel: {color: '#94a3b8'},
-          axisLine: {show: false},
-          axisTick: {show: false}
-        },
-        yAxis: {
-          type: 'value',
-          min: 0,
-          max: 100,
-          axisLabel: {color: '#94a3b8'},
-          splitLine: {lineStyle: {color: 'rgba(255,255,255,0.08)'}},
-          axisLine: {show: false},
-          axisTick: {show: false}
-        },
-        series: [
-          {
-            name: '设备综合状态值',
-            type: 'line',
-            smooth: true,
-            data: this.predictChartData.score,
-            lineStyle: {color: '#8b5cf6', width: 3},
-            itemStyle: {color: '#8b5cf6'},
-            areaStyle: {
-              color: {
-                type: 'linear',
-                x: 0,
-                y: 0,
-                x2: 0,
-                y2: 1,
-                colorStops: [
-                  {offset: 0, color: 'rgba(139, 92, 246, 0.3)'},
-                  {offset: 1, color: 'rgba(139, 92, 246, 0.02)'}
-                ]
+              if (p.value === null || p.value === undefined) return
+              const color = p.color || '#38bdf8'
+              let val = p.value
+              let unit = '%'
+              if (p.seriesName === '故障信号') {
+                val = p.data?.warnContent || '故障'
+                unit = ''
+              } else {
+                if (p.seriesName && p.seriesName.includes('温度')) unit = '℃'
+                if (p.seriesName && p.seriesName.includes('状态分')) unit = '分'
               }
-            },
-            symbol: 'circle',
-            symbolSize: 6
-          }
-        ]
-      })
-    },
-
-    initTotalChart() {
-      const el = this.$refs.totalChart
-      if (!el) return
-      this.totalChart = echarts.init(el, null, {renderer: 'canvas'})
-      this.totalChart.setOption({
-        animation: true,
-        animationDuration: 1000,
-        animationEasing: 'cubicOut',
-        tooltip: {
-          trigger: 'axis',
-          backgroundColor: 'rgba(8, 14, 24, 0.92)',
-          borderColor: 'rgba(56, 189, 248, 0.25)',
-          borderWidth: 1,
-          padding: [10, 14],
-          textStyle: {color: '#e2e8f0', fontSize: 12},
-          formatter(params) {
-            let html = `<div style="font-size:13px;font-weight:bold;color:#38bdf8;margin-bottom:6px;border-bottom:1px solid rgba(56,189,248,0.15);padding-bottom:4px;">${params[0].axisValue}</div>`
-            const colorMap = {CPU: '#38bdf8', 内存: '#22c55e', 温度: '#f59e0b'}
-            params.forEach(p => {
-              const color = colorMap[p.seriesName] || '#38bdf8'
-              const unit = p.seriesName === '温度' ? '℃' : '%'
-              html += `<div style="display:flex;justify-content:space-between;gap:20px;padding:2px 0;">`
-              html += `<span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${color};margin-right:6px;"></span>${p.seriesName}</span>`
-              html += `<span style="font-weight:bold;color:#fff;">${p.value}${unit}</span>`
-              html += `</div>`
+              html +=
+                `<div style="display:flex;justify-content:space-between;gap:20px;padding:2px 0;">` +
+                `<span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${color};margin-right:6px;"></span>${p.seriesName}</span>` +
+                `<span style="font-weight:bold;color:#fff;">${val}${unit}</span></div>`
             })
             return html
           }
         },
         legend: {
-          data: ['CPU', '内存', '温度'],
-          textStyle: {color: '#e2e8f0', fontSize: 12}
+          data: [
+            {name: 'CPU实测', icon: 'circle'},
+            {name: 'MEM实测', icon: 'circle'},
+            {name: '温度实测', icon: 'circle'},
+            {name: '状态分实测', icon: 'circle'},
+            {name: 'CPU预测', icon: 'diamond'},
+            {name: 'MEM预测', icon: 'diamond'},
+            {name: '温度预测', icon: 'diamond'},
+            {name: '状态分预测', icon: 'diamond'},
+            {name: '故障信号', icon: 'circle'}
+          ],
+          textStyle: {color: '#e2e8f0', fontSize: 10},
+          bottom: 0
         },
-        grid: {left: '8%', right: '5%', top: '15%', bottom: '10%'},
+        grid: {left: '6%', right: '8%', top: '10%', bottom: '18%'},
         xAxis: {
           type: 'category',
-          data: this.totalChartData.time,
-          axisLabel: {color: '#94a3b8'},
+          axisLabel: {color: '#94a3b8', fontSize: 10},
           axisLine: {show: false},
-          axisTick: {show: false}
+          axisTick: {show: false},
+          splitLine: {show: false}
         },
-        yAxis: {
-          type: 'value',
-          min: 0,
-          max: 100,
-          axisLabel: {color: '#94a3b8', formatter: '{value}'},
-          splitLine: {lineStyle: {color: 'rgba(255,255,255,0.08)'}},
-          axisLine: {show: false},
-          axisTick: {show: false}
-        },
+        yAxis: [
+          {
+            type: 'value',
+            min: 0,
+            max: 100,
+            position: 'left',
+            name: '(%)',
+            nameTextStyle: {color: '#64748b', fontSize: 9},
+            axisLabel: {color: '#94a3b8', fontSize: 9, formatter: '{value}'},
+            splitLine: {lineStyle: {color: 'rgba(255,255,255,0.06)'}},
+            axisLine: {show: false},
+            axisTick: {show: false}
+          },
+          {
+            type: 'value',
+            min: 0,
+            max: 100,
+            position: 'right',
+            name: '(分)',
+            nameTextStyle: {color: '#64748b', fontSize: 9},
+            axisLabel: {color: '#a78bfa', fontSize: 9, formatter: '{value}'},
+            splitLine: {show: false},
+            axisLine: {show: false},
+            axisTick: {show: false}
+          }
+        ],
         series: [
           {
-            name: 'CPU',
+            name: 'CPU实测',
             type: 'line',
             smooth: true,
-            data: this.totalChartData.cpu,
-            lineStyle: {color: '#38bdf8', width: 3},
+            yAxisIndex: 0,
+            data: [],
+            lineStyle: {color: '#38bdf8', width: 2},
             itemStyle: {color: '#38bdf8'},
             symbol: 'circle',
-            symbolSize: 5
+            symbolSize: 4
           },
           {
-            name: '内存',
+            name: 'MEM实测',
             type: 'line',
             smooth: true,
-            data: this.totalChartData.mem,
-            lineStyle: {color: '#22c55e', width: 3},
+            yAxisIndex: 0,
+            data: [],
+            lineStyle: {color: '#22c55e', width: 2},
             itemStyle: {color: '#22c55e'},
             symbol: 'circle',
-            symbolSize: 5
+            symbolSize: 4
           },
           {
-            name: '温度',
+            name: '温度实测',
             type: 'line',
             smooth: true,
-            data: this.totalChartData.temp,
-            lineStyle: {color: '#f59e0b', width: 3},
+            yAxisIndex: 0,
+            data: [],
+            lineStyle: {color: '#f59e0b', width: 2},
             itemStyle: {color: '#f59e0b'},
             symbol: 'circle',
-            symbolSize: 5
+            symbolSize: 4
+          },
+          {
+            name: '状态分实测',
+            type: 'line',
+            smooth: true,
+            yAxisIndex: 1,
+            data: [],
+            lineStyle: {color: '#8b5cf6', width: 2},
+            itemStyle: {color: '#8b5cf6'},
+            symbol: 'circle',
+            symbolSize: 4
+          },
+          {
+            name: 'CPU预测',
+            type: 'line',
+            smooth: true,
+            yAxisIndex: 0,
+            data: [],
+            lineStyle: {color: '#38bdf8', width: 2, type: 'dashed'},
+            itemStyle: {color: '#38bdf8'},
+            symbol: 'diamond',
+            symbolSize: 4
+          },
+          {
+            name: 'MEM预测',
+            type: 'line',
+            smooth: true,
+            yAxisIndex: 0,
+            data: [],
+            lineStyle: {color: '#22c55e', width: 2, type: 'dashed'},
+            itemStyle: {color: '#22c55e'},
+            symbol: 'diamond',
+            symbolSize: 4
+          },
+          {
+            name: '温度预测',
+            type: 'line',
+            smooth: true,
+            yAxisIndex: 0,
+            data: [],
+            lineStyle: {color: '#f59e0b', width: 2, type: 'dashed'},
+            itemStyle: {color: '#f59e0b'},
+            symbol: 'diamond',
+            symbolSize: 4
+          },
+          {
+            name: '状态分预测',
+            type: 'line',
+            smooth: true,
+            yAxisIndex: 1,
+            data: [],
+            lineStyle: {color: '#8b5cf6', width: 2, type: 'dashed'},
+            itemStyle: {color: '#8b5cf6'},
+            symbol: 'diamond',
+            symbolSize: 4
+          },
+          {
+            name: '故障信号',
+            type: 'scatter',
+            yAxisIndex: 0,
+            data: [],
+            symbol: 'circle',
+            symbolSize: 10,
+            itemStyle: {color: '#ef4444'},
+            label: {
+              show: true,
+              position: 'bottom',
+              color: '#ef4444',
+              fontSize: 9,
+              distance: 2,
+              formatter(p) {
+                return p.data?.faultTime || ''
+              }
+            },
+            z: 10
           }
         ]
       })
@@ -976,7 +1221,7 @@ export default {
   padding: 2px 14px;
   border-radius: 30px;
   letter-spacing: 0.5px;
-  box-shadow: 0 0 12px rgba(56, 189, 248, 0.25);
+  /* box-shadow: 0 0 12px rgba(56, 189, 248, 0.25); */
   animation: badgePulse 2s ease-in-out infinite;
 }
 @keyframes badgePulse {
@@ -988,11 +1233,132 @@ export default {
     box-shadow: 0 0 18px rgba(56, 189, 248, 0.4);
   }
 }
-.device-select {
-  width: 180px;
+
+/* ==================== 左右主布局 ==================== */
+.main-body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  gap: 12px;
 }
 
-/* ==================== 通用卡片组件 ==================== */
+/* 左侧设备列表 */
+.device-sidebar {
+  width: 220px;
+  flex-shrink: 0;
+  background: linear-gradient(
+    160deg,
+    rgba(10, 18, 34, 0.9),
+    rgba(8, 14, 24, 0.95)
+  );
+  border: 1px solid rgba(30, 41, 59, 0.6);
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.sidebar-title {
+  font-size: 12px;
+  font-weight: bold;
+  color: var(--color-primary);
+  padding: 12px 10px 8px;
+  border-bottom: 1px solid rgba(56, 189, 248, 0.1);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+.sidebar-count {
+  color: #64748b;
+  font-weight: normal;
+  font-size: 11px;
+}
+.sidebar-scroll {
+  flex: 1;
+  height: 100%;
+}
+.sidebar-scroll .el-scrollbar__wrap {
+  overflow-x: hidden;
+}
+.device-card {
+  padding: 10px;
+  border-bottom: 1px solid rgba(30, 41, 59, 0.25);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.device-card:hover {
+  background: rgba(56, 189, 248, 0.06);
+}
+.device-card.is-active {
+  background: rgba(56, 189, 248, 0.1);
+  border-left: 3px solid var(--color-primary);
+  padding-left: 7px;
+}
+.device-card-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+.status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.dot-success {
+  background: #10b981;
+  box-shadow: 0 0 6px rgba(16, 185, 129, 0.4);
+}
+.dot-warning {
+  background: #f59e0b;
+  box-shadow: 0 0 6px rgba(245, 158, 11, 0.4);
+}
+.dot-danger {
+  background: #ef4444;
+  box-shadow: 0 0 6px rgba(239, 68, 68, 0.4);
+}
+.device-name {
+  font-size: 12px;
+  color: #e2e8f0;
+  font-weight: 500;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.device-type {
+  font-size: 9px;
+  color: #64748b;
+  background: rgba(30, 41, 59, 0.5);
+  padding: 1px 6px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+.device-card-metrics {
+  display: flex;
+  gap: 8px;
+  font-size: 10px;
+  padding-left: 13px;
+}
+.device-card-metrics .metric {
+  font-variant-numeric: tabular-nums;
+}
+.load-more-tip {
+  text-align: center;
+  font-size: 11px;
+  color: #64748b;
+  padding: 10px;
+}
+
+/* 右侧详细面板 */
+.detail-panel {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
 .card-base {
   position: relative;
   background: linear-gradient(
@@ -1107,6 +1473,9 @@ export default {
   min-width: 0;
   min-height: 0;
 }
+.col-merg-chart {
+  flex: 3;
+}
 
 /* ==================== 下排行布局 ==================== */
 .row-bottom {
@@ -1169,14 +1538,6 @@ export default {
   color: #fff;
   flex-shrink: 0;
   letter-spacing: 0.3px;
-}
-.tag-iso {
-  background: linear-gradient(135deg, #f59e0b, #d97706);
-  box-shadow: 0 0 8px rgba(245, 158, 11, 0.2);
-}
-.tag-lstm {
-  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
-  box-shadow: 0 0 8px rgba(139, 92, 246, 0.2);
 }
 
 /* ==================== 状态数值区（竖向排列） ==================== */
@@ -1358,6 +1719,30 @@ export default {
 .analysis-list li:hover::before {
   color: var(--color-primary);
   left: 3px;
+}
+
+.analysis-split-layout {
+  display: flex;
+  gap: 10px;
+  flex: 1;
+  min-height: 0;
+}
+.analysis-split-left {
+  width: 45%;
+  overflow-y: auto;
+  border-right: 1px solid rgba(56, 189, 248, 0.1);
+  padding-right: 8px;
+}
+.analysis-split-left::-webkit-scrollbar {
+  width: 3px;
+}
+.analysis-split-left::-webkit-scrollbar-thumb {
+  background: rgba(56, 189, 248, 0.2);
+  border-radius: 3px;
+}
+.analysis-split-right {
+  flex: 1;
+  overflow-y: auto;
 }
 
 /* ==================== 历史日志表格 ==================== */

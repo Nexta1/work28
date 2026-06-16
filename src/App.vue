@@ -452,10 +452,10 @@ export default {
           this.checkNewAlerts()
         }, 3000)
       })
-      // 每 60 秒轮询一次
+      // 每 20 秒轮询一次
       this.alertCheckTimer = setInterval(() => {
         this.checkNewAlerts()
-      }, 60000)
+      }, 20000)
     },
 
     /**

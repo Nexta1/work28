@@ -581,7 +581,6 @@
         </div>
       </div>
     </div>
-    <!-- 事件查询抽屉 -->
     <EventQueryDrawer
       :visible="eventDrawerVisible"
       page-title="业务质量监控"
@@ -604,7 +603,6 @@ import {wllxMap} from '@/api/map'
 export default {
   name: 'BusinessQualityMonitor',
   components: {
-    EventQueryDrawer
   },
   data() {
     return {

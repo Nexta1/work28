@@ -194,11 +194,27 @@
               <!-- 操作区 -->
               <el-table-column
                 label="操作"
-                width="100"
+                width="260"
                 fixed="right"
                 align="center"
               >
                 <template slot-scope="scope">
+                  <el-button
+                    size="mini"
+                    type="primary"
+                    icon="el-icon-monitor"
+                    class="custom-ai-btn"
+                    @click="handleAIAnalysis(scope.row)"
+                    >AI分析</el-button
+                  >
+                  <el-button
+                    size="mini"
+                    type="warning"
+                    icon="el-icon-connection"
+                    class="custom-diagnosis-btn"
+                    @click="handleFaultDiagnosis(scope.row)"
+                    >故障诊断</el-button
+                  >
                   <el-button
                     v-if="scope.row.warnState === '待手工清除'"
                     size="mini"
@@ -225,6 +241,188 @@
               :total="page.total"
             />
           </div>
+
+          <!-- 故障诊断对话框 -->
+          <el-dialog
+            title="故障诊断策略"
+            :visible.sync="diagnosisDialogVisible"
+            width="1100px"
+            :close-on-click-modal="false"
+            custom-class="diagnosis-dialog"
+            append-to-body
+            @opened="onDiagnosisDialogOpened"
+            @closed="onDiagnosisDialogClosed"
+          >
+            <div class="diagnosis-split-layout">
+              <!-- 左侧：方案列表 -->
+              <div class="diagnosis-left" v-loading="strategyLoading">
+                <div class="diagnosis-left-header">
+                  <Icon
+                    icon="lucide:file-text"
+                    :size="13"
+                    color="#f59e0b"
+                    style="vertical-align: middle; margin-right: 4px"
+                  />可选诊断方案
+                  <span class="strategy-count"
+                    >({{ strategyList.length }})</span
+                  >
+                </div>
+                <div class="diagnosis-strategy-list">
+                  <div
+                    v-for="item in strategyList"
+                    :key="item.faultStrategyId"
+                    class="strategy-card"
+                    :class="{
+                      active: selectedStrategyId === item.faultStrategyId
+                    }"
+                    @click="selectStrategy(item)"
+                  >
+                    <div class="strategy-radio-indicator">
+                      <span
+                        class="radio-dot"
+                        :class="{
+                          checked: selectedStrategyId === item.faultStrategyId
+                        }"
+                      ></span>
+                    </div>
+                    <div class="strategy-info">
+                      <div class="strategy-name">
+                        <span class="text-cyan"
+                          >#{{ item.faultStrategyId }}</span
+                        >
+                        {{ item.strategyName }}
+                      </div>
+                      <div class="strategy-detail">
+                        <span
+                          v-if="item.faultDiagnosis"
+                          class="detail-tag diagnosis-tag"
+                        >
+                          <i class="el-icon-document"></i>
+                          {{ item.faultDiagnosis }}
+                        </span>
+                        <span
+                          v-if="item.dealMethod"
+                          class="detail-tag deal-tag"
+                        >
+                          <i class="el-icon-s-tools"></i>
+                          {{ item.dealMethod }}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  v-if="strategyList.length === 0 && !strategyLoading"
+                  class="custom-empty-wrap"
+                >
+                  <Icon
+                    icon="lucide:file-x"
+                    :size="28"
+                    color="#334155"
+                    style="margin-bottom: 8px"
+                  />
+                  <p class="empty-text">该故障暂无关联的诊断策略</p>
+                </div>
+              </div>
+
+              <!-- 右侧：拓扑图 + 详情 -->
+              <div class="diagnosis-right">
+                <div class="topology-toolbar" v-if="selectedStrategyId">
+                  <el-button
+                    size="mini"
+                    type="primary"
+                    plain
+                    @click="layoutDiagnosisGraph"
+                    ><i class="el-icon-s-operation"></i> 一键布局</el-button
+                  >
+                </div>
+                <div
+                  class="diagnosis-topology-container"
+                  v-loading="diagnosisTopologyLoading"
+                >
+                  <div
+                    id="diagnosis-x6-canvas"
+                    v-show="
+                      selectedStrategyId && diagnosisTopologyNodes.length > 0
+                    "
+                    class="diagnosis-x6-instance"
+                  ></div>
+                  <div v-if="!selectedStrategyId" class="topology-empty-tip">
+                    <i
+                      class="el-icon-search"
+                      style="font-size: 22px; color: #516580"
+                    ></i>
+                    <p>请先在左侧选择诊断方案</p>
+                    <p class="sub-tip">选中后将展示关联流程拓扑图</p>
+                  </div>
+                  <div
+                    v-else-if="
+                      !diagnosisTopologyLoading &&
+                      diagnosisTopologyNodes.length === 0
+                    "
+                    class="topology-empty-tip"
+                  >
+                    <i
+                      class="el-icon-document"
+                      style="font-size: 22px; color: #516580"
+                    ></i>
+                    <p>该流程暂无关联的节点</p>
+                    <p class="sub-tip">
+                      {{ selectedStrategy.businessName || '未关联流程' }}
+                    </p>
+                  </div>
+                </div>
+                <div v-if="selectedStrategy" class="diagnosis-detail-panel">
+                  <div class="detail-panel-header">
+                    <Icon
+                      icon="lucide:info"
+                      :size="12"
+                      color="#38bdf8"
+                      style="vertical-align: middle; margin-right: 4px"
+                    />策略详情
+                  </div>
+                  <div class="detail-panel-body">
+                    <div class="detail-row">
+                      <span class="detail-label">策略名称</span>
+                      <span class="detail-value strategy-val">{{
+                        selectedStrategy.strategyName
+                      }}</span>
+                    </div>
+                    <div class="detail-row">
+                      <span class="detail-label">诊断方法</span>
+                      <span class="detail-value">{{
+                        selectedStrategy.faultDiagnosis || '--'
+                      }}</span>
+                    </div>
+                    <div class="detail-row">
+                      <span class="detail-label">处理方法</span>
+                      <span class="detail-value">{{
+                        selectedStrategy.dealMethod || '--'
+                      }}</span>
+                    </div>
+                    <div class="detail-row">
+                      <span class="detail-label">关联流程</span>
+                      <span class="detail-value flow-val">{{
+                        selectedStrategy.businessName || '未关联'
+                      }}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <span slot="footer" class="diagnosis-footer">
+              <el-button size="mini" @click="diagnosisDialogVisible = false"
+                >取消</el-button
+              >
+              <el-button
+                size="mini"
+                type="warning"
+                :disabled="!selectedStrategyId"
+                @click="submitDiagnosis"
+                >下发策略</el-button
+              >
+            </span>
+          </el-dialog>
         </div>
       </el-tab-pane>
 
@@ -306,7 +504,15 @@
 </template>
 
 <script>
-import {mainPage, mainDelete, apiGetAll} from '@/api/common'
+import {
+  mainPage,
+  mainDelete,
+  apiGetAll,
+  apiPage,
+  apiGetDetail
+} from '@/api/common'
+import {Graph} from '@antv/x6'
+import {DagreLayout} from '@antv/layout'
 import WarnClear from './WarnClear.vue'
 import WarnBlock from './WarnBlock.vue'
 import WarnMerge from './WarnMerge.vue'
@@ -344,6 +550,18 @@ export default {
       deviceOptions: [], // 设备选项列表
       metricOptions: [],
       performanceMetricOptions: [],
+
+      // 故障诊断对话框
+      diagnosisDialogVisible: false,
+      diagnosisRow: null,
+      strategyList: [],
+      strategyLoading: false,
+      selectedStrategyId: null,
+      selectedStrategy: null,
+      diagnosisGraph: null,
+      diagnosisTopologyLoading: false,
+      diagnosisTopologyNodes: [],
+      diagnosisTopologyLinks: [],
       cascadeProps: {
         value: 'faultTypeId',
         label: 'faultName',
@@ -531,6 +749,344 @@ export default {
         手工清除: '手工清除'
       }
       return maps[state] || state || '--'
+    },
+
+    // ========== 故障诊断 ==========
+
+    // ========== 故障诊断 ==========
+
+    handleFaultDiagnosis(row) {
+      this.diagnosisRow = row
+      this.selectedStrategyId = null
+      this.selectedStrategy = null
+      this.strategyList = []
+      this.diagnosisTopologyNodes = []
+      this.diagnosisTopologyLinks = []
+      this.diagnosisDialogVisible = true
+      this.loadFaultStrategies(row)
+    },
+
+    onDiagnosisDialogOpened() {
+      this.$nextTick(() => {
+        if (this.diagnosisGraph) {
+          const container = document.getElementById('diagnosis-x6-canvas')
+          if (container) {
+            const parent = container.parentElement
+            if (parent) {
+              this.diagnosisGraph.resize(
+                parent.clientWidth,
+                parent.clientHeight
+              )
+            }
+            this.diagnosisGraph.centerContent()
+          }
+        }
+      })
+    },
+
+    onDiagnosisDialogClosed() {
+      this.disposeDiagnosisGraph()
+    },
+
+    selectStrategy(item) {
+      this.selectedStrategyId = item.faultStrategyId
+      this.selectedStrategy = item
+      // 加载关联流程拓扑图
+      if (item.businessId) {
+        this.$nextTick(() => {
+          this.loadDiagnosisTopology(item.businessId)
+        })
+      } else {
+        this.diagnosisTopologyNodes = []
+        this.diagnosisTopologyLinks = []
+        this.clearDiagnosisGraph()
+      }
+    },
+
+    initDiagnosisGraph() {
+      if (this.diagnosisGraph) return
+      const container = document.getElementById('diagnosis-x6-canvas')
+      if (!container) return
+
+      // 确保容器有尺寸
+      const rect = container.getBoundingClientRect()
+      if (rect.width === 0 || rect.height === 0) {
+        container.style.width = '100%'
+        container.style.height = '100%'
+      }
+
+      this.diagnosisGraph = new Graph({
+        container,
+        autoResize: true,
+        background: {color: '#070c14'},
+        grid: {
+          size: 10,
+          visible: true,
+          type: 'mesh',
+          args: {color: '#111c2e', thickness: 1}
+        },
+        connecting: {
+          router: 'manhattan',
+          connector: {name: 'rounded', args: {radius: 8}}
+        },
+        panning: true,
+        mousewheel: {enabled: true, modifiers: 'ctrl'}
+      })
+
+      // 立即调整到父容器尺寸
+      this.$nextTick(() => {
+        if (this.diagnosisGraph) {
+          const parent = container.parentElement
+          if (parent) {
+            this.diagnosisGraph.resize(parent.clientWidth, parent.clientHeight)
+          }
+        }
+      })
+    },
+
+    disposeDiagnosisGraph() {
+      if (this.diagnosisGraph) {
+        this.diagnosisGraph.dispose()
+        this.diagnosisGraph = null
+      }
+    },
+
+    clearDiagnosisGraph() {
+      if (this.diagnosisGraph) {
+        this.diagnosisGraph.clearCells()
+      }
+    },
+
+    async loadDiagnosisTopology(businessId) {
+      this.diagnosisTopologyLoading = true
+      this.initDiagnosisGraph()
+      if (this.diagnosisGraph) {
+        this.diagnosisGraph.clearCells()
+      }
+
+      try {
+        const payload = {
+          pageNum: 1,
+          pageSize: 1000,
+          params: {businessId}
+        }
+        const [resNodes, resLinks] = await Promise.all([
+          apiPage('businessNode', payload),
+          apiPage('businessLink', payload)
+        ])
+
+        const backendNodes = resNodes.data?.list || resNodes.data || []
+        const backendLinks = resLinks.data?.list || resLinks.data || []
+
+        if (!this.diagnosisGraph) {
+          this.initDiagnosisGraph()
+        }
+        if (!this.diagnosisGraph) return
+
+        const x6NodesMap = {}
+        backendNodes.forEach(item => {
+          const vNode = this.diagnosisGraph.addNode({
+            id: 'node-' + item.businessNodeId,
+            x: Number(item.coordinateX) || 100,
+            y: Number(item.coordinateY) || 100,
+            width: 140,
+            height: 40,
+            label: item.nodeName,
+            attrs: {
+              body: {
+                fill: '#0f172a',
+                stroke: '#06b6d4',
+                strokeWidth: 1.5,
+                rx: 3
+              },
+              label: {fill: '#cbd5e1', fontSize: 12}
+            },
+            ports: {
+              groups: {absolute: {position: 'absolute'}},
+              items: [
+                {
+                  id: 'port-top',
+                  group: 'absolute',
+                  args: {x: '50%', y: 0},
+                  attrs: {circle: {r: 4, magnet: true, fill: '#06b6d4'}}
+                },
+                {
+                  id: 'port-bottom',
+                  group: 'absolute',
+                  args: {x: '50%', y: '100%'},
+                  attrs: {circle: {r: 4, magnet: true, fill: '#06b6d4'}}
+                }
+              ]
+            },
+            data: {...item}
+          })
+          x6NodesMap[item.businessNodeId] = vNode
+        })
+
+        backendLinks.forEach(link => {
+          const sNode = x6NodesMap[link.srcNodeId]
+          const dNode = x6NodesMap[link.dstNodeId]
+          if (sNode && dNode) {
+            this.diagnosisGraph.addEdge({
+              id: 'link-' + link.businessLinkId,
+              source: {cell: sNode.id, port: 'port-bottom'},
+              target: {cell: dNode.id, port: 'port-top'},
+              attrs: {
+                line: {
+                  stroke: '#f59e0b',
+                  strokeWidth: 2,
+                  targetMarker: {name: 'block', width: 8, height: 6}
+                }
+              },
+              labels: link.elExp
+                ? [
+                    {
+                      attrs: {
+                        text: {
+                          text: link.elExp,
+                          fill: '#f59e0b',
+                          fontSize: 10
+                        }
+                      }
+                    }
+                  ]
+                : [],
+              data: {...link}
+            })
+          }
+        })
+
+        this.diagnosisTopologyNodes = backendNodes
+        this.diagnosisTopologyLinks = backendLinks
+
+        // 确保容器尺寸后居中
+        this.$nextTick(() => {
+          if (!this.diagnosisGraph) return
+          const container = document.getElementById('diagnosis-x6-canvas')
+          if (container && container.parentElement) {
+            this.diagnosisGraph.resize(
+              container.parentElement.clientWidth,
+              container.parentElement.clientHeight
+            )
+          }
+          if (backendNodes.length > 0) {
+            if (!backendNodes[0].coordinateX) {
+              this.layoutDiagnosisGraph()
+            } else {
+              this.diagnosisGraph.zoomToFit({padding: 20, maxScale: 1})
+            }
+          }
+        })
+      } catch (e) {
+        console.error('加载流程拓扑失败:', e)
+        this.diagnosisTopologyNodes = []
+        this.diagnosisTopologyLinks = []
+      } finally {
+        this.diagnosisTopologyLoading = false
+      }
+    },
+
+    layoutDiagnosisGraph() {
+      if (!this.diagnosisGraph) return
+      const nodes = this.diagnosisGraph
+        .getNodes()
+        .map(n => ({id: n.id, width: 140, height: 40}))
+      const edges = this.diagnosisGraph.getEdges().map(e => ({
+        source: e.getSourceCellId(),
+        target: e.getTargetCellId()
+      }))
+
+      const dagreLayout = new DagreLayout({
+        type: 'dagre',
+        rankdir: 'TB',
+        ranksep: 40,
+        nodesep: 40
+      })
+      const model = dagreLayout.layout({nodes, edges})
+
+      this.diagnosisGraph.batchUpdate(() => {
+        model.nodes.forEach(n => {
+          const cell = this.diagnosisGraph.getCellById(n.id)
+          if (cell) cell.position(n.x, n.y)
+        })
+      })
+      this.diagnosisGraph.zoomToFit({padding: 20, maxScale: 1})
+    },
+
+    async loadFaultStrategies(row) {
+      this.strategyLoading = true
+      try {
+        const faultTypeId = row.faultTypeId
+        if (faultTypeId != null) {
+          const res = await apiPage('faultStrategy', {
+            pageNum: 1,
+            pageSize: 200
+          })
+          const pool = res.data.list || res.data || []
+          this.strategyList = pool.filter(
+            s => Number(s.faultTypeId) === Number(faultTypeId)
+          )
+        } else {
+          this.strategyList = []
+          this.$message.info('该告警未关联故障类型')
+        }
+      } catch (e) {
+        console.error('获取诊断策略失败:', e)
+        this.strategyList = []
+      } finally {
+        this.strategyLoading = false
+      }
+    },
+
+    flattenTree(tree) {
+      const result = []
+      const walk = nodes => {
+        nodes.forEach(n => {
+          result.push(n)
+          if (n.children && n.children.length) walk(n.children)
+        })
+      }
+      walk(tree)
+      return result
+    },
+
+    async submitDiagnosis() {
+      if (!this.selectedStrategyId) {
+        this.$message.warning('请选择一个诊断策略')
+        return
+      }
+      try {
+        const detail = await apiGetDetail(
+          'faultStrategy',
+          this.selectedStrategyId
+        )
+        const data = detail.data || detail
+        this.$message.success(
+          `已下发诊断策略「${data.strategyName || ''}」至告警 #${this.diagnosisRow.warnId}`
+        )
+        this.diagnosisDialogVisible = false
+      } catch (e) {
+        console.error('下发诊断策略失败:', e)
+        this.$message.error('下发诊断策略失败')
+      }
+    },
+
+    handleAIAnalysis(row) {
+      const deviceId = row.deviceId || row.sbid
+      const wlh = row.wlh
+      if (deviceId != null) {
+        this.$router.push({
+          name: 'DeviceStatusAnalysis',
+          query: {deviceId: String(deviceId)}
+        })
+      } else if (wlh != null) {
+        this.$router.push({
+          name: 'NetworkStatusAnalysis',
+          query: {wlh: String(wlh), llh: String(row.llh || 1)}
+        })
+      } else {
+        this.$message.warning('该告警无关联设备或网络，无法跳转分析')
+      }
     }
   }
 }
@@ -671,8 +1227,337 @@ export default {
   border-radius: 3px;
 }
 
+.custom-ai-btn {
+  padding: 5px 10px;
+  font-size: 11px;
+  border-radius: 3px;
+  margin-right: 4px;
+}
+
+.custom-diagnosis-btn {
+  padding: 5px 8px;
+  font-size: 11px;
+  border-radius: 3px;
+  margin: 0 4px;
+}
+
 .action-disabled-text {
   color: #334155;
   font-size: 12px;
+}
+
+/* ========== 故障诊断对话框 ========== */
+::v-deep .diagnosis-dialog {
+  background: #1a1f2e !important;
+  border: 1px solid #2d3548 !important;
+  border-radius: 8px !important;
+}
+
+::v-deep .diagnosis-dialog .el-dialog__title {
+  color: #e2e8f0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+::v-deep .diagnosis-dialog .el-dialog__header {
+  border-bottom: 1px solid #2d3548;
+  padding: 16px 20px;
+}
+
+::v-deep .diagnosis-dialog .el-dialog__body {
+  padding: 16px 20px;
+  height: 520px;
+  overflow: hidden;
+}
+
+::v-deep .diagnosis-dialog .el-dialog__footer {
+  border-top: 1px solid #2d3548;
+  padding: 12px 20px;
+}
+
+/* ====== 左右分栏布局 ====== */
+.diagnosis-split-layout {
+  display: flex;
+  gap: 16px;
+  height: 100%;
+}
+
+.diagnosis-left {
+  width: 340px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid #2d3548;
+  padding-right: 16px;
+}
+
+.diagnosis-left-header {
+  font-size: 12px;
+  font-weight: 600;
+  color: #e2e8f0;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #2d3548;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+}
+
+.strategy-count {
+  color: #64748b;
+  font-weight: normal;
+  font-size: 11px;
+  margin-left: 6px;
+}
+
+.diagnosis-strategy-list {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+.diagnosis-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.diagnosis-topology-container {
+  flex: 1;
+  position: relative;
+  background: #070c14;
+  border: 1px solid #1e293b;
+  border-radius: 4px;
+  overflow: hidden;
+  min-height: 280px;
+}
+
+.diagnosis-x6-instance {
+  width: 100%;
+  height: 100%;
+}
+
+.topology-empty-tip {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #516580;
+  font-size: 13px;
+  gap: 6px;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.topology-empty-tip .sub-tip {
+  font-size: 11px;
+  color: #334155;
+  margin: 0;
+}
+
+.topology-empty-tip p {
+  margin: 0;
+}
+
+/* ====== 拓扑工具栏 ====== */
+.topology-toolbar {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 6px;
+  flex-shrink: 0;
+}
+
+.topology-toolbar .el-button {
+  font-size: 11px !important;
+  padding: 5px 10px !important;
+}
+
+/* ====== 策略卡片重设计 ====== */
+.strategy-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  border: 1px solid #2d3548;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: rgba(30, 41, 59, 0.5);
+  margin-bottom: 8px;
+}
+
+.strategy-card:hover {
+  border-color: rgba(251, 191, 36, 0.5);
+  background: rgba(251, 191, 36, 0.05);
+}
+
+.strategy-card.active {
+  border-color: var(--color-warning, #f59e0b);
+  background: rgba(251, 191, 36, 0.08);
+  box-shadow: 0 0 8px rgba(251, 191, 36, 0.15);
+}
+
+.strategy-radio-indicator {
+  flex-shrink: 0;
+  padding-top: 2px;
+}
+
+.radio-dot {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid #475569;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.radio-dot.checked {
+  border-color: var(--color-warning, #f59e0b);
+  background: var(--color-warning, #f59e0b);
+  box-shadow: 0 0 4px rgba(251, 191, 36, 0.4);
+}
+
+.radio-dot.checked::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #1a1f2e;
+}
+
+.strategy-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.strategy-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: #e2e8f0;
+  margin-bottom: 6px;
+  line-height: 1.4;
+}
+
+.strategy-name .text-cyan {
+  color: #38bdf8;
+  margin-right: 6px;
+}
+
+.strategy-detail {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.detail-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 8px;
+  border-radius: 3px;
+  font-size: 11px;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+
+.detail-tag i {
+  font-size: 12px;
+}
+
+.diagnosis-tag {
+  background: rgba(56, 189, 248, 0.1);
+  color: #7dd3fc;
+  border-color: rgba(56, 189, 248, 0.3);
+}
+
+.deal-tag {
+  background: rgba(52, 211, 153, 0.1);
+  color: #6ee7b7;
+  border-color: rgba(52, 211, 153, 0.3);
+}
+
+/* ====== 详情面板 ====== */
+.diagnosis-detail-panel {
+  margin-top: 10px;
+  background: rgba(12, 20, 36, 0.8);
+  border: 1px solid #1e293b;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.detail-panel-header {
+  font-size: 11px;
+  font-weight: 600;
+  color: #94a3b8;
+  padding: 8px 14px;
+  border-bottom: 1px solid #1e293b;
+}
+
+.detail-panel-body {
+  padding: 10px 14px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.detail-row {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.detail-label {
+  font-size: 10px;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.detail-value {
+  font-size: 12px;
+  color: #cbd5e1;
+}
+
+.detail-value.strategy-val {
+  color: #f59e0b;
+  font-weight: 500;
+}
+
+.detail-value.flow-val {
+  color: #38bdf8;
+}
+
+/* ====== 诊断对话框底部按钮间距 ====== */
+::v-deep .diagnosis-footer .el-button + .el-button {
+  margin-left: 12px;
+}
+
+::v-deep .diagnosis-footer .el-button {
+  padding: 7px 18px;
+  font-size: 12px;
+}
+
+/* ====== 自定义空状态 ====== */
+.custom-empty-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  min-height: 120px;
+  padding: 0;
+}
+
+.custom-empty-wrap .empty-text {
+  margin: 0;
+  color: #516580;
+  font-size: 12px;
+  line-height: 1.5;
 }
 </style>

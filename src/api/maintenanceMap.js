@@ -61,3 +61,15 @@ export function getOperationStandardEventPage(params) {
     params
   })
 }
+
+/**
+ * 分页查询性能标准事件
+ * @param {Object} params - { start, length, groupValue, metricName, eventTimestampBegin, eventTimestampEnd }
+ */
+export function getPerformanceStandardEventPage(params) {
+  return request({
+    url: '/rest/performanceStandardEvent',
+    method: 'get',
+    params
+  })
+}

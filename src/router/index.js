@@ -353,10 +353,38 @@ const routes = [
     component: () =>
       import('@/views/system-maintenance/gjjscl/WarnInfoDashboard.vue'),
     meta: {
-      title: '告警监视处理',
+      title: '告警信息处理',
       subsystem: '系统运维',
       category: '告警监视处理',
       icon: 'lucide:bell-ring', // 告警
+      parentModule: '告警监视处理',
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/performance-events',
+    name: 'PerformanceEvents',
+    component: () =>
+      import('@/views/system-maintenance/components/EventQueryPage.vue'),
+    meta: {
+      title: '性能事件',
+      subsystem: '系统运维',
+      category: '告警监视处理',
+      icon: 'lucide:zap',
+      parentModule: '告警监视处理',
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/business-quality-events',
+    name: 'BusinessQualityEvents',
+    component: () =>
+      import('@/views/system-maintenance/components/EventQueryPage.vue'),
+    meta: {
+      title: '业务质量事件',
+      subsystem: '系统运维',
+      category: '告警监视处理',
+      icon: 'lucide:clipboard-list',
       parentModule: '告警监视处理',
       requiresAuth: true
     }
@@ -574,30 +602,17 @@ const routes = [
       requiresAuth: true
     }
   },
-  // 数据分析
-  {
-    path: '/data-analysis',
-    name: 'DataAnalysis',
-    redirect: '/device-status-analysis',
-    meta: {
-      title: '数据分析',
-      subsystem: '资源和数据管理',
-      category: '数据分析',
-      icon: 'lucide:bar-chart-3',
-      isModule: true,
-      requiresAuth: true
-    }
-  },
+  // 系统运维 - 性能监视处理（含分析子页面）
   {
     path: '/device-status-analysis',
     name: 'DeviceStatusAnalysis',
     component: () => import('@/views/data-analysis/DeviceStatusAnalysis.vue'),
     meta: {
       title: '设备状态分析',
-      subsystem: '资源和数据管理',
-      category: '数据分析',
+      subsystem: '系统运维',
+      category: '性能监视处理',
       icon: 'lucide:monitor',
-      parentModule: '数据分析',
+      parentModule: '性能监视处理',
       requiresAuth: true
     }
   },
@@ -607,10 +622,10 @@ const routes = [
     component: () => import('@/views/data-analysis/NetworkStatusAnalysis.vue'),
     meta: {
       title: '网络状态分析',
-      subsystem: '资源和数据管理',
-      category: '数据分析',
+      subsystem: '系统运维',
+      category: '性能监视处理',
       icon: 'lucide:network',
-      parentModule: '数据分析',
+      parentModule: '性能监视处理',
       requiresAuth: true
     }
   },

@@ -831,6 +831,13 @@ body::after {
   background-color: var(--bg-base) !important;
   border-color: var(--border-tech) !important;
 }
+.el-table__fixed-right-patch {
+  background-color: var(--bg-dark) !important;
+}
+.el-table--border th.el-table__cell,
+.el-table__fixed-right-patch {
+  border-bottom: none;
+}
 .el-table__fixed-right::before,
 .el-table__fixed::before {
   background-color: var(--border-tech) !important;

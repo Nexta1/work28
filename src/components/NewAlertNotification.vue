@@ -1,7 +1,7 @@
 <template>
-  <transition name="alert-fade">
-    <div v-if="visible" class="new-alert-overlay" @click.self="handleIgnore">
-      <div class="new-alert-dialog">
+  <transition name="alert-slide">
+    <div v-if="visible" class="alert-noti-wrapper">
+      <div class="alert-noti-card">
         <!-- 顶部装饰条 -->
         <div class="alert-top-bar">
           <Icon icon="lucide:bell-ring" :size="18" />
@@ -78,7 +78,7 @@
         </div>
 
         <!-- 关闭按钮 -->
-        <button class="alert-close-btn" @click="handleIgnore">
+        <button class="alert-close-btn" @click.stop="handleIgnore">
           <Icon icon="lucide:x" :size="16" />
         </button>
       </div>
@@ -107,10 +107,9 @@ export default {
     handleGoToAlarm() {
       this.$emit('goto-alarm')
       this.$emit('close')
-      this.$router.push('/alarm-monitoring')
+      this.$router.push('/gj-monitoring')
     },
     handleIgnore() {
-      // 本次忽略，记录当前时间戳（30秒内不再弹相同告警）
       localStorage.setItem('alert_ignore_until', String(Date.now()))
       this.$emit('ignore')
       this.$emit('close')
@@ -126,7 +125,6 @@ export default {
           expireTime = now + 60 * 60 * 1000
           break
         case 'today': {
-          // 今天结束时间
           const endOfDay = new Date()
           endOfDay.setHours(23, 59, 59, 999)
           expireTime = endOfDay.getTime()
@@ -142,25 +140,18 @@ export default {
 </script>
 
 <style scoped>
-.new-alert-overlay {
+.alert-noti-wrapper {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.55);
-  z-index: 9999;
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  padding-top: 10vh;
+  top: 16px;
+  right: 16px;
+  z-index: 10000;
 }
 
-.new-alert-dialog {
+.alert-noti-card {
   position: relative;
   width: 420px;
   background: #0a1220;
-  border: 1px solid #1e2d4a;
+  border: 1px solid rgba(244, 63, 94, 0.35);
   border-radius: 8px;
   box-shadow:
     0 0 30px rgba(244, 63, 94, 0.15),
@@ -267,19 +258,19 @@ export default {
   color: #f43f5e;
 }
 
-/* 过渡动画 */
-.alert-fade-enter-active {
-  transition: all 0.3s ease;
+/* 滑入动画 */
+.alert-slide-enter-active {
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
-.alert-fade-leave-active {
-  transition: all 0.2s ease;
+.alert-slide-leave-active {
+  transition: all 0.25s ease;
 }
-.alert-fade-enter,
-.alert-fade-leave-to {
+.alert-slide-enter {
   opacity: 0;
+  transform: translateX(60px) scale(0.92);
 }
-.alert-fade-enter .new-alert-dialog,
-.alert-fade-leave-to .new-alert-dialog {
-  transform: translateY(-20px);
+.alert-slide-leave-to {
+  opacity: 0;
+  transform: translateX(40px) scale(0.95);
 }
 </style>
