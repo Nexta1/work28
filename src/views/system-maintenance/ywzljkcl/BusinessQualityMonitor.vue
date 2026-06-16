@@ -1,29 +1,5 @@
 <template>
   <div class="business-screen-container">
-    <div class="business-top-header">
-      <div class="brand-title">
-        <Icon
-          icon="lucide:layout-dashboard"
-          :size="14"
-          color="#38bdf8"
-          style="vertical-align: middle; margin-right: 4px"
-        />业务质量监控
-      </div>
-      <div class="global-legend">
-        <div class="legend-node"><span class="dot bg-safe"></span>稳健运行</div>
-        <div class="legend-node"><span class="dot bg-warn"></span>轻度越限</div>
-        <div class="legend-node"><span class="dot bg-crit"></span>严重告警</div>
-        <div class="sync-countdown-badge font-num">
-          <Icon
-            icon="lucide:refresh-cw"
-            :size="11"
-            color="#a7f3d0"
-            style="vertical-align: middle; margin-right: 3px"
-          />15S 轮询步进
-        </div>
-      </div>
-    </div>
-
     <div class="global-statistics-bar">
       <div class="stat-card">
         <div class="stat-lbl">
@@ -32,10 +8,10 @@
             :size="12"
             color="#60a5fa"
             style="vertical-align: middle; margin-right: 4px"
-          />在网作战任务群组
+          />所有群组
         </div>
         <div class="stat-val text-blue font-num">
-          {{ globalStats.activeGroups }}<small>组</small>
+          {{ globalStats.totalGroups }}<small>组</small>
         </div>
       </div>
       <div class="stat-card">
@@ -75,6 +51,10 @@
     <div class="business-main-layout two-col-layout">
       <div class="business-column width-60">
         <div class="sub-panel flex-100">
+          <span class="panel-corner-tl"></span>
+          <span class="panel-corner-tr"></span>
+          <span class="panel-corner-bl"></span>
+          <span class="panel-corner-br"></span>
           <div class="panel-title-bar">
             <span class="title">
               <Icon
@@ -103,7 +83,13 @@
             />
           </div>
 
-          <div class="scroll-wrapper" v-loading="loadingTask">
+          <div
+            class="scroll-wrapper task-grid"
+            v-loading="loadingTask"
+            v-infinite-scroll="loadMoreTaskGroups"
+            :infinite-scroll-disabled="taskScrollDisabled"
+            :infinite-scroll-distance="10"
+          >
             <div v-if="taskGroupList.length === 0" class="empty-holder">
               当前无在网执行的作战群组任务
             </div>
@@ -113,113 +99,149 @@
               :key="task.ZZRWQZID"
               class="task-group-dashboard"
             >
-              <div class="task-top-meta">
-                <span class="qz-title">
-                  <Icon
-                    icon="lucide:shield"
-                    :size="12"
-                    color="#60a5fa"
-                    style="vertical-align: middle; margin-right: 4px"
-                  />{{ task.QZMC }}
-                </span>
-                <span class="state-tag" :class="'state-' + task.QZSTATE">{{
-                  getTaskStateText(task.QZSTATE)
-                }}</span>
-              </div>
+              <div class="task-corner"></div>
+              <div class="task-card-body">
+                <div class="task-card-left">
+                  <div class="task-top-meta">
+                    <span class="qz-title">
+                      <Icon
+                        icon="lucide:shield"
+                        :size="12"
+                        color="#60a5fa"
+                        style="vertical-align: middle; margin-right: 4px"
+                      />{{ task.QZMC }}
+                    </span>
+                    <span class="state-tag" :class="'state-' + task.QZSTATE">{{
+                      getTaskStateText(task.QZSTATE)
+                    }}</span>
+                  </div>
 
-              <div class="task-rwmc-row">
-                <Icon
-                  icon="lucide:flag"
-                  :size="11"
-                  color="#facc15"
-                  style="vertical-align: middle; margin-right: 4px"
-                />
-                <span class="rwmc-text">{{ task.RWMC }}</span>
-              </div>
-
-              <div class="platform-section">
-                <div class="pl-header">
-                  <span class="pl-header-lbl">
+                  <span class="task-badge">
                     <Icon
-                      icon="lucide:radio"
-                      :size="11"
-                      color="#22d3ee"
-                      style="vertical-align: middle; margin-right: 4px"
-                    />编组平台
+                      icon="lucide:flag"
+                      :size="9"
+                      color="#facc15"
+                      style="margin-right: 3px"
+                    />{{ task.RWMC }}
                   </span>
-                  <span class="online-badge"
-                    >{{ getOnlineCount(task) }}/{{
-                      getTotalCount(task)
-                    }}在线</span
-                  >
-                </div>
-                <div class="pl-tags-wrap">
-                  <div class="pl-tags-inner" ref="plTags">
-                    <span
-                      v-for="(pt, pi) in getPlatformItems(task)"
-                      :key="pi"
-                      class="pl-tag"
-                      :class="pt.online ? 'tag-online' : 'tag-offline'"
-                    >
-                      <span
-                        class="pl-dot"
-                        :class="pt.online ? 'dot-online' : 'dot-offline'"
-                      ></span>
-                      <span class="pl-name">{{ pt.name }}</span>
+
+                  <div class="time-period-row font-num">
+                    <span class="tp-item">
+                      <Icon
+                        icon="lucide:play"
+                        :size="11"
+                        color="#34d399"
+                        style="vertical-align: middle; margin-right: 3px"
+                      />开始:
+                      <span class="tp-val text-green">{{ task.RWKSSJ }}</span>
+                    </span>
+                    <span class="tp-item">
+                      <Icon
+                        icon="lucide:square"
+                        :size="11"
+                        color="#f87171"
+                        style="vertical-align: middle; margin-right: 3px"
+                      />终止:
+                      <span class="tp-val text-red">{{ task.RWZZSJ }}</span>
                     </span>
                   </div>
-                  <el-popover
-                    v-if="getPlatformItems(task).length > platformVisibleLimit"
-                    placement="right"
-                    trigger="hover"
-                    popper-class="dark-pl-popover"
-                  >
-                    <span slot="reference" class="pl-more-btn"
-                      >+{{
-                        getPlatformItems(task).length - platformVisibleLimit
-                      }}</span
-                    >
-                    <div class="popover-pl-list">
-                      <div
-                        v-for="(pt, pi) in getPlatformItems(task)"
-                        :key="pi"
-                        class="popover-pl-item"
-                      >
-                        <span
-                          class="pl-dot"
-                          :class="pt.online ? 'dot-online' : 'dot-offline'"
-                        ></span>
-                        <span
-                          class="pl-name"
-                          :class="pt.online ? 'text-green' : 'text-gray'"
-                          >{{ pt.name }}</span
-                        >
-                      </div>
-                    </div>
-                  </el-popover>
-                </div>
-              </div>
 
-              <div class="time-period-row font-num">
-                <span class="tp-item">
-                  <Icon
-                    icon="lucide:play"
-                    :size="11"
-                    color="#34d399"
-                    style="vertical-align: middle; margin-right: 3px"
-                  />开始:
-                  <span class="tp-val text-green">{{ task.RWKSSJ }}</span>
-                </span>
-                <span class="tp-sep"></span>
-                <span class="tp-item">
-                  <Icon
-                    icon="lucide:square"
-                    :size="11"
-                    color="#f87171"
-                    style="vertical-align: middle; margin-right: 3px"
-                  />终止:
-                  <span class="tp-val text-red">{{ task.RWZZSJ }}</span>
-                </span>
+                  <div class="task-extra-meta font-num">
+                    <span class="extra-item">
+                      <Icon
+                        icon="lucide:radio"
+                        :size="9"
+                        color="#64748b"
+                        style="vertical-align: middle; margin-right: 2px"
+                      />平台编识号:
+                      <span class="text-cyan"
+                        >{{ task.QSPTBSH || '?' }}~{{
+                          task.ZZPTBSH || '?'
+                        }}</span
+                      >
+                    </span>
+                    <span class="extra-item">
+                      <Icon
+                        icon="lucide:crosshair"
+                        :size="9"
+                        color="#64748b"
+                        style="vertical-align: middle; margin-right: 2px"
+                      />目标编识号:
+                      <span class="text-orange"
+                        >{{ task.QSMBBSH || '?' }}~{{
+                          task.ZZMBBSH || '?'
+                        }}</span
+                      >
+                    </span>
+                  </div>
+                </div>
+
+                <div class="task-card-right">
+                  <div class="platform-section">
+                    <div class="pl-header">
+                      <span class="pl-header-lbl">
+                        <Icon
+                          icon="lucide:radio"
+                          :size="11"
+                          color="#22d3ee"
+                          style="vertical-align: middle; margin-right: 4px"
+                        />编组平台
+                      </span>
+                      <span class="online-badge"
+                        >{{ getOnlineCount(task) }}/{{
+                          getTotalCount(task)
+                        }}在线</span
+                      >
+                    </div>
+                    <div class="pl-tags-wrap">
+                      <div class="pl-tags-inner">
+                        <span
+                          v-for="(pt, pi) in getPlatformItems(task)"
+                          :key="pi"
+                          class="pl-tag"
+                          :class="pt.online ? 'tag-online' : 'tag-offline'"
+                        >
+                          <span
+                            class="pl-dot"
+                            :class="pt.online ? 'dot-online' : 'dot-offline'"
+                          ></span>
+                          <span class="pl-name">{{ pt.name }}</span>
+                        </span>
+                      </div>
+                      <el-popover
+                        v-if="
+                          getPlatformItems(task).length > platformVisibleLimit
+                        "
+                        placement="right"
+                        trigger="hover"
+                        popper-class="dark-pl-popover"
+                      >
+                        <span slot="reference" class="pl-more-btn"
+                          >+{{
+                            getPlatformItems(task).length - platformVisibleLimit
+                          }}</span
+                        >
+                        <div class="popover-pl-list">
+                          <div
+                            v-for="(pt, pi) in getPlatformItems(task)"
+                            :key="pi"
+                            class="popover-pl-item"
+                          >
+                            <span
+                              class="pl-dot"
+                              :class="pt.online ? 'dot-online' : 'dot-offline'"
+                            ></span>
+                            <span
+                              class="pl-name"
+                              :class="pt.online ? 'text-green' : 'text-gray'"
+                              >{{ pt.name }}</span
+                            >
+                          </div>
+                        </div>
+                      </el-popover>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -227,50 +249,11 @@
       </div>
 
       <div class="business-column width-40">
-        <div class="sub-panel flex-35">
-          <div class="panel-title-bar">
-            <span class="title">
-              <Icon
-                icon="lucide:compass"
-                :size="12"
-                color="#22d3ee"
-                style="vertical-align: middle; margin-right: 4px"
-              />时空同源步进监测
-            </span>
-          </div>
-          <div class="scroll-wrapper" v-loading="loadingTimeSync">
-            <div
-              v-for="pt in timeSyncList"
-              :key="pt.PTBSH"
-              class="sync-compact-row"
-            >
-              <div class="sync-meta">
-                <div class="node-name">
-                  <Icon
-                    icon="lucide:satellite"
-                    :size="12"
-                    color="#38bdf8"
-                    style="vertical-align: middle; margin-right: 4px"
-                  />{{ pt.PTMC }}
-                  <small class="font-num text-cyan">#{{ pt.PTBSH }}</small>
-                </div>
-                <div class="time-lbl font-num">
-                  授时基准 [{{ pt.STSMC }}]: {{ pt.STSSJ }}
-                </div>
-              </div>
-              <div
-                class="deviation-badge"
-                :class="
-                  Number(pt.deviation || 0) > 50 ? 'dev-high' : 'dev-normal'
-                "
-              >
-                <span class="font-num">{{ pt.deviation || 0 }}ms</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="sub-panel flex-65">
+        <div class="sub-panel flex-100">
+          <span class="panel-corner-tl"></span>
+          <span class="panel-corner-tr"></span>
+          <span class="panel-corner-bl"></span>
+          <span class="panel-corner-br"></span>
           <div class="panel-title-bar">
             <span class="title">
               <Icon
@@ -303,7 +286,7 @@
             </el-select>
           </div>
 
-          <div class="scroll-wrapper" v-loading="loadingService">
+          <div class="scroll-wrapper service-grid" v-loading="loadingService">
             <div v-if="serviceList.length === 0" class="empty-holder">
               未捕捉到运行微服务监控指标
             </div>
@@ -311,69 +294,62 @@
             <div
               v-for="srv in serviceList"
               :key="srv.serviceId"
-              class="service-mesh-card"
+              class="service-circle-card"
               :class="
-                Number(srv.serviceStatus) === 1 ? 'border-dead' : 'border-alive'
+                Number(srv.serviceStatus) === 1 ? 'card-dead' : 'card-alive'
               "
             >
-              <div class="service-title-row">
-                <div class="srv-main">
-                  <span class="srv-name">
-                    <Icon
-                      icon="lucide:box"
-                      :size="12"
-                      color="#fb7185"
-                      style="vertical-align: middle; margin-right: 4px"
-                    />{{ srv.serviceName }}
-                  </span>
-                  <span class="srv-template text-gray">{{
-                    srv.templateName
-                  }}</span>
-                </div>
-                <div
-                  class="status-light"
+              <div class="scc-top">
+                <span class="scc-name">{{ srv.serviceName }}</span>
+                <span
+                  class="scc-status"
                   :class="
-                    Number(srv.serviceStatus) === 1
-                      ? 'light-red'
-                      : 'light-green'
+                    Number(srv.serviceStatus) === 1 ? 'st-red' : 'st-green'
                   "
+                ></span>
+              </div>
+
+              <div class="scc-circus">
+                <div class="scc-ring">
+                  <svg viewBox="0 0 36 36" class="scc-svg">
+                    <path
+                      class="ring-bg"
+                      d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                    />
+                    <path
+                      class="ring-fill"
+                      :stroke-dasharray="cpuArc(srv)"
+                      d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                    />
+                    <text x="18" y="20" class="ring-text">
+                      {{ srv.useCpu || 0 }}%
+                    </text>
+                  </svg>
+                  <span class="scc-label">CPU</span>
+                </div>
+                <div class="scc-ring">
+                  <svg viewBox="0 0 36 36" class="scc-svg">
+                    <path
+                      class="ring-bg"
+                      d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                    />
+                    <path
+                      class="ring-fill mem"
+                      :stroke-dasharray="memArc(srv)"
+                      d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                    />
+                    <text x="18" y="20" class="ring-text">
+                      {{ srv.useMemory || 0 }}
+                    </text>
+                  </svg>
+                  <span class="scc-label">MB</span>
+                </div>
+              </div>
+
+              <div class="scc-footer font-num">
+                <span class="text-cyan"
+                  >{{ srv.serviceIp }}:{{ srv.servicePort }}</span
                 >
-                  {{ Number(srv.serviceStatus) === 1 ? '离线' : '在线' }}
-                </div>
-              </div>
-
-              <div class="service-resource-bars">
-                <div class="bar-item">
-                  <span class="lbl">CPU 开销</span>
-                  <el-progress
-                    :percentage="Math.min(Math.floor(srv.useCpu || 0), 100)"
-                    :status="srv.useCpu > 80 ? 'exception' : 'success'"
-                    :stroke-width="3"
-                    :show-text="false"
-                  />
-                  <span class="num font-num">{{ srv.useCpu || 0 }}%</span>
-                </div>
-                <div class="bar-item">
-                  <span class="lbl">内存吞吐</span>
-                  <span class="num font-num text-blue"
-                    >{{ srv.useMemory || 0 }} <small>MB</small></span
-                  >
-                </div>
-              </div>
-
-              <div class="network-contract-box font-num">
-                <div class="contract-node">
-                  <span class="c-lbl">套接字:</span>
-                  <span class="text-cyan"
-                    >{{ srv.serviceIp }}:{{ srv.servicePort }}</span
-                  >
-                </div>
-                <div class="contract-node ellipsis">
-                  <span class="c-lbl">资源定位:</span>
-                  <span class="text-gray" :title="srv.serviceURL">{{
-                    srv.serviceURL
-                  }}</span>
-                </div>
               </div>
             </div>
           </div>
@@ -385,11 +361,7 @@
 
 <script>
 import * as echarts from 'echarts'
-import {
-  getPlatformPage,
-  getServiceInfoPage,
-  getZzrwqzPage
-} from '@/api/platform'
+import {getServiceInfoPage, getZzrwqzPage} from '@/api/platform'
 
 export default {
   name: 'BusinessQualityMonitor',
@@ -397,17 +369,15 @@ export default {
   data() {
     return {
       eventDrawerVisible: false,
-      loadingTimeSync: false,
       loadingTask: false,
       loadingService: false,
       globalPollingTimer: null,
 
-      timeSyncList: [],
       taskGroupList: [],
       serviceList: [],
 
       globalStats: {
-        activeGroups: 0,
+        totalGroups: 0,
         totalServices: 0,
         alertCount: 0
       },
@@ -415,10 +385,18 @@ export default {
       taskQueryParams: {QZMC: '', RWMC: ''},
       serviceQueryParams: {serviceName: '', serviceStatus: ''},
 
-      pageConfig: {pageNum: 1, pageSize: 50},
+      pageConfig: {pageNum: 1, pageSize: 20},
+      taskPageNum: 1,
+      taskHasMore: true,
+      taskLoadingMore: false,
 
       chartIns: null,
-      platformVisibleLimit: 6
+      platformVisibleLimit: 8
+    }
+  },
+  computed: {
+    taskScrollDisabled() {
+      return !this.taskHasMore || this.taskLoadingMore || this.loadingTask
     }
   },
   created() {
@@ -434,61 +412,23 @@ export default {
   },
   methods: {
     async initialMasterWorkflow() {
-      this.loadingTimeSync = true
       this.loadingTask = true
       this.loadingService = true
 
-      await Promise.all([
-        this.fetchTimeSyncPage(),
-        this.fetchTaskGroupPage(),
-        this.fetchServicePage()
-      ])
+      await Promise.all([this.fetchTaskGroupPage(), this.fetchServicePage()])
 
-      this.loadingTimeSync = false
       this.loadingTask = false
       this.loadingService = false
     },
 
-    async fetchTimeSyncPage() {
-      try {
-        const payload = {pageNum: 1, pageSize: 10, params: {}}
-        const res = await getPlatformPage(payload)
-        this.timeSyncList = res?.rows || res?.data?.list || []
-
-        if (!this.timeSyncList || this.timeSyncList.length === 0) {
-          this.timeSyncList = [
-            {
-              PTBSH: '1001',
-              PTMC: '一号测控雷达站',
-              STSMC: '北京北斗主时钟',
-              STSSJ: '13:28:05.110',
-              deviation: 12
-            },
-            {
-              PTBSH: '1002',
-              PTMC: '预警机空基节点',
-              STSMC: '北京北斗主时钟',
-              STSSJ: '13:28:05.110',
-              deviation: 64
-            },
-            {
-              PTBSH: '1003',
-              PTMC: '远洋护卫舰艇编队',
-              STSMC: '长波授时授时源',
-              STSSJ: '13:28:05.108',
-              deviation: 28
-            }
-          ]
-        }
-      } catch (e) {
-        console.warn('时空步进偏差载入挂起')
+    async fetchTaskGroupPage(append = false) {
+      if (!append) {
+        this.taskPageNum = 1
+        this.taskHasMore = true
       }
-    },
-
-    async fetchTaskGroupPage() {
       try {
         const payload = {
-          pageNum: this.pageConfig.pageNum,
+          pageNum: append ? this.taskPageNum : 1,
           pageSize: this.pageConfig.pageSize,
           params: {
             QZMC: this.taskQueryParams.QZMC || undefined,
@@ -496,51 +436,33 @@ export default {
           }
         }
         const res = await getZzrwqzPage(payload)
-        this.taskGroupList = res?.rows || res?.data?.list || []
+        const rows = res?.rows || res?.data?.list || []
+        const total = res?.total || res?.data?.total || 0
 
-        if (!this.taskGroupList || this.taskGroupList.length === 0) {
-          this.taskGroupList = [
-            {
-              ZZRWQZID: 'QZ_881',
-              QZMC: '海面火力打击群',
-              RWMC: '近海低空警戒任务',
-              QZSTATE: 1,
-              QSPTBSH: 1,
-              ZZPTBSH: 4,
-              QSMBBSH: 3,
-              ZZMBBSH: 7,
-              PTXXMCS: '辽宁舰,052D型导弹驱逐舰-1,歼-15-1',
-              onlineCount: 3,
-              onlinePTs: [
-                {PTMC: '辽宁舰'},
-                {PTMC: '052D型导弹驱逐舰-1'},
-                {PTMC: '歼-15-1'}
-              ],
-              RWKSSJ: '2026-02-08 00:00:00',
-              RWZZSJ: '2026-02-27 00:00:00'
-            },
-            {
-              ZZRWQZID: 'QZ_882',
-              QZMC: '多维协同深空侦察编群',
-              RWMC: '卫星侦察与数据回传任务',
-              QZSTATE: 0,
-              QSPTBSH: 5,
-              ZZPTBSH: 9,
-              QSMBBSH: 2,
-              ZZMBBSH: 6,
-              PTXXMCS:
-                '高分侦察卫星-2,空警-500,地面接收站-3,无人机-7,预警雷达-1,通讯中继-2',
-              onlineCount: 1,
-              onlinePTs: [{PTMC: '高分侦察卫星-2'}],
-              RWKSSJ: '2026-02-10 06:30:00',
-              RWZZSJ: '2026-03-05 18:00:00'
-            }
-          ]
+        if (rows.length === 0) {
+          this.taskHasMore = false
         }
-        this.calculateGlobalStats()
+
+        if (append) {
+          this.taskGroupList = [...this.taskGroupList, ...rows]
+          this.taskPageNum++
+        } else {
+          this.taskGroupList = rows.length > 0 ? rows : []
+          if (rows.length > 0) this.taskPageNum = 2
+        }
+
+        this.calculateGlobalStats(total)
       } catch (e) {
         console.warn('作战任务群组加载阻断')
       }
+    },
+
+    loadMoreTaskGroups() {
+      if (this.taskScrollDisabled) return
+      this.taskLoadingMore = true
+      this.fetchTaskGroupPage(true).finally(() => {
+        this.taskLoadingMore = false
+      })
     },
 
     async fetchServicePage() {
@@ -603,17 +525,11 @@ export default {
     },
 
     async executeSilentSyncWorkflow() {
-      await Promise.all([
-        this.fetchTimeSyncPage(),
-        this.fetchTaskGroupPage(),
-        this.fetchServicePage()
-      ])
+      await Promise.all([this.fetchTaskGroupPage(), this.fetchServicePage()])
     },
 
-    calculateGlobalStats() {
-      this.globalStats.activeGroups = this.taskGroupList.filter(
-        t => t.QZSTATE === 1
-      ).length
+    calculateGlobalStats(total) {
+      this.globalStats.totalGroups = total || this.taskGroupList.length
       this.globalStats.totalServices = this.serviceList.length
 
       const deadServices = this.serviceList.filter(
@@ -626,18 +542,37 @@ export default {
       return {0: '新建', 1: '在线', 2: '离线'}[s] || '未知'
     },
     getPlatformItems(task) {
-      const names = (task.PTXXMCS || '').split(',').filter(Boolean)
-      const onlineNames = (task.onlinePTs || []).map(pt => pt.PTMC)
+      const raw = task.PTXXMCS || task.ptxxmcs || task.platformNames || ''
+      const names = String(raw).split(',').filter(Boolean)
+      const onlineRaw = task.onlinePTs || task.onlinepts || []
+      const onlineNames = onlineRaw.map(
+        pt => pt.PTMC || pt.ptmc || pt.name || ''
+      )
       return names.map(name => ({
-        name,
-        online: onlineNames.includes(name)
+        name: name.trim(),
+        online: onlineNames.includes(name.trim()) || onlineNames.includes(name)
       }))
     },
     getOnlineCount(task) {
-      return task.onlineCount || (task.onlinePTs || []).length
+      return (
+        task.onlineCount ||
+        task.onlinecount ||
+        (task.onlinePTs || task.onlinepts || []).length
+      )
     },
     getTotalCount(task) {
-      return (task.PTXXMCS || '').split(',').filter(Boolean).length
+      const raw = task.PTXXMCS || task.ptxxmcs || task.platformNames || ''
+      return String(raw).split(',').filter(Boolean).length
+    },
+    cpuArc(srv) {
+      const pct = Math.min(Math.floor(srv.useCpu || 0), 100)
+      return `${pct} ${100 - pct}`
+    },
+    memArc(srv) {
+      const max = 8192
+      const val = Math.min(srv.useMemory || 0, max)
+      const pct = Math.round((val / max) * 100)
+      return `${pct} ${100 - pct}`
     }
   }
 }
@@ -679,7 +614,7 @@ export default {
 .business-screen-container {
   width: 100%;
   height: 100%;
-  background-color: #03060c;
+  /* background-color: #03060c; */
   color: #cbd5e1;
   color: #cbd5e1;
   display: flex;
@@ -815,10 +750,10 @@ export default {
   min-height: 0;
 }
 .two-col-layout .width-60 {
-  width: 60%;
+  width: 68%;
 }
 .two-col-layout .width-40 {
-  width: 40%;
+  width: 32%;
 }
 .business-column {
   display: flex;
@@ -829,13 +764,91 @@ export default {
 
 .sub-panel {
   background: #080e18;
-  border: 1px solid #111b2b;
+  border: 1px solid rgba(56, 189, 248, 0.18);
   border-radius: 4px;
   padding: 12px;
   display: flex;
   flex-direction: column;
   min-height: 0;
   box-sizing: border-box;
+  position: relative;
+  box-shadow:
+    0 0 12px rgba(56, 189, 248, 0.04),
+    inset 0 0 20px rgba(56, 189, 248, 0.02);
+}
+.sub-panel::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: 16px;
+  right: 16px;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(56, 189, 248, 0.4),
+    transparent
+  );
+  pointer-events: none;
+}
+.sub-panel::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 16px;
+  right: 16px;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(56, 189, 248, 0.2),
+    transparent
+  );
+  pointer-events: none;
+}
+.sub-panel .panel-corner-tl {
+  position: absolute;
+  top: -1px;
+  left: -1px;
+  width: 16px;
+  height: 16px;
+  border-top: 2px solid rgba(56, 189, 248, 0.45);
+  border-left: 2px solid rgba(56, 189, 248, 0.45);
+  border-radius: 4px 0 0 0;
+  pointer-events: none;
+}
+.sub-panel .panel-corner-tr {
+  position: absolute;
+  top: -1px;
+  right: -1px;
+  width: 16px;
+  height: 16px;
+  border-top: 2px solid rgba(56, 189, 248, 0.45);
+  border-right: 2px solid rgba(56, 189, 248, 0.45);
+  border-radius: 0 4px 0 0;
+  pointer-events: none;
+}
+.sub-panel .panel-corner-bl {
+  position: absolute;
+  bottom: -1px;
+  left: -1px;
+  width: 16px;
+  height: 16px;
+  border-bottom: 2px solid rgba(56, 189, 248, 0.45);
+  border-left: 2px solid rgba(56, 189, 248, 0.45);
+  border-radius: 0 0 0 4px;
+  pointer-events: none;
+}
+.sub-panel .panel-corner-br {
+  position: absolute;
+  bottom: -1px;
+  right: -1px;
+  width: 16px;
+  height: 16px;
+  border-bottom: 2px solid rgba(56, 189, 248, 0.45);
+  border-right: 2px solid rgba(56, 189, 248, 0.45);
+  border-radius: 0 0 4px 0;
+  pointer-events: none;
 }
 .flex-100 {
   flex: 1;
@@ -903,6 +916,12 @@ export default {
   display: flex;
   flex-direction: column;
   gap: 8px;
+}
+.task-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  align-content: start;
 }
 ::-webkit-scrollbar {
   width: 4px;
@@ -1059,14 +1078,116 @@ export default {
 
 /* 作战群组面板 */
 .task-group-dashboard {
-  background: #0d1522;
-  border: 1px solid #16263d;
-  border-left: 3px solid #3b82f6;
-  border-radius: 3px;
-  padding: 10px 11px;
+  background: linear-gradient(
+    135deg,
+    rgba(13, 21, 34, 0.95),
+    rgba(8, 14, 24, 0.98)
+  );
+  border: 1px solid rgba(56, 189, 248, 0.15);
+  border-radius: 4px;
+  padding: 8px;
   transition: all 0.3s ease;
   animation: fadeSlideUp 0.5s ease both;
   position: relative;
+  overflow: hidden;
+  min-height: 150px;
+}
+.task-card-body {
+  display: flex;
+  gap: 10px;
+  height: 100%;
+  min-height: 130px;
+}
+.task-card-left {
+  flex: 0 0 36%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-width: 0;
+  padding: 2px 0;
+}
+.task-card-left .task-top-meta {
+  margin-bottom: 2px;
+}
+.task-card-left .task-badge {
+  margin-bottom: 2px;
+}
+.task-card-right {
+  flex: 1;
+  display: flex;
+  min-width: 0;
+}
+.task-card-right .platform-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: rgba(5, 11, 20, 0.6);
+  border: 1px solid rgba(56, 189, 248, 0.12);
+  border-radius: 4px;
+  padding: 6px 8px;
+  min-height: 0;
+}
+.task-card-right .pl-header {
+  margin-bottom: 4px;
+  flex-shrink: 0;
+}
+.task-card-right .pl-header-lbl {
+  font-size: 10px;
+}
+.task-card-right .online-badge {
+  font-size: 10px;
+}
+.task-card-right .pl-tags-wrap {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+}
+.task-card-right .pl-tags-inner {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  align-content: flex-start;
+  padding: 2px 0;
+}
+.task-card-right .pl-tag {
+  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 3px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.task-card-right .pl-dot {
+  width: 7px;
+  height: 7px;
+}
+.task-card-right .pl-more-btn {
+  font-size: 10px;
+  padding: 3px 8px;
+}
+.task-group-dashboard::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: -1px;
+  width: 14px;
+  height: 14px;
+  border-top: 2px solid rgba(56, 189, 248, 0.35);
+  border-left: 2px solid rgba(56, 189, 248, 0.35);
+  border-radius: 4px 0 0 0;
+  pointer-events: none;
+}
+.task-group-dashboard::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  right: -1px;
+  width: 14px;
+  height: 14px;
+  border-bottom: 2px solid rgba(56, 189, 248, 0.35);
+  border-right: 2px solid rgba(56, 189, 248, 0.35);
+  border-radius: 0 0 4px 0;
+  pointer-events: none;
 }
 .task-group-dashboard:nth-child(1) {
   animation-delay: 0s;
@@ -1084,23 +1205,47 @@ export default {
   animation-delay: 0.32s;
 }
 .task-group-dashboard:hover {
-  background: #111b2f;
-  border-color: #2d4a7a;
-  border-left-color: #60a5fa;
-  transform: translateX(3px);
-  box-shadow: 0 2px 16px rgba(56, 189, 248, 0.08);
+  border-color: rgba(56, 189, 248, 0.35);
+  box-shadow:
+    0 0 18px rgba(56, 189, 248, 0.08),
+    inset 0 0 20px rgba(56, 189, 248, 0.02);
+}
+.task-group-dashboard:hover::before,
+.task-group-dashboard:hover::after {
+  border-color: rgba(56, 189, 248, 0.6);
 }
 .task-top-meta {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
+  gap: 6px;
 }
 .task-top-meta .qz-title {
   font-size: 12px;
   font-weight: bold;
   color: #e2e8f0;
   letter-spacing: 0.5px;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+/* 任务小标签 */
+.task-badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 9px;
+  color: #facc15;
+  background: rgba(250, 204, 21, 0.08);
+  border: 1px solid rgba(250, 204, 21, 0.15);
+  padding: 1px 8px;
+  border-radius: 3px;
+  margin-bottom: 5px;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .state-tag {
   font-size: 9px;
@@ -1165,47 +1310,32 @@ export default {
   border-radius: 2px;
   margin-bottom: 4px;
 }
-/* 作战群组 — 任务名称行 */
-.task-rwmc-row {
-  font-size: 10px;
-  color: #facc15;
-  padding: 4px 6px;
-  background: rgba(250, 204, 21, 0.06);
-  border: 1px solid rgba(250, 204, 21, 0.12);
-  border-radius: 2px;
-  margin-bottom: 5px;
-  display: flex;
-  align-items: center;
-}
-.rwmc-text {
-  font-weight: bold;
-  letter-spacing: 0.3px;
-}
-
 /* 作战群组 — 编组平台区域 */
 .platform-section {
-  background: #070c14;
-  border-radius: 2px;
-  padding: 5px 6px;
-  margin-bottom: 4px;
+  background: rgba(5, 11, 20, 0.5);
+  border: 1px solid rgba(56, 189, 248, 0.08);
+  border-radius: 3px;
+  padding: 4px 5px;
+  margin-bottom: 3px;
 }
 .pl-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 4px;
+  margin-bottom: 3px;
 }
 .pl-header-lbl {
   font-size: 9px;
   color: #94a3b8;
+  font-weight: 600;
 }
 .online-badge {
   font-size: 9px;
   color: #10b981;
-  background: rgba(16, 185, 129, 0.1);
-  padding: 1px 7px;
+  background: rgba(16, 185, 129, 0.12);
+  padding: 2px 8px;
   border-radius: 3px;
-  border: 1px solid rgba(16, 185, 129, 0.2);
+  border: 1px solid rgba(16, 185, 129, 0.25);
   font-weight: bold;
 }
 .pl-tags-wrap {
@@ -1218,8 +1348,6 @@ export default {
   flex-wrap: wrap;
   gap: 3px;
   flex: 1;
-  max-height: 36px;
-  overflow: hidden;
 }
 .pl-tag {
   font-size: 9px;
@@ -1231,29 +1359,28 @@ export default {
 }
 .tag-online {
   color: #a7f3d0;
-  background: rgba(16, 185, 129, 0.12);
+  background: rgba(16, 185, 129, 0.1);
   border: 1px solid rgba(16, 185, 129, 0.2);
 }
 .tag-offline {
-  color: #94a3b8;
-  background: rgba(100, 116, 139, 0.1);
-  border: 1px solid rgba(100, 116, 139, 0.15);
+  color: #64748b;
+  background: rgba(100, 116, 139, 0.08);
+  border: 1px solid rgba(100, 116, 139, 0.12);
 }
 .pl-dot {
-  width: 5px;
-  height: 5px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
   flex-shrink: 0;
 }
 .dot-online {
   background: #10b981;
-  box-shadow: 0 0 3px rgba(16, 185, 129, 0.5);
+  box-shadow: 0 0 5px rgba(16, 185, 129, 0.6);
 }
 .dot-offline {
-  background: #94a3b8;
+  background: #64748b;
 }
 .pl-name {
-  max-width: 80px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -1273,187 +1400,167 @@ export default {
   background: rgba(56, 189, 248, 0.2);
 }
 
-/* 作战群组 — 时间单行 */
+/* 作战群组 — 时间两排 */
 .time-period-row {
   display: flex;
-  align-items: center;
-  gap: 8px;
+  flex-direction: column;
+  gap: 3px;
   font-size: 9px;
-  padding: 3px 0;
+  padding: 2px 0;
 }
 .tp-item {
   display: inline-flex;
   align-items: center;
-  gap: 2px;
-}
-.tp-sep {
-  width: 1px;
-  height: 10px;
-  background: #1e293b;
-  flex-shrink: 0;
+  gap: 3px;
 }
 .tp-val {
   font-weight: bold;
 }
 
-/* 时空步进组件 */
-.sync-compact-row {
-  background: #0c1424;
-  border: 1px solid #16233a;
-  padding: 5px 8px;
-  border-radius: 2px;
+.task-extra-meta {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  animation: fadeSlideUp 0.5s ease both;
-  transition: all 0.3s ease;
-}
-.sync-compact-row:nth-child(1) {
-  animation-delay: 0s;
-}
-.sync-compact-row:nth-child(2) {
-  animation-delay: 0.08s;
-}
-.sync-compact-row:nth-child(3) {
-  animation-delay: 0.16s;
-}
-.sync-compact-row:hover {
-  border-color: #1e3a5f;
-  transform: translateX(2px);
-}
-.sync-meta {
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
-}
-.sync-meta .node-name {
-  font-size: 11px;
-  font-weight: bold;
-  color: #fff;
-}
-.sync-meta .time-lbl {
-  font-size: 9px;
-  color: #94a3b8;
-}
-.deviation-badge {
-  background: #070c14;
-  padding: 2px 6px;
+  flex-wrap: wrap;
+  gap: 4px 8px;
+  font-size: 10px;
+  padding: 5px 6px;
+  background: rgba(5, 11, 20, 0.4);
+  border: 1px solid rgba(56, 189, 248, 0.06);
   border-radius: 3px;
-  border: 1px solid #172438;
-  font-size: 9px;
+  margin-top: 3px;
 }
-.dev-normal {
-  color: #10b981;
-  border-color: #10b981;
-}
-.dev-high {
-  color: #ef4444;
-  border-color: #ef4444;
+.extra-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
 }
 
 /* 应用微服务 */
-.service-mesh-card {
-  background: #0d1522;
-  border: 1px solid #172438;
-  border-radius: 3px;
-  padding: 8px;
+.service-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  align-content: start;
+}
+.service-circle-card {
+  background: linear-gradient(
+    135deg,
+    rgba(13, 21, 34, 0.9),
+    rgba(8, 14, 24, 0.95)
+  );
+  border: 1px solid rgba(56, 189, 248, 0.12);
+  border-radius: 6px;
+  padding: 8px 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
   animation: fadeSlideUp 0.5s ease both;
   transition: all 0.3s ease;
 }
-.service-mesh-card:nth-child(1) {
+.service-circle-card:nth-child(1) {
   animation-delay: 0s;
 }
-.service-mesh-card:nth-child(2) {
-  animation-delay: 0.08s;
+.service-circle-card:nth-child(2) {
+  animation-delay: 0.06s;
 }
-.service-mesh-card:nth-child(3) {
-  animation-delay: 0.16s;
+.service-circle-card:nth-child(3) {
+  animation-delay: 0.12s;
 }
-.service-mesh-card:nth-child(4) {
-  animation-delay: 0.24s;
+.service-circle-card:nth-child(4) {
+  animation-delay: 0.18s;
 }
-.service-mesh-card:hover {
-  border-color: #2d4a7a;
+.service-circle-card:hover {
+  border-color: rgba(56, 189, 248, 0.3);
+  box-shadow: 0 0 14px rgba(56, 189, 248, 0.06);
   transform: translateY(-1px);
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
 }
-.border-alive {
+.card-alive {
   border-top: 2px solid #10b981;
 }
-.border-dead {
+.card-dead {
   border-top: 2px solid #ef4444;
-}
-.service-title-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 6px;
-}
-.srv-main {
-  display: flex;
-  flex-direction: column;
-}
-.srv-name {
-  font-size: 11px;
-  font-weight: bold;
-  color: #fff;
-}
-.srv-template {
-  font-size: 9px;
-}
-.status-light {
-  font-size: 9px;
-  padding: 1px 4px;
-  border-radius: 2px;
-}
-.light-green {
-  color: #10b981;
-  background: rgba(16, 185, 129, 0.1);
-}
-.light-red {
-  color: #ef4444;
-  background: rgba(239, 68, 68, 0.1);
+  opacity: 0.7;
 }
 
-.service-resource-bars {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-  margin: 5px 0;
-}
-.bar-item {
+.scc-top {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  font-size: 9px;
-  color: #94a3b8;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
 }
-.bar-item .el-progress {
-  width: 50%;
-}
-.bar-item .num {
-  color: #cbd5e1;
-}
-.network-contract-box {
-  background: #070c14;
-  padding: 4px;
-  border-radius: 2px;
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
-}
-.contract-node {
-  font-size: 9px;
-  display: flex;
-}
-.contract-node .c-lbl {
-  color: #94a3b8;
-  width: 42px;
-}
-.ellipsis {
-  white-space: nowrap;
+.scc-name {
+  font-size: 10px;
+  font-weight: bold;
+  color: #e2e8f0;
+  text-align: center;
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.scc-status {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.st-green {
+  background: #10b981;
+  box-shadow: 0 0 6px rgba(16, 185, 129, 0.6);
+}
+.st-red {
+  background: #ef4444;
+  box-shadow: 0 0 6px rgba(239, 68, 68, 0.6);
+}
+
+.scc-circus {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  padding: 4px 0;
+}
+.scc-ring {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+}
+.scc-svg {
+  width: 42px;
+  height: 42px;
+  transform: rotate(-90deg);
+}
+.scc-svg .ring-bg {
+  fill: none;
+  stroke: #172438;
+  stroke-width: 3.2;
+}
+.scc-svg .ring-fill {
+  fill: none;
+  stroke: #38bdf8;
+  stroke-width: 3.2;
+  stroke-linecap: round;
+  transition: stroke-dasharray 0.6s ease;
+}
+.scc-svg .ring-fill.mem {
+  stroke: #f59e0b;
+}
+.scc-svg .ring-text {
+  transform: rotate(90deg);
+  transform-origin: 18px 18px;
+  fill: #cbd5e1;
+  font-size: 8px;
+  text-anchor: middle;
+  dominant-baseline: central;
+}
+.scc-label {
+  font-size: 9px;
+  color: #64748b;
+}
+.scc-footer {
+  font-size: 9px;
+  color: #64748b;
+  text-align: center;
 }
 
 /* 警报状态定义 */
