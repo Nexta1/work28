@@ -305,7 +305,7 @@ export default {
           net.wlmc || net.name,
           centerX - 30,
           currentY,
-          'https://cdn-icons-png.flaticon.com/512/2111/2111303.png',
+          net.icon,
           this.theme.network,
           {...net}
         )
@@ -322,7 +322,7 @@ export default {
             sub.name,
             subX - 30,
             subY,
-            'https://cdn-icons-png.flaticon.com/512/906/906204.png',
+            net.icon,
             this.theme.subnet,
             {...sub}
           )

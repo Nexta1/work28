@@ -57,6 +57,7 @@ export const transformTopologyData = rawData => {
         name: sub.WLMC,
         wllx: sub.WLLX,
         wlh: net.WLH,
+        icon: IMAGE_MAP[net.WLLX] || IMAGE_MAP['默认'],
         // 3. 处理群组层 (Groups)
         groups: (sub.zzrwqzwls || []).map(group => ({
           id: group.ZZRWQZID + 'qz',
