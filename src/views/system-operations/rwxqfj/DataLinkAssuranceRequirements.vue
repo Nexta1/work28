@@ -11,13 +11,23 @@
           :key="i"
           class="step-item"
           :class="{active: activeStep === i + 1, completed: activeStep > i + 1}"
-          @click="activeStep = i + 1"
+          @click="handleStepClick(i + 1)"
         >
           <span class="step-circle">{{
             activeStep > i + 1 ? '✓' : i + 1
           }}</span>
           <span class="step-text">{{ s }}</span>
         </div>
+        <transition name="adv-text" mode="out-in">
+          <span
+            class="advance-hint"
+            v-if="autoAdvanceText"
+            :key="autoAdvanceText"
+          >
+            <span class="adv-dot-pulse"></span>
+            {{ autoAdvanceText }}
+          </span>
+        </transition>
       </div>
       <div class="header-right">
         <span class="task-label">作战任务：</span>
@@ -66,11 +76,21 @@
           </div>
         </template>
         <template v-if="activeStep === 3">
-          <Step3AIAnalysis
-            ref="step3"
-            :zzrwid="zzrwid"
-            :datalink-requirements="datalinkRequirements"
-          />
+          <div class="step3-overlay-wrap">
+            <Step3AIAnalysis
+              ref="step3"
+              :zzrwid="zzrwid"
+              :datalink-requirements="datalinkRequirements"
+            />
+            <transition name="overlay-fade">
+              <div class="analysis-overlay" v-if="showStep3Overlay">
+                <div class="overlay-content">
+                  <span class="overlay-spinner"></span>
+                  <span class="overlay-text">AI 智能分析中...</span>
+                </div>
+              </div>
+            </transition>
+          </div>
           <div
             style="
               text-align: center;
@@ -132,14 +152,78 @@ export default {
       ],
       taskList: [],
       zzrwid: 22,
-      datalinkRequirements: []
+      datalinkRequirements: [],
+      autoAdvancing: false,
+      autoAdvanceText: '',
+      showStep3Overlay: false
     }
   },
-  mounted() {
-    this.fetchTaskList()
-    this.fetchNetworkData()
+  async mounted() {
+    const routeZzrwid = this.$route.query?.zzrwid
+    if (routeZzrwid) {
+      this.zzrwid = Number(routeZzrwid) || routeZzrwid
+    }
+    await this.fetchTaskList()
+    await this.fetchNetworkData()
+    if (routeZzrwid) {
+      this.$nextTick(() => this.startAutoAdvance())
+    }
+  },
+  beforeDestroy() {
+    this.clearAutoAdvance()
   },
   methods: {
+    // ---- 自动推演推进 ----
+    startAutoAdvance() {
+      this.clearAutoAdvance()
+      this.autoAdvancing = true
+      this._advanceTimers = []
+      // 第一步初始文字
+      this.autoAdvanceText = '正在同步输入数据，准备推演...'
+      // 步骤推进: 第一步2s → 第二步12s → 第三步5s
+      const schedule = [
+        {step: 2, delay: 2000, text: '加载基础信息完成，进入AI推导...'},
+        {step: 3, delay: 14000, text: '推导过程完成，进入智能分析...'},
+        {step: 4, delay: 19000, text: '分析完成，进入任务网络推演...'}
+      ]
+      schedule.forEach(({step, delay, text}) => {
+        const timer = setTimeout(() => {
+          this.autoAdvanceText = text
+          this.activeStep = step
+          if (step === 3) {
+            this.showStep3Overlay = true
+            setTimeout(() => {
+              this.showStep3Overlay = false
+            }, 2000)
+          }
+          if (step === 4) {
+            setTimeout(() => {
+              this.autoAdvancing = false
+              this.autoAdvanceText = ''
+            }, 1500)
+          }
+        }, delay)
+        this._advanceTimers.push(timer)
+      })
+    },
+    clearAutoAdvance() {
+      this.autoAdvancing = false
+      this.autoAdvanceText = ''
+      if (this._advanceTimers) {
+        this._advanceTimers.forEach(clearTimeout)
+        this._advanceTimers = []
+      }
+    },
+    handleStepClick(step) {
+      this.clearAutoAdvance()
+      this.activeStep = step
+      if (step === 3) {
+        this.showStep3Overlay = true
+        setTimeout(() => {
+          this.showStep3Overlay = false
+        }, 1000)
+      }
+    },
     async fetchTaskList() {
       try {
         const res = await taskGetPage({pageNum: 1, pageSize: 100})
@@ -392,5 +476,155 @@ export default {
   background: rgba(8, 14, 24, 0.8);
   border-color: rgba(56, 189, 248, 0.2);
   color: #e2e8f0;
+}
+
+/* 自动推演提示文字 */
+.advance-hint {
+  font-size: 11px;
+  color: #f59e0b;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  animation: advHintPulse 1.4s ease-in-out infinite;
+  white-space: nowrap;
+}
+@keyframes advHintPulse {
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+.adv-dot-pulse {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #f59e0b;
+  animation: advDotScale 0.9s ease-in-out infinite;
+}
+@keyframes advDotScale {
+  0%,
+  100% {
+    transform: scale(0.5);
+    opacity: 0.3;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 1;
+  }
+}
+
+/* 推演文字切换过渡 */
+.adv-text-enter-active {
+  animation: advFadeIn 0.4s ease-out;
+}
+.adv-text-leave-active {
+  animation: advFadeOut 0.25s ease-in;
+}
+@keyframes advFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+@keyframes advFadeOut {
+  0% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(10px);
+  }
+}
+
+/* 第三步分析遮罩 */
+.step3-overlay-wrap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  position: relative;
+}
+.analysis-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(3, 6, 12, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  border-radius: 4px;
+}
+.overlay-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+.overlay-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(56, 189, 248, 0.15);
+  border-top-color: #38bdf8;
+  border-radius: 50%;
+  animation: overlaySpin 0.8s linear infinite;
+}
+@keyframes overlaySpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.overlay-text {
+  font-size: 13px;
+  font-weight: bold;
+  color: #38bdf8;
+  letter-spacing: 2px;
+  animation: overlayPulse 1.6s ease-in-out infinite;
+}
+@keyframes overlayPulse {
+  0%,
+  100% {
+    opacity: 0.5;
+    text-shadow: 0 0 4px rgba(56, 189, 248, 0.2);
+  }
+  50% {
+    opacity: 1;
+    text-shadow: 0 0 16px rgba(56, 189, 248, 0.5);
+  }
+}
+
+/* 遮罩淡入淡出 */
+.overlay-fade-enter-active {
+  animation: overlayIn 0.4s ease-out;
+}
+.overlay-fade-leave-active {
+  animation: overlayOut 0.3s ease-in;
+}
+@keyframes overlayIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+@keyframes overlayOut {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
 }
 </style>

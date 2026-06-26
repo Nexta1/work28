@@ -37,6 +37,20 @@
           />
           同步全要素数据源
         </el-button>
+        <el-button
+          type="primary"
+          size="mini"
+          class="action-btn"
+          :disabled="!selectedRw"
+          @click="goToAnalysis"
+        >
+          <Icon
+            icon="lucide:play"
+            :size="13"
+            style="vertical-align: middle; margin-right: 4px"
+          />
+          需求分析推演
+        </el-button>
       </div>
     </div>
 
@@ -1256,6 +1270,14 @@ export default {
     },
     handleResize() {
       if (this.chartInstance) this.chartInstance.resize()
+    },
+    goToAnalysis() {
+      if (!this.selectedRw) return
+      const id = this.selectedRw.ZZRWID || this.selectedRw.zzrwid
+      this.$router.push({
+        path: '/datalink-assurance-requirements',
+        query: {zzrwid: id}
+      })
     },
     taskCardActiveClass(rw) {
       const curId = this.selectedRw

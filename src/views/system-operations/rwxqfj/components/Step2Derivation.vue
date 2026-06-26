@@ -7,13 +7,13 @@
       class="step-content-header"
       :style="
         derivationProcess && derivationProcess.figure
-          ? {fontSize: (derivationProcess.figure.suptitleFontSize || 13) + 'px'}
+          ? {fontSize: 13 + 'px'}
           : {}
       "
     >
       {{
         derivationProcess && derivationProcess.figure
-          ? derivationProcess.figure.suptitle
+          ? '步骤二：' + derivationProcess.figure.suptitle
           : '步骤二：任务规划推导过程'
       }}
     </div>
