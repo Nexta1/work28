@@ -361,7 +361,7 @@
                 start-placeholder="开始"
                 end-placeholder="结束"
                 size="mini"
-                style="width: 280px"
+                style="width: 380px"
                 value-format="yyyy-MM-dd HH:mm:ss"
                 @change="handleAlertTimeChange"
               />
@@ -502,7 +502,10 @@ export default {
       // 告警
       operationAlertData: [],
       performanceAlertData: [],
-      alertTimeRange: [],
+      alertTimeRange: [
+        `${new Date().getFullYear()}-01-01 00:00:00`,
+        `${new Date().getFullYear()}-12-31 23:59:59`
+      ],
       // 故障
       faultData: {
         labels: ['设备故障', '通信故障', '电源故障', '软件故障'],
@@ -723,11 +726,13 @@ export default {
         params: params
       })
         .then(res => {
-          const data = res.data || []
-          this.operationAlertData = data.map(item => ({
-            name: item.sumCategory || '其他',
-            value: Math.round((item.sumValue || 0) * 10)
-          }))
+          const data = res || []
+          this.operationAlertData = data
+            .filter(item => item.sumCategory != null && item.sumValue != null)
+            .map(item => ({
+              name: item.sumCategory,
+              value: Math.round(item.sumValue)
+            }))
           const totalWarn = this.operationAlertData.reduce(
             (s, t) => s + t.value,
             0
@@ -749,11 +754,13 @@ export default {
         params: params
       })
         .then(res => {
-          const data = res.data || []
-          this.performanceAlertData = data.map(item => ({
-            name: item.sumCategory || '其他',
-            value: Math.round((item.sumValue || 0) * 10)
-          }))
+          const data = res || []
+          this.performanceAlertData = data
+            .filter(item => item.sumCategory != null && item.sumValue != null)
+            .map(item => ({
+              name: item.sumCategory,
+              value: Math.round(item.sumValue)
+            }))
           this.$nextTick(() => this.initPerformanceChart())
         })
         .catch(() => {
@@ -846,8 +853,6 @@ export default {
             label: {color: '#94a3b8', fontSize: 10},
             itemStyle: {
               borderRadius: 4,
-              borderColor: '#03060c',
-              borderWidth: 2,
               shadowBlur: 10,
               shadowColor: 'rgba(0, 180, 255, 0.2)'
             },
@@ -904,8 +909,6 @@ export default {
             label: {color: '#94a3b8', fontSize: 10},
             itemStyle: {
               borderRadius: 4,
-              borderColor: '#03060c',
-              borderWidth: 2,
               shadowBlur: 10,
               shadowColor: 'rgba(0, 180, 255, 0.2)'
             },

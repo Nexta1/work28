@@ -519,7 +519,7 @@ export default {
             mainPage('warnInfo', {
               pageNum: 1,
               pageSize: 10,
-              params: {deviceId: sbid}
+              deviceId: sbid
             })
           ])
 

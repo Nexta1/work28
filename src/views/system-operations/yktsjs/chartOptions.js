@@ -55,39 +55,23 @@ export const getAlertPieOption = data => ({
     borderColor: '#1e3a5f',
     textStyle: {color: '#cbd5e1', fontSize: 11}
   },
-  legend: {
-    orient: 'vertical',
-    right: '5%',
-    top: 'center',
-    textStyle: {color: '#94a3b8', fontSize: 10}
-  },
   series: [
     {
       name: '告警类型',
       type: 'pie',
       radius: ['35%', '60%'],
-      center: ['32%', '50%'],
+      center: ['50%', '50%'],
       avoidLabelOverlap: false,
       animationDuration: 1500,
       animationEasing: 'cubicInOut',
       itemStyle: {
         borderRadius: 4,
-        borderColor: '#03060c',
-        borderWidth: 2,
         shadowBlur: 12,
         shadowColor: 'rgba(0, 180, 255, 0.3)'
       },
       label: {show: false},
       emphasis: {
         scaleSize: 12,
-        label: {
-          show: true,
-          fontSize: 13,
-          fontWeight: 'bold',
-          color: '#fff',
-          textShadowColor: 'rgba(0,212,255,0.6)',
-          textShadowBlur: 6
-        },
         itemStyle: {
           shadowBlur: 20,
           shadowColor: 'rgba(0, 212, 255, 0.6)'
@@ -187,9 +171,7 @@ export const getTargetPieOption = data => ({
       center: ['35%', '50%'],
       avoidLabelOverlap: false,
       itemStyle: {
-        borderRadius: 4,
-        borderColor: '#03060c',
-        borderWidth: 2
+        borderRadius: 4
       },
       label: {show: false},
       emphasis: {

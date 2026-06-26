@@ -14,6 +14,12 @@
 
     <div id="container" ref="container"></div>
 
+    <div v-if="!hasData" class="empty-state">
+      <Icon icon="mdi:database-off-outline" size="48px" />
+      <p>暂无拓扑数据</p>
+      <span>等待数据传输...</span>
+    </div>
+
     <transition name="panel-slide">
       <div v-if="detailVisible" class="detail-panel">
         <div class="panel-header">
@@ -158,10 +164,17 @@ export default {
       }
     }
   },
+  computed: {
+    hasData() {
+      return this.topologyData && this.topologyData.length > 0
+    }
+  },
   watch: {
     topologyData: {
       deep: true,
+      immediate: true,
       handler(newVal) {
+        if (!this.graph) return
         this.clearGraph()
         if (newVal && newVal.length > 0) {
           this.buildVerticalLayout(newVal)
@@ -596,6 +609,49 @@ export default {
 .panel-slide-leave-to {
   transform: translateX(350px);
   opacity: 0;
+}
+
+.empty-state {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: rgba(0, 229, 255, 0.7);
+  z-index: 10;
+  pointer-events: none;
+  user-select: none;
+}
+
+.empty-state p {
+  margin: 16px 0 8px;
+  font-size: 16px;
+  color: rgba(0, 229, 255, 0.5);
+}
+
+.empty-state span {
+  font-size: 12px;
+  color: rgba(0, 229, 255, 0.25);
+  animation: pulse-text 2s ease-in-out infinite;
+}
+
+.empty-state .local-icon {
+  opacity: 1;
+  filter: drop-shadow(0 0 6px rgba(0, 229, 255, 0.5));
+}
+
+@keyframes pulse-text {
+  0%,
+  100% {
+    opacity: 0.25;
+  }
+  50% {
+    opacity: 0.6;
+  }
 }
 
 ::v-deep g.x6-cell.x6-edge:hover path.x6-edge-line {

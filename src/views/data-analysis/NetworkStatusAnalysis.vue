@@ -481,7 +481,7 @@ export default {
             mainPage('warnInfo', {
               pageNum: 1,
               pageSize: 10,
-              params: {wlh: this.currentWLH}
+              WLH: this.currentWLH
             })
           ])
 

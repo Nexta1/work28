@@ -61,7 +61,7 @@
                 <i
                   class="el-icon-edit text-green"
                   title="编辑"
-                  @click.stop="openTreeDialog(data)"
+                  @click.stop="openTreeDialog(true, data)"
                 ></i>
                 <i
                   class="el-icon-delete text-red"
@@ -916,6 +916,7 @@ export default {
     openTreeDialog(isEdit, data = null) {
       this.isEditTree = isEdit
       if (isEdit && data) {
+        console.log('编辑业务架构节点数据：', data)
         this.formTree = {...data}
       } else {
         this.formTree = {

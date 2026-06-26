@@ -194,7 +194,7 @@
               <!-- 操作区 -->
               <el-table-column
                 label="操作"
-                width="260"
+                width="280"
                 fixed="right"
                 align="center"
               >
@@ -511,6 +511,7 @@ import {
   apiPage,
   apiGetDetail
 } from '@/api/common'
+import request from '@/utils/request'
 import {Graph} from '@antv/x6'
 import {DagreLayout} from '@antv/layout'
 import WarnClear from './WarnClear.vue'
@@ -1056,13 +1057,13 @@ export default {
         return
       }
       try {
-        const detail = await apiGetDetail(
-          'faultStrategy',
-          this.selectedStrategyId
-        )
-        const data = detail.data || detail
+        await request({
+          url: `/rest/warnInfo/dealWarn/${this.diagnosisRow.warnId}`,
+          method: 'post',
+          data: {faultStrategyId: this.selectedStrategyId}
+        })
         this.$message.success(
-          `已下发诊断策略「${data.strategyName || ''}」至告警 #${this.diagnosisRow.warnId}`
+          `已下发诊断策略至告警 #${this.diagnosisRow.warnId}`
         )
         this.diagnosisDialogVisible = false
       } catch (e) {

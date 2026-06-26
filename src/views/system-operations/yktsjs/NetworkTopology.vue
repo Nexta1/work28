@@ -490,7 +490,7 @@ export default {
           }
         })
         .catch(() => {
-          this.currentTopology = transformTopologyData(this.getMockTopology())
+          this.currentTopology = []
         })
         .finally(() => {
           this.globalLoading = false
@@ -533,54 +533,6 @@ export default {
         4: '脱网'
       }
       return statusMap[st] || '未知'
-    },
-    getMockTopology() {
-      return [
-        {
-          ZZRWWLID: 'NET_001',
-          WLMC: '战术核心网',
-          WLLX: '核心网',
-          WLH: '1001',
-          children: [
-            {
-              ZZRWWLID: 'SUB_001',
-              WLMC: '区域接入子网A',
-              WLLX: '子网',
-              zzrwqzwls: [
-                {
-                  ZZRWQZID: 'QZ_881',
-                  QZMC: '海面火力打击群',
-                  zzrwpts: [
-                    {PTID: 'PT_01', PTMC: '辽宁舰指挥中心'},
-                    {PTID: 'PT_02', PTMC: '052D型导弹驱逐舰-1'},
-                    {PTID: 'PT_03', PTMC: '歼-15舰载机-1'},
-                    {PTID: 'PT_04', PTMC: '歼-15舰载机-2'},
-                    {PTID: 'PT_05', PTMC: '预警直升机-1'}
-                  ]
-                }
-              ]
-            },
-            {
-              ZZRWWLID: 'SUB_002',
-              WLMC: '天基接入子网B',
-              WLLX: '子网',
-              zzrwqzwls: [
-                {
-                  ZZRWQZID: 'QZ_882',
-                  QZMC: '多维协同深空侦察编群',
-                  zzrwpts: [
-                    {PTID: 'PT_06', PTMC: '高分侦察卫星-2'},
-                    {PTID: 'PT_07', PTMC: '空警-500预警机'},
-                    {PTID: 'PT_08', PTMC: '地面接收站-3'},
-                    {PTID: 'PT_09', PTMC: '无人机-7'},
-                    {PTID: 'PT_10', PTMC: '预警雷达站-1'}
-                  ]
-                }
-              ]
-            }
-          ]
-        }
-      ]
     }
   }
 }
