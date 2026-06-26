@@ -3,17 +3,6 @@
     <div class="top-search-header">
       <div class="search-flex">
         <span class="hub-title">数据链保障方案生成</span>
-
-        <div class="search-item">
-          <label>作战任务名称</label>
-          <el-input
-            v-model="queryParam.RWMC"
-            @input="loadZzrwxxList"
-            placeholder="输入任务名称搜索..."
-            style="width: 260px"
-            size="small"
-          />
-        </div>
       </div>
 
       <div class="monitor-legend">
@@ -27,88 +16,28 @@
           同步全要素数据源
         </el-button>
       </div>
+      <div class="header-right-select">
+        <span class="task-label">当前任务：</span>
+        <el-select
+          v-model="selectedRwId"
+          size="small"
+          class="task-select"
+          @change="onTaskSelect"
+          placeholder="选择作战任务..."
+          clearable
+        >
+          <el-option
+            v-for="rw in rwxxList"
+            :key="rw.ZZRWID || rw.zzrwid"
+            :label="rw.RWMC || rw.rwmc"
+            :value="rw.ZZRWID || rw.zzrwid"
+          />
+        </el-select>
+      </div>
     </div>
 
     <div class="main-body-layout">
-      <div class="left-tree-panel">
-        <div class="panel-header-summary">
-          <span class="title">
-            <Icon
-              icon="lucide:swords"
-              :size="16"
-              style="vertical-align: middle; margin-right: 4px"
-            />
-            作战任务源
-          </span>
-          <span class="badge font-num text-cyan">{{ rwxxList.length }} 项</span>
-        </div>
-
-        <div class="task-scroll-box">
-          <div
-            v-for="rw in rwxxList"
-            :key="rw.ZZRWXXID || rw.ZZRWID"
-            class="task-item-card"
-            :class="taskCardActiveClass(rw)"
-            @click="handleSelectRw(rw)"
-          >
-            <div class="task-card-header">
-              <span class="rw-title ellipsis-text" :title="rw.RWMC || rw.rwmc">
-                <Icon
-                  icon="lucide:layers"
-                  :size="12"
-                  style="color: var(--color-primary); margin-right: 4px"
-                />
-                {{ rw.RWMC || rw.rwmc }}
-              </span>
-              <span
-                class="status-tag"
-                :class="rw.STATE === 1 ? 'tag-active' : 'tag-pending'"
-              >
-                {{ rw.STATE === 1 ? '已启用' : '待命' }}
-              </span>
-            </div>
-
-            <div class="task-card-body">
-              <div class="meta-grid">
-                <div>
-                  任务ID:
-                  <span class="text-blue font-num">{{
-                    rw.ZZRWID || rw.zzrwid
-                  }}</span>
-                </div>
-                <div>
-                  信息ID:
-                  <span class="text-cyan font-num">{{
-                    rw.ZZRWXXID || rw.zzrwxxid
-                  }}</span>
-                </div>
-                <div>
-                  领域:
-                  <span class="text-green">{{ rw.SSLY || '未划分' }}</span>
-                </div>
-                <div>
-                  优先级:
-                  <span class="text-orange">{{
-                    yxjMap[rw.RWYXJ] || rw.RWYXJ || '常态'
-                  }}</span>
-                </div>
-                <div>
-                  开始时间:
-                  <span>{{ formatStartTime(rw.STARTTIME) }}</span>
-                </div>
-                <div>
-                  任务时长:
-                  <span class="text-cyan font-num">{{
-                    formatTaskDuration(rw.RWSJ)
-                  }}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="right-combined-panel">
+      <div class="right-full-panel">
         <div class="right-bottom-strategy-zone">
           <el-tabs v-model="activeTab" class="dark-tabs fill-tabs">
             <el-tab-pane name="dataLinkTab" class="full-pane">
@@ -159,10 +88,16 @@ export default {
       platformTreeNodes: [],
       selectedRw: null,
       queryParam: {RWMC: ''},
-      yxjMap: getYXJMap ? getYXJMap() : {1: '低', 2: '重要', 3: '高'}
+      yxjMap: getYXJMap ? getYXJMap() : {1: '低', 2: '重要', 3: '高'},
+      selectedRwId: null
     }
   },
   mounted() {
+    const routeZzrwid = this.$route.query?.zzrwid
+    if (routeZzrwid) {
+      this.queryParam.RWMC = ''
+      this.selectedRwId = Number(routeZzrwid) || routeZzrwid
+    }
     this.initGlobalDashboard()
   },
   methods: {
@@ -176,7 +111,15 @@ export default {
         params: {RWMC: this.queryParam.RWMC || undefined}
       }).then(res => {
         this.rwxxList = res.data?.list || res.data || []
-        if (this.rwxxList.length > 0) this.handleSelectRw(this.rwxxList[0])
+        if (this.rwxxList.length > 0) {
+          // 优先选中路由传递的任务
+          const target = this.selectedRwId
+            ? this.rwxxList.find(
+                t => (t.ZZRWID || t.zzrwid) === this.selectedRwId
+              )
+            : null
+          this.handleSelectRw(target || this.rwxxList[0])
+        }
       })
     },
     handleSelectRw(rw) {
@@ -258,6 +201,16 @@ export default {
       })
     },
 
+    onTaskSelect(val) {
+      if (!val) {
+        this.selectedRw = null
+        this.platformList = []
+        this.platformTreeNodes = []
+        return
+      }
+      const rw = this.rwxxList.find(t => (t.ZZRWID || t.zzrwid) === val)
+      if (rw) this.handleSelectRw(rw)
+    },
     taskCardActiveClass(rw) {
       const curId = this.selectedRw
         ? this.selectedRw.ZZRWID || this.selectedRw.zzrwid
@@ -317,6 +270,31 @@ export default {
   font-size: 11px;
   color: #fff;
 }
+.header-right-select {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  margin-left: auto;
+  padding-left: 12px;
+  border-left: 1px solid rgba(56, 189, 248, 0.15);
+}
+.header-right-select .task-label {
+  font-size: 11px;
+  color: #94a3b8;
+  white-space: nowrap;
+}
+.header-right-select .task-select {
+  width: 180px;
+}
+.header-right-select .task-select >>> .el-input__inner {
+  height: 28px;
+  line-height: 28px;
+  font-size: 11px;
+  background: rgba(8, 14, 24, 0.8);
+  border-color: rgba(56, 189, 248, 0.2);
+  color: #e2e8f0;
+}
 
 .main-body-layout {
   flex: 1;
@@ -344,6 +322,13 @@ export default {
 }
 
 .right-combined-panel {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+.right-full-panel {
   flex: 1;
   min-width: 0;
   display: flex;

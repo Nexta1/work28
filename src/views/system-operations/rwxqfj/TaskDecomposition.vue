@@ -10,17 +10,6 @@
           />
           作战筹划信息获取与数据链保障需求生成
         </span>
-
-        <div class="search-item">
-          <label>作战任务名称</label>
-          <el-input
-            v-model="queryParam.RWMC"
-            @input="loadZzrwxxList"
-            placeholder="输入任务名称搜索..."
-            style="width: 260px"
-            size="small"
-          />
-        </div>
       </div>
 
       <div class="monitor-legend">
@@ -50,6 +39,19 @@
             style="vertical-align: middle; margin-right: 4px"
           />
           需求分析推演
+        </el-button>
+        <el-button
+          size="mini"
+          class="plan-btn"
+          :disabled="!selectedRw"
+          @click="goToPlan"
+        >
+          <Icon
+            icon="lucide:shield"
+            :size="13"
+            style="vertical-align: middle; margin-right: 4px"
+          />
+          数据链保障方案构建
         </el-button>
       </div>
     </div>
@@ -1038,7 +1040,8 @@ export default {
       activeNodeMeta: null,
       queryParam: {RWMC: ''},
       treeDefaultProps: {children: 'children', label: 'PTMC'},
-      yxjMap: getYXJMap ? getYXJMap() : {1: '低', 2: '重要', 3: '高'}
+      yxjMap: getYXJMap ? getYXJMap() : {1: '低', 2: '重要', 3: '高'},
+      selectedRwId: null
     }
   },
   computed: {
@@ -1070,6 +1073,7 @@ export default {
     },
     handleSelectRw(rw) {
       this.selectedRw = rw
+      this.selectedRwId = rw.ZZRWID || rw.zzrwid
       this.routeList = []
       this.qyList = []
       this.sslrwList = []
@@ -1279,6 +1283,26 @@ export default {
         query: {zzrwid: id}
       })
     },
+    goToPlan() {
+      if (!this.selectedRw) return
+      const id = this.selectedRw.ZZRWID || this.selectedRw.zzrwid
+      this.$router.push({
+        path: '/datalink-assurance-plan',
+        query: {zzrwid: id}
+      })
+    },
+    onTaskSelect(val) {
+      if (!val) {
+        this.selectedRw = null
+        this.routeList = []
+        this.qyList = []
+        this.sslrwList = []
+        this.platformTreeNodes = []
+        return
+      }
+      const rw = this.rwxxList.find(t => (t.ZZRWID || t.zzrwid) === val)
+      if (rw) this.handleSelectRw(rw)
+    },
     taskCardActiveClass(rw) {
       const curId = this.selectedRw
         ? this.selectedRw.ZZRWID || this.selectedRw.zzrwid
@@ -1401,6 +1425,30 @@ export default {
   border: 1px solid #1e3557;
   font-size: 11px;
   color: #fff;
+}
+.plan-btn {
+  /* background: linear-gradient(135deg, #7c3a1e, #c75b1e); */
+  border: 1px solid #f59e0b;
+  font-size: 11px;
+  color: #fff;
+  font-weight: bold;
+  box-shadow: 0 0 12px rgba(245, 158, 11, 0.25);
+  transition: all 0.3s ease;
+}
+.plan-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #9a4a28, #e87a2a);
+  box-shadow: 0 0 20px rgba(245, 158, 11, 0.5);
+  transform: translateY(-1px);
+  color: #fff;
+}
+.plan-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+.plan-btn:disabled {
+  background: #2a1e14;
+  border-color: #4a3a2a;
+  color: #7a6a5a;
+  box-shadow: none;
 }
 
 .main-body-layout {

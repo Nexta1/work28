@@ -53,6 +53,9 @@
           v-if="layoutMode === 'card'"
           class="platform-scroll-list"
           v-loading="loading"
+          v-infinite-scroll="loadMore"
+          :infinite-scroll-disabled="loadDisabled"
+          infinite-scroll-distance="50"
         >
           <div
             v-for="net in tableData"
@@ -171,15 +174,12 @@
           </div>
         </div>
 
-        <div class="pagination-row-mini" v-if="layoutMode === 'card'">
-          <el-pagination
-            layout="prev, next"
-            :current-page.sync="pagination.pageNum"
-            :page-size="pagination.pageSize"
-            :total="totalCount"
-            @current-change="fetchList"
-            small
-          />
+        <div
+          class="scroll-end-hint"
+          v-if="tableData.length > 0 && !loadDisabled"
+        >
+          <span v-if="loading">加载中...</span>
+          <span v-else>下拉加载更多</span>
         </div>
       </div>
 
@@ -397,13 +397,15 @@ export default {
     return {
       totalCount: 0,
       loading: false,
+      loadingMore: false,
+      allLoaded: false,
       strategyLoading: false,
       attrLoading: false,
       layoutMode: 'card',
       tableData: [],
       networkTree: [],
       searchQuery: {WLMC: ''},
-      pagination: {pageNum: 1, pageSize: 50},
+      pagination: {pageNum: 1, pageSize: 20},
       operatorDict: {},
       fullAttributeDict: {},
       // 策略管理核心状态
@@ -427,11 +429,24 @@ export default {
       dynamicFormValues: {} // 专门独立存放动态输入框模型字段的值
     }
   },
+  computed: {
+    loadDisabled() {
+      return (
+        this.loading ||
+        this.loadingMore ||
+        this.allLoaded ||
+        this.layoutMode !== 'card'
+      )
+    }
+  },
   watch: {
     selectedTask: {
       deep: true,
       immediate: true,
       handler() {
+        this.pagination.pageNum = 1
+        this.tableData = []
+        this.allLoaded = false
         this.fetchList()
       }
     }
@@ -510,8 +525,9 @@ export default {
       }
     },
     // 左侧保障网络列表数据
-    fetchList() {
-      this.loading = true
+    fetchList(append = false) {
+      this.loading = !append
+      this.loadingMore = append
       const payload = {
         pageNum: this.pagination.pageNum,
         pageSize: this.pagination.pageSize,
@@ -525,8 +541,14 @@ export default {
       }
       apiPage('zzrwwl', payload)
         .then(res => {
-          this.tableData = res.data?.list || res.data || []
-          this.totalCount = res.data?.total || this.tableData.length
+          const list = res.data?.list || res.data || []
+          if (append) {
+            this.tableData = this.tableData.concat(list)
+          } else {
+            this.tableData = list
+          }
+          this.totalCount = res.data?.total || list.length
+          this.allLoaded = this.tableData.length >= this.totalCount
           this.networkTree = buildTree(
             this.tableData,
             'ZZRWWLID',
@@ -538,15 +560,25 @@ export default {
           }
         })
         .catch(() => {
-          this.tableData = []
-          this.networkTree = []
-          this.resetActiveState()
+          if (!append) {
+            this.tableData = []
+            this.networkTree = []
+            this.resetActiveState()
+          }
         })
         .finally(() => {
           this.loading = false
+          this.loadingMore = false
         })
     },
+    loadMore() {
+      if (this.loadDisabled) return
+      this.pagination.pageNum++
+      this.fetchList(true)
+    },
     handleSearch() {
+      this.pagination.pageNum = 1
+      this.allLoaded = false
       this.fetchList()
     },
     selectNetwork(net) {
@@ -824,11 +856,14 @@ export default {
   display: flex;
   align-items: center;
   gap: 8px;
+  flex-wrap: nowrap;
+  white-space: nowrap;
 }
 .search-item label {
   font-size: 11px;
   color: #94a3b8;
   font-weight: bold;
+  flex-shrink: 0;
 }
 .search-item input {
   background: #0d1522;
@@ -859,7 +894,7 @@ export default {
 
 /* LEFT 侧边栏 */
 .left-platform-sidebar {
-  width: 24%;
+  width: 28%;
   background: #080e18;
   border: 1px solid #111b2b;
   border-radius: 4px;
@@ -902,7 +937,14 @@ export default {
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
+}
+.scroll-end-hint {
+  text-align: center;
+  font-size: 10px;
+  color: #4b5d78;
+  padding: 8px 0;
+  flex-shrink: 0;
 }
 .platform-tree-box {
   flex: 1;
@@ -1003,7 +1045,7 @@ export default {
 
 /* RIGHT: 运控策略卡片流容器 (核心修改样式) */
 .right-cascade-panel {
-  width: 76%;
+  width: 72%;
   background: #080e18;
   border: 1px solid #111b2b;
   border-radius: 4px;
@@ -1036,9 +1078,10 @@ export default {
 .strategy-card-scroll-container {
   flex: 1;
   overflow-y: auto;
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
   gap: 12px;
+  align-content: start;
   background: #050a12;
   border: 1px solid #111b2b;
   border-radius: 4px;

@@ -327,7 +327,7 @@ export default {
       return {
         MBXXID: null,
         mbxxid: null,
-        rwid: null, // 任务主键联动圈
+        ZZRWID: null, // 任务主键联动圈
         MBID: null,
         MBXHID: null,
         MBMC: '',
@@ -349,10 +349,10 @@ export default {
         params: {
           MBMC: this.searchQuery.MBMC || undefined,
           // 关联任务条件筛选
-          rwid: this.selectedTask
-            ? this.selectedTask.ZZRWID ||
+          ZZRWID: this.selectedTask
+            ? this.selectedTask.ZZZZRWID ||
               this.selectedTask.zzrwxxid ||
-              this.selectedTask.rwid
+              this.selectedTask.ZZRWID
             : undefined
         }
       }
@@ -378,10 +378,10 @@ export default {
       this.isEdit = false
       this.form = this.getInitForm()
       if (this.selectedTask) {
-        this.form.rwid =
-          this.selectedTask.ZZRWID ||
+        this.form.ZZRWID =
+          this.selectedTask.ZZZZRWID ||
           this.selectedTask.zzrwxxid ||
-          this.selectedTask.rwid
+          this.selectedTask.ZZRWID
       }
       this.dialogVisible = true
       this.$nextTick(() => {

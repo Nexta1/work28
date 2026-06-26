@@ -62,7 +62,7 @@
                 filter: drop-shadow(0 0 4px rgba(245, 158, 11, 0.4));
               "
             />
-         网络需求   
+            网络需求
           </span>
           <el-radio-group
             v-model="layoutMode"
@@ -78,6 +78,9 @@
           v-if="layoutMode === 'card'"
           class="platform-scroll-list"
           v-loading="loading"
+          v-infinite-scroll="loadMore"
+          :infinite-scroll-disabled="loadDisabled"
+          infinite-scroll-distance="50"
         >
           <div
             v-for="net in tableData"
@@ -196,15 +199,12 @@
           </div>
         </div>
 
-        <div class="pagination-row-mini" v-if="layoutMode === 'card'">
-          <el-pagination
-            layout="prev, next"
-            :current-page.sync="pagination.pageNum"
-            :page-size="pagination.pageSize"
-            :total="totalCount"
-            @current-change="fetchList"
-            small
-          />
+        <div
+          class="scroll-end-hint"
+          v-if="tableData.length > 0 && !loadDisabled"
+        >
+          <span v-if="loading">加载中...</span>
+          <span v-else>下拉加载更多</span>
         </div>
       </div>
 
@@ -647,10 +647,9 @@
 <script>
 // 1. 引入统一封装的通用动态接口
 import {apiPage, apiAdd, apiUpdate, apiDelete, apiGetAll} from '@/api/common.js'
-// 引入树形结构转换工具
-import {buildTree} from '@/utils' // 或是相对应的工程路径
 // 3. 引入通联业务和安全保密要求字典函数
 import {tlywList, aqbmList} from '@/api/map'
+import request from '@/utils/request'
 
 export default {
   name: 'ZzrwWlManager',
@@ -668,7 +667,9 @@ export default {
       totalCount: 0,
       wllxDict: {},
       searchQuery: {WLMC: ''},
-      pagination: {pageNum: 1, pageSize: 50}, // 树形或大量呈现时适当扩大容量
+      pagination: {pageNum: 1, pageSize: 20},
+      allLoaded: false,
+      loadingMore: false,
       dialogVisible: false,
       isEdit: false,
       activeNetId: null,
@@ -684,6 +685,14 @@ export default {
     }
   },
   computed: {
+    loadDisabled() {
+      return (
+        this.loading ||
+        this.loadingMore ||
+        this.allLoaded ||
+        this.layoutMode !== 'card'
+      )
+    },
     // 平铺外部传入的深层作战任务平台树，方便匹配、状态看板以及下拉框渲染
     flattenPlatforms() {
       const result = []
@@ -721,7 +730,24 @@ export default {
       deep: true,
       immediate: true,
       handler() {
+        this.pagination.pageNum = 1
+        this.tableData = []
+        this.allLoaded = false
+        this.networkTree = []
+        if (this.layoutMode === 'card') {
+          this.fetchList()
+        } else {
+          this.fetchTree()
+        }
+      }
+    },
+    layoutMode(mode) {
+      if (mode === 'card' && this.tableData.length === 0) {
+        this.pagination.pageNum = 1
+        this.allLoaded = false
         this.fetchList()
+      } else if (mode === 'tree') {
+        this.fetchTree()
       }
     }
   },
@@ -818,8 +844,9 @@ export default {
       )
       return target ? target.PTMC : `平台#${ptId}`
     },
-    fetchList() {
-      this.loading = true
+    fetchList(append = false) {
+      this.loading = !append
+      this.loadingMore = append
       const payload = {
         pageNum: this.pagination.pageNum,
         pageSize: this.pagination.pageSize,
@@ -827,37 +854,71 @@ export default {
           WLMC: this.searchQuery.WLMC || undefined,
           ZZRWID: this.selectedTask
             ? this.selectedTask.ZZRWID || this.selectedTask.zzrwid
+            : undefined,
+          RWMC: this.selectedTask
+            ? this.selectedTask.RWMC || this.selectedTask.rwmc
             : undefined
         }
       }
 
       return apiPage('zzrwwl', payload)
         .then(res => {
-          this.tableData = res.data?.list || res.data || []
-          this.totalCount = res.data?.total || this.tableData.length
-
-          // 运行引入的树合并工具函数，动态计算并转化为级联层次树
-          this.networkTree = buildTree(
-            this.tableData,
-            'ZZRWWLID',
-            'parentWLID',
-            null
-          )
+          const list = res.data?.list || res.data || []
+          if (append) {
+            this.tableData = this.tableData.concat(list)
+          } else {
+            this.tableData = list
+          }
+          this.totalCount = res.data?.total || list.length
+          this.allLoaded = this.tableData.length >= this.totalCount
 
           if (this.tableData.length > 0 && !this.activeNetId) {
             this.selectNetwork(this.tableData[0])
           }
         })
         .catch(() => {
-          this.tableData = []
+          if (!append) {
+            this.tableData = []
+            this.resetActiveState()
+          }
+        })
+        .finally(() => {
+          this.loading = false
+          this.loadingMore = false
+        })
+    },
+    loadMore() {
+      if (this.loadDisabled) return
+      this.pagination.pageNum++
+      this.fetchList(true)
+    },
+    fetchTree() {
+      if (!this.selectedTask) {
+        this.networkTree = []
+        return
+      }
+      const zzrwid = this.selectedTask.ZZRWID || this.selectedTask.zzrwid
+      this.loading = true
+      return request({
+        url: `/rest/zzrwwl/findTree/${zzrwid}`,
+        method: 'get'
+      })
+        .then(res => {
+          this.networkTree = [res.data] || []
+          if (this.networkTree.length > 0 && !this.activeNetId) {
+            this.selectNetwork(this.networkTree[0])
+          }
+        })
+        .catch(() => {
           this.networkTree = []
-          this.resetActiveState()
         })
         .finally(() => {
           this.loading = false
         })
     },
     handleSearch() {
+      this.pagination.pageNum = 1
+      this.allLoaded = false
       this.fetchList()
     },
     selectNetwork(net) {
@@ -1084,6 +1145,13 @@ export default {
   display: flex;
   flex-direction: column;
   gap: 8px;
+}
+.scroll-end-hint {
+  text-align: center;
+  font-size: 10px;
+  color: #4b5d78;
+  padding: 8px 0;
+  flex-shrink: 0;
 }
 .platform-tree-box {
   flex: 1;

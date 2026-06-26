@@ -112,9 +112,9 @@ const routes = [
     meta: {
       title: '数据链保障方案构建',
       subsystem: '体系运营管理',
-      category: '运控策略制定',
-      icon: 'lucide:shield-check', // 保障、安全防御
-      parentModule: '运控策略制定',
+      category: '任务需求分解',
+      icon: 'lucide:shield-check',
+      parentModule: '任务需求分解',
       requiresAuth: true
     }
   },

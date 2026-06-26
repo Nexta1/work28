@@ -763,19 +763,22 @@ export default {
     loadNetworkTreeStructure() {
       const taskId = this.selectedTask?.ZZRWID
       if (!taskId) return
-      apiPage('zzrwwl', {pageNum: 1, pageSize: 9999, params: {ZZRWID: taskId}})
-        .then(res => {
-          this.tableData = res.data?.list || res.data || []
-          this.totalCount = res.data?.total || this.tableData.length
+      apiPage('zzrwwl', {
+        pageNum: 1,
+        pageSize: 9999,
+        params: {ZZRWID: taskId}
+      }).then(res => {
+        this.tableData = res.data?.list || res.data || []
+        this.totalCount = res.data?.total || this.tableData.length
 
-          // 运行引入的树合并工具函数，动态计算并转化为级联层次树
-          this.networkTreeOptions = buildTree(
-            this.tableData,
-            'ZZRWWLID',
-            'parentWLID',
-            null
-          )})
-    
+        // 运行引入的树合并工具函数，动态计算并转化为级联层次树
+        this.networkTreeOptions = buildTree(
+          this.tableData,
+          'ZZRWWLID',
+          'parentWLID',
+          null
+        )
+      })
     },
     fetchGroupList() {
       this.groupLoading = true
@@ -1021,11 +1024,14 @@ export default {
   display: flex;
   align-items: center;
   gap: 8px;
+  flex-wrap: nowrap;
+  white-space: nowrap;
 }
 .search-item label {
   font-size: 11px;
   color: #94a3b8;
   font-weight: bold;
+  flex-shrink: 0;
 }
 .search-item input {
   background: #0d1522;
@@ -1055,7 +1061,7 @@ export default {
 
 /* LEFT 侧边栏 */
 .left-platform-sidebar {
-  width: 24%;
+  width: 35%;
   background: #080e18;
   border: 1px solid #111b2b;
   border-radius: 4px;
@@ -1087,9 +1093,10 @@ export default {
 .platform-scroll-list {
   flex: 1;
   overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6px;
+  align-content: start;
 }
 
 /* 🌟【完美修复】采用左右 Flex 双列结构隔离文字层与状态按钮层，杜绝位置冲突 */
