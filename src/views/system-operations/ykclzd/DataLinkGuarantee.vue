@@ -1,65 +1,60 @@
 <template>
   <div class="screen-container">
-    <div class="top-search-header">
-      <div class="search-flex">
-        <span class="hub-title">数据链保障方案生成</span>
-      </div>
-
-      <div class="monitor-legend">
-        <el-button
-          type="info"
-          size="mini"
-          icon="el-icon-refresh"
-          class="action-btn"
-          @click="initGlobalDashboard"
-        >
-          同步全要素数据源
-        </el-button>
-      </div>
-      <div class="header-right-select">
-        <span class="task-label">当前任务：</span>
-        <el-select
-          v-model="selectedRwId"
-          size="small"
-          class="task-select"
-          @change="onTaskSelect"
-          placeholder="选择作战任务..."
-          clearable
-        >
-          <el-option
-            v-for="rw in rwxxList"
-            :key="rw.ZZRWID || rw.zzrwid"
-            :label="rw.RWMC || rw.rwmc"
-            :value="rw.ZZRWID || rw.zzrwid"
-          />
-        </el-select>
-      </div>
-    </div>
-
     <div class="main-body-layout">
       <div class="right-full-panel">
         <div class="right-bottom-strategy-zone">
-          <el-tabs v-model="activeTab" class="dark-tabs fill-tabs">
-            <el-tab-pane name="dataLinkTab" class="full-pane">
-              <span slot="label">分级运控方案</span>
-              <div class="pane-content-box" style="height: 100%">
-                <OperationalControlScheme
-                  :selected-task="selectedRw"
-                  :platformTreeNodes="platformTreeNodes"
-                />
+          <div class="tab-header-bar">
+            <el-tabs v-model="activeTab" class="dark-tabs fill-tabs">
+              <el-tab-pane name="dataLinkTab" class="full-pane">
+                <span slot="label">分级运控方案</span>
+                <div class="pane-content-box" style="height: 100%">
+                  <OperationalControlScheme
+                    :selected-task="selectedRw"
+                    :platformTreeNodes="platformTreeNodes"
+                  />
+                </div>
+              </el-tab-pane>
+              <el-tab-pane name="rwqzTab" class="full-pane">
+                <span slot="label">任务群组方案</span>
+                <div class="pane-content-box" style="height: 100%">
+                  <TaskGroupScheme
+                    :selected-task="selectedRw"
+                    :platformTreeNodes="platformTreeNodes"
+                    :platformList="platformList"
+                  />
+                </div>
+              </el-tab-pane>
+            </el-tabs>
+            <div class="tab-header-controls">
+              <div class="task-select-group">
+                <span class="task-label">当前任务：</span>
+                <el-select
+                  v-model="selectedRwId"
+                  size="small"
+                  class="task-select"
+                  @change="onTaskSelect"
+                  placeholder="选择作战任务..."
+                  clearable
+                >
+                  <el-option
+                    v-for="rw in rwxxList"
+                    :key="rw.ZZRWID || rw.zzrwid"
+                    :label="rw.RWMC || rw.rwmc"
+                    :value="rw.ZZRWID || rw.zzrwid"
+                  />
+                </el-select>
               </div>
-            </el-tab-pane>
-            <el-tab-pane name="rwqzTab" class="full-pane">
-              <span slot="label">任务群组方案</span>
-              <div class="pane-content-box" style="height: 100%">
-                <TaskGroupScheme
-                  :selected-task="selectedRw"
-                  :platformTreeNodes="platformTreeNodes"
-                  :platformList="platformList"
-                />
-              </div>
-            </el-tab-pane>
-          </el-tabs>
+              <el-button
+                type="info"
+                size="mini"
+                icon="el-icon-refresh"
+                class="action-btn"
+                @click="initGlobalDashboard"
+              >
+                同步全要素数据源
+              </el-button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -124,6 +119,7 @@ export default {
     },
     handleSelectRw(rw) {
       this.selectedRw = rw
+      this.selectedRwId = rw.ZZRWID || rw.zzrwid
       this.platformTreeNodes = []
 
       this.loadPlatformTreeData()
@@ -233,36 +229,11 @@ export default {
   padding: 12px;
   box-sizing: border-box;
 }
-.top-search-header {
-  height: 46px;
-  background: #080e18;
-  border: 1px solid #111b2b;
-  border-radius: 4px;
+.main-body-layout {
+  flex: 1;
+  min-height: 0;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 12px;
-  margin-bottom: 12px;
-  flex-shrink: 0;
-}
-.hub-title {
-  font-size: 13px;
-  font-weight: bold;
-  color: #38bdf8;
-}
-.search-flex {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-.search-item {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-.search-item label {
-  font-size: 11px;
-  color: #94a3b8;
+  gap: 12px;
 }
 .action-btn {
   background: #101b2e;
@@ -270,39 +241,7 @@ export default {
   font-size: 11px;
   color: #fff;
 }
-.header-right-select {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  flex-shrink: 0;
-  margin-left: auto;
-  padding-left: 12px;
-  border-left: 1px solid rgba(56, 189, 248, 0.15);
-}
-.header-right-select .task-label {
-  font-size: 11px;
-  color: #94a3b8;
-  white-space: nowrap;
-}
-.header-right-select .task-select {
-  width: 180px;
-}
-.header-right-select .task-select >>> .el-input__inner {
-  height: 28px;
-  line-height: 28px;
-  font-size: 11px;
-  background: rgba(8, 14, 24, 0.8);
-  border-color: rgba(56, 189, 248, 0.2);
-  color: #e2e8f0;
-}
 
-.main-body-layout {
-  flex: 1;
-  min-height: 0;
-  width: 100%;
-  display: flex;
-  gap: 12px;
-}
 .left-tree-panel {
   width: 380px;
   flex-shrink: 0;
@@ -334,6 +273,60 @@ export default {
   display: flex;
   flex-direction: column;
   height: 100%;
+}
+.right-bottom-strategy-zone {
+  background: #080e18;
+  border: 1px solid #111b2b;
+  border-radius: 4px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+.tab-header-bar {
+  display: flex;
+  align-items: flex-start;
+  flex: 1;
+  min-height: 0;
+  position: relative;
+}
+.tab-header-controls {
+  position: absolute;
+  top: 4px;
+  right: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+  z-index: 10;
+}
+.task-select-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.task-select-group .task-label {
+  font-size: 11px;
+  color: #94a3b8;
+  white-space: nowrap;
+}
+.task-select-group .task-select {
+  width: 180px;
+}
+.task-select-group .task-select >>> .el-input__inner {
+  height: 28px;
+  line-height: 28px;
+  font-size: 11px;
+  background: rgba(8, 14, 24, 0.8);
+  border-color: rgba(56, 189, 248, 0.2);
+  color: #e2e8f0;
+}
+.action-btn {
+  background: #101b2e;
+  border: 1px solid #1e3557;
+  font-size: 11px;
+  color: #fff;
 }
 .right-bottom-strategy-zone {
   background: #080e18;
