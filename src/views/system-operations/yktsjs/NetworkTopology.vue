@@ -6,9 +6,7 @@
   >
     <div class="top-search-header-refined">
       <div class="search-flex-zone">
-        <span class="hub-title-refined">
-          <Icon icon="mdi:satellite" size="14px" /> 网络资源拓扑
-        </span>
+        <span class="hub-title-refined"> 网络资源拓扑 </span>
 
         <div class="search-item-refined">
           <label>作战任务</label>
@@ -384,7 +382,7 @@ export default {
       },
       currentTopology: [],
       networkTypeMap: {},
-      layoutType: 'circular'
+      layoutType: 'TB'
     }
   },
   computed: {

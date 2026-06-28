@@ -10,6 +10,21 @@
       >
         <Icon icon="mdi:fit-to-screen" size="14px" />
       </el-button>
+
+      <div class="layout-switch-group">
+        <el-radio-group
+          :value="layoutType"
+          @input="handleLayoutChange"
+          size="mini"
+          class="dir-radio-group"
+        >
+          <el-radio-button label="TB">纵向</el-radio-button>
+          <el-radio-button label="LR">横向</el-radio-button>
+          <el-radio-button label="BT">倒纵</el-radio-button>
+          <el-radio-button label="RL">倒横</el-radio-button>
+          <el-radio-button label="circular">环形</el-radio-button>
+        </el-radio-group>
+      </div>
     </div>
 
     <div id="container" ref="container"></div>
@@ -130,6 +145,7 @@
 import {Graph, Shape} from '@antv/x6'
 import {wlzt} from '@/api/network'
 import {wllxMap} from '@/api/map'
+import dagre from 'dagre'
 
 export default {
   name: 'TopologyCanvas',
@@ -137,6 +153,11 @@ export default {
     topologyData: {
       type: Array,
       default: () => []
+    },
+    layoutType: {
+      type: String,
+      default: 'TB',
+      validator: v => ['TB', 'BT', 'LR', 'RL', 'circular'].includes(v)
     }
   },
   data() {
@@ -172,20 +193,21 @@ export default {
   watch: {
     topologyData: {
       deep: true,
-      immediate: true,
       handler(newVal) {
-        if (!this.graph) return
-        this.clearGraph()
-        if (newVal && newVal.length > 0) {
-          this.buildVerticalLayout(newVal)
-        }
+        this.$nextTick(() => this.rebuildLayout())
       }
+    },
+    layoutType() {
+      this.$nextTick(() => this.rebuildLayout())
     }
   },
   mounted() {
     this.initGraph()
     this.fetchNetworkTypeMap()
     window.addEventListener('resize', this.handleResize)
+    if (this.topologyData && this.topologyData.length > 0) {
+      this.buildLayout(this.topologyData)
+    }
   },
   beforeDestroy() {
     window.removeEventListener('resize', this.handleResize)
@@ -300,41 +322,78 @@ export default {
         }
       }
     },
-    clearGraph() {
-      if (this.graph) this.graph.clearCells()
+    rebuildLayout() {
+      if (!this.graph) return
+      this.graph.dispose()
+      this.graph = null
+      this.initGraph()
+      if (this.topologyData && this.topologyData.length > 0) {
+        this.buildLayout(this.topologyData)
+      }
+    },
+
+    buildLayout(data) {
+      if (this.layoutType === 'circular') {
+        this.buildCircularLayout(data)
+        return
+      }
+      this.buildVerticalLayout(data)
     },
 
     buildVerticalLayout(data) {
-      const containerWidth = this.$refs.container.clientWidth
-      const centerX = containerWidth / 2
-      let currentY = 80
-      const layerGap = 200
-      const subGap = 400
-      const groupGap = 220
+      // 使用 dagre 库计算分层布局
+      const g = new dagre.graphlib.Graph()
+      g.setGraph({
+        rankdir: this.layoutType,
+        nodesep: 60,
+        ranksep: 120,
+        align: 'UL',
+        marginx: 30,
+        marginy: 30
+      })
+      g.setDefaultEdgeLabel(() => ({}))
 
+      // 注册节点和边到 dagre
       data.forEach(net => {
+        g.setNode(net.id, {width: 40, height: 40})
+        if (!net.children) return
+        net.children.forEach(sub => {
+          g.setNode(sub.id, {width: 40, height: 40})
+          g.setEdge(net.id, sub.id)
+          if (!sub.groups) return
+          sub.groups.forEach(group => {
+            const nodeCount = group.nodes?.length || 0
+            const gHeight = 40 + nodeCount * 34
+            g.setNode(group.id, {width: 120, height: gHeight})
+            g.setEdge(sub.id, group.id)
+          })
+        })
+      })
+
+      // 执行 dagre 布局计算
+      dagre.layout(g)
+
+      // 根据 dagre 计算结果创建 X6 节点（dagre x/y 是中心坐标）
+      data.forEach(net => {
+        const n = g.node(net.id)
         this.createNode(
           net.id,
           net.wlmc || net.name,
-          centerX - 30,
-          currentY,
+          n.x - 20,
+          n.y - 20,
           net.icon,
           this.theme.network,
           {...net}
         )
-
         if (!net.children) return
 
-        const subY = currentY + layerGap
-        const subStartX = centerX - ((net.children.length - 1) * subGap) / 2
-
-        net.children.forEach((sub, subIdx) => {
-          const subX = subStartX + subIdx * subGap
+        net.children.forEach(sub => {
+          const s = g.node(sub.id)
           this.createNode(
             sub.id,
             sub.name,
-            subX - 30,
-            subY,
+            s.x - 20,
+            s.y - 20,
             net.icon,
             this.theme.subnet,
             {...sub}
@@ -343,36 +402,36 @@ export default {
 
           if (!sub.groups) return
 
-          const groupY = subY + layerGap
-          const groupStartX = subX - ((sub.groups.length - 1) * groupGap) / 2
-
-          sub.groups.forEach((group, gIdx) => {
-            const groupX = groupStartX + gIdx * groupGap - 90
-            const gHeight = 80 + (group.nodes?.length || 0) * 65
+          sub.groups.forEach(group => {
+            const gp = g.node(group.id)
+            const nodeCount = group.nodes?.length || 0
+            const gHeight = 40 + nodeCount * 34
+            const gx = gp.x - 60
+            const gy = gp.y - gHeight / 2
 
             const groupNode = this.graph.addNode({
               id: group.id,
-              x: groupX,
-              y: groupY,
-              width: 180,
+              x: gx,
+              y: gy,
+              width: 120,
               height: gHeight,
               label: group.name,
               zIndex: 1,
-              data: {isGroup: true},
+              data: {isGroup: true, nodeCount},
               attrs: {
                 body: {
                   fill: this.theme.group,
                   stroke: this.theme.groupBorder,
                   strokeWidth: 1,
-                  rx: 8,
-                  ry: 8,
+                  rx: 6,
+                  ry: 6,
                   strokeDasharray: '5,5'
                 },
                 label: {
                   refX: 0.5,
-                  refY: 15,
+                  refY: 10,
                   fill: this.theme.groupBorder,
-                  fontSize: 12,
+                  fontSize: 9,
                   fontWeight: 'bold'
                 }
               }
@@ -383,10 +442,10 @@ export default {
               group.nodes.forEach((node, nIdx) => {
                 const dev = this.graph.addNode({
                   id: node.id,
-                  x: groupX + 67,
-                  y: groupY + 55 + nIdx * 65,
-                  width: 45,
-                  height: 45,
+                  x: gx + Math.round((120 - 24) / 2),
+                  y: gy + 26 + nIdx * 34,
+                  width: 24,
+                  height: 24,
                   shape: 'image',
                   imageUrl: node.icon || node.txurl,
                   label: node.name,
@@ -395,9 +454,9 @@ export default {
                   attrs: {
                     label: {
                       fill: this.theme.text,
-                      fontSize: 11,
+                      fontSize: 8,
                       refY: '100%',
-                      refY2: 5
+                      refY2: 1
                     }
                   }
                 })
@@ -407,7 +466,133 @@ export default {
           })
         })
       })
-      // 居中显示并缩放适配
+
+      // 自适应屏幕，缩放至适配
+      this.graph.zoomToFit({padding: 60, maxScale: 1})
+      this.graph.centerContent()
+    },
+
+    buildCircularLayout(data) {
+      const cx = 960
+      const cy = 540
+      const mainRadius = 300
+      const layerGap = 240
+      const netCount = data.length
+      if (netCount === 0) return
+
+      data.forEach((net, netIdx) => {
+        const angle = (2 * Math.PI * netIdx) / netCount - Math.PI / 2
+        const nx = cx + mainRadius * Math.cos(angle)
+        const ny = cy + mainRadius * Math.sin(angle)
+
+        this.createNode(
+          net.id,
+          net.wlmc || net.name,
+          nx - 20,
+          ny - 20,
+          net.icon,
+          this.theme.network,
+          {...net}
+        )
+
+        if (!net.children) return
+
+        const subCount = net.children.length
+        const spreadAngle = Math.min(
+          Math.PI / 2,
+          (2 * Math.PI) / (netCount * 1.2)
+        )
+
+        net.children.forEach((sub, subIdx) => {
+          const subAngle =
+            angle +
+            (subIdx - (subCount - 1) / 2) *
+              (spreadAngle / Math.max(subCount, 1))
+          const sr = mainRadius + layerGap
+          const sx = cx + sr * Math.cos(subAngle)
+          const sy = cy + sr * Math.sin(subAngle)
+
+          this.createNode(
+            sub.id,
+            sub.name,
+            sx - 20,
+            sy - 20,
+            net.icon,
+            this.theme.subnet,
+            {...sub}
+          )
+          this.createEdge(net.id, sub.id)
+
+          if (!sub.groups) return
+
+          sub.groups.forEach((group, gIdx) => {
+            const gr = sr + layerGap * 0.9
+            const gAngle =
+              subAngle + (gIdx - (sub.groups.length - 1) / 2) * 0.25
+            const gx = cx + gr * Math.cos(gAngle)
+            const gy = cy + gr * Math.sin(gAngle)
+
+            const nodeCount = group.nodes?.length || 0
+            const gHeight = 40 + nodeCount * 34
+
+            const groupNode = this.graph.addNode({
+              id: group.id,
+              x: gx - 60,
+              y: gy - gHeight / 2,
+              width: 120,
+              height: gHeight,
+              label: group.name,
+              zIndex: 1,
+              data: {isGroup: true, nodeCount},
+              attrs: {
+                body: {
+                  fill: this.theme.group,
+                  stroke: this.theme.groupBorder,
+                  strokeWidth: 1,
+                  rx: 6,
+                  ry: 6,
+                  strokeDasharray: '5,5'
+                },
+                label: {
+                  refX: 0.5,
+                  refY: 10,
+                  fill: this.theme.groupBorder,
+                  fontSize: 9,
+                  fontWeight: 'bold'
+                }
+              }
+            })
+            this.createEdge(sub.id, group.id)
+
+            if (group.nodes) {
+              group.nodes.forEach((node, nIdx) => {
+                const dev = this.graph.addNode({
+                  id: node.id,
+                  x: gx - 60 + Math.round((120 - 24) / 2),
+                  y: gy - gHeight / 2 + 26 + nIdx * 34,
+                  width: 24,
+                  height: 24,
+                  shape: 'image',
+                  imageUrl: node.icon || node.txurl,
+                  label: node.name,
+                  zIndex: 10,
+                  data: {...node},
+                  attrs: {
+                    label: {
+                      fill: this.theme.text,
+                      fontSize: 8,
+                      refY: '100%',
+                      refY2: 1
+                    }
+                  }
+                })
+                groupNode.addChild(dev)
+              })
+            }
+          })
+        })
+      })
+
       this.graph.zoomToFit({padding: 60, maxScale: 1})
       this.graph.centerContent()
     },
@@ -417,8 +602,8 @@ export default {
         id,
         x,
         y,
-        width: 60,
-        height: 60,
+        width: 40,
+        height: 40,
         shape: 'image',
         imageUrl: icon,
         label,
@@ -426,10 +611,10 @@ export default {
         attrs: {
           label: {
             fill: color,
-            fontSize: 14,
+            fontSize: 12,
             fontWeight: 'bold',
             refY: '100%',
-            refY2: 12
+            refY2: 8
           }
         }
       })
@@ -490,6 +675,10 @@ export default {
         const {clientWidth, clientHeight} = this.$refs.container
         this.graph.resize(clientWidth, clientHeight)
       }
+    },
+
+    handleLayoutChange(dir) {
+      this.$emit('update:layoutType', dir)
     }
   }
 }
@@ -512,6 +701,42 @@ export default {
   top: 20px;
   left: 20px;
   z-index: 90;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.layout-switch-group ::v-deep .el-radio-group.dir-radio-group {
+  display: inline-flex;
+  background: rgba(8, 14, 24, 0.85);
+  border: 1px solid rgba(56, 189, 248, 0.2);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.layout-switch-group ::v-deep .el-radio-button__inner {
+  background: transparent !important;
+  border: none !important;
+  color: #64748b !important;
+  font-size: 11px !important;
+  padding: 5px 10px !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+}
+.layout-switch-group
+  ::v-deep
+  .el-radio-button__orig-radio:checked
+  + .el-radio-button__inner {
+  background: rgba(56, 189, 248, 0.15) !important;
+  color: #38bdf8 !important;
+  box-shadow: none !important;
+}
+.layout-switch-group
+  ::v-deep
+  .el-radio-button__orig-radio:checked
+  + .el-radio-button__inner:hover {
+  color: #38bdf8 !important;
 }
 
 .detail-panel {
