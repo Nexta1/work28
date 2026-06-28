@@ -40,113 +40,32 @@
               </span>
 
               <button class="logout-btn" @click="logout">退出</button>
+
+              <el-tooltip
+                content="切换为后端路由模式时将重新加载页面"
+                placement="bottom"
+              >
+                <button
+                  class="route-toggle-btn"
+                  :class="{active: useBackendRoutes}"
+                  @click="toggleRouteMode"
+                >
+                  <Icon
+                    :icon="useBackendRoutes ? 'lucide:cloud' : 'lucide:folder'"
+                    :size="14"
+                  />
+                  {{ useBackendRoutes ? '后端路由' : '静态路由' }}
+                </button>
+              </el-tooltip>
             </div>
           </header>
 
           <div class="main-layout">
             <!-- 悬浮侧边菜单（fixed定位，不占内容空间） -->
-            <aside
-              class="left-menu"
-              :class="{visible: navVisible}"
-              @mouseleave="navVisible = false"
-            >
-              <div class="menu-header">
-                <div class="menu-title">体系运控分系统</div>
-                <button class="collapse-btn" @click="toggleNav">
-                  <Icon icon="lucide:chevron-left" :size="16" />
-                </button>
-              </div>
-
-              <div class="menu-content">
-                <div
-                  v-for="subsystem in subsystems"
-                  :key="subsystem"
-                  class="subsystem-block"
-                >
-                  <div class="subsystem-title">
-                    <span class="subsystem-text">{{ subsystem }}</span>
-                  </div>
-
-                  <transition name="menu-expand">
-                    <div class="modules-container">
-                      <div
-                        v-for="category in getCategoriesBySubsystem(subsystem)"
-                        :key="category"
-                        class="module-group"
-                      >
-                        <template
-                          v-if="getModuleRoutes(subsystem, category).length > 0"
-                        >
-                          <div
-                            v-for="moduleRoute in getModuleRoutes(
-                              subsystem,
-                              category
-                            )"
-                            :key="moduleRoute.path"
-                            class="module-item"
-                            :class="{
-                              active:
-                                getSubRoutes(category).length === 0 &&
-                                $route.path === moduleRoute.path
-                            }"
-                            @click="handleModuleClick(moduleRoute, category)"
-                          >
-                            <Icon
-                              :icon="moduleRoute.meta.icon || 'lucide:box'"
-                              :size="18"
-                              class="nav-icon"
-                            />
-
-                            <span class="nav-text">
-                              {{ moduleRoute.meta.title }}
-                            </span>
-
-                            <Icon
-                              v-if="getSubRoutes(category).length > 0"
-                              icon="lucide:chevron-right"
-                              :size="14"
-                              class="module-arrow"
-                              :class="{expanded: isCategoryExpanded(category)}"
-                            />
-                          </div>
-
-                          <transition name="menu-expand">
-                            <div
-                              v-if="
-                                isCategoryExpanded(category) &&
-                                getSubRoutes(category).length > 0
-                              "
-                              class="sub-items-container"
-                            >
-                              <router-link
-                                v-for="subRoute in getSubRoutes(category)"
-                                :key="subRoute.path"
-                                :to="subRoute.path"
-                                class="nav-item"
-                                :class="{active: $route.path === subRoute.path}"
-                                @click.native="navVisible = false"
-                              >
-                                <Icon
-                                  :icon="
-                                    subRoute.meta.icon || 'lucide:file-text'
-                                  "
-                                  :size="16"
-                                  class="nav-icon"
-                                />
-
-                                <span class="nav-text">
-                                  {{ subRoute.meta.title }}
-                                </span>
-                              </router-link>
-                            </div>
-                          </transition>
-                        </template>
-                      </div>
-                    </div>
-                  </transition>
-                </div>
-              </div>
-            </aside>
+            <SideMenu
+              :visible="navVisible"
+              @update:visible="navVisible = $event"
+            />
 
             <main class="content-area">
               <router-view v-if="!isLoginPage" />
@@ -177,6 +96,7 @@
 </template>
 
 <script>
+import SideMenu from '@/components/SideMenu.vue'
 import NewAlertNotification from '@/components/NewAlertNotification.vue'
 import UserProfileDialog from '@/components/UserProfileDialog.vue'
 import {getLatestWarnInfo} from '@/api/warnInfo'
@@ -184,6 +104,7 @@ import {getLatestWarnInfo} from '@/api/warnInfo'
 export default {
   name: 'App',
   components: {
+    SideMenu,
     NewAlertNotification,
     UserProfileDialog
   },
@@ -194,8 +115,6 @@ export default {
       currentTime: '',
       timer: null,
       navVisible: false,
-      collapsedCategories: {},
-      collapsedSubsystems: {},
       // 个人信息弹窗
       showProfile: false,
       // 新告警通知
@@ -220,6 +139,10 @@ export default {
 
     currentMenuTitle() {
       return this.$route.meta?.title || '体系运营管理'
+    },
+
+    useBackendRoutes() {
+      return localStorage.getItem('useBackendRoutes') === 'true'
     }
   },
 
@@ -233,8 +156,8 @@ export default {
       this.updateTime()
     }, 1000)
     this.$store.dispatch('restoreSession')
-    // 刷新用户信息（从服务端获取最新数据，更新 localStorage 和 store）
-    this.$store.dispatch('fetchCurrentUser')
+    // 刷新用户信息已由路由守卫自动触发，此处不再重复调用
+    // this.$store.dispatch('fetchCurrentUser')
     // 启动告警检查
     this.startAlertCheck()
     // 监听路由变化：如果用户自行进入告警页面，关闭通知并确认
@@ -254,78 +177,15 @@ export default {
   },
 
   methods: {
-    toggleNav() {
-      this.navVisible = !this.navVisible
-    },
-
-    handleModuleClick(moduleRoute, category) {
-      const hasSubRoutes = this.getSubRoutes(category).length > 0
-
-      if (hasSubRoutes) {
-        this.toggleCategory(category)
-      } else {
-        if (this.$route.path !== moduleRoute.path) {
-          this.$router.push(moduleRoute.path)
-        }
-        this.navVisible = false
-      }
-    },
-
-    toggleCategory(category) {
-      this.$set(
-        this.collapsedCategories,
-        category,
-        !this.collapsedCategories[category]
+    toggleRouteMode() {
+      const current = localStorage.getItem('useBackendRoutes') === 'true'
+      localStorage.setItem('useBackendRoutes', current ? 'false' : 'true')
+      this.$message.success(
+        current
+          ? '已切换为静态路由模式，页面即将重新加载'
+          : '已切换为后端路由模式，页面即将重新加载'
       )
-    },
-
-    isCategoryExpanded(category) {
-      return !this.collapsedCategories[category]
-    },
-
-    toggleSubsystem(subsystem) {
-      this.$set(
-        this.collapsedSubsystems,
-        subsystem,
-        !this.collapsedSubsystems[subsystem]
-      )
-    },
-
-    isSubsystemCollapsed(subsystem) {
-      return !!this.collapsedSubsystems[subsystem]
-    },
-
-    getCategoriesBySubsystem(subsystem) {
-      const routes = this.$router.getRoutes()
-      const categories = new Set()
-      routes.forEach(route => {
-        if (
-          route.meta &&
-          route.meta.subsystem === subsystem &&
-          route.meta.category
-        ) {
-          categories.add(route.meta.category)
-        }
-      })
-      return Array.from(categories)
-    },
-
-    getModuleRoutes(subsystem, category) {
-      return this.$router
-        .getRoutes()
-        .filter(
-          route =>
-            route.meta &&
-            route.meta.subsystem === subsystem &&
-            route.meta.category === category &&
-            route.meta.isModule
-        )
-    },
-
-    getSubRoutes(module) {
-      return this.$router
-        .getRoutes()
-        .filter(route => route.meta && route.meta.parentModule === module)
+      setTimeout(() => window.location.reload(), 800)
     },
 
     updateTime() {
@@ -627,6 +487,32 @@ body {
 
 .logout-btn:hover {
   background: rgba(255, 80, 80, 0.25);
+}
+
+.route-toggle-btn {
+  height: 32px;
+  padding: 0 12px;
+  border-radius: 6px;
+  border: 1px solid rgba(56, 189, 248, 0.2);
+  background: rgba(56, 189, 248, 0.1);
+  color: #94a3b8;
+  font-size: 12px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  transition: all 0.2s ease;
+  outline: none;
+}
+.route-toggle-btn:hover {
+  background: rgba(56, 189, 248, 0.18);
+  color: #38bdf8;
+  border-color: rgba(56, 189, 248, 0.3);
+}
+.route-toggle-btn.active {
+  background: rgba(56, 189, 248, 0.15);
+  color: #38bdf8;
+  border-color: rgba(56, 189, 248, 0.3);
 }
 
 .collapse-btn {

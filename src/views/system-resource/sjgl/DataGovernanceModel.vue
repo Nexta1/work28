@@ -8,9 +8,8 @@
             :size="18"
             style="vertical-align: middle; color: #38bdf8"
           />
-          数据治理模型维护总线
+          数据治理模型维护
         </span>
-        <span class="header-subtitle">数据分类模型与数据标注模型分区维护</span>
       </div>
       <el-button
         type="info"
@@ -27,34 +26,28 @@
       <div class="stat-card">
         <span>数据分类节点</span>
         <strong class="font-num text-blue">{{ dataModelCount }}</strong>
-        <small>dataModel 树节点总量</small>
       </div>
       <div class="stat-card">
         <span>分类目录</span>
         <strong class="font-num text-green">{{ dataFolderCount }}</strong>
-        <small>nodeType = 1 (文件夹)</small>
       </div>
       <div class="stat-card">
         <span>数据叶子</span>
         <strong class="font-num text-orange">{{ dataLeafCount }}</strong>
-        <small>nodeType = 2 (实体表)</small>
       </div>
       <div class="stat-card">
         <span>标注分类</span>
         <strong class="font-num text-cyan">{{ labelClassCount }}</strong>
-        <small>labelClass 树节点总量</small>
       </div>
       <div class="stat-card">
         <span>标签模型</span>
         <strong class="font-num text-green">{{ labelModelTotal }}</strong>
-        <small>labelModel 实例总量</small>
       </div>
       <div class="stat-card">
         <span>数据源</span>
         <strong class="font-num text-blue">{{
           dataSourceOptions.length
         }}</strong>
-        <small>可绑定数据源数量</small>
       </div>
     </div>
 
@@ -109,16 +102,11 @@
                 >
                   <span class="tree-node" slot-scope="{data}">
                     <span class="node-content-flex">
-                      <i
-                        :class="[
-                          data.nodeType === 2
-                            ? 'el-icon-s-grid'
-                            : 'el-icon-folder-opened',
-                          data.nodeType === 2
-                            ? 'icon-color-table'
-                            : 'icon-color-folder'
-                        ]"
-                      ></i>
+                      <Icon
+                        :icon="getDataModelIcon(data)"
+                        :size="15"
+                        :style="{color: getDataModelIconColor(data)}"
+                      />
                       <span class="node-text-span">{{ data.modelName }}</span>
                     </span>
                     <span class="tree-actions">
@@ -149,17 +137,15 @@
                   <div class="hero-top-flex">
                     <h3 class="hero-title">{{ activeDataModel.modelName }}</h3>
                     <div class="tag-group">
+                      <el-tag size="mini" type="warning">{{
+                        dataCategoryText(activeDataModel.dataCategory)
+                      }}</el-tag>
                       <el-tag
                         size="mini"
-                        :type="
-                          activeDataModel.nodeType === 2 ? 'success' : 'info'
-                        "
+                        type="success"
+                        v-if="activeDataModel.dataType != null"
+                        >{{ dataTypeText(activeDataModel.dataType) }}</el-tag
                       >
-                        {{ nodeTypeText(activeDataModel.nodeType) }}
-                      </el-tag>
-                      <el-tag size="mini" type="warning">{{
-                        dataTypeText(activeDataModel.dataType)
-                      }}</el-tag>
                     </div>
                   </div>
                   <p class="hero-memo">
@@ -210,7 +196,7 @@
                       class="visual-table-token interactive-token"
                       @click="previewPhysicalTableData(table)"
                     >
-                      <i class="el-icon-table-lamp"></i>
+                      <Icon icon="lucide:database" :size="14" color="#f59e0b" />
                       <span class="token-text">{{ table }}</span>
                     </div>
                   </div>
@@ -274,16 +260,18 @@
                 >
                   <span class="tree-node" slot-scope="{data}">
                     <span class="node-content-flex">
-                      <i
-                        :class="[
+                      <Icon
+                        :icon="
                           Number(data.classType) === 1
-                            ? 'el-icon-folder-opened'
-                            : 'el-icon-price-tag',
-                          Number(data.classType) === 1
-                            ? 'icon-color-folder'
-                            : 'icon-color-label'
-                        ]"
-                      ></i>
+                            ? 'lucide:folder'
+                            : 'mdi:tag-outline'
+                        "
+                        :size="15"
+                        :style="{
+                          color:
+                            Number(data.classType) === 1 ? '#fbbf24' : '#10b981'
+                        }"
+                      />
                       <span class="node-text-span">{{ data.className }}</span>
                     </span>
                     <span class="tree-actions">
@@ -786,8 +774,8 @@
         </el-form-item>
         <el-row :gutter="8">
           <el-col :span="12">
-            <el-form-item label="数据类型">
-              <el-radio-group v-model="dataModelForm.dataType">
+            <el-form-item label="数据分类">
+              <el-radio-group v-model="dataModelForm.dataCategory">
                 <el-radio-button :label="0">非结构化</el-radio-button>
                 <el-radio-button :label="1">结构化</el-radio-button>
               </el-radio-group>
@@ -797,13 +785,42 @@
             <el-form-item label="节点类型">
               <el-radio-group v-model="dataModelForm.nodeType">
                 <el-radio-button :label="1">文件夹</el-radio-button>
-                <el-radio-button :label="2">数据表</el-radio-button>
+                <el-radio-button :label="2">数据存储</el-radio-button>
               </el-radio-group>
             </el-form-item>
           </el-col>
         </el-row>
 
-        <el-form-item label="绑定数据表">
+        <el-form-item label="数据类型">
+          <div class="data-type-rows">
+            <el-radio-group
+              v-model="dataModelForm.dataType"
+              class="data-type-radio-group"
+            >
+              <el-radio-button
+                v-for="(label, val) in dataTypeRow1"
+                :key="val"
+                :label="Number(val)"
+                >{{ label }}</el-radio-button
+              >
+            </el-radio-group>
+            <el-radio-group
+              v-model="dataModelForm.dataType"
+              class="data-type-radio-group"
+            >
+              <el-radio-button
+                v-for="(label, val) in dataTypeRow2"
+                :key="val"
+                :label="Number(val)"
+                >{{ label }}</el-radio-button
+              >
+            </el-radio-group>
+          </div>
+        </el-form-item>
+        <el-form-item
+          label="绑定数据表"
+          v-if="dataModelForm.dataCategory === 1"
+        >
           <el-select
             v-model="selectedTableList"
             multiple
@@ -1081,6 +1098,30 @@ export default {
       isEditLabelClass: false,
       isEditLabelModel: false,
 
+      dataTypeOptions: {
+        1: '基础数据',
+        3: '事务数据',
+        4: '报告数据',
+        5: '观测数据',
+        6: '规则数据',
+        11: '图像',
+        12: '视频',
+        13: '语音',
+        14: '文件'
+      },
+      dataTypeRow1: {
+        1: '基础数据',
+        3: '事务数据',
+        4: '报告数据',
+        5: '观测数据',
+        6: '规则数据'
+      },
+      dataTypeRow2: {
+        11: '图像',
+        12: '视频',
+        13: '语音',
+        14: '文件'
+      },
       dataModelForm: this.getEmptyDataModelForm(),
       labelClassForm: this.getEmptyLabelClassForm(),
       labelModelForm: this.getEmptyLabelModelForm(),
@@ -1114,7 +1155,7 @@ export default {
         ],
         labelAttrName: [
           {required: true, message: '请选择标注属性名称', trigger: 'change'}
-        ] // 自动模式校验
+        ]
       }
     }
   },
@@ -1225,7 +1266,8 @@ export default {
         parentModelId: null,
         dataSourceId: null,
         modelName: '',
-        dataType: 1,
+        dataCategory: 1,
+        dataType: null,
         nodeType: 1,
         tableNames: '',
         dataMemo: ''
@@ -1995,8 +2037,52 @@ export default {
         })
       })
     },
+    dataCategoryText(cat) {
+      return Number(cat) === 0 ? '非结构化' : '结构化'
+    },
+    getDataModelIcon(data) {
+      if (data.nodeType !== 2) return 'lucide:folder'
+      const iconMap = {
+        1: 'lucide:database',
+        3: 'lucide:activity',
+        4: 'lucide:file-text',
+        5: 'lucide:radar',
+        6: 'lucide:workflow',
+        11: 'lucide:monitor',
+        12: 'lucide:play-circle',
+        13: 'lucide:radio',
+        14: 'lucide:file-plus'
+      }
+      return iconMap[Number(data.dataType)] || 'lucide:database'
+    },
+    getDataModelIconColor(data) {
+      if (data.nodeType !== 2) return '#fbbf24'
+      const colorMap = {
+        1: '#38bdf8',
+        3: '#10b981',
+        4: '#f59e0b',
+        5: '#a855f7',
+        6: '#ef4444',
+        11: '#f43f5e',
+        12: '#8b5cf6',
+        13: '#06b6d4',
+        14: '#94a3b8'
+      }
+      return colorMap[Number(data.dataType)] || '#38bdf8'
+    },
     dataTypeText(type) {
-      return Number(type) === 0 ? '非结构化' : '结构化'
+      const map = {
+        1: '基础数据',
+        3: '事务数据',
+        4: '报告数据',
+        5: '观测数据',
+        6: '规则数据',
+        11: '图像',
+        12: '视频',
+        13: '语音',
+        14: '文件'
+      }
+      return map[Number(type)] || '未知'
     },
     nodeTypeText(type) {
       return Number(type) === 2 ? '数据表' : '文件夹'
@@ -2490,6 +2576,34 @@ export default {
   text-align: right;
 }
 .font-num {
+}
+
+/* 数据类型 radio 按钮组自动换行 */
+.data-type-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+.data-type-radio-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.data-type-radio-group .el-radio-button__inner {
+  font-size: 10px;
+  padding: 4px 8px;
+  background: #0d1522;
+  border-color: #1e3557;
+  color: #94a3b8;
+}
+.data-type-radio-group
+  .el-radio-button__orig-radio:checked
+  + .el-radio-button__inner {
+  background: #1a3a5e;
+  color: #38bdf8;
+  border-color: #38bdf8;
+  box-shadow: none;
 }
 .text-blue {
   color: #38bdf8 !important;

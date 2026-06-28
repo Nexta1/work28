@@ -80,7 +80,9 @@ const store = new Vuex.Store({
             role: user.roleNames || '普通用户',
             mobile: user.userMobile
           })
-          commit('SET_PERMISSIONS', user.userPrivs || [])
+          const perms = user.userPrivs || []
+
+          commit('SET_PERMISSIONS', perms)
           return user
         }
       } catch (e) {

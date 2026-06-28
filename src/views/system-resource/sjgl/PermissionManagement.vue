@@ -8,11 +8,8 @@
             :size="18"
             style="vertical-align: middle; color: #f59e0b"
           />
-          用户角色与数据权限管控总线
+          用户角色与数据权限
         </span>
-        <span class="header-subtitle"
-          >用户管理、角色管理分区隔离，详情独立配置</span
-        >
       </div>
       <el-button
         type="info"
@@ -29,32 +26,26 @@
       <div class="stat-card">
         <span>用户总数</span>
         <strong class="font-num text-blue">{{ userTotal }}</strong>
-        <small>当前查询命中</small>
       </div>
       <div class="stat-card">
         <span>已绑定用户</span>
         <strong class="font-num text-green">{{ boundUserCount }}</strong>
-        <small>存在 roleIds</small>
       </div>
       <div class="stat-card">
         <span>角色总数</span>
         <strong class="font-num text-cyan">{{ roleList.length }}</strong>
-        <small>全部角色池</small>
       </div>
       <div class="stat-card">
         <span>管理员角色</span>
         <strong class="font-num text-orange">{{ adminRoleCount }}</strong>
-        <small>roleType = 0</small>
       </div>
       <div class="stat-card">
         <span>模块节点</span>
         <strong class="font-num text-blue">{{ moduleNodeCount }}</strong>
-        <small>前端模块树</small>
       </div>
       <div class="stat-card">
         <span>数据目录</span>
         <strong class="font-num text-green">{{ dataModelNodeCount }}</strong>
-        <small>数据权限树</small>
       </div>
     </div>
 
@@ -396,6 +387,17 @@
             </div>
           </div>
         </el-tab-pane>
+        <el-tab-pane name="moduleManager">
+          <span slot="label">
+            <Icon
+              icon="lucide:box"
+              :size="16"
+              style="vertical-align: middle; color: #38bdf8"
+            />
+            前端模块管理
+          </span>
+          <ModuleManager />
+        </el-tab-pane>
       </el-tabs>
     </div>
 
@@ -510,9 +512,11 @@
 <script>
 import request from '@/utils/request'
 import {apiAdd, apiDelete, apiPage, apiUpdate} from '@/api/common.js'
+import ModuleManager from './ModuleManager.vue'
 
 export default {
   name: 'PermissionManagement',
+  components: {ModuleManager},
   data() {
     return {
       activeMainTab: 'userSection',
@@ -874,7 +878,6 @@ export default {
 }
 
 .search-flex,
-.search-item,
 .panel-header-summary,
 .panel-filter-bar,
 .section-toolbar,
@@ -882,6 +885,14 @@ export default {
   display: flex;
   align-items: center;
   gap: 12px;
+}
+
+.search-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: nowrap;
+  white-space: nowrap;
 }
 
 .hub-title {
@@ -896,6 +907,7 @@ export default {
 .stat-card small {
   color: #94a3b8;
   font-size: 11px;
+  flex-shrink: 0;
 }
 
 .stats-grid {
@@ -1026,10 +1038,6 @@ export default {
 .panel-filter-bar {
   margin-bottom: 8px;
   flex-shrink: 0;
-}
-
-.search-item {
-  gap: 6px;
 }
 
 .flex-search {
