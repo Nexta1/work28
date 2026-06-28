@@ -1600,6 +1600,10 @@ export default {
     },
     // 当手工选择数据目录树节点时，联动拉取其映射的表
     handleManualModelChange(modelId) {
+      // 切换目录前，先将当前表的勾选状态保存到 manualLabeledData
+      this.updateManualLabeledDataWithSelection()
+      // 清空当前勾选和表格数据
+      this.manualSelection = []
       this.manualSelectedTable = ''
       this.manualTableData = []
       this.manualColumns = []
@@ -1652,6 +1656,9 @@ export default {
           this.manualColumns = Array.from(columnSet)
           // 更新分页总数
           this.manualTablePage.total = res.data.total
+
+          // 从 manualLabeledData 中恢复当前表+目录的已勾选行
+          this.restoreManualSelection()
         })
         .catch(() => {
           this.$message.error('拉取物理表测试源数据失败')
@@ -1719,6 +1726,20 @@ export default {
       this.manualLabeledData = updatedManualLabels
     },
 
+    // 从 manualLabeledData 中恢复当前表+目录的勾选状态
+    restoreManualSelection() {
+      if (!this.manualSelectedModelId || !this.manualSelectedTable) {
+        this.manualSelection = []
+        return
+      }
+      const saved = this.manualLabeledData.find(
+        item =>
+          item.dataModelId === this.manualSelectedModelId &&
+          item.tableName === this.manualSelectedTable
+      )
+      this.manualSelection = saved ? [...saved.submitRowDatas] : []
+    },
+
     // 获取已标注的数据（用于回显）
     fetchManualLabeledData() {
       if (!this.currentLabelModelId) return
@@ -1731,6 +1752,8 @@ export default {
           } else {
             this.manualLabeledData = []
           }
+          // 数据加载后，恢复当前表+目录的勾选状态
+          this.restoreManualSelection()
         })
         .catch(err => {
           console.error('获取已标注数据失败:', err)
@@ -1742,11 +1765,13 @@ export default {
     handleManualPageSizeChange(val) {
       this.manualTablePage.pageSize = val
       this.manualTablePage.pageNum = 1
+      this.fetchManualSourceData()
     },
 
     // 手工标注表格分页 - 页码变化
     handleManualPageNumChange(val) {
       this.manualTablePage.pageNum = val
+      this.fetchManualSourceData()
     },
 
     // 执行手工标注提交
