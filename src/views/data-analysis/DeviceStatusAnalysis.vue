@@ -41,12 +41,10 @@
             >
               <div class="device-card-header">
                 <span class="status-dot" :class="getMiniStatusClass(d)"></span>
-                <span class="device-name">{{
-                  d.SBXHMC || d.sbxhmc || '未知设备'
-                }}</span>
+                <span class="device-name">{{ d.SBMC || '未知设备' }}</span>
                 <span class="device-type">{{ getDeviceTypeName(d.SBLX) }}</span>
               </div>
-              <div class="device-card-metrics">
+              <!-- <div class="device-card-metrics">
                 <span
                   class="metric"
                   :class="(d.CPU || 0) > 80 ? 'text-red' : 'text-green'"
@@ -60,7 +58,7 @@
                 >
                   {{ d.TEMP || 0 }}℃
                 </span>
-              </div>
+              </div> -->
             </div>
           </div>
           <div v-if="deviceLoading" class="load-more-tip">加载更多...</div>

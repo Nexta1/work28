@@ -11,7 +11,7 @@
         /></el-form-item>
         <el-form-item label="关联指标">
           <el-select
-            v-model="queryForm.performanceMetricId"
+            v-model="queryForm.metricName"
             placeholder="请选择指标"
             clearable
             filterable
@@ -19,27 +19,13 @@
           >
             <el-option
               v-for="item in metricOptions"
-              :key="item.performanceMetricId"
+              :key="item.metricName"
               :label="item.metricName"
-              :value="item.performanceMetricId"
+              :value="item.metricName"
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="性能表现">
-          <el-select
-            v-model="queryForm.performanceEvaluation"
-            placeholder="请选择"
-            clearable
-            style="width: 120px"
-          >
-            <el-option
-              v-for="item in performanceEvaluationOptions"
-              :key="item"
-              :label="item"
-              :value="item"
-            />
-          </el-select>
-        </el-form-item>
+
         <el-form-item>
           <el-button type="primary" icon="el-icon-search" @click="handleSearch"
             >检索</el-button
@@ -93,15 +79,14 @@
         />
         <el-table-column label="阈值范围" width="180" align="center"
           ><template slot-scope="scope">{{
-            formatThreshold(scope.row.lowerLimit, scope.row.upperLimit)
+            formatThreshold(
+              scope.row.lowerLimit,
+              scope.row.upperLimit,
+              scope.row.intervalType
+            )
           }}</template></el-table-column
         >
-        <el-table-column
-          prop="intervalType"
-          label="区间类型"
-          width="120"
-          align="center"
-        />
+
         <el-table-column
           prop="performanceEvaluation"
           label="性能表现"
@@ -321,7 +306,7 @@ export default {
       loading: false,
       queryForm: {
         standardName: '',
-        performanceMetricId: null,
+        metricName: null,
         performanceEvaluation: ''
       },
       tableData: [],
@@ -401,7 +386,7 @@ export default {
     resetQuery() {
       this.queryForm = {
         standardName: '',
-        performanceMetricId: null,
+        metricName: null,
         performanceEvaluation: ''
       }
       this.handleSearch()
@@ -495,11 +480,18 @@ export default {
         })
         .catch(() => {})
     },
-    formatThreshold(lowerLimit, upperLimit) {
+    formatThreshold(lowerLimit, upperLimit, intervalType) {
       if (lowerLimit === null && upperLimit === null) return '--'
       const lower = lowerLimit !== null ? lowerLimit.toFixed(2) : '-∞'
       const upper = upperLimit !== null ? upperLimit.toFixed(2) : '+∞'
-      return `[${lower}, ${upper}]`
+      const symbolMap = {
+        左闭右闭区间: ['[', ']'],
+        左开右开区间: ['(', ')'],
+        左闭右开区间: ['[', ')'],
+        左开右闭区间: ['(', ']']
+      }
+      const [left, right] = symbolMap[intervalType] || ['[', ']']
+      return `${left}${lower}, ${upper}${right}`
     },
     formatDateTime(dateTime) {
       if (!dateTime) return '--'

@@ -11,15 +11,6 @@
           />
         </el-form-item>
 
-        <el-form-item label="源数据表">
-          <el-input
-            v-model="queryForm.srcTableName"
-            placeholder="请输入表名"
-            clearable
-            style="width: 150px"
-          />
-        </el-form-item>
-
         <el-form-item>
           <el-button type="primary" icon="el-icon-search" @click="handleSearch"
             >检索</el-button
@@ -164,7 +155,18 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="指标单位" prop="metricUnit">
-              <el-input v-model="formData.metricUnit" placeholder="如：次、%" />
+              <el-select
+                v-model="formData.metricUnit"
+                placeholder="请选择指标单位"
+                style="width: 100%"
+              >
+                <el-option
+                  v-for="item in unitOptions"
+                  :key="item.unitName"
+                  :label="item.unitName"
+                  :value="item.unitName"
+                />
+              </el-select>
             </el-form-item>
           </el-col>
         </el-row>
@@ -262,7 +264,7 @@
 
 <script>
 import {mainPage, apiDelete, apiAdd, apiUpdate} from '@/api/common'
-import {windowTypes, accumulateMethods} from '@/api/maintenanceMap'
+import {windowTypes, accumulateMethods, unitInfo} from '@/api/maintenanceMap'
 
 export default {
   name: 'OperationMetric',
@@ -314,7 +316,8 @@ export default {
         ]
       },
       windowTypeOptions: [],
-      accumulateMethodOptions: []
+      accumulateMethodOptions: [],
+      unitOptions: []
     }
   },
   mounted() {
@@ -324,12 +327,14 @@ export default {
   methods: {
     async loadOptions() {
       try {
-        const [windowRes, accumulateRes] = await Promise.all([
+        const [windowRes, accumulateRes, unitRes] = await Promise.all([
           windowTypes(),
-          accumulateMethods()
+          accumulateMethods(),
+          unitInfo()
         ])
         this.windowTypeOptions = windowRes || []
         this.accumulateMethodOptions = accumulateRes || []
+        this.unitOptions = unitRes || []
       } catch (e) {
         console.error('加载选项失败:', e)
       }

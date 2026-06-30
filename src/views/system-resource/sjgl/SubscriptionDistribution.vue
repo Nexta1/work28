@@ -523,7 +523,7 @@
             </el-table-column>
             <el-table-column label="操作" width="130" fixed="right">
               <template slot-scope="scope">
-                <template v-if="scope.row.subscribeState === 0">
+                <template v-if="scope.row.subscribeState === 1">
                   <el-button
                     size="mini"
                     type="text"

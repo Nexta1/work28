@@ -11,20 +11,13 @@
           />
         </el-form-item>
 
-        <el-form-item label="质量状态">
-          <el-select
-            v-model="queryForm.qualityState"
-            placeholder="请选择"
+        <el-form-item label="指标名称">
+          <el-input
+            v-model="queryForm.metricName"
+            placeholder="请输入指标名称"
             clearable
-            style="width: 120px"
-          >
-            <el-option
-              v-for="item in qualityStateOptions"
-              :key="item"
-              :label="item"
-              :value="item"
-            />
-          </el-select>
+            style="width: 180px"
+          />
         </el-form-item>
 
         <el-form-item>
@@ -74,15 +67,16 @@
         />
         <el-table-column label="阈值范围" width="180" align="center">
           <template slot-scope="scope">
-            {{ formatThreshold(scope.row.lowerLimit, scope.row.upperLimit) }}
+            {{
+              formatThreshold(
+                scope.row.lowerLimit,
+                scope.row.upperLimit,
+                scope.row.intervalType
+              )
+            }}
           </template>
         </el-table-column>
-        <el-table-column
-          prop="intervalType"
-          label="区间类型"
-          width="120"
-          align="center"
-        />
+
         <el-table-column label="质量状态" width="100" align="center">
           <template slot-scope="scope">
             <span
@@ -238,9 +232,9 @@
               >
                 <el-option
                   v-for="item in intervalTypeOptions"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
+                  :key="item"
+                  :label="item"
+                  :value="item"
                 />
               </el-select>
             </el-form-item>
@@ -273,7 +267,7 @@
               <el-select
                 v-model="formData.warnLevel"
                 placeholder="请选择告警级别"
-                :disabled="formData.isWarn !== '1'"
+                :disabled="formData.isWarn !== '是'"
                 style="width: 100%"
               >
                 <el-option label="一般" :value="1" />
@@ -333,7 +327,7 @@ export default {
   data() {
     return {
       loading: false,
-      queryForm: {standardName: '', qualityState: ''},
+      queryForm: {standardName: '', metricName: ''},
       tableData: [],
       page: {pageNum: 1, pageSize: 20, total: 0},
       dialogVisible: false,
@@ -408,7 +402,7 @@ export default {
       this.loadData()
     },
     resetQuery() {
-      this.queryForm = {standardName: '', qualityState: ''}
+      this.queryForm = {standardName: '', metricName: ''}
       this.handleSearch()
     },
     handleSizeChange(val) {
@@ -504,11 +498,18 @@ export default {
         .catch(() => {})
     },
 
-    formatThreshold(lowerLimit, upperLimit) {
+    formatThreshold(lowerLimit, upperLimit, intervalType) {
       if (lowerLimit === null && upperLimit === null) return '--'
       const lower = lowerLimit !== null ? lowerLimit.toFixed(2) : '-∞'
       const upper = upperLimit !== null ? upperLimit.toFixed(2) : '+∞'
-      return `[${lower}, ${upper}]`
+      const symbolMap = {
+        左闭右闭区间: ['[', ']'],
+        左开右开区间: ['(', ')'],
+        左闭右开区间: ['[', ')'],
+        左开右闭区间: ['(', ']']
+      }
+      const [left, right] = symbolMap[intervalType] || ['[', ']']
+      return `${left}${lower}, ${upper}${right}`
     },
 
     formatDateTime(dateTime) {

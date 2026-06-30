@@ -189,9 +189,20 @@
         </el-row>
         <el-row :gutter="20">
           <el-col :span="12">
-            <el-form-item label="指标单位" prop="metricUnit"
-              ><el-input v-model="formData.metricUnit" placeholder="如：ms、%"
-            /></el-form-item>
+            <el-form-item label="指标单位" prop="metricUnit">
+              <el-select
+                v-model="formData.metricUnit"
+                placeholder="请选择指标单位"
+                style="width: 100%"
+              >
+                <el-option
+                  v-for="item in unitOptions"
+                  :key="item.unitName"
+                  :label="item.unitName"
+                  :value="item.unitName"
+                />
+              </el-select>
+            </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="源数据表" prop="srcTableName"
@@ -275,7 +286,12 @@
 
 <script>
 import {mainPage, apiDelete, apiAdd, apiUpdate} from '@/api/common'
-import {dataTypes, windowTypes, accumulateMethods} from '@/api/maintenanceMap'
+import {
+  dataTypes,
+  windowTypes,
+  accumulateMethods,
+  unitInfo
+} from '@/api/maintenanceMap'
 
 export default {
   name: 'PerformanceMetric',
@@ -325,7 +341,8 @@ export default {
       },
       dataTypeOptions: [],
       windowTypeOptions: [],
-      accumulateMethodOptions: []
+      accumulateMethodOptions: [],
+      unitOptions: []
     }
   },
   mounted() {
@@ -335,14 +352,17 @@ export default {
   methods: {
     async loadOptions() {
       try {
-        const [dataTypeRes, windowRes, accumulateRes] = await Promise.all([
-          dataTypes(),
-          windowTypes(),
-          accumulateMethods()
-        ])
+        const [dataTypeRes, windowRes, accumulateRes, unitRes] =
+          await Promise.all([
+            dataTypes(),
+            windowTypes(),
+            accumulateMethods(),
+            unitInfo()
+          ])
         this.dataTypeOptions = dataTypeRes || []
         this.windowTypeOptions = windowRes || []
         this.accumulateMethodOptions = accumulateRes || []
+        this.unitOptions = unitRes || []
       } catch (e) {
         console.error('加载选项失败:', e)
       }

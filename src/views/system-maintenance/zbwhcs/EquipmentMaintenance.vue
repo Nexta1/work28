@@ -11,7 +11,11 @@
           <!-- 测试方案维护 -->
           <el-tab-pane name="testPlan" class="full-pane">
             <span slot="label">
-              <Icon icon="lucide:clipboard-list" :size="14" style="margin-right: 4px" />
+              <Icon
+                icon="lucide:clipboard-list"
+                :size="14"
+                style="margin-right: 4px"
+              />
               测试方案维护
             </span>
             <div class="pane-content-box">
@@ -21,14 +25,18 @@
                   <el-input
                     v-model="planSearch.planName"
                     placeholder="输入方案名称搜索..."
-                    size="small"
                     style="width: 220px"
                     clearable
                     @input="searchTestPlans"
                   />
                 </div>
                 <div class="toolbar-right">
-                  <el-button type="primary" size="mini" icon="el-icon-plus" @click="openPlanAddDialog">
+                  <el-button
+                    type="primary"
+                    size="mini"
+                    icon="el-icon-plus"
+                    @click="openPlanAddDialog"
+                  >
                     新增方案
                   </el-button>
                 </div>
@@ -47,39 +55,66 @@
                 <el-table-column type="index" label="序号" width="50" />
                 <el-table-column prop="testPlanId" label="方案ID" width="70">
                   <template slot-scope="scope">
-                    <span class="text-blue font-num">{{ scope.row.testPlanId }}</span>
+                    <span class="text-blue font-num">{{
+                      scope.row.testPlanId
+                    }}</span>
                   </template>
                 </el-table-column>
-                <el-table-column prop="planName" label="方案名称" min-width="180">
+                <el-table-column
+                  prop="planName"
+                  label="方案名称"
+                  min-width="180"
+                >
                   <template slot-scope="scope">
                     <span class="text-cyan">{{ scope.row.planName }}</span>
                   </template>
                 </el-table-column>
                 <el-table-column prop="createTime" label="创建时间" width="160">
-                  <template slot-scope="scope">{{ scope.row.createTime || '--' }}</template>
+                  <template slot-scope="scope">{{
+                    scope.row.createTime || '--'
+                  }}</template>
                 </el-table-column>
                 <el-table-column prop="updateTime" label="更新时间" width="160">
-                  <template slot-scope="scope">{{ scope.row.updateTime || '--' }}</template>
+                  <template slot-scope="scope">{{
+                    scope.row.updateTime || '--'
+                  }}</template>
                 </el-table-column>
                 <el-table-column prop="runMs" label="运行时长(ms)" width="110">
-                  <template slot-scope="scope">{{ scope.row.runMs || '--' }}</template>
+                  <template slot-scope="scope">{{
+                    scope.row.runMs || '--'
+                  }}</template>
                 </el-table-column>
                 <el-table-column prop="runStatus" label="运行状态" width="90">
                   <template slot-scope="scope">
-                    <el-tag size="mini" :type="getRunStatusType(scope.row.runStatus)">
+                    <el-tag
+                      size="mini"
+                      :type="getRunStatusType(scope.row.runStatus)"
+                    >
                       {{ getRunStatusText(scope.row.runStatus) }}
                     </el-tag>
                   </template>
                 </el-table-column>
                 <el-table-column prop="opTime" label="操作时间" width="160">
-                  <template slot-scope="scope">{{ scope.row.opTime || '--' }}</template>
+                  <template slot-scope="scope">{{
+                    scope.row.opTime || '--'
+                  }}</template>
                 </el-table-column>
                 <el-table-column label="操作" width="120" fixed="right">
                   <template slot-scope="scope">
-                    <el-button type="text" size="mini" class="btn-modify" @click="openPlanEditDialog(scope.row)">
+                    <el-button
+                      type="text"
+                      size="mini"
+                      class="btn-modify"
+                      @click="openPlanEditDialog(scope.row)"
+                    >
                       修改
                     </el-button>
-                    <el-button type="text" size="mini" style="color: #f43f5e" @click="handleDeletePlan(scope.row)">
+                    <el-button
+                      type="text"
+                      size="mini"
+                      style="color: #f43f5e"
+                      @click="handleDeletePlan(scope.row)"
+                    >
                       删除
                     </el-button>
                   </template>
@@ -90,7 +125,6 @@
               <el-pagination
                 class="table-pagination"
                 background
-                small
                 layout="total, prev, pager, next"
                 :total="planPagination.total"
                 :current-page="planPagination.pageNum"
@@ -113,7 +147,6 @@
                   <el-select
                     v-model="deviceSearch.planName"
                     placeholder="按方案名称筛选"
-                    size="small"
                     clearable
                     style="width: 220px"
                     @change="searchTestDevices"
@@ -127,7 +160,12 @@
                   </el-select>
                 </div>
                 <div class="toolbar-right">
-                  <el-button type="primary" size="mini" icon="el-icon-plus" @click="openDeviceAddDialog">
+                  <el-button
+                    type="primary"
+                    size="mini"
+                    icon="el-icon-plus"
+                    @click="openDeviceAddDialog"
+                  >
                     新增关联
                   </el-button>
                 </div>
@@ -144,36 +182,66 @@
                 height="100%"
               >
                 <el-table-column type="index" label="序号" width="50" />
-                <el-table-column prop="testComponentId" label="关联ID" width="70">
+                <el-table-column
+                  prop="testComponentId"
+                  label="关联ID"
+                  width="70"
+                >
                   <template slot-scope="scope">
-                    <span class="text-blue font-num">{{ scope.row.testComponentId }}</span>
+                    <span class="text-blue font-num">{{
+                      scope.row.testComponentId
+                    }}</span>
                   </template>
                 </el-table-column>
-                <el-table-column prop="planName" label="所属方案" min-width="160">
+                <el-table-column
+                  prop="planName"
+                  label="所属方案"
+                  min-width="160"
+                >
                   <template slot-scope="scope">
-                    <span class="text-cyan">{{ scope.row.planName || '--' }}</span>
+                    <span class="text-cyan">{{
+                      scope.row.planName || '--'
+                    }}</span>
                   </template>
                 </el-table-column>
                 <el-table-column prop="SBMC" label="设备名称" min-width="140">
-                  <template slot-scope="scope">{{ scope.row.SBMC || '--' }}</template>
+                  <template slot-scope="scope">{{
+                    scope.row.SBMC || '--'
+                  }}</template>
                 </el-table-column>
                 <el-table-column prop="SBID" label="设备ID" width="80">
                   <template slot-scope="scope">
-                    <span class="text-green font-num">{{ scope.row.SBID }}</span>
+                    <span class="text-green font-num">{{
+                      scope.row.SBID
+                    }}</span>
                   </template>
                 </el-table-column>
                 <el-table-column prop="opUserName" label="操作人" width="100">
-                  <template slot-scope="scope">{{ scope.row.opUserName || '--' }}</template>
+                  <template slot-scope="scope">{{
+                    scope.row.opUserName || '--'
+                  }}</template>
                 </el-table-column>
                 <el-table-column prop="opTime" label="操作时间" width="160">
-                  <template slot-scope="scope">{{ scope.row.opTime || '--' }}</template>
+                  <template slot-scope="scope">{{
+                    scope.row.opTime || '--'
+                  }}</template>
                 </el-table-column>
                 <el-table-column label="操作" width="120" fixed="right">
                   <template slot-scope="scope">
-                    <el-button type="text" size="mini" class="btn-modify" @click="openDeviceEditDialog(scope.row)">
+                    <el-button
+                      type="text"
+                      size="mini"
+                      class="btn-modify"
+                      @click="openDeviceEditDialog(scope.row)"
+                    >
                       修改
                     </el-button>
-                    <el-button type="text" size="mini" style="color: #f43f5e" @click="handleDeleteDevice(scope.row)">
+                    <el-button
+                      type="text"
+                      size="mini"
+                      style="color: #f43f5e"
+                      @click="handleDeleteDevice(scope.row)"
+                    >
                       删除
                     </el-button>
                   </template>
@@ -184,7 +252,6 @@
               <el-pagination
                 class="table-pagination"
                 background
-                small
                 layout="total, prev, pager, next"
                 :total="devicePagination.total"
                 :current-page="devicePagination.pageNum"
@@ -206,7 +273,12 @@
       append-to-body
       @close="resetPlanForm"
     >
-      <el-form ref="planForm" :model="planForm" :rules="planFormRules" label-width="90px" size="small">
+      <el-form
+        ref="planForm"
+        :model="planForm"
+        :rules="planFormRules"
+        label-width="90px"
+      >
         <el-form-item label="方案名称" prop="planName">
           <el-input v-model="planForm.planName" placeholder="请输入方案名称" />
         </el-form-item>
@@ -221,8 +293,12 @@
         </el-form-item>
       </el-form>
       <span slot="footer">
-        <el-button size="small" @click="planDialogVisible = false">取消</el-button>
-        <el-button type="primary" size="small" :loading="planSubmitLoading" @click="submitPlanForm">
+        <el-button @click="planDialogVisible = false">取消</el-button>
+        <el-button
+          type="primary"
+          :loading="planSubmitLoading"
+          @click="submitPlanForm"
+        >
           确定
         </el-button>
       </span>
@@ -237,9 +313,18 @@
       append-to-body
       @close="resetDeviceForm"
     >
-      <el-form ref="deviceForm" :model="deviceForm" :rules="deviceFormRules" label-width="100px" size="small">
+      <el-form
+        ref="deviceForm"
+        :model="deviceForm"
+        :rules="deviceFormRules"
+        label-width="100px"
+      >
         <el-form-item label="测试方案" prop="testPlanId">
-          <el-select v-model="deviceForm.testPlanId" placeholder="请选择测试方案" style="width: 100%">
+          <el-select
+            v-model="deviceForm.testPlanId"
+            placeholder="请选择测试方案"
+            style="width: 100%"
+          >
             <el-option
               v-for="plan in planNameOptions"
               :key="plan.testPlanId"
@@ -249,12 +334,21 @@
           </el-select>
         </el-form-item>
         <el-form-item label="设备ID" prop="SBID">
-          <el-input-number v-model="deviceForm.SBID" :min="1" placeholder="请输入设备ID" style="width: 100%" />
+          <el-input-number
+            v-model="deviceForm.SBID"
+            :min="1"
+            placeholder="请输入设备ID"
+            style="width: 100%"
+          />
         </el-form-item>
       </el-form>
       <span slot="footer">
-        <el-button size="small" @click="deviceDialogVisible = false">取消</el-button>
-        <el-button type="primary" size="small" :loading="deviceSubmitLoading" @click="submitDeviceForm">
+        <el-button @click="deviceDialogVisible = false">取消</el-button>
+        <el-button
+          type="primary"
+          :loading="deviceSubmitLoading"
+          @click="submitDeviceForm"
+        >
           确定
         </el-button>
       </span>
@@ -284,30 +378,36 @@ export default {
       // ---- 测试方案 ----
       planLoading: false,
       planTableData: [],
-      planPagination: { pageNum: 1, pageSize: 10, total: 0 },
-      planSearch: { planName: '' },
+      planPagination: {pageNum: 1, pageSize: 10, total: 0},
+      planSearch: {planName: ''},
       planDialogVisible: false,
       planDialogMode: 'add',
       planSubmitLoading: false,
-      planForm: { testPlanId: null, planName: '', createTime: '' },
+      planForm: {testPlanId: null, planName: '', createTime: ''},
       planFormRules: {
-        planName: [{ required: true, message: '请输入方案名称', trigger: 'blur' }],
-        createTime: [{ required: true, message: '请选择创建时间', trigger: 'change' }]
+        planName: [
+          {required: true, message: '请输入方案名称', trigger: 'blur'}
+        ],
+        createTime: [
+          {required: true, message: '请选择创建时间', trigger: 'change'}
+        ]
       },
       planNameOptions: [],
 
       // ---- 测试设备 ----
       deviceLoading: false,
       deviceTableData: [],
-      devicePagination: { pageNum: 1, pageSize: 10, total: 0 },
-      deviceSearch: { planName: '' },
+      devicePagination: {pageNum: 1, pageSize: 10, total: 0},
+      deviceSearch: {planName: ''},
       deviceDialogVisible: false,
       deviceDialogMode: 'add',
       deviceSubmitLoading: false,
-      deviceForm: { testComponentId: null, testPlanId: null, SBID: null },
+      deviceForm: {testComponentId: null, testPlanId: null, SBID: null},
       deviceFormRules: {
-        testPlanId: [{ required: true, message: '请选择测试方案', trigger: 'change' }],
-        SBID: [{ required: true, message: '请输入设备ID', trigger: 'blur' }]
+        testPlanId: [
+          {required: true, message: '请选择测试方案', trigger: 'change'}
+        ],
+        SBID: [{required: true, message: '请输入设备ID', trigger: 'blur'}]
       }
     }
   },
@@ -358,7 +458,7 @@ export default {
     },
     openPlanAddDialog() {
       this.planDialogMode = 'add'
-      this.planForm = { testPlanId: null, planName: '', createTime: '' }
+      this.planForm = {testPlanId: null, planName: '', createTime: ''}
       this.planDialogVisible = true
     },
     openPlanEditDialog(row) {
@@ -371,7 +471,7 @@ export default {
       this.planDialogVisible = true
     },
     submitPlanForm() {
-      this.$refs.planForm.validate(async (valid) => {
+      this.$refs.planForm.validate(async valid => {
         if (!valid) return
         this.planSubmitLoading = true
         try {
@@ -386,8 +486,10 @@ export default {
             payload.testPlanId = this.planForm.testPlanId
             res = await updateTestPlan(payload)
           }
-          if (res.code === 200) {
-            this.$message.success(this.planDialogMode === 'add' ? '新增成功' : '修改成功')
+          if (res.code === 0) {
+            this.$message.success(
+              this.planDialogMode === 'add' ? '新增成功' : '修改成功'
+            )
             this.planDialogVisible = false
             this.fetchPlanPage()
             this.fetchAllPlans()
@@ -410,7 +512,7 @@ export default {
         .then(async () => {
           try {
             const res = await deleteTestPlan(row.testPlanId)
-            if (res.code === 200) {
+            if (res.code === 0) {
               this.$message.success('删除成功')
               this.fetchPlanPage()
               this.fetchAllPlans()
@@ -437,7 +539,7 @@ export default {
     async fetchAllPlans() {
       try {
         const res = await getAllTestPlans()
-        if (res.code === 200 || res.code === 0) {
+        if (res.code === 0 || res.code === 0) {
           this.planNameOptions = res.data || []
         }
       } catch (e) {
@@ -450,7 +552,8 @@ export default {
       this.deviceLoading = true
       try {
         const params = {}
-        if (this.deviceSearch.planName) params.planName = this.deviceSearch.planName
+        if (this.deviceSearch.planName)
+          params.planName = this.deviceSearch.planName
         const res = await getTestComponentPage({
           pageNum: this.devicePagination.pageNum,
           pageSize: this.devicePagination.pageSize,
@@ -476,7 +579,7 @@ export default {
     },
     openDeviceAddDialog() {
       this.deviceDialogMode = 'add'
-      this.deviceForm = { testComponentId: null, testPlanId: null, SBID: null }
+      this.deviceForm = {testComponentId: null, testPlanId: null, SBID: null}
       this.deviceDialogVisible = true
     },
     openDeviceEditDialog(row) {
@@ -489,7 +592,7 @@ export default {
       this.deviceDialogVisible = true
     },
     submitDeviceForm() {
-      this.$refs.deviceForm.validate(async (valid) => {
+      this.$refs.deviceForm.validate(async valid => {
         if (!valid) return
         this.deviceSubmitLoading = true
         try {
@@ -504,8 +607,10 @@ export default {
             payload.testComponentId = this.deviceForm.testComponentId
             res = await updateTestComponent(payload)
           }
-          if (res.code === 200) {
-            this.$message.success(this.deviceDialogMode === 'add' ? '新增成功' : '修改成功')
+          if (res.code === 0) {
+            this.$message.success(
+              this.deviceDialogMode === 'add' ? '新增成功' : '修改成功'
+            )
             this.deviceDialogVisible = false
             this.fetchDevicePage()
           } else {
@@ -519,15 +624,19 @@ export default {
       })
     },
     handleDeleteDevice(row) {
-      this.$confirm(`确定删除设备「${row.SBMC || row.SBID}」的关联？`, '确认删除', {
-        type: 'warning',
-        confirmButtonText: '确定',
-        cancelButtonText: '取消'
-      })
+      this.$confirm(
+        `确定删除设备「${row.SBMC || row.SBID}」的关联？`,
+        '确认删除',
+        {
+          type: 'warning',
+          confirmButtonText: '确定',
+          cancelButtonText: '取消'
+        }
+      )
         .then(async () => {
           try {
             const res = await deleteTestComponent(row.testComponentId)
-            if (res.code === 200) {
+            if (res.code === 0) {
               this.$message.success('删除成功')
               this.fetchDevicePage()
             } else {
@@ -678,10 +787,20 @@ export default {
 }
 
 /* 文字颜色 */
-.text-blue  { color: #38bdf8 !important; }
-.text-cyan  { color: #06b6d4 !important; }
-.text-green { color: #10b981 !important; }
-.font-num   { font-family: monospace; }
+.text-blue {
+  color: #38bdf8 !important;
+}
+.text-cyan {
+  color: #06b6d4 !important;
+}
+.text-green {
+  color: #10b981 !important;
+}
+.font-num {
+  font-family: monospace;
+}
 
-.btn-modify { color: #38bdf8 !important; }
+.btn-modify {
+  color: #38bdf8 !important;
+}
 </style>

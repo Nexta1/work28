@@ -439,7 +439,7 @@ export default {
         const rows = res?.rows || res?.data?.list || []
         const total = res?.total || res?.data?.total || 0
 
-        if (rows.length === 0) {
+        if (rows.length === 0 || rows.length < this.pageConfig.pageSize) {
           this.taskHasMore = false
         }
 
@@ -1099,12 +1099,13 @@ export default {
   min-height: 130px;
 }
 .task-card-left {
-  flex: 0 0 36%;
+  flex: 0.7;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   min-width: 0;
   padding: 2px 0;
+  overflow: auto;
 }
 .task-card-left .task-top-meta {
   margin-bottom: 2px;
