@@ -221,6 +221,44 @@
           <el-form-item label="平台编识号">
             <el-input-number v-model="form.PTBSH" :min="0" class="full-width" />
           </el-form-item>
+
+          <!-- <el-form-item label="军种" prop="JZ">
+            <el-select
+              v-model="form.JZ"
+              placeholder="请选择军种"
+              class="full-width"
+            >
+              <el-option
+                v-for="item in armyOptions"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="战区" prop="ZQ">
+            <el-select
+              v-model="form.ZQ"
+              placeholder="请选择战区"
+              class="full-width"
+            >
+              <el-option
+                v-for="item in theaterOptions"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              />
+            </el-select>
+          </el-form-item> -->
+          <el-form-item label="服役时间" prop="FYSJ">
+            <el-date-picker
+              v-model="form.FYSJ"
+              type="date"
+              placeholder="选择日期"
+              value-format="yyyy-MM-dd HH:mm:ss"
+              class="full-width"
+            />
+          </el-form-item>
         </template>
 
         <!-- 武器型号 -->
@@ -395,7 +433,9 @@ import {
   getPtxhPtlxMap,
   getPtxxInfos,
   getWqxhInfos,
-  normalizeMapOptions
+  normalizeMapOptions,
+  getBshSegmentTheaterMap,
+  getBshSegmentArmyMap
 } from '@/api/resourceManagement.js'
 import resourcePageMixin from '../mixins/resourcePageMixin'
 
@@ -429,19 +469,29 @@ const MODULE_CONFIG = {
     baseUrl: 'ptxx',
     idKeys: ['PTXXID', 'ptxxid'],
     query: {PTMC: ''},
-    queryFields: [{key: 'PTMC', type: 'input', placeholder: '平台名称'}],
+    queryFields: [
+      {key: 'PTMC', type: 'input', placeholder: '平台名称'},
+      {key: 'PTXHMC', type: 'input', placeholder: '平台型号名称'}
+    ],
     columns: [
       {prop: 'PTXXID', label: '平台标识', width: 90},
       {prop: 'PTMC', label: '平台名称', minWidth: 130},
       {prop: 'PTXHMC', label: '平台型号', width: 130},
       {prop: 'PTID', label: '平台ID', width: 90},
       {prop: 'PTBSH', label: '编识号', width: 100},
+      // ---- 新增表格列 ----
+      {prop: 'SSJZMC', label: '军种', width: 100, mapOptions: 'army'},
+      {prop: 'SSZQMC', label: '战区', width: 100, mapOptions: 'theater'},
+      {prop: 'FYSJ', label: '服役时间', width: 140},
       {prop: 'opTime', label: '操作时间', minWidth: 150}
     ],
     rules: {
       PTMC: [{required: true, message: '请输入平台名称', trigger: 'blur'}],
       PTXHID: [{required: true, message: '请选择平台型号', trigger: 'change'}],
-      PTID: [{required: true, message: '请输入平台ID', trigger: 'blur'}]
+      PTID: [{required: true, message: '请输入平台ID', trigger: 'blur'}],
+      // ---- 可选：为新字段增加校验规则 ----
+      SSJZNM: [{required: true, message: '请选择军种', trigger: 'change'}],
+      SSZQNM: [{required: true, message: '请选择战区', trigger: 'change'}]
     },
     emptyForm: () => ({
       PTXXID: null,
@@ -449,7 +499,11 @@ const MODULE_CONFIG = {
       PTXHID: null,
       PTID: null,
       SJLID: null,
-      PTBSH: null
+      PTBSH: null,
+      // ---- 新增字段初始化 ----
+      FYSJ: '',
+      SSJZNM: null,
+      SSZQNM: null
     })
   },
   weapon_model: {
@@ -486,6 +540,7 @@ const MODULE_CONFIG = {
     query: {PTMC: '', WQXHMC: ''},
     queryFields: [
       {key: 'PTMC', type: 'input', placeholder: '平台名称'},
+      {key: 'WQMC', type: 'input', placeholder: '武器名称'},
       {key: 'WQXHMC', type: 'input', placeholder: '武器型号'}
     ],
     columns: [
@@ -543,7 +598,8 @@ const MODULE_CONFIG = {
     query: {PTMC: '', CGQMC: ''},
     queryFields: [
       {key: 'PTMC', type: 'input', placeholder: '平台名称'},
-      {key: 'CGQMC', type: 'input', placeholder: '传感器名称'}
+      {key: 'CGQMC', type: 'input', placeholder: '传感器名称'},
+      {key: 'CGQXHMC', type: 'input', placeholder: '传感器型号'}
     ],
     columns: [
       {prop: 'CGQXXID', label: '传感器标识', width: 100},
@@ -596,7 +652,9 @@ export default {
       cgqxhOptions: [],
       ptxxOptions: [],
       ptflsInputVisible: false,
-      ptflsInputValue: ''
+      ptflsInputValue: '',
+      armyOptions: [], // 新增军种下拉
+      theaterOptions: [] // 新增战区下拉
     }
   },
   computed: {
@@ -621,6 +679,11 @@ export default {
         if (col.mapOptions === 'cgqlx') {
           return {...col, mapOptions: this.cgqlxOptions}
         }
+        // ---- 新增军种和战区映射 ----
+        if (col.mapOptions === 'army')
+          return {...col, mapOptions: this.armyOptions}
+        if (col.mapOptions === 'theater')
+          return {...col, mapOptions: this.theaterOptions}
         return col
       })
     },
@@ -696,26 +759,45 @@ export default {
           getPtxhInfos(),
           getWqxhInfos(),
           getCgqxhInfos(),
-          getPtxxInfos()
+          getPtxxInfos(),
+          // ---- 增加新字典接口 ----
+          getBshSegmentTheaterMap(),
+          getBshSegmentArmyMap()
         ],
         '型号字典加载失败'
       )
-        .then(([ptlxRes, ptxhRes, wqxhRes, cgqxhRes, ptxxRes]) => {
-          this.ptlxOptions = normalizeMapOptions(ptlxRes)
-          this.ptxhOptions = this.normalizeList(ptxhRes)
-          this.wqxhOptions = this.normalizeList(wqxhRes)
-          this.cgqxhOptions = this.normalizeList(cgqxhRes)
-          this.ptxxOptions = this.normalizeList(ptxxRes).map(p => ({
-            value: p.PTID,
-            label: `${p.PTMC || p.ptmc || ''} [${p.PTID}]`
-          }))
-        })
+        .then(
+          ([
+            ptlxRes,
+            ptxhRes,
+            wqxhRes,
+            cgqxhRes,
+            ptxxRes,
+            theaterRes,
+            armyRes
+          ]) => {
+            this.ptlxOptions = normalizeMapOptions(ptlxRes)
+            this.ptxhOptions = this.normalizeList(ptxhRes)
+            this.wqxhOptions = this.normalizeList(wqxhRes)
+            this.cgqxhOptions = this.normalizeList(cgqxhRes)
+            this.ptxxOptions = this.normalizeList(ptxxRes).map(p => ({
+              value: p.PTID,
+              label: `${p.PTMC || p.ptmc || ''} [${p.PTID}]`
+            }))
+            // ---- 赋值新字典数据 ----
+            this.theaterOptions = normalizeMapOptions(theaterRes)
+            this.armyOptions = normalizeMapOptions(armyRes)
+          }
+        )
         .catch(() => {
           this.ptlxOptions = []
           this.ptxhOptions = []
           this.wqxhOptions = []
           this.cgqxhOptions = []
           this.ptxxOptions = []
+          // ---- 失败重置 ----
+          this.theaterOptions = []
+          this.armyOptions = []
         })
     },
     buildQueryParams() {

@@ -36,6 +36,13 @@
               placeholder="装备名称"
               class="filter-item"
             />
+            <el-input
+              v-model="sbxxQuery.SBXHMC"
+              size="mini"
+              clearable
+              placeholder="装备型号名称"
+              class="filter-item"
+            />
             <el-button
               type="primary"
               size="mini"
@@ -478,7 +485,7 @@ export default {
       sbxxList: [],
       sbxxTotal: 0,
       sbxxPage: {pageNum: 1, pageSize: 15},
-      sbxxQuery: {PTID: null, SBMC: ''},
+      sbxxQuery: {PTID: null, SBMC: '', SBXHMC: ''},
       sbxxDialogVisible: false,
       sbxxEdit: false,
       sbxxForm: {SBXXID: null, PTID: null, SBID: null, SBMC: '', ZYXH: null},
@@ -548,6 +555,7 @@ export default {
       const params = {}
       if (this.sbxxQuery.PTID != null) params.PTID = this.sbxxQuery.PTID
       if (this.sbxxQuery.SBMC) params.SBMC = this.sbxxQuery.SBMC
+      if (this.sbxxQuery.SBXHMC) params.SBXHMC = this.sbxxQuery.SBXHMC
       apiPage('sbxx', {
         pageNum: this.sbxxPage.pageNum,
         pageSize: this.sbxxPage.pageSize,

@@ -276,7 +276,7 @@
                     </span>
                     <span class="tree-actions">
                       <i
-                        v-if="Number(data.classType) === 1"
+                        v-if="Number(data.classType) === 0"
                         class="el-icon-plus text-blue"
                         title="新建子标签模型"
                         @click.stop="openLabelModelDialog(false, data)"
@@ -2014,7 +2014,7 @@ export default {
         // 2. 新增时根据 Tab 类型分发到 dataInfo.js 的两个专有接口
         if (this.labelModeTab === 'manual') {
           // 🌟 手动模式：调用 manual
-          manual(this.labelModelForm)
+          apiAdd('labelModel', this.labelModelForm)
             .then(res => {
               this.$message.success('手动标签模型创建完成')
               this.labelModelDialogVisible = false

@@ -118,7 +118,7 @@
                     }}</el-tag>
                   </div>
                   <div class="card-body-content">
-                    <div class="info-row">
+                    <div class="info-row info-h">
                       <span class="info-label">模型关联</span>
                       <div class="model-pair-group">
                         <template v-if="getModelAttrList(item).length > 0">
@@ -295,7 +295,7 @@
                     <el-tag size="mini" type="success">我的</el-tag>
                   </div>
                   <div class="card-body-content">
-                    <div class="info-row">
+                    <div class="info-row info-h">
                       <span class="info-label">模型关联</span>
                       <div class="model-pair-group">
                         <template v-if="getModelAttrList(item).length > 0">
@@ -1712,7 +1712,10 @@ export default {
   color: #5c6b73;
   font-size: 12px;
 }
-
+.info-h {
+  height: 120px;
+  overflow: auto;
+}
 /* 🌟 控制添加区域容器条样式 */
 .selector-control-bar {
   display: flex;

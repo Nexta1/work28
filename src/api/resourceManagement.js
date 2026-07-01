@@ -54,7 +54,7 @@ export function getPtxhInfos() {
 /** 编识号类型 */
 export const BSH_TYPE_OPTIONS = [
   {value: 0, label: '平台编识号'},
-  {value: 1, label: '目标标识号'}
+  {value: 1, label: '目标编识号'}
 ]
 
 /** 装备入退网状态 */

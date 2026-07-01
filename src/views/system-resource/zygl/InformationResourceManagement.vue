@@ -521,6 +521,22 @@
           label-width="120px"
           size="mini"
         >
+          <el-form-item label="编识号类型" prop="bshType">
+            <el-select
+              v-model="ptBshForm.bshType"
+              class="full-width"
+              clearable
+              placeholder="请先选择编识号类型"
+              @change="ptBshForm.bshSegmentId = null"
+            >
+              <el-option
+                v-for="item in bshTypeOptions"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              />
+            </el-select>
+          </el-form-item>
           <el-form-item label="平台信息" prop="PTXXID">
             <el-select v-model="ptBshForm.PTXXID" filterable class="full-width">
               <el-option
@@ -538,7 +554,7 @@
               class="full-width"
             >
               <el-option
-                v-for="item in bshSegmentOptions"
+                v-for="item in filteredBshSegmentOptions"
                 :key="item.bshSegmentId"
                 :label="formatBshSegmentLabel(item)"
                 :value="item.bshSegmentId"
@@ -583,7 +599,22 @@
           :rules="allocateRules"
           label-width="130px"
           size="mini"
-        >
+          ><el-form-item label="编识号类型" prop="bshType">
+            <el-select
+              v-model="allocateForm.bshType"
+              class="full-width"
+              clearable
+              placeholder="请先选择编识号类型"
+              @change="allocateForm.ptBSHSegmentId = null"
+            >
+              <el-option
+                v-for="item in bshTypeOptions"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              />
+            </el-select>
+          </el-form-item>
           <el-form-item label="分配平台" prop="allocatedPTXXID">
             <el-select
               v-model="allocateForm.allocatedPTXXID"
@@ -605,7 +636,7 @@
               class="full-width"
             >
               <el-option
-                v-for="item in ptBshSegmentOptions"
+                v-for="item in filteredPtBshSegmentOptions"
                 :key="item.ptBSHSegmentId"
                 :label="formatPtBshLabel(item)"
                 :value="item.ptBSHSegmentId"
@@ -746,7 +777,8 @@ export default {
         PTXXID: null,
         bshSegmentId: null,
         startBsh: null,
-        endBsh: null
+        endBsh: null,
+        bshType: null // 新增
       },
       ptBshRules: {
         PTXXID: [{required: true, message: '请选择平台', trigger: 'change'}],
@@ -773,7 +805,8 @@ export default {
         allocatedPTXXID: null,
         ptBSHSegmentId: null,
         startBsh: null,
-        endBsh: null
+        endBsh: null,
+        bshType: null // 新增
       },
       allocateRules: {
         allocatedPTXXID: [
@@ -797,6 +830,32 @@ export default {
     this.loadMaps()
     this.loadReferenceData()
     this.fetchBsh()
+  },
+  computed: {
+    // 过滤预分配号段
+    filteredBshSegmentOptions() {
+      if (
+        this.ptBshForm.bshType === null ||
+        this.ptBshForm.bshType === undefined
+      ) {
+        return this.bshSegmentOptions
+      }
+      return this.bshSegmentOptions.filter(
+        item => item.bshType === this.ptBshForm.bshType
+      )
+    },
+    // 过滤平台分配号段
+    filteredPtBshSegmentOptions() {
+      if (
+        this.allocateForm.bshType === null ||
+        this.allocateForm.bshType === undefined
+      ) {
+        return this.ptBshSegmentOptions
+      }
+      return this.ptBshSegmentOptions.filter(
+        item => item.bshType === this.allocateForm.bshType
+      )
+    }
   },
   watch: {
     activeTab(val) {
@@ -1048,22 +1107,29 @@ export default {
     },
     openPtBshDialog(isEdit, row = null) {
       this.ptBshEdit = isEdit
-      this.ptBshForm =
-        isEdit && row
-          ? {
-              ptBSHSegmentId: this.pickRowId(row, ['ptBSHSegmentId']),
-              PTXXID: row.PTXXID,
-              bshSegmentId: row.bshSegmentId,
-              startBsh: row.startBsh,
-              endBsh: row.endBsh
-            }
-          : {
-              ptBSHSegmentId: null,
-              PTXXID: null,
-              bshSegmentId: null,
-              startBsh: null,
-              endBsh: null
-            }
+      if (isEdit && row) {
+        // 回显时，去基础号段列表查一下当前号段对应的 bshType 是什么
+        const currentSeg = this.bshSegmentOptions.find(
+          s => s.bshSegmentId === row.bshSegmentId
+        )
+        this.ptBshForm = {
+          ptBSHSegmentId: this.pickRowId(row, ['ptBSHSegmentId']),
+          PTXXID: row.PTXXID,
+          bshType: currentSeg ? currentSeg.bshType : (row.bshType ?? null), // 补齐类型
+          bshSegmentId: row.bshSegmentId,
+          startBsh: row.startBsh,
+          endBsh: row.endBsh
+        }
+      } else {
+        this.ptBshForm = {
+          ptBSHSegmentId: null,
+          PTXXID: null,
+          bshType: null,
+          bshSegmentId: null,
+          startBsh: null,
+          endBsh: null
+        }
+      }
       this.ptBshDialogVisible = true
       this.$nextTick(
         () => this.$refs.ptBshFormRef && this.$refs.ptBshFormRef.clearValidate()
@@ -1129,22 +1195,29 @@ export default {
     },
     openAllocateDialog(isEdit, row = null) {
       this.allocateEdit = isEdit
-      this.allocateForm =
-        isEdit && row
-          ? {
-              ptBSHAllocateId: this.pickRowId(row, ['ptBSHAllocateId']),
-              allocatedPTXXID: row.allocatedPTXXID,
-              ptBSHSegmentId: row.ptBSHSegmentId,
-              startBsh: row.startBsh,
-              endBsh: row.endBsh
-            }
-          : {
-              ptBSHAllocateId: null,
-              allocatedPTXXID: null,
-              ptBSHSegmentId: null,
-              startBsh: null,
-              endBsh: null
-            }
+      if (isEdit && row) {
+        // 从已有的上游数据中匹配类型
+        const currentPtSeg = this.ptBshSegmentOptions.find(
+          s => s.ptBSHSegmentId === row.ptBSHSegmentId
+        )
+        this.allocateForm = {
+          ptBSHAllocateId: this.pickRowId(row, ['ptBSHAllocateId']),
+          allocatedPTXXID: row.allocatedPTXXID,
+          bshType: currentPtSeg ? currentPtSeg.bshType : (row.bshType ?? null), // 补齐类型
+          ptBSHSegmentId: row.ptBSHSegmentId,
+          startBsh: row.startBsh,
+          endBsh: row.endBsh
+        }
+      } else {
+        this.allocateForm = {
+          ptBSHAllocateId: null,
+          allocatedPTXXID: null,
+          bshType: null,
+          ptBSHSegmentId: null,
+          startBsh: null,
+          endBsh: null
+        }
+      }
       this.allocateDialogVisible = true
       this.$nextTick(
         () =>

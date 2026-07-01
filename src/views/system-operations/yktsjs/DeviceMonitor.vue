@@ -30,17 +30,27 @@
       </div>
 
       <div class="monitor-legend">
-        <div class="legend-node">
-          <span class="dot bg-running"></span>正常空闲
+        <div class="legend-group">
+          <span class="group-label">健康状态：</span>
+          <div class="legend-node">
+            <span class="dot bg-jk-running"></span>运行
+          </div>
+          <div class="legend-node">
+            <span class="dot bg-jk-offline"></span>未运行
+          </div>
+          <div class="legend-node">
+            <span class="dot bg-jk-fault"></span>故障
+          </div>
         </div>
-        <div class="legend-node">
-          <span class="dot bg-busy"></span>高负荷占用
-        </div>
-        <div class="legend-node">
-          <span class="dot bg-fault"></span>严重故障
-        </div>
-        <div class="legend-node">
-          <span class="dot bg-offline"></span>未激活/离线
+        <div class="legend-divider"></div>
+        <div class="legend-group">
+          <span class="group-label">资源状态：</span>
+          <div class="legend-node">
+            <span class="dot bg-zy-free"></span>空闲
+          </div>
+          <div class="legend-node">
+            <span class="dot bg-zy-busy"></span>占用
+          </div>
         </div>
       </div>
     </div>
@@ -65,7 +75,8 @@
             :key="pt.PTXXID"
             class="platform-brief-card"
             :class="[
-              getStatusClass(pt.JKZT, pt.ZYZYZT),
+              getJkStatusClass(pt.JKZT),
+              getZyStatusClass(pt.ZYZYZT),
               {'is-active': activePtId === pt.PTXXID},
               {'data-bounce': pt._bounce}
             ]"
@@ -73,6 +84,20 @@
           >
             <div class="card-top">
               <span class="pt-name" :title="pt.PTMC">{{ pt.PTMC }}</span>
+              <div class="status-tags-box">
+                <span
+                  class="mini-status-tag"
+                  :class="getJkStatusClass(pt.JKZT)"
+                >
+                  {{ jkztMap[pt.JKZT] || '未知' }}
+                </span>
+                <span
+                  class="mini-status-tag"
+                  :class="getZyStatusClass(pt.ZYZYZT)"
+                >
+                  {{ zyzyztMap[pt.ZYZYZT] || '未知' }}
+                </span>
+              </div>
             </div>
             <div class="card-sub-info">
               <span class="bsh-txt">#{{ pt.PTBSH || '未标号' }}</span>
@@ -90,7 +115,7 @@
                 {{ pt.PTSD || 0 }}k/h
               </span>
             </div>
-            <div v-if="pt.JKZT === 2" class="alarm-flash-dot"></div>
+            <div v-if="Number(pt.JKZT) === 2" class="alarm-flash-dot"></div>
           </div>
 
           <div class="scroll-loading-tip" v-if="pageConfig.pageNum >= 15">
@@ -120,11 +145,27 @@
 
         <div v-show="activePtId" class="cascade-content-wrapper">
           <div class="detail-param-dashboard" v-if="selectedPlatform">
-            <div class="panel-inner-title">
-              <Icon icon="mdi:satellite" size="14px" style="color: #38bdf8" />
-              当前靶向：{{ selectedPlatform.PTMC }} ({{
-                selectedPlatform.PTXXID
-              }})
+            <div class="panel-inner-title-flex">
+              <div class="panel-inner-title">
+                <Icon icon="mdi:satellite" size="14px" style="color: #38bdf8" />
+                当前靶向：{{ selectedPlatform.PTMC }} ({{
+                  selectedPlatform.PTXXID
+                }})
+              </div>
+              <div class="main-status-display">
+                <span class="status-indicator">
+                  健康:
+                  <strong :class="getJkTextClass(selectedPlatform.JKZT)">{{
+                    jkztMap[selectedPlatform.JKZT]
+                  }}</strong>
+                </span>
+                <span class="status-indicator">
+                  资源:
+                  <strong :class="getZyTextClass(selectedPlatform.ZYZYZT)">{{
+                    zyzyztMap[selectedPlatform.ZYZYZT]
+                  }}</strong>
+                </span>
+              </div>
             </div>
             <div class="params-matrix">
               <div class="matrix-item">
@@ -169,30 +210,43 @@
             <div class="platform-status-summary-bar">
               <div class="summary-label">
                 <Icon icon="mdi:chart-bar" size="12px" style="color: #38bdf8" />
-                挂载资产态势统计：
+                挂载资产状态审计：
               </div>
               <div class="summary-indicators">
                 <div class="indicator-item text-green">
-                  <span class="status-dot dot-running"></span>
-                  运行中 (正常/占用)：<span class="count-num">{{
-                    statusStatistics.running
+                  <span class="status-dot jk-dot-running"></span>
+                  健康/运行：<span class="count-num">{{
+                    statusStatistics.jkRunning
                   }}</span>
                 </div>
                 <div class="indicator-item text-gray">
-                  <span class="status-dot dot-offline"></span>
-                  未运行 (离线/未激活)：<span class="count-num">{{
-                    statusStatistics.offline
+                  <span class="status-dot jk-dot-offline"></span>
+                  未运行：<span class="count-num">{{
+                    statusStatistics.jkOffline
                   }}</span>
                 </div>
                 <div class="indicator-item text-red">
-                  <span class="status-dot dot-fault"></span>
-                  严重故障：<span class="count-num">{{
-                    statusStatistics.fault
+                  <span class="status-dot jk-dot-fault"></span>
+                  故障：<span class="count-num">{{
+                    statusStatistics.jkFault
+                  }}</span>
+                </div>
+                <div class="indicator-divider">|</div>
+                <div class="indicator-item text-cyan">
+                  <span class="status-dot zy-dot-free"></span>
+                  资源空闲：<span class="count-num">{{
+                    statusStatistics.zyFree
+                  }}</span>
+                </div>
+                <div class="indicator-item text-orange">
+                  <span class="status-dot zy-dot-busy"></span>
+                  资源占用：<span class="count-num">{{
+                    statusStatistics.zyBusy
                   }}</span>
                 </div>
                 <div class="indicator-item text-blue">
                   <Icon icon="mdi:package-variant-closed" size="12px" />
-                  资产总计：<span class="count-num">{{
+                  总计：<span class="count-num">{{
                     statusStatistics.total
                   }}</span>
                 </div>
@@ -219,14 +273,23 @@
                   :key="wq.ZYXH"
                   class="monitor-node node-weapon"
                   :class="[
-                    getStatusClass(wq.JKZT, wq.ZYZYZT),
+                    getJkStatusClass(wq.JKZT),
+                    getZyStatusClass(wq.ZYZYZT),
                     {'data-bounce': wq._bounce}
                   ]"
                 >
-                  <div
-                    class="card-status-dot"
-                    :class="getStatusDotClass(wq.JKZT, wq.ZYZYZT)"
-                  ></div>
+                  <div class="double-dots-container">
+                    <span
+                      class="card-status-dot"
+                      :class="getJkDotClass(wq.JKZT)"
+                      title="健康状态"
+                    ></span>
+                    <span
+                      class="card-status-dot"
+                      :class="getZyDotClass(wq.ZYZYZT)"
+                      title="资源状态"
+                    ></span>
+                  </div>
 
                   <div class="node-name-bar">{{ wq.WQXHMC }}</div>
                   <div class="detail-grid">
@@ -272,14 +335,23 @@
                   :key="cg.ZYXH"
                   class="monitor-node node-sensor"
                   :class="[
-                    getStatusClass(cg.JKZT, cg.ZYZYZT),
+                    getJkStatusClass(cg.JKZT),
+                    getZyStatusClass(cg.ZYZYZT),
                     {'data-bounce': cg._bounce}
                   ]"
                 >
-                  <div
-                    class="card-status-dot"
-                    :class="getStatusDotClass(cg.JKZT, cg.ZYZYZT)"
-                  ></div>
+                  <div class="double-dots-container">
+                    <span
+                      class="card-status-dot"
+                      :class="getJkDotClass(cg.JKZT)"
+                      title="健康状态"
+                    ></span>
+                    <span
+                      class="card-status-dot"
+                      :class="getZyDotClass(cg.ZYZYZT)"
+                      title="资源状态"
+                    ></span>
+                  </div>
 
                   <div class="node-name-bar">
                     {{ cg.CGQMC || '未知传感器点' }}
@@ -320,14 +392,23 @@
                   :key="sb.ZYXH"
                   class="monitor-node node-device"
                   :class="[
-                    getStatusClass(sb.JKZT, sb.ZYZYZT),
+                    getJkStatusClass(sb.JKZT),
+                    getZyStatusClass(sb.ZYZYZT),
                     {'data-bounce': sb._bounce}
                   ]"
                 >
-                  <div
-                    class="card-status-dot"
-                    :class="getStatusDotClass(sb.JKZT, sb.ZYZYZT)"
-                  ></div>
+                  <div class="double-dots-container">
+                    <span
+                      class="card-status-dot"
+                      :class="getJkDotClass(sb.JKZT)"
+                      title="健康状态"
+                    ></span>
+                    <span
+                      class="card-status-dot"
+                      :class="getZyDotClass(sb.ZYZYZT)"
+                      title="资源状态"
+                    ></span>
+                  </div>
 
                   <div class="node-name-bar">
                     {{ sb.SBXHMC || '未知硬件元' }}
@@ -420,6 +501,9 @@ export default {
       selectedPlatform: null,
       activePtId: null,
       totalPlatforms: 0,
+      // 状态静态标准字典
+      jkztMap: {0: '运行', 1: '未运行', 2: '故障'},
+      zyzyztMap: {0: '空闲', 1: '占用'},
       platformTypeMap: {
         1: '指控平台',
         2: '舰艇平台',
@@ -434,35 +518,40 @@ export default {
       barChartIns: null
     }
   },
-  // 🔥 新增：利用 computed 计算属性，实时高效统计当前选中平台下的状态总数
   computed: {
+    // 独立解耦的计算属性数据审计
     statusStatistics() {
-      // 聚合当前平台下所有的挂载资产节点
       const allAssets = [
         ...this.weaponList,
         ...this.sensorList,
         ...this.deviceList
       ]
 
-      let running = 0
-      let offline = 0
-      let fault = 0
+      let jkRunning = 0
+      let jkOffline = 0
+      let jkFault = 0
+      let zyFree = 0
+      let zyBusy = 0
 
       allAssets.forEach(asset => {
-        const jkzt = Number(asset.JKZT)
-        if (jkzt === 2) {
-          fault++
-        } else if (jkzt === 1) {
-          offline++
-        } else {
-          running++ // jkzt 为 0 (运行中)
-        }
+        // 1. 统计健康状态
+        const jk = Number(asset.JKZT)
+        if (jk === 0) jkRunning++
+        else if (jk === 1) jkOffline++
+        else if (jk === 2) jkFault++
+
+        // 2. 统计资源状态
+        const zy = Number(asset.ZYZYZT)
+        if (zy === 0) zyFree++
+        else if (zy === 1) zyBusy++
       })
 
       return {
-        running,
-        offline,
-        fault,
+        jkRunning,
+        jkOffline,
+        jkFault,
+        zyFree,
+        zyBusy,
         total: allAssets.length
       }
     }
@@ -620,7 +709,11 @@ export default {
         this.platformList.forEach(oldPt => {
           const matching = freshList.find(f => f.PTXXID === oldPt.PTXXID)
           if (matching) {
-            if (matching.JKZT !== oldPt.JKZT || matching.PTSD !== oldPt.PTSD)
+            if (
+              matching.JKZT !== oldPt.JKZT ||
+              matching.PTSD !== oldPt.PTSD ||
+              matching.ZYZYZT !== oldPt.ZYZYZT
+            )
               oldPt._bounce = true
             Object.assign(oldPt, matching)
           }
@@ -738,16 +831,42 @@ export default {
       if (this.radarChartIns) this.radarChartIns.resize()
       if (this.barChartIns) this.barChartIns.resize()
     },
-    getStatusClass(jkzt, zyzyzt) {
-      if (Number(jkzt) === 2) return 'status-fault'
-      if (Number(jkzt) === 1) return 'status-offline'
-      return Number(zyzyzt) === 1 ? 'status-busy' : 'status-running'
+
+    /* ==========================================
+       🆕 新增/重构：显式独立分流的状态映射函数
+       ========================================== */
+    // 健康状态对应 Class (左侧卡片边框、标签底色)
+    getJkStatusClass(jkzt) {
+      const status = Number(jkzt)
+      if (status === 2) return 'jk-fault'
+      if (status === 1) return 'jk-offline'
+      return 'jk-running'
     },
-    getStatusDotClass(jkzt, zyzyzt) {
-      if (Number(jkzt) === 2) return 'dot-fault'
-      if (Number(jkzt) === 1) return 'dot-offline'
-      return Number(zyzyzt) === 1 ? 'dot-busy' : 'dot-running'
+    // 资源状态对应 Class (左侧卡片边框、标签底色)
+    getZyStatusClass(zyzyzt) {
+      return Number(zyzyzt) === 1 ? 'zy-busy' : 'zy-free'
     },
+    // 右侧大面板文本颜色分流
+    getJkTextClass(jkzt) {
+      const status = Number(jkzt)
+      if (status === 2) return 'text-red'
+      if (status === 1) return 'text-gray'
+      return 'text-green'
+    },
+    getZyTextClass(zyzyzt) {
+      return Number(zyzyzt) === 1 ? 'text-orange' : 'text-cyan'
+    },
+    // 小圆点(Dot) 的独立类名指定
+    getJkDotClass(jkzt) {
+      const status = Number(jkzt)
+      if (status === 2) return 'jk-dot-fault'
+      if (status === 1) return 'jk-dot-offline'
+      return 'jk-dot-running'
+    },
+    getZyDotClass(zyzyzt) {
+      return Number(zyzyzt) === 1 ? 'zy-dot-busy' : 'zy-dot-free'
+    },
+
     getWeaponType(t) {
       return {1: '对陆', 2: '对水面', 3: '对水下', 4: '对空'}[t] || '多型'
     },
@@ -818,10 +937,25 @@ export default {
   width: 140px;
 }
 
-/* 状态图例 */
+/* 状态图例区重构（双状态拆分显示） */
 .monitor-legend {
   display: flex;
-  gap: 12px;
+  align-items: center;
+  gap: 16px;
+}
+.legend-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.group-label {
+  font-size: 11px;
+  color: #4b5a70;
+}
+.legend-divider {
+  width: 1px;
+  height: 12px;
+  background: #1e293b;
 }
 .legend-node {
   display: flex;
@@ -835,17 +969,22 @@ export default {
   height: 6px;
   border-radius: 50%;
 }
-.bg-running {
+/* 健康图例颜色 */
+.bg-jk-running {
   background: #10b981;
 }
-.bg-busy {
-  background: #f59e0b;
+.bg-jk-offline {
+  background: #94a3b8;
 }
-.bg-fault {
+.bg-jk-fault {
   background: #ef4444;
 }
-.bg-offline {
-  background: #94a3b8;
+/* 资源图例颜色 */
+.bg-zy-free {
+  background: #06b6d4;
+}
+.bg-zy-busy {
+  background: #f59e0b;
 }
 
 /* 主体分栏骨架 */
@@ -859,7 +998,7 @@ export default {
 
 /* LEFT: 瘦身型平台列表 */
 .left-platform-sidebar {
-  width: 22%;
+  width: 24%; /* 略微拓宽确保双状态标签放得下 */
   background: #080e18;
   border: 1px solid #111b2b;
   border-radius: 4px;
@@ -906,29 +1045,46 @@ export default {
   border-radius: 2px;
 }
 
-/* 卡片精致化 */
+/* 左侧简报卡片双状态融合 */
 .platform-brief-card {
   background: #0d1522;
   border: 1px solid #172438;
-  border-left: 3px solid #172438;
+  border-left: 3px solid #94a3b8; /* 默认灰色 */
   border-radius: 3px;
   padding: 8px 11px;
   cursor: pointer;
   position: relative;
   transition: all 0.2s ease;
 }
+/* 卡片左侧高亮边框以 健康状态(JKZT) 为主导 */
+.platform-brief-card.jk-running {
+  border-left-color: #10b981;
+}
+.platform-brief-card.jk-offline {
+  border-left-color: #64748b;
+  opacity: 0.6;
+}
+.platform-brief-card.jk-fault {
+  border-left-color: #ef4444;
+}
+/* 卡片背景阴影可以体现 资源状态(ZYZYZT) 忙碌度 */
+.platform-brief-card.zy-busy {
+  background: #131924;
+}
+
 .platform-brief-card:hover {
   background: #131f33;
 }
 .platform-brief-card.is-active {
-  border-color: #38bdf8 !important;
-  background: #13233c;
+  border-right: 1px solid #38bdf8;
+  box-shadow: inset 0 0 8px rgba(56, 189, 248, 0.15);
 }
 
 .card-top {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 4px;
 }
 .pt-name {
   font-size: 12px;
@@ -937,8 +1093,42 @@ export default {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 95%;
+  flex: 1;
 }
+
+/* 双状态胶囊小标签 */
+.status-tags-box {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
+.mini-status-tag {
+  font-size: 9px;
+  padding: 1px 4px;
+  border-radius: 2px;
+  font-weight: normal;
+}
+.mini-status-tag.jk-running {
+  background: rgba(16, 185, 129, 0.15);
+  color: #10b981;
+}
+.mini-status-tag.jk-offline {
+  background: rgba(148, 163, 184, 0.15);
+  color: #94a3b8;
+}
+.mini-status-tag.jk-fault {
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+}
+.mini-status-tag.zy-free {
+  background: rgba(6, 182, 212, 0.15);
+  color: #06b6d4;
+}
+.mini-status-tag.zy-busy {
+  background: rgba(245, 158, 11, 0.15);
+  color: #f59e0b;
+}
+
 .card-sub-info {
   display: flex;
   justify-content: space-between;
@@ -968,7 +1158,7 @@ export default {
 
 /* RIGHT: 宽域级联详情 */
 .right-cascade-panel {
-  width: 78%;
+  width: 76%;
   background: #080e18;
   border: 1px solid #111b2b;
   border-radius: 4px;
@@ -991,15 +1181,30 @@ export default {
   margin-bottom: 12px;
   border-left: 3px solid #38bdf8;
 }
+.panel-inner-title-flex {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
 .panel-inner-title {
   font-size: 12px;
   font-weight: bold;
   color: #fff;
-  margin-bottom: 6px;
 }
+.main-status-display {
+  display: flex;
+  gap: 12px;
+  font-size: 11px;
+  color: #94a3b8;
+}
+.status-indicator strong {
+  margin-left: 2px;
+}
+
 .params-matrix {
   display: grid;
-  grid-template-columns: repeat(6, 1fr); /* 调整为 6 列平铺 */
+  grid-template-columns: repeat(6, 1fr);
   gap: 6px;
 }
 .matrix-item {
@@ -1007,7 +1212,7 @@ export default {
   padding: 5px 8px;
   border-radius: 2px;
   display: flex;
-  flex-direction: column; /* 调整为上下结构，更节省大屏幕横向空间 */
+  flex-direction: column;
   align-items: flex-start;
   gap: 2px;
   font-size: 11px;
@@ -1021,7 +1226,7 @@ export default {
   color: #fff;
 }
 
-/* 🔥 新增：平台状态统计行样式 */
+/* 平台状态统计行样式 */
 .platform-status-summary-bar {
   margin-top: 11px;
   padding-top: 8px;
@@ -1036,8 +1241,12 @@ export default {
 }
 .summary-indicators {
   display: flex;
-  gap: 18px;
+  gap: 14px;
   align-items: center;
+}
+.indicator-divider {
+  color: #1e293b;
+  font-size: 12px;
 }
 .indicator-item {
   display: flex;
@@ -1052,10 +1261,10 @@ export default {
   display: inline-block;
 }
 .indicator-item .count-num {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: bold;
   background: rgba(255, 255, 255, 0.04);
-  padding: 0px 6px;
+  padding: 0px 5px;
   border-radius: 3px;
 }
 
@@ -1088,15 +1297,31 @@ export default {
   gap: 8px;
 }
 
-/* 基础节点卡片 */
+/* 基础节点卡片解耦状态样式 */
 .monitor-node {
   background: #0d1522;
   border: 1px solid #172438;
-  border-left: 3px solid #172438;
+  border-left: 3px solid #94a3b8;
   border-radius: 4px;
   padding: 8px;
   position: relative;
 }
+/* 卡片左边线：依旧交给健康状态绑定 */
+.monitor-node.jk-running {
+  border-left-color: #10b981 !important;
+}
+.monitor-node.jk-offline {
+  border-left-color: #64748b !important;
+  opacity: 0.5;
+}
+.monitor-node.jk-fault {
+  border-left-color: #ef4444 !important;
+}
+/* 资产卡片：如果是占用状态，给予不易察觉的微暗背景差异 */
+.monitor-node.zy-busy {
+  background: #111824;
+}
+
 .node-name-bar {
   font-size: 11px;
   font-weight: bold;
@@ -1104,7 +1329,7 @@ export default {
   border-bottom: 1px solid #111b2b;
   padding-bottom: 3px;
   margin-bottom: 5px;
-  padding-right: 16px;
+  padding-right: 28px; /* 拓宽右边距留给并排两个小圆点 */
 }
 .detail-grid {
   display: grid;
@@ -1127,16 +1352,22 @@ export default {
   justify-content: space-between;
 }
 
-/* 呼吸小圆点 */
-.card-status-dot {
+/* 右上角并排双指示灯容器 */
+.double-dots-container {
   position: absolute;
   top: 9px;
   right: 9px;
+  display: flex;
+  gap: 5px;
+  z-index: 5;
+}
+.card-status-dot {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  z-index: 5;
+  display: inline-block;
 }
+
 @keyframes dot-pulsate {
   0% {
     transform: scale(0.9);
@@ -1146,7 +1377,7 @@ export default {
   50% {
     transform: scale(1.3);
     opacity: 1;
-    box-shadow: 0 0 6px 2px currentColor;
+    box-shadow: 0 0 6px 1px currentColor;
   }
   100% {
     transform: scale(0.9);
@@ -1154,28 +1385,33 @@ export default {
     box-shadow: 0 0 0 0 currentColor;
   }
 }
-.dot-running {
+
+/* 健康状态指示灯 */
+.jk-dot-running {
   background-color: #10b981;
-  color: rgba(16, 185, 129, 0.6);
+  color: rgba(16, 185, 129, 0.4);
   animation: dot-pulsate 2s infinite ease-in-out;
 }
-.dot-busy {
-  background-color: #f59e0b;
-  color: rgba(245, 158, 11, 0.6);
-  animation: dot-pulsate 1.6s infinite ease-in-out;
-}
-.dot-fault {
+.jk-dot-fault {
   background-color: #ef4444;
-  color: rgba(239, 68, 68, 0.8);
+  color: rgba(239, 68, 68, 0.6);
   animation: dot-pulsate 0.8s infinite ease-in-out;
 }
-.dot-offline {
-  background-color: #94a3b8;
-  animation: none;
-  opacity: 0.4;
+.jk-dot-offline {
+  background-color: #64748b;
 }
 
-/* 最右侧 ECharts 垂直专属列 */
+/* 资源状态指示灯 */
+.zy-dot-free {
+  background-color: #06b6d4;
+}
+.zy-dot-busy {
+  background-color: #f59e0b;
+  color: rgba(245, 158, 11, 0.5);
+  animation: dot-pulsate 1.6s infinite ease-in-out;
+}
+
+/* 最右侧 ECharts 专属列 */
 .charts-exclusive-column {
   background: rgba(13, 21, 34, 0.3);
   padding: 6px;
@@ -1232,19 +1468,6 @@ export default {
 .data-bounce .bounce-num {
   display: inline-block;
   animation: text-pop 0.5s ease-in-out;
-}
-
-.status-running {
-  border-left-color: #10b981 !important;
-}
-.status-busy {
-  border-left-color: #f59e0b !important;
-}
-.status-fault {
-  border-left-color: #ef4444 !important;
-}
-.status-offline {
-  opacity: 0.35;
 }
 
 .alarm-flash-dot {
